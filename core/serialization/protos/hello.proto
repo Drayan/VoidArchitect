@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package core.serialization.protos;
+
+message HelloServer { string client_info = 1; }
+
+message HelloClient { string server_info = 1; }
