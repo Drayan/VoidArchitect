@@ -1,7 +1,7 @@
-include!(concat!(env!("OUT_DIR"), "/core.serialization.protos.rs"));
 use env_logger::Builder;
 use log::LevelFilter;
 use tokio::net::TcpListener;
+use void_architect_core::serialization::protos;
 
 fn get_config() -> (String, String) {
     // TODO: Load the configuration from environment variables or a config file
