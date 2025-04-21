@@ -19,14 +19,14 @@ async fn main() {
     loop {
         // Wait for the soket to be ready for writing
         stream.writable().await.unwrap();
-        let hello_client = protos::HelloClient {
-            server_info: "4242".to_string(),
+        let hello_server = protos::HelloServer {
+            client_info: "4242".to_string(),
         };
 
-        let buffer: Vec<u8> = hello_client.encode_to_vec();
+        let buffer: Vec<u8> = hello_server.encode_to_vec();
         match AsyncWriteExt::write_all(&mut stream, &buffer).await {
             Ok(_) => {
-                println!("Sent: {:?}", hello_client);
+                println!("Sent: {:?}", hello_server);
             }
             Err(e) => {
                 println!("Failed to send: {e}");
