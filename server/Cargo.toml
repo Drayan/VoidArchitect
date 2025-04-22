@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-void-architect_core = { path = "../core" }
+void-architect_shared = { path = "../shared" }
 prost = "0.13"
 prost-types = "0.13"
 log = "0.4.27"

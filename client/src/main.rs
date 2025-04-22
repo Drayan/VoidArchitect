@@ -3,7 +3,8 @@ use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::TcpStream,
 };
-use void_architect_core::serialization::protos;
+use void_architect_engine_client::EngineClient;
+use void_architect_shared::messages::{HelloClient, HelloServer};
 
 #[tokio::main]
 async fn main() {
@@ -24,7 +25,7 @@ async fn main() {
 
     // Wait for the soket to be ready for writing
     stream.writable().await.unwrap();
-    let hello_server = protos::HelloServer {
+    let hello_server = HelloServer {
         client_info: "Hello!".to_string(),
     };
 
@@ -50,8 +51,7 @@ async fn main() {
             }
             log::info!("Received {n} bytes from server");
             // Decode the message
-            let hello_client: protos::HelloClient = match protos::HelloClient::decode(&buffer[..n])
-            {
+            let hello_client: HelloClient = match HelloClient::decode(&buffer[..n]) {
                 Ok(hello_client) => hello_client,
                 Err(e) => {
                     log::error!("Failed to decode message: {e}");
@@ -66,6 +66,12 @@ async fn main() {
             return;
         }
     }
+
+    // Initialize the engine
+    let mut engine_client = EngineClient::new();
+    engine_client.initialize();
+    engine_client.run();
+    engine_client.shutdown();
 
     stream.shutdown().await.unwrap();
     log::info!("Closing client");

@@ -2,7 +2,7 @@ use env_logger::Builder;
 use log::LevelFilter;
 use prost::Message;
 use tokio::{io::AsyncReadExt, io::AsyncWriteExt, net::TcpListener};
-use void_architect_core::serialization::protos;
+use void_architect_shared::messages::{HelloClient, HelloServer};
 
 const MAX_MESSAGE_SIZE: usize = 1024;
 
@@ -71,7 +71,7 @@ async fn handle_connection(mut stream: tokio::net::TcpStream) {
     // the client and the server. The client need to send a HelloServer
     // message and the server will reply with a HelloClient message.
     log::info!("Waiting for client...");
-    let hello_server: protos::HelloServer;
+    let hello_server: HelloServer;
     match stream.readable().await {
         Ok(_) => {
             let mut buffer = [0; MAX_MESSAGE_SIZE];
@@ -85,7 +85,7 @@ async fn handle_connection(mut stream: tokio::net::TcpStream) {
                     log::info!("Received {n} bytes from client");
 
                     // Decode the message
-                    hello_server = match protos::HelloServer::decode(&buffer[..n]) {
+                    hello_server = match HelloServer::decode(&buffer[..n]) {
                         Ok(hello_server) => hello_server,
                         Err(e) => {
                             log::error!("Failed to decode message: {e:#?}");
@@ -107,7 +107,7 @@ async fn handle_connection(mut stream: tokio::net::TcpStream) {
     }
 
     // Send a HelloServer message back to the client
-    let hello_client = protos::HelloClient {
+    let hello_client = HelloClient {
         server_info: hello_server.client_info,
     };
     let message = hello_client.encode_to_vec();
