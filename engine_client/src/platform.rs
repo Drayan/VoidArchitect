@@ -19,9 +19,8 @@ pub struct PlatformLayer<A: EngineApplication> {
     window_width: u32,
     window_height: u32,
     event_loop: Option<EventLoop<()>>,
-    window: Option<Window>,
+    pub window: Option<Window>,
     engine_app: Option<A>,
-    // Add more fields as needed for future extensibility
 }
 
 impl<A: EngineApplication> ApplicationHandler for PlatformLayer<A> {
@@ -40,13 +39,12 @@ impl<A: EngineApplication> ApplicationHandler for PlatformLayer<A> {
             )
             .expect("Failed to create window");
         self.window = Some(window);
-    }
 
-    fn about_to_wait(&mut self, _event_loop: &ActiveEventLoop) {
-        self.engine_app.as_mut().expect("EngineContext must be initialized.").update(0.0);
-        if let Some(window) = &self.window {
-            window.request_redraw();
-        }
+        self.engine_app
+            .as_mut()
+            .expect("EngineContext must be initialized.")
+            .initialize(self.window.as_ref().unwrap())
+            .expect("Failed to initialize engine application");
     }
 
     fn window_event(
@@ -67,7 +65,22 @@ impl<A: EngineApplication> ApplicationHandler for PlatformLayer<A> {
                 log::info!("Window close requested");
                 event_loop.exit();
             }
+            WindowEvent::Resized(size) => {
+                //TODO: Refactor this to send the event only when the window resizing is finished
+                log::info!("Window resized to: {:?}", size);
+                if let Some(engine_app) = &mut self.engine_app {
+                    engine_app.resize(size.width, size.height).expect("Failed to resize");
+                }
+            }
             _ => {}
+        }
+    }
+
+    fn about_to_wait(&mut self, _event_loop: &ActiveEventLoop) {
+        //TODO: Should check for internal should_exit flag and exit if true
+        self.engine_app.as_mut().expect("EngineContext must be initialized.").update(0.0);
+        if let Some(window) = &self.window {
+            window.request_redraw();
         }
     }
 }
@@ -114,13 +127,15 @@ impl<A: EngineApplication> PlatformLayer<A> {
     ///
     /// # Reason:
     /// The event loop is required to run the application and is consumed by this method.
-    pub fn run(&mut self, engine_app: A) {
+    pub fn run(&mut self, engine_app: A) -> A {
         let event_loop =
             self.event_loop.take().expect("Event loop must be initialized before run()");
 
         // Set the engine application reference
         self.engine_app = Some(engine_app);
         event_loop.run_app(self).expect("Failed to run event loop");
+
+        self.engine_app.take().expect("Engine application must be initialized before run()")
     }
 
     /// Cleans up resources if necessary.

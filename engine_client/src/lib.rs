@@ -1,28 +1,75 @@
 pub mod platform;
+pub mod renderer;
 
 use platform::PlatformLayer;
+use renderer::RendererFrontend;
+use winit::window::Window;
 
-#[derive(Clone)]
-pub struct EngineContext {}
+pub struct EngineContext {
+    renderer_system: Option<RendererFrontend>,
+}
 
 impl EngineContext {
     pub fn new() -> Self {
-        EngineContext {}
+        EngineContext {
+            renderer_system: Some(RendererFrontend::new()),
+        }
     }
 }
 
 pub trait EngineApplication {
+    fn initialize(&mut self, window: &Window) -> Result<(), String>;
+    fn shutdown(&mut self) -> Result<(), String>;
+
     fn update(&mut self, delta_time: f32);
     fn render(&mut self, delta_time: f32);
+
+    fn resize(&mut self, width: u32, height: u32) -> Result<(), String>;
 }
 
 impl EngineApplication for EngineContext {
+    fn initialize(&mut self, window: &Window) -> Result<(), String> {
+        if let Some(renderer) = &mut self.renderer_system {
+            renderer.initialize(window)
+        } else {
+            Err("Renderer system not initialized".to_string())
+        }
+    }
+
+    fn shutdown(&mut self) -> Result<(), String> {
+        if let Some(renderer) = &mut self.renderer_system {
+            renderer.shutdown()
+        } else {
+            Err("Renderer system not initialized".to_string())
+        }
+    }
+
     fn update(&mut self, _delta_time: f32) {
         // Default implementation does nothing
     }
 
     fn render(&mut self, _delta_time: f32) {
-        // Default implementation does nothing
+        self.renderer_system
+            .as_mut()
+            .expect("Renderer system not initialized")
+            .begin_frame()
+            .expect("Failed to begin frame");
+
+        // TODO: Renderer logic should be here
+
+        self.renderer_system
+            .as_mut()
+            .expect("Renderer system not initialized")
+            .end_frame()
+            .expect("Failed to end frame");
+    }
+
+    fn resize(&mut self, width: u32, height: u32) -> Result<(), String> {
+        if let Some(renderer) = &mut self.renderer_system {
+            renderer.resize(width, height)
+        } else {
+            Err("Renderer system not initialized".to_string())
+        }
     }
 }
 
@@ -50,12 +97,14 @@ impl<'a> EngineClient {
     }
 
     /// Runs the main event loop. This will block until the event loop exits.
-    pub fn run(&mut self) {
-        self.platform_layer.run(self.context.clone());
+    pub fn run(mut self) -> Self {
+        self.context = self.platform_layer.run(self.context);
+        self
     }
 
     /// Shuts down the engine subsystems.
     pub fn shutdown(&mut self) {
+        self.context.shutdown().expect("Failed to shutdown context");
         self.platform_layer.shutdown();
         log::info!("Engine shutdown");
     }
