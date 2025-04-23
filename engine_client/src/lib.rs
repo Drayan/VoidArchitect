@@ -1,35 +1,62 @@
-mod platform;
-use platform::PlatformSystem;
+pub mod platform;
 
-pub struct EngineClient {
-    platform_system: Option<PlatformSystem>,
+use platform::PlatformLayer;
+
+#[derive(Clone)]
+pub struct EngineContext {}
+
+impl EngineContext {
+    pub fn new() -> Self {
+        EngineContext {}
+    }
 }
 
-impl EngineClient {
+pub trait EngineApplication {
+    fn update(&mut self, delta_time: f32);
+    fn render(&mut self, delta_time: f32);
+}
+
+impl EngineApplication for EngineContext {
+    fn update(&mut self, _delta_time: f32) {
+        // Default implementation does nothing
+    }
+
+    fn render(&mut self, _delta_time: f32) {
+        // Default implementation does nothing
+    }
+}
+
+/// Main entry point for the client engine. Owns the platform system and other subsystems.
+/// This struct is responsible for subsystem orchestration.
+pub struct EngineClient {
+    platform_layer: PlatformLayer<EngineContext>,
+    context: EngineContext,
+}
+
+impl<'a> EngineClient {
     pub fn new() -> Self {
         EngineClient {
-            platform_system: None,
+            platform_layer: PlatformLayer::new(),
+            context: EngineContext::new(),
         }
     }
 
-    pub fn initialize(&mut self) {
-        // Initialize the platform system
-        self.platform_system = Some(PlatformSystem::new());
-        self.platform_system
-            .as_mut()
-            .expect("platform should exist")
-            .initialize();
-
-        println!("EngineClient initialized");
+    /// Initialize the engine subsystems.
+    ///
+    /// # Arguments
+    /// * `title` - The title of the window to be created.
+    pub fn initialize(&mut self, title: &str) {
+        self.platform_layer.initialize(title);
     }
 
-    pub fn run(&self) {
-        // Placeholder for the actual run logic
-        println!("EngineClient is running");
+    /// Runs the main event loop. This will block until the event loop exits.
+    pub fn run(&mut self) {
+        self.platform_layer.run(self.context.clone());
     }
 
-    pub fn shutdown(&self) {
-        // Placeholder for the actual shutdown logic
-        println!("EngineClient is shutting down");
+    /// Shuts down the engine subsystems.
+    pub fn shutdown(&mut self) {
+        self.platform_layer.shutdown();
+        log::info!("Engine shutdown");
     }
 }

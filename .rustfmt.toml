@@ -1,0 +1,5 @@
+edition = "2024"
+empty_item_single_line = false
+max_width = 95
+wrap_comments = true
+chain_width = 95

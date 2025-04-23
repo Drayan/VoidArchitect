@@ -9,9 +9,7 @@ use void_architect_shared::messages::{HelloClient, HelloServer};
 #[tokio::main]
 async fn main() {
     // Initialize the logger
-    env_logger::Builder::new()
-        .filter_level(log::LevelFilter::max())
-        .init();
+    env_logger::Builder::new().filter_level(log::LevelFilter::max()).init();
 
     let mut stream = match TcpStream::connect("127.0.0.1:4242").await {
         Ok(stream) => stream,
@@ -67,11 +65,11 @@ async fn main() {
         }
     }
 
-    // Initialize the engine
-    let mut engine_client = EngineClient::new();
-    engine_client.initialize();
-    engine_client.run();
-    engine_client.shutdown();
+    // Launch the engine and create a window (this will block until the window is closed)
+    let mut engine = EngineClient::new();
+    engine.initialize("Void Architect Client");
+    engine.run();
+    engine.shutdown();
 
     stream.shutdown().await.unwrap();
     log::info!("Closing client");

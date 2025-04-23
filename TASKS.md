@@ -56,12 +56,15 @@ This document breaks down the project milestones into actionable Epics and Stori
 - [x] **Story 1.1.4: Instanciate `Engine` from `client` crate**
     *   **Description:** Create a new instance of the `Engine` struct in the `client` crate and initialize it.
     *   **Goal:** The `Engine` instance is created and used within the `client` crate.
-- [ ] **Story 1.1.5: Implement Basic Window Initialization**
+- [x] **Story 1.1.5: Implement Basic Window Initialization**
     *   **Description:** Write code in the `engine_client` crate's dedicated module to use `winit` to create and display a desktop window.
     *   **Goal:** A visible, empty window appears when the client application is executed.
-- [ ] **Story 1.1.6: Implement Minimal Event Loop**
+    *   **Note:** PlatformSystem is initialized by EngineClient, with winit event loop setup and tested.
+    *   **Completed:** 22-04-2025 
+- [x] **Story 1.1.6: Implement Minimal Event Loop**
     *   **Description:** Set up the `winit` event loop to process window events, specifically handling the close request to allow clean application termination.
     *   **Goal:** The window remains open and responsive until the user closes it, at which point the application exits gracefully.
+    *   **Completed:** 22-04-2025
 - [ ] **Story 1.1.7: Create Vulkan Surface (`VkSurfaceKHR`)**
     *   **Description:** Using the created `winit` window and the Vulkan instance (from Epic 1.2), create the `VkSurfaceKHR` object required for presentation. This involves platform-specific Vulkan extension calls, likely handled via `ash`.
     *   **Goal:** A valid `VkSurfaceKHR` handle is obtained and stored, linking the window to the Vulkan API.

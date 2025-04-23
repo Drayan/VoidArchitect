@@ -1,86 +1,76 @@
 # VoidArchitect
 
-VoidArchitect is a project aiming to create a 4X (eXplore, eXpand, eXploit, eXterminate) space strategy game, powered by a custom game engine. The project adopts a distinct client-server architecture.
+VoidArchitect is a modular, Rust-based project aiming to create a 4X (eXplore, eXpand, eXploit, eXterminate) space strategy game, powered by a custom game engine.
 
-## General Architecture
+## Architecture
 
-The project is divided into two main components:
+The project is organized into several Rust crates:
 
-1.  **Server (`va_server`):**
+- **engine_client**: The cross-platform engine crate, responsible for window creation, platform abstraction, and (future) Vulkan integration. Uses `winit` for window and event loop management.
+- **client**: The main client application crate, which instantiates and drives the engine. Acts as the user interface and entry point for client logic.
+- **(Planned) server**: Will handle game logic and world state for multiplayer (not yet implemented).
 
-    - Written in **Rust**.
-    - Responsible for the main game logic, managing the state of the universe (galaxy, systems, empires, etc.), validating player actions, and synchronizing the state between clients.
-    - Designed to be **authoritative** and performant, leveraging Rust's concurrency and memory safety features.
-    - Will likely use the `tokio` ecosystem for asynchronous network management.
+## Key Features
 
-2.  **Client (`va_client`):**
+- **Cross-platform window initialization** via `winit` (Windows, Linux, macOS supported)
+- **Native event loop** integrated into the client application
+- **Clear separation** between engine (engine_client) and application logic (client) for testability and scalability
+- **Rust unit tests** for all major features
+- **Comprehensive documentation** and rustdoc comments
 
-    - Written in **C++** (C++20 standard or newer).
-    - Responsible for graphics rendering (via a low-level API like Vulkan, Metal, or eventually DirectX), handling user input, communicating with the server, and potentially client-side prediction.
-    - Designed to be **cross-platform** (Windows, Linux, macOS).
+## Known Limitations
 
-3.  **Communication:**
-    - The client and server communicate via a network protocol based on **TCP/IP**.
-    - Exchanged messages are defined using **Protocol Buffers (Protobuf)** to ensure structured, efficient, and scalable communication. The `.proto` definitions are located in the `/proto` folder.
-
-## Current Status
-
-The project is currently in its very early stages of development (Milestone 0 / Technical Foundations).
-
-**Immediate Goal:** Set up the basic structure for the client and server projects, configure the build systems, and establish minimal bidirectional communication between the client and server using Protobuf.
+- On macOS, the event loop (`winit::EventLoop`) must be created on the main thread.
+- Server logic and Vulkan rendering are not yet implemented.
 
 ## Prerequisites
 
-Before you can compile and run the project, you will need the following tools installed on your system:
+- Rust (edition 2021 or newer)
+- Supported OS: Windows, Linux, macOS
+- (Optional, for future graphics work) Vulkan SDK
+
+## Running the Client
+
+```sh
+cargo run -p client
+```
+
+A window will open, managed by the engine via `winit`.
+
+## Repository Structure
+
+- `/engine_client` — Rust engine crate (windowing, platform abstraction)
+- `/client` — Main Rust client application
+- `/tests` — Unit and integration tests
+- `/proto` — (Planned) Protobuf definitions for networking
+
+## Roadmap (extract)
+
+- [x] Cross-platform window initialization (winit)
+- [ ] Vulkan rendering integration
+- [ ] Rust server implementation
+- [ ] Network protocol (Protobuf)
+- [ ] 4X gameplay features
+
+## Development Notes
+
+- Strict adherence to Rust conventions, modularity, and testing
+- See `PLANNING.md` and [TASKS.md](./TASKS.md) for architecture and progress details
+
+The project is currently in its early development stages (Milestone 0: Technical Foundations).
+
+**Immediate Goal:** Establish a robust Rust-based foundation for the client engine and application, with cross-platform window and event loop support. Networking, server logic, and rendering will be added in future milestones.
+
+## Prerequisites
 
 - **Rust:** Installed via [rustup](https://rustup.rs/). (Check with `rustc --version` and `cargo --version`).
-- **Modern C++ Compiler:** Supporting at least C++20 (e.g., GCC >= 7, Clang >= 5, MSVC >= 19.14 / Visual Studio 2017).
-- **CMake:** Version 3.15 or newer. (Check with `cmake --version`).
-- **Protobuf Compiler (`protoc`):** Version 3.x or newer. (See [installation instructions](https://grpc.io/docs/protoc-installation/)).
 - **Git:** To clone the repository and manage versions.
-
-## Compilation
-
-### Server (`va_server` - Rust)
-
-1.  Navigate to the server directory: `cd va_server`
-2.  Compile the project in debug mode: `cargo build`
-3.  (Optional) Compile the project in release mode (optimized): `cargo build --release`
-
-The executables will be located in the `target/debug` or `target/release` subdirectory.
-
-### Client (`va_client` - C++)
-
-1.  Navigate to the client directory: `cd va_client`
-2.  Create a separate build directory: `mkdir build && cd build`
-3.  Configure the project with CMake: `cmake ..`
-    - _On Windows with Visual Studio:_ You might need to specify a generator, e.g.: `cmake .. -G "Visual Studio 17 2022" -A x64`
-    - _For an optimized build:_ `cmake .. -DCMAKE_BUILD_TYPE=Release`
-4.  Compile the project:
-    - On Linux/macOS: `make` (or `ninja` if configured)
-    - With generic CMake: `cmake --build .`
-    - With Visual Studio: Open the generated `.sln` solution in the `build` folder and compile from the IDE, or use `cmake --build . --config Release` for a release build from the command line.
-
-The executables will typically be found in the `build` directory (or a subdirectory like `build/Debug` or `build/Release` depending on the generator).
-
-## Execution
-
-1.  **Launch the server:**
-
-    - From the `va_server` directory: `cargo run` (for the debug version)
-    - Or execute directly: `va_server/target/debug/va_server` (adjust the path if in release or on Windows `.exe`)
-    - The server should indicate that it is listening on a specific port (e.g., `127.0.0.1:12345`).
-
-2.  **Launch the client:**
-    - Execute the compiled binary: `va_client/build/va_client` (adjust the path according to your system and build configuration).
-    - The client should attempt to connect to the server.
-
-Check the server and client console logs to verify communication.
+- *(Optional, for future graphics work)* **Vulkan SDK**
 
 ## Key Technologies
 
-- **Languages:** Rust (Server), C++20 (Client)
-- **Build:** Cargo (Server), CMake (Client)
+- **Languages:** Rust (Server)
+- **Build:** Cargo (Server)
 - **Communication:** Protobuf v3, TCP/IP
 - **Server Networking (Planned):** Tokio (Async Runtime)
 - **Client Graphics (Planned):** Low-level API (Vulkan, Metal, DirectX12)
@@ -90,5 +80,4 @@ Check the server and client console logs to verify communication.
 (Section to be defined later, if the project becomes open source or collaborative).
 
 ## License
-
 Apache 2.0
