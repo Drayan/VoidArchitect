@@ -1,11 +1,20 @@
+use std::borrow::Cow;
+
 use crate::{platform::WindowHandle, renderer::RendererBackend};
 use ash::{Entry, vk};
-use raw_window_handle::HasDisplayHandle;
+use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 
 struct VulkanContext {
     instance: Option<ash::Instance>,
     physical_device: ash::vk::PhysicalDevice,
     logical_device: Option<ash::Device>,
+    surface: Option<ash::vk::SurfaceKHR>,
+    surface_loader: Option<ash::khr::surface::Instance>,
+
+    #[cfg(debug_assertions)]
+    debug_callback: Option<ash::vk::DebugUtilsMessengerEXT>,
+    #[cfg(debug_assertions)]
+    debug_utils_loader: Option<ash::ext::debug_utils::Instance>,
 }
 
 pub struct RendererBackendVulkan {
@@ -32,6 +41,13 @@ impl RendererBackend for RendererBackendVulkan {
                 instance: None,
                 physical_device: ash::vk::PhysicalDevice::null(),
                 logical_device: None,
+                surface: None,
+                surface_loader: None,
+
+                #[cfg(debug_assertions)]
+                debug_callback: None,
+                #[cfg(debug_assertions)]
+                debug_utils_loader: None,
             };
 
             // Create Vulkan Application Info
@@ -81,6 +97,61 @@ impl RendererBackend for RendererBackendVulkan {
             };
             log::debug!("Vulkan instance created successfully");
 
+            // If this is a debug build, create debug messenger
+            #[cfg(debug_assertions)]
+            {
+                let debug_info = vk::DebugUtilsMessengerCreateInfoEXT::default()
+                    .message_severity(
+                        vk::DebugUtilsMessageSeverityFlagsEXT::ERROR
+                            | vk::DebugUtilsMessageSeverityFlagsEXT::WARNING
+                            | vk::DebugUtilsMessageSeverityFlagsEXT::INFO,
+                    )
+                    .message_type(
+                        vk::DebugUtilsMessageTypeFlagsEXT::GENERAL
+                            | vk::DebugUtilsMessageTypeFlagsEXT::VALIDATION
+                            | vk::DebugUtilsMessageTypeFlagsEXT::PERFORMANCE,
+                    )
+                    .pfn_user_callback(Some(vulkan_debug_callback));
+
+                context.debug_utils_loader = Some(ash::ext::debug_utils::Instance::new(
+                    &entry,
+                    &context.instance.as_ref().unwrap(),
+                ));
+                context.debug_callback = Some(
+                    context
+                        .debug_utils_loader
+                        .as_ref()
+                        .expect("Vulkan debugger loader not initialized")
+                        .create_debug_utils_messenger(&debug_info, None)
+                        .expect("Debug callback creation failed"),
+                );
+                log::debug!("Vulkan debug callback created successfully");
+            }
+
+            // Create Vulkan surface
+            let surface = ash_window::create_surface(
+                &entry,
+                &context.instance.as_ref().unwrap(),
+                window_hndl.window.display_handle().unwrap().as_raw(),
+                window_hndl.window.window_handle().unwrap().as_raw(),
+                None,
+            );
+            context.surface = match surface {
+                Ok(surface) => Some(surface),
+                Err(e) => {
+                    log::error!("Failed to create Vulkan surface: {:?}", e);
+                    return Err(format!("Failed to create Vulkan surface: {:?}", e));
+                }
+            };
+            log::debug!("Vulkan surface created successfully");
+
+            // Create Vulkan surface loader
+            context.surface_loader = Some(ash::khr::surface::Instance::new(
+                &entry,
+                &context.instance.as_ref().unwrap(),
+            ));
+            log::debug!("Vulkan surface loader created successfully");
+
             self.context = Some(context);
             log::debug!("Vulkan renderer initialized successfully");
             Ok(())
@@ -90,6 +161,29 @@ impl RendererBackend for RendererBackendVulkan {
     fn shutdown(&mut self) -> Result<(), String> {
         // Cleanup Vulkan resources here
         if let Some(context) = self.context.take() {
+            // Destroy Vulkan surface
+            if let Some(surface) = context.surface {
+                unsafe {
+                    context.surface_loader.as_ref().unwrap().destroy_surface(surface, None);
+                    log::debug!("Vulkan surface destroyed");
+                }
+            }
+
+            // If this is a debug build, destroy debug messenger
+            #[cfg(debug_assertions)]
+            {
+                if let Some(debug_callback) = context.debug_callback {
+                    unsafe {
+                        context
+                            .debug_utils_loader
+                            .as_ref()
+                            .unwrap()
+                            .destroy_debug_utils_messenger(debug_callback, None);
+                        log::debug!("Vulkan debug callback destroyed");
+                    }
+                }
+            }
+
             if let Some(instance) = context.instance {
                 unsafe {
                     instance.destroy_instance(None);
@@ -116,4 +210,60 @@ impl RendererBackend for RendererBackendVulkan {
         log::debug!("Resizing Vulkan swapchain");
         Ok(())
     }
+}
+
+#[cfg(debug_assertions)]
+unsafe extern "system" fn vulkan_debug_callback(
+    message_severity: vk::DebugUtilsMessageSeverityFlagsEXT,
+    message_type: vk::DebugUtilsMessageTypeFlagsEXT,
+    p_callback_data: *const vk::DebugUtilsMessengerCallbackDataEXT<'_>,
+    _p_user_data: *mut std::ffi::c_void,
+) -> vk::Bool32 {
+    let callback_data = *p_callback_data;
+    let message_id_number = callback_data.message_id_number;
+
+    let message_id_name = if callback_data.p_message_id_name.is_null() {
+        Cow::from("")
+    } else {
+        std::ffi::CStr::from_ptr(callback_data.p_message_id_name).to_string_lossy()
+    };
+
+    let message = if callback_data.p_message.is_null() {
+        Cow::from("")
+    } else {
+        std::ffi::CStr::from_ptr(callback_data.p_message).to_string_lossy()
+    };
+
+    match message_severity {
+        vk::DebugUtilsMessageSeverityFlagsEXT::ERROR => {
+            log::error!(
+                "Vulkan:{:?} [{}: {}] = {}",
+                message_type,
+                message_id_name,
+                message_id_number,
+                message
+            );
+        }
+        vk::DebugUtilsMessageSeverityFlagsEXT::WARNING => {
+            log::warn!(
+                "Vulkan:{:?} [{}: {}] = {}",
+                message_type,
+                message_id_name,
+                message_id_number,
+                message
+            );
+        }
+        vk::DebugUtilsMessageSeverityFlagsEXT::INFO => {
+            log::info!(
+                "Vulkan:{:?} [{}: {}] = {}",
+                message_type,
+                message_id_name,
+                message_id_number,
+                message
+            );
+        }
+        _ => {}
+    }
+
+    vk::FALSE
 }
