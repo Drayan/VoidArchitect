@@ -16,6 +16,8 @@ use crate::EngineApplication;
 /// event loop.
 pub struct PlatformLayer<A: EngineApplication> {
     title: String,
+    window_width: u32,
+    window_height: u32,
     event_loop: Option<EventLoop<()>>,
     window: Option<Window>,
     engine_app: Option<A>,
@@ -25,7 +27,17 @@ pub struct PlatformLayer<A: EngineApplication> {
 impl<A: EngineApplication> ApplicationHandler for PlatformLayer<A> {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         let window = event_loop
-            .create_window(WindowAttributes::default().with_title(self.title.clone()))
+            .create_window(
+                WindowAttributes::default()
+                    .with_title(self.title.clone())
+                    .with_inner_size(winit::dpi::LogicalSize::new(
+                        self.window_width,
+                        self.window_height,
+                    ))
+                    .with_resizable(true)
+                    .with_visible(true)
+                    .with_decorations(true),
+            )
             .expect("Failed to create window");
         self.window = Some(window);
     }
@@ -66,6 +78,8 @@ impl<A: EngineApplication> PlatformLayer<A> {
     pub fn new() -> Self {
         Self {
             title: String::from(""),
+            window_width: 1280,
+            window_height: 720,
             event_loop: None,
             window: None,
             engine_app: None,
@@ -82,9 +96,11 @@ impl<A: EngineApplication> PlatformLayer<A> {
     ///
     /// # Reason:
     /// The window is not created here, but in the `resumed()` method of the `ApplicationHandler` implementation.
-    pub fn initialize(&mut self, title: &str) {
+    pub fn initialize(&mut self, title: &str, window_width: u32, window_height: u32) {
         self.event_loop = Some(EventLoop::new().unwrap());
         self.title = title.to_string();
+        self.window_width = window_width;
+        self.window_height = window_height;
         // Window is created in resumed(), see ApplicationHandler impl
     }
 

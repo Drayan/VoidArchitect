@@ -45,8 +45,8 @@ impl<'a> EngineClient {
     ///
     /// # Arguments
     /// * `title` - The title of the window to be created.
-    pub fn initialize(&mut self, title: &str) {
-        self.platform_layer.initialize(title);
+    pub fn initialize(&mut self, title: &str, window_width: u32, window_height: u32) {
+        self.platform_layer.initialize(title, window_width, window_height);
     }
 
     /// Runs the main event loop. This will block until the event loop exits.
