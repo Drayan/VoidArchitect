@@ -5,6 +5,10 @@ use winit::window::{Window, WindowAttributes, WindowId};
 
 use crate::EngineApplication;
 
+pub struct WindowHandle<'a> {
+    pub window: &'a Window,
+}
+
 /// System responsible for platform abstraction and windowing.
 ///
 /// # Platform Limitation
@@ -13,7 +17,7 @@ use crate::EngineApplication;
 /// documentation for details.
 ///
 /// PlatformSystem manages initialization, running, and shutdown phases for the windowing
-/// event loop.
+/// event loop.o
 pub struct PlatformLayer<A: EngineApplication> {
     title: String,
     window_width: u32,
@@ -25,6 +29,14 @@ pub struct PlatformLayer<A: EngineApplication> {
 
 impl<A: EngineApplication> ApplicationHandler for PlatformLayer<A> {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+        if self.engine_app.is_some() {
+            self.engine_app
+                .as_mut()
+                .expect("EngineContext must be initialized.")
+                .shutdown()
+                .expect("Failed to shutdown engine application");
+        }
+
         let window = event_loop
             .create_window(
                 WindowAttributes::default()
@@ -43,7 +55,9 @@ impl<A: EngineApplication> ApplicationHandler for PlatformLayer<A> {
         self.engine_app
             .as_mut()
             .expect("EngineContext must be initialized.")
-            .initialize(self.window.as_ref().unwrap())
+            .initialize(WindowHandle {
+                window: self.window.as_ref().unwrap(),
+            })
             .expect("Failed to initialize engine application");
     }
 

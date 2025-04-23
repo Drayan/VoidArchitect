@@ -1,4 +1,4 @@
-use crate::{EngineContext, platform::PlatformLayer, renderer::RendererBackend};
+use crate::{platform::WindowHandle, renderer::RendererBackend};
 use ash::{Entry, vk};
 use raw_window_handle::HasDisplayHandle;
 
@@ -20,7 +20,7 @@ impl RendererBackendVulkan {
 }
 
 impl RendererBackend for RendererBackendVulkan {
-    fn initialize(&mut self, window: &winit::window::Window) -> Result<(), String> {
+    fn initialize(&mut self, window_hndl: WindowHandle) -> Result<(), String> {
         // Initialize Vulkan resources here
         unsafe {
             log::debug!("Initializing Vulkan renderer");
@@ -45,7 +45,7 @@ impl RendererBackend for RendererBackendVulkan {
             let layer_names = vec![c"VK_LAYER_KHRONOS_validation".as_ptr()];
 
             let mut extension_names = ash_window::enumerate_required_extensions(
-                window.display_handle().unwrap().as_raw(),
+                window_hndl.window.display_handle().unwrap().as_raw(),
             )
             .unwrap()
             .to_vec();

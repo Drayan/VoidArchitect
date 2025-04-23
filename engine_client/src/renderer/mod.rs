@@ -1,10 +1,9 @@
 mod backends;
-use winit::window::Window;
 
-use crate::renderer::backends::RendererBackendVulkan;
+use crate::{platform::WindowHandle, renderer::backends::RendererBackendVulkan};
 
 pub trait RendererBackend {
-    fn initialize(&mut self, window: &Window) -> Result<(), String>;
+    fn initialize(&mut self, window: WindowHandle) -> Result<(), String>;
     fn shutdown(&mut self) -> Result<(), String>;
 
     fn begin_frame(&mut self) -> Result<(), String>;
@@ -24,7 +23,7 @@ impl RendererFrontend {
         }
     }
 
-    pub fn initialize(&mut self, window: &Window) -> Result<(), String> {
+    pub fn initialize(&mut self, window: WindowHandle) -> Result<(), String> {
         self.backend.initialize(window)
     }
 

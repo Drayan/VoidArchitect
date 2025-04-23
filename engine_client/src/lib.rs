@@ -1,9 +1,8 @@
 pub mod platform;
 pub mod renderer;
 
-use platform::PlatformLayer;
+use platform::{PlatformLayer, WindowHandle};
 use renderer::RendererFrontend;
-use winit::window::Window;
 
 pub struct EngineContext {
     renderer_system: Option<RendererFrontend>,
@@ -18,7 +17,7 @@ impl EngineContext {
 }
 
 pub trait EngineApplication {
-    fn initialize(&mut self, window: &Window) -> Result<(), String>;
+    fn initialize(&mut self, window: WindowHandle) -> Result<(), String>;
     fn shutdown(&mut self) -> Result<(), String>;
 
     fn update(&mut self, delta_time: f32);
@@ -28,7 +27,7 @@ pub trait EngineApplication {
 }
 
 impl EngineApplication for EngineContext {
-    fn initialize(&mut self, window: &Window) -> Result<(), String> {
+    fn initialize(&mut self, window: WindowHandle) -> Result<(), String> {
         if let Some(renderer) = &mut self.renderer_system {
             renderer.initialize(window)
         } else {
