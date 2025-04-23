@@ -76,6 +76,12 @@ impl<A: EngineApplication> PlatformLayer<A> {
     ///
     /// # Arguments
     /// * `title` - The title of the window to be created.
+    ///
+    /// # Panics
+    /// This function will panic if the event loop cannot be created (see `winit::EventLoop::new`).
+    ///
+    /// # Reason:
+    /// The window is not created here, but in the `resumed()` method of the `ApplicationHandler` implementation.
     pub fn initialize(&mut self, title: &str) {
         self.event_loop = Some(EventLoop::new().unwrap());
         self.title = title.to_string();
@@ -83,6 +89,15 @@ impl<A: EngineApplication> PlatformLayer<A> {
     }
 
     /// Runs the main event loop. This will block until the event loop exits.
+    ///
+    /// # Arguments
+    /// * `engine_app` - The engine application instance implementing `EngineApplication`.
+    ///
+    /// # Panics
+    /// This function will panic if the event loop has not been initialized by calling `initialize()` first.
+    ///
+    /// # Reason:
+    /// The event loop is required to run the application and is consumed by this method.
     pub fn run(&mut self, engine_app: A) {
         let event_loop =
             self.event_loop.take().expect("Event loop must be initialized before run()");
@@ -92,7 +107,10 @@ impl<A: EngineApplication> PlatformLayer<A> {
         event_loop.run_app(self).expect("Failed to run event loop");
     }
 
-    // Cleans up resources if necessary (placeholder for future extensibility).
+    /// Cleans up resources if necessary.
+    ///
+    /// # Reason:
+    /// Currently a no-op, but provided for future extensibility and symmetry with other lifecycle methods.
     pub fn shutdown(&mut self) {
         // No-op for now
     }

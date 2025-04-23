@@ -3,14 +3,72 @@
 // NOTE: On macOS, `winit::EventLoop` can only be created on the main thread. As a result,
 // these tests are skipped on macOS. See platform.rs for more details.
 
-use void_architect_engine_client::{EngineClient, platform::PlatformSystem};
+use void_architect_engine_client::EngineClient;
+
+// --- PlatformLayer tests for new architecture ---
+use void_architect_engine_client::platform::PlatformLayer;
+
+/// Mock implementation of EngineApplication for testing.
+struct MockEngineApp {
+    pub updated: bool,
+    pub rendered: bool,
+}
+
+impl Default for MockEngineApp {
+    fn default() -> Self {
+        Self {
+            updated: false,
+            rendered: false,
+        }
+    }
+}
+
+impl void_architect_engine_client::EngineApplication for MockEngineApp {
+    fn update(&mut self, _dt: f32) {
+        self.updated = true;
+    }
+    fn render(&mut self, _dt: f32) {
+        self.rendered = true;
+    }
+}
+
+#[cfg(not(target_os = "macos"))]
+#[test]
+fn platform_layer_new_initializes_empty() {
+    let platform: PlatformLayer<MockEngineApp> = PlatformLayer::new();
+    assert!(platform.event_loop.is_none());
+    assert!(platform.window.is_none());
+    assert!(platform.engine_app.is_none());
+}
+
+#[cfg(not(target_os = "macos"))]
+#[test]
+fn platform_layer_initialize_sets_title_and_event_loop() {
+    let mut platform: PlatformLayer<MockEngineApp> = PlatformLayer::new();
+    platform.initialize("Test Window");
+    assert_eq!(platform.title, "Test Window");
+    assert!(platform.event_loop.is_some());
+}
+
+#[cfg(not(target_os = "macos"))]
+#[test]
+#[should_panic(expected = "Event loop must be initialized before run()")]
+fn platform_layer_run_panics_if_not_initialized() {
+    let mut platform: PlatformLayer<MockEngineApp> = PlatformLayer::new();
+    let app = MockEngineApp::default();
+    // Should panic because event_loop is None
+    platform.run(app);
+}
 
 #[cfg(not(target_os = "macos"))]
 #[test]
 fn platform_system_initializes_event_loop() {
     let mut platform = PlatformSystem::new();
     platform.initialize();
-    assert!(platform.event_loop.is_some(), "Event loop should be initialized");
+    assert!(
+        platform.event_loop.is_some(),
+        "Event loop should be initialized"
+    );
 }
 
 #[cfg(not(target_os = "macos"))]
@@ -18,21 +76,12 @@ fn platform_system_initializes_event_loop() {
 fn engine_client_initializes_platform_system() {
     let mut engine = EngineClient::new();
     engine.initialize();
-    assert!(engine.platform_system.is_some(), "Platform system should be initialized");
-    assert!(engine.platform_system.as_ref().unwrap().event_loop.is_some(), "Event loop should be initialized by EngineClient");
-}
-
-#[test]
-#[should_panic(expected = "platform should exist")]
-fn engine_client_initialize_panics_if_platform_missing() {
-    struct DummyEngineClient {
-        platform_system: Option<PlatformSystem>,
-    }
-    impl DummyEngineClient {
-        fn initialize(&mut self) {
-            self.platform_system.as_mut().expect("platform should exist").initialize();
-        }
-    }
-    let mut engine = DummyEngineClient { platform_system: None };
-    engine.initialize();
+    assert!(
+        engine.platform_system.is_some(),
+        "Platform system should be initialized"
+    );
+    assert!(
+        engine.platform_system.as_ref().unwrap().event_loop.is_some(),
+        "Event loop should be initialized by EngineClient"
+    );
 }
