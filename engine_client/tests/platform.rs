@@ -3,11 +3,6 @@
 // NOTE: On macOS, `winit::EventLoop` can only be created on the main thread. As a result,
 // these tests are skipped on macOS. See platform.rs for more details.
 
-use void_architect_engine_client::EngineClient;
-
-// --- PlatformLayer tests for new architecture ---
-use void_architect_engine_client::platform::PlatformLayer;
-
 /// Mock implementation of EngineApplication for testing.
 struct MockEngineApp {
     pub updated: bool,

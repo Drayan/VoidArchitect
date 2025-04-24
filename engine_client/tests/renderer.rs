@@ -1,10 +1,12 @@
 //!
 //! Unit tests for RendererFrontend and RendererBackendVulkan
 //!
+#![allow(invalid_value)]
 use void_architect_engine_client::platform::WindowHandle;
-use void_architect_engine_client::renderer::{RendererBackend, RendererFrontend};
+use void_architect_engine_client::renderer::RendererFrontend;
 
 // Mock WindowHandle for tests (cannot create real winit::Window in CI)
+
 struct DummyWindow;
 impl DummyWindow {
     fn handle() -> WindowHandle<'static> {

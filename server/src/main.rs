@@ -51,7 +51,7 @@ async fn handle_connection(mut stream: tokio::net::TcpStream) {
             // Wait for the socket to be ready for reading
             match stream.read(&mut buffer).await {
                 Ok(n) => {
-                    if (n == 0) {
+                    if n == 0 {
                         log::info!("Client disconnected");
                         return;
                     }
