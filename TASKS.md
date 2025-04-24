@@ -26,7 +26,7 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 
 ## Milestone 1: Window & Basic Vulkan Setup
 
-- **Status:** Currently working on Epic 1.2.
+- **Status:** Completed on 25-04-2025
 - **Goal:** Create a desktop window capable of hosting a Vulkan surface and initialize the core Vulkan components needed for rendering, without actually drawing anything yet.
 
 ### Epic 1.1: Window Creation and Surface Integration
@@ -91,15 +91,19 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 - [x] **Story 1.2.2: Create Vulkan Instance (`VkInstance`)**
   - **Description:** Write code within `engine_client` to initialize the Vulkan loader and create a `VkInstance`. Enable required instance extensions (fetched from `winit` for the surface) and validation layers for debugging.
   - **Goal:** A valid `VkInstance` handle is created and stored.
-- [ ] **Story 1.2.3: Select Suitable Physical Device (`VkPhysicalDevice`)**
+  - **Completed:** 24-04-2025
+- [x] **Story 1.2.3: Select Suitable Physical Device (`VkPhysicalDevice`)**
   - **Description:** Implement logic to enumerate available physical devices, check their properties, features, and queue families, and select one that supports graphics rendering and presentation to the created `VkSurfaceKHR`.
   - **Goal:** A valid `VkPhysicalDevice` handle representing the chosen GPU is selected and stored.
-- [ ] **Story 1.2.4: Identify Required Queue Families**
+  - **Completed:** 25-04-2025
+- [x] **Story 1.2.4: Identify Required Queue Families**
   - **Description:** Query the selected `VkPhysicalDevice` for its queue family properties and find the indices of queue families that support both graphics commands and presentation to the specific `VkSurfaceKHR`. Handle cases where one queue family supports both or separate families are needed.
   - **Goal:** Indices for the graphics and present queue families are identified and stored.
-- [ ] **Story 1.2.5: Create Logical Device and Queues (`VkDevice`, `VkQueue`)**
+  - **Completed:** 25-04-2025
+- [x] **Story 1.2.5: Create Logical Device and Queues (`VkDevice`, `VkQueue`)**
   - **Description:** Create the `VkDevice` (logical device interface) from the selected `VkPhysicalDevice`. Request the necessary device features (none specific yet) and specify the creation of queues from the identified families. Obtain the `VkQueue` handles.
   - **Goal:** Valid `VkDevice` and `VkQueue` handles for graphics and presentation are created and stored.
+  - **Completed:** 25-04-2025
 
 ## Milestone 2: Static Vulkan Triangle
 
@@ -120,9 +124,10 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 
 #### Stories:
 
-- [ ] **Story 2.1.1: Query Swapchain Support Details**
+- [x] **Story 2.1.1: Query Swapchain Support Details**
   - **Description:** Query the physical device for its capabilities regarding the specific window surface (supported formats, present modes, image counts, extent).
   - **Goal:** Determine suitable parameters for swapchain creation based on hardware/surface support.
+  - **Completed:** 25-04-2025
 - [ ] **Story 2.1.2: Create Swapchain (`VkSwapchainKHR`)**
   - **Description:** Create the `VkSwapchainKHR` object using the selected parameters, logical device, and surface.
   - **Goal:** A valid `VkSwapchainKHR` handle is obtained.
@@ -135,6 +140,40 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 - [ ] **Story 2.1.5: Create Framebuffers (`VkFramebuffer`)**
   - **Description:** Create a `VkFramebuffer` for each swapchain image view, linking it to the `VkRenderPass` and specifying the dimensions.
   - **Goal:** A list/vector of `VkFramebuffer` handles, one per swapchain image, is created and stored.
+
+### Epic 2.A: Migrate from Winit to SDL2
+
+- **Status:** To Do (Discovered During Work)
+- **Description:** Replace the winit windowing library with SDL2 across all client components. Update the platform abstraction layer, window creation, event loop, and Vulkan surface integration to work with SDL2 instead of winit.
+- **Goal:** The client application should function identically but use SDL2 for window management and event handling instead of winit.
+- **Definition of Done (DoD):**
+  - winit dependency is removed and SDL2 dependency is added to the `engine_client` crate.
+  - Platform abstraction layer is refactored to use SDL2 APIs.
+  - Window creation code uses SDL2 instead of winit.
+  - Event loop implementation is updated to match SDL2's polling model.
+  - Vulkan surface creation code uses SDL2's surface creation methods.
+  - All functionality from Milestone 1 remains working as before.
+
+#### Stories:
+
+- [ ] **Story 2.A.1: Add SDL2 Dependency**
+  - **Description:** Add the SDL2 crate to the `engine_client` project's Cargo.toml and remove winit.
+  - **Goal:** SDL2 library is available for use within the client code.
+- [ ] **Story 2.A.2: Refactor Platform Abstraction Layer**
+  - **Description:** Update the platform module in `engine_client` to use SDL2 instead of winit.
+  - **Goal:** The platform layer is fully converted to use SDL2 APIs.
+- [ ] **Story 2.A.3: Update Window Creation Code**
+  - **Description:** Modify the window initialization code to use SDL2's window creation methods.
+  - **Goal:** A visible window is created using SDL2 instead of winit.
+- [ ] **Story 2.A.4: Reimplement Event Loop**
+  - **Description:** Replace the winit event loop with SDL2's event polling mechanism.
+  - **Goal:** The application properly processes window events using SDL2.
+- [ ] **Story 2.A.5: Update Vulkan Surface Integration**
+  - **Description:** Update the code that creates a Vulkan surface from the window to use SDL2's methods.
+  - **Goal:** A valid `VkSurfaceKHR` is created from the SDL2 window.
+- [ ] **Story 2.A.6: Test Milestone 1 Functionality**
+  - **Description:** Verify that all functionality from Milestone 1 works correctly with SDL2.
+  - **Goal:** The application behaves identically to before but now uses SDL2.
 
 ### Epic 2.2: Minimal Graphics Pipeline
 
