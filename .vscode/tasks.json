@@ -1,0 +1,40 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Client (Debug)",
+            "type": "cargo",
+            "command": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/client"
+            },
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Build Server (Debug)",
+            "type": "cargo",
+            "command": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/server"
+            },
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Build All (Debug)",
+            "dependsOn": [
+                "Build Client (Debug)",
+                "Build Server (Debug)"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

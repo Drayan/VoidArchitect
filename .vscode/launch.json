@@ -4,7 +4,22 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
-
+        {
+            "name": "Launch Client",
+            "type": "lldb-dap",
+            "request": "launch",
+            "program": "${workspaceFolder}/client/target/debug/void-architect_client",
+            "osx": {
+                "env": {
+                    "DYLD_LIBRARY_PATH": "/Users/drayan/VulkanSDK/1.4.309.0/macOS/lib:${env:DYLD_LIBRARY_PATH}"
+                }
+            },
+        },
+        {
+            "name": "Launch Server",
+            "type": "lldb-dap",
+            "request": "launch",
+            "program": "${workspaceFolder}/server/target/debug/void-architect_server",
+        }
     ]
 }
