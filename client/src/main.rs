@@ -1,3 +1,8 @@
+//! Main entry point for the VoidArchitect client application.
+//!
+//! This binary connects to the server, exchanges initial handshake messages using Protobuf,
+//! and launches the engine client window. It demonstrates basic networking and engine startup.
+
 use prost::Message;
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},

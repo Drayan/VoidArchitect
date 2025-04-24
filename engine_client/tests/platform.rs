@@ -12,6 +12,9 @@ use void_architect_engine_client::platform::PlatformLayer;
 struct MockEngineApp {
     pub updated: bool,
     pub rendered: bool,
+    pub initialize: bool,
+    pub shutdown: bool,
+    pub resize: bool,
 }
 
 impl Default for MockEngineApp {
@@ -19,6 +22,9 @@ impl Default for MockEngineApp {
         Self {
             updated: false,
             rendered: false,
+            initialize: false,
+            shutdown: false,
+            resize: false,
         }
     }
 }
@@ -29,6 +35,21 @@ impl void_architect_engine_client::EngineApplication for MockEngineApp {
     }
     fn render(&mut self, _dt: f32) {
         self.rendered = true;
+    }
+    fn initialize(
+        &mut self,
+        _window: void_architect_engine_client::platform::WindowHandle,
+    ) -> Result<(), String> {
+        self.initialize = true;
+        Ok(())
+    }
+    fn shutdown(&mut self) -> Result<(), String> {
+        self.shutdown = true;
+        Ok(())
+    }
+    fn resize(&mut self, _width: u32, _height: u32) -> Result<(), String> {
+        self.resize = true;
+        Ok(())
     }
 }
 

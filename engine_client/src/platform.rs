@@ -1,3 +1,10 @@
+//! Platform abstraction and windowing system for the engine client.
+//!
+//! This module provides the `PlatformLayer` struct, which manages window creation, event loop handling,
+//! and integration with the engine application. It is responsible for initializing and running the main
+//! event loop using `winit`, handling window events, and providing a platform-agnostic interface for
+//! the rest of the engine.
+
 use winit::application::ApplicationHandler;
 use winit::event::WindowEvent;
 use winit::event_loop::{ActiveEventLoop, EventLoop};

@@ -1,3 +1,9 @@
+//! Engine client library root module.
+//!
+//! This module re-exports the main subsystems of the engine client, including platform abstraction
+//! and rendering. It defines the main entry points for engine context, application trait, and
+//! orchestrates subsystem initialization and shutdown.
+
 pub mod platform;
 pub mod renderer;
 
@@ -9,6 +15,10 @@ pub struct EngineContext {
 }
 
 impl EngineContext {
+    /// Creates a new engine context with a default renderer system.
+    ///
+    /// # Returns
+    /// * `EngineContext` - A new engine context instance.
     pub fn new() -> Self {
         EngineContext {
             renderer_system: Some(RendererFrontend::new()),
@@ -80,6 +90,10 @@ pub struct EngineClient {
 }
 
 impl<'a> EngineClient {
+    /// Creates a new engine client with default platform and context.
+    ///
+    /// # Returns
+    /// * `EngineClient` - A new engine client instance.
     pub fn new() -> Self {
         EngineClient {
             platform_layer: PlatformLayer::new(),
@@ -91,11 +105,16 @@ impl<'a> EngineClient {
     ///
     /// # Arguments
     /// * `title` - The title of the window to be created.
+    /// * `window_width` - The width of the window.
+    /// * `window_height` - The height of the window.
     pub fn initialize(&mut self, title: &str, window_width: u32, window_height: u32) {
         self.platform_layer.initialize(title, window_width, window_height);
     }
 
     /// Runs the main event loop. This will block until the event loop exits.
+    ///
+    /// # Returns
+    /// * `Self` - The engine client after the event loop has run.
     pub fn run(mut self) -> Self {
         self.context = self.platform_layer.run(self.context);
         self

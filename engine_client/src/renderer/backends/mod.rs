@@ -1,3 +1,10 @@
+//! Vulkan backend implementation for the renderer.
+//!
+//! This module provides the `RendererBackendVulkan` struct, which implements the `RendererBackend`
+//! trait using the Vulkan API via the `ash` crate. It manages Vulkan instance, device, surface,
+//! and related resources, and provides methods for initialization, frame rendering, resizing,
+//! and shutdown. Debug utilities are enabled in debug builds.
+
 use std::borrow::Cow;
 
 use crate::{platform::WindowHandle, renderer::RendererBackend};
@@ -23,6 +30,10 @@ pub struct RendererBackendVulkan {
 }
 
 impl RendererBackendVulkan {
+    /// Creates a new Vulkan renderer backend instance.
+    ///
+    /// # Returns
+    /// * `RendererBackendVulkan` - A new Vulkan backend instance.
     pub fn new() -> Self {
         Self { context: None }
     }
@@ -31,6 +42,13 @@ impl RendererBackendVulkan {
 impl RendererBackend for RendererBackendVulkan {
     fn initialize(&mut self, window_hndl: WindowHandle) -> Result<(), String> {
         // Initialize Vulkan resources here
+        if window_hndl.window.display_handle().is_err() {
+            return Err("Window handle is invalid".to_string());
+        }
+        if window_hndl.window.window_handle().is_err() {
+            return Err("Window handle is invalid".to_string());
+        }
+
         unsafe {
             log::debug!("Initializing Vulkan renderer");
 

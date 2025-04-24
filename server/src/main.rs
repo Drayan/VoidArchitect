@@ -1,43 +1,16 @@
+//! Main entry point for the VoidArchitect server application.
+//!
+//! This binary listens for TCP connections from clients, performs a handshake using Protobuf messages,
+//! and demonstrates basic async networking and logging. Game state and logic will be added in future milestones.
+
 use env_logger::Builder;
 use log::LevelFilter;
 use prost::Message;
 use tokio::{io::AsyncReadExt, io::AsyncWriteExt, net::TcpListener};
+use void_architect_server::get_config;
 use void_architect_shared::messages::{HelloClient, HelloServer};
 
 const MAX_MESSAGE_SIZE: usize = 1024;
-
-fn get_config() -> (String, String) {
-    // TODO: Load the configuration from environment variables or a config file
-    // For now, we will just return a default configuration
-    let default_host = "127.0.0.1";
-    let default_port = "4242";
-
-    // If the VOID_SERVER_HOST environment variable is set, use it
-    let host = match std::env::var("VOID_SERVER_HOST") {
-        Ok(env_host) => env_host,
-        Err(_) => default_host.to_string(),
-    };
-
-    let host = if host.is_empty() {
-        default_host.to_string()
-    } else {
-        host
-    };
-
-    // If the VOID_SERVER_PORT environment variable is set, use it
-    let port = match std::env::var("VOID_SERVER_PORT") {
-        Ok(env_port) => env_port,
-        Err(_) => default_port.to_string(),
-    };
-
-    let port = if port.is_empty() {
-        default_port.to_string()
-    } else {
-        port
-    };
-
-    (host, port)
-}
 
 #[tokio::main]
 async fn main() {
@@ -78,7 +51,7 @@ async fn handle_connection(mut stream: tokio::net::TcpStream) {
             // Wait for the socket to be ready for reading
             match stream.read(&mut buffer).await {
                 Ok(n) => {
-                    if n == 0 {
+                    if (n == 0) {
                         log::info!("Client disconnected");
                         return;
                     }
