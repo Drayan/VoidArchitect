@@ -115,7 +115,7 @@ impl RendererBackendVulkan {
         if let Some(context) = &mut self.context {
             let swapchain = context.swapchain.as_ref().unwrap();
             let device = context.device.as_ref().unwrap();
-            for i in 0..swapchain.images.len() {
+            for _i in 0..swapchain.images.len() {
                 let buffer = VulkanCommandBuffer::new(
                     device.logical_device.as_ref().unwrap(),
                     device.graphics_command_pool,
