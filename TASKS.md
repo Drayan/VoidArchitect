@@ -128,12 +128,14 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
   - **Description:** Query the physical device for its capabilities regarding the specific window surface (supported formats, present modes, image counts, extent).
   - **Goal:** Determine suitable parameters for swapchain creation based on hardware/surface support.
   - **Completed:** 25-04-2025
-- [ ] **Story 2.1.2: Create Swapchain (`VkSwapchainKHR`)**
+- [x] **Story 2.1.2: Create Swapchain (`VkSwapchainKHR`)**
   - **Description:** Create the `VkSwapchainKHR` object using the selected parameters, logical device, and surface.
   - **Goal:** A valid `VkSwapchainKHR` handle is obtained.
-- [ ] **Story 2.1.3: Create Swapchain Image Views**
+  - **Completed:** 25-04-2025
+- [x] **Story 2.1.3: Create Swapchain Image Views**
   - **Description:** Retrieve the `VkImage` handles from the created swapchain and create a corresponding `VkImageView` for each one.
   - **Goal:** A list/vector of `VkImageView` handles for the swapchain images is created and stored.
+  - **Completed:** 25-04-2025
 - [ ] **Story 2.1.4: Define Basic Render Pass (`VkRenderPass`)**
   - **Description:** Create a `VkRenderPass` object defining a single color attachment (matching the swapchain format) that should be cleared at the start and stored at the end, used in a single subpass.
   - **Goal:** A valid `VkRenderPass` handle suitable for rendering to the swapchain images is created.

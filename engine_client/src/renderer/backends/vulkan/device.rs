@@ -23,30 +23,32 @@ struct VulkanPhysicalDeviceQueueFamilyInfo {
     present: u32,
 }
 
-struct VulkanPhysicalDeviceSwapchainSupportInfo {
-    capabilities: vk::SurfaceCapabilitiesKHR,
-    formats: Vec<vk::SurfaceFormatKHR>,
-    present_modes: Vec<vk::PresentModeKHR>,
+pub(super) struct VulkanPhysicalDeviceSwapchainSupportInfo {
+    pub(super) capabilities: vk::SurfaceCapabilitiesKHR,
+    pub(super) formats: Vec<vk::SurfaceFormatKHR>,
+    pub(super) present_modes: Vec<vk::PresentModeKHR>,
 }
 
 pub(crate) struct VulkanDevice {
-    physical_device: ash::vk::PhysicalDevice,
-    logical_device: Option<ash::Device>,
-    swapchain_support: VulkanPhysicalDeviceSwapchainSupportInfo,
+    pub(super) physical_device: ash::vk::PhysicalDevice,
+    pub(super) logical_device: Option<ash::Device>,
+    pub(super) swapchain_support: VulkanPhysicalDeviceSwapchainSupportInfo,
 
     properties: ash::vk::PhysicalDeviceProperties,
     features: ash::vk::PhysicalDeviceFeatures,
     memory: ash::vk::PhysicalDeviceMemoryProperties,
 
-    graphics_queue_index: u32,
-    compute_queue_index: u32,
-    transfer_queue_index: u32,
-    present_queue_index: u32,
+    pub(super) graphics_queue_index: u32,
+    pub(super) compute_queue_index: u32,
+    pub(super) transfer_queue_index: u32,
+    pub(super) present_queue_index: u32,
 
     graphics_queue: ash::vk::Queue,
     compute_queue: ash::vk::Queue,
     transfer_queue: ash::vk::Queue,
     present_queue: ash::vk::Queue,
+
+    pub(super) depth_format: vk::Format,
 }
 
 impl VulkanDevice {
@@ -187,7 +189,7 @@ impl VulkanDevice {
         }
     }
 
-    fn query_swapchain_support(
+    pub(crate) fn query_swapchain_support(
         context: &VulkanContext,
         device: ash::vk::PhysicalDevice,
         surface: vk::SurfaceKHR,
@@ -353,6 +355,8 @@ impl VulkanDevice {
                 compute_queue: vk::Queue::null(),
                 transfer_queue: vk::Queue::null(),
                 present_queue: vk::Queue::null(),
+
+                depth_format: vk::Format::UNDEFINED,
             });
             break;
         }
@@ -539,5 +543,46 @@ impl VulkanDevice {
         }
 
         Ok((queue_info, swapchain_info))
+    }
+
+    pub(crate) fn detect_depth_format(
+        self: &Self,
+        context: &VulkanContext,
+    ) -> Result<vk::Format, String> {
+        // Candidate depth formats, in order of preference
+        let depth_formats = [
+            vk::Format::D32_SFLOAT,
+            vk::Format::D32_SFLOAT_S8_UINT,
+            vk::Format::D24_UNORM_S8_UINT,
+        ];
+        let flags = vk::FormatFeatureFlags::DEPTH_STENCIL_ATTACHMENT;
+
+        // Select the first format that supports the required features
+        // and is supported by the physical device
+        let selected_format = depth_formats
+            .iter()
+            .filter(|&&format| {
+                let format_props = unsafe {
+                    context
+                        .instance
+                        .as_ref()
+                        .unwrap()
+                        .get_physical_device_format_properties(self.physical_device, format)
+                };
+                if format_props.linear_tiling_features.contains(flags) {
+                    return true;
+                } else if format_props.optimal_tiling_features.contains(flags) {
+                    return true;
+                } else {
+                    return false;
+                }
+            })
+            .next();
+        if let Some(format) = selected_format {
+            log::info!("Selected depth format: {:?}", format);
+            Ok(format.clone())
+        } else {
+            Err("No suitable depth format found".to_string())
+        }
     }
 }

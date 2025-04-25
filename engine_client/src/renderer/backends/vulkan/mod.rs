@@ -12,19 +12,67 @@ use ash::{Entry, vk};
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 
 mod device;
+mod image;
+mod swapchain;
 use device::VulkanDevice;
 
-pub(crate) struct VulkanContext {
+struct VulkanContext {
+    framebuffer_width: u32,
+    framebuffer_height: u32,
+
     instance: Option<ash::Instance>,
     surface: Option<ash::vk::SurfaceKHR>,
     surface_loader: Option<ash::khr::surface::Instance>,
+    swapchain_loader: Option<ash::khr::swapchain::Device>,
 
     #[cfg(debug_assertions)]
     debug_callback: Option<ash::vk::DebugUtilsMessengerEXT>,
     #[cfg(debug_assertions)]
     debug_utils_loader: Option<ash::ext::debug_utils::Instance>,
 
-    vulkan_device: Option<VulkanDevice>,
+    device: Option<VulkanDevice>,
+    swapchain: Option<swapchain::VulkanSwapchain>,
+    image_index: u32,
+    current_frame: u32,
+
+    recreating_swapchain: bool,
+}
+
+impl VulkanContext {
+    /// Finds a suitable memory type for the given memory requirements and flags.
+    ///
+    /// # Arguments
+    /// * `type_filter` - The memory type filter.
+    /// * `properties` - The desired memory properties.
+    ///
+    /// # Returns
+    /// * `u32` - The index of the suitable memory type.
+    pub fn find_memory_type(
+        &self,
+        type_filter: u32,
+        properties: vk::MemoryPropertyFlags,
+    ) -> Result<u32, String> {
+        let physical_device = self.device.as_ref().unwrap().physical_device;
+        let mem_properties = unsafe {
+            self.instance
+                .as_ref()
+                .unwrap()
+                .get_physical_device_memory_properties(physical_device)
+        };
+
+        for i in 0..mem_properties.memory_type_count {
+            if (type_filter & (1 << i)) != 0
+                && mem_properties.memory_types[i as usize].property_flags.contains(properties)
+            {
+                return Ok(i);
+            }
+        }
+
+        Err(format!(
+            "Failed to find suitable memory type for filter: {} and properties: {:?}",
+            type_filter, properties
+        ))
+    }
 }
 
 pub struct RendererBackendVulkan {
@@ -62,13 +110,21 @@ impl RendererBackend for RendererBackendVulkan {
                 instance: None,
                 surface: None,
                 surface_loader: None,
+                swapchain_loader: None,
 
                 #[cfg(debug_assertions)]
                 debug_callback: None,
                 #[cfg(debug_assertions)]
                 debug_utils_loader: None,
 
-                vulkan_device: None,
+                device: None,
+
+                current_frame: 0,
+                image_index: 0,
+                framebuffer_width: window_hndl.window.inner_size().width,
+                framebuffer_height: window_hndl.window.inner_size().height,
+                swapchain: None,
+                recreating_swapchain: false,
             };
 
             // Create Vulkan Application Info
@@ -174,7 +230,7 @@ impl RendererBackend for RendererBackendVulkan {
             log::debug!("Vulkan surface loader created successfully");
 
             // Create Vulkan device
-            context.vulkan_device = match VulkanDevice::new(&context) {
+            context.device = match VulkanDevice::new(&context) {
                 Ok(device) => Some(device),
                 Err(e) => {
                     log::error!("Failed to create Vulkan device: {:?}", e);
@@ -182,6 +238,26 @@ impl RendererBackend for RendererBackendVulkan {
                 }
             };
             log::debug!("Vulkan device created successfully");
+
+            // Create Vulkan swapchain loader
+            context.swapchain_loader = Some(ash::khr::swapchain::Device::new(
+                context.instance.as_ref().unwrap(),
+                context.device.as_ref().unwrap().logical_device.as_ref().unwrap(),
+            ));
+            log::debug!("Vulkan swapchain loader created successfully");
+
+            // Create Vulkan swapchain
+            let width = context.framebuffer_width;
+            let height = context.framebuffer_height;
+            context.swapchain =
+                match swapchain::VulkanSwapchain::new(&mut context, width, height) {
+                    Ok(swapchain) => Some(swapchain),
+                    Err(e) => {
+                        log::error!("Failed to create Vulkan swapchain: {:?}", e);
+                        return Err(format!("Failed to create Vulkan swapchain: {:?}", e));
+                    }
+                };
+            log::debug!("Vulkan swapchain created successfully");
 
             self.context = Some(context);
             log::debug!("Vulkan renderer initialized successfully");
@@ -192,8 +268,14 @@ impl RendererBackend for RendererBackendVulkan {
     fn shutdown(&mut self) -> Result<(), String> {
         // Cleanup Vulkan resources here
         if let Some(mut context) = self.context.take() {
+            // Destroy Vulkan swapchain
+            if let Some(mut swapchain) = context.swapchain.take() {
+                swapchain.destroy(&context);
+                log::debug!("Vulkan swapchain destroyed");
+            }
+
             // Destroy Vulkan device
-            if let Some(mut device) = context.vulkan_device.take() {
+            if let Some(mut device) = context.device.take() {
                 device.destroy();
                 log::debug!("Vulkan device destroyed");
             }
