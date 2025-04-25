@@ -84,10 +84,10 @@ void-architect
   - **Status:** Done.
 - **Milestone 1: Window & Basic Vulkan Setup**
   - **Goal:** Create a desktop window using `winit`. Initialize the Vulkan API: create an instance, select a suitable physical device, create a logical device, and potentially acquire a queue family. No rendering yet, just setup.
-  - **Status:** Planned (Epic and Stories defined).
+  - **Status:** Done.
 - **Milestone 2: Static Vulkan Triangle**
   - **Goal:** Render a static triangle using Vulkan. Implement a basic rendering pipeline, handle vertex and index buffers, and draw calls.
-  - **Status:** Planned (Epic and Stories defined).
+  - **Status:** In Progress.
 - **Milestone 3: Persistant Mobile Cube**
   - **Goal:** Integrate the network communication with the rendering, display a mobile cube that can be moved by the server, and rendered by the client. The state of the cube is persisted and synchronized between the client and the server.
   - **Status:** Planned (Epic and Stories defined).
