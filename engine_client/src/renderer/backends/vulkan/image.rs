@@ -5,7 +5,7 @@ use super::VulkanContext;
 pub(super) struct VulkanImage {
     handle: vk::Image,
     memory: vk::DeviceMemory,
-    view: vk::ImageView,
+    pub view: vk::ImageView,
     width: u32,
     height: u32,
 }

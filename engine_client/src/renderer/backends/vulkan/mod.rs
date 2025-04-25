@@ -10,16 +10,19 @@ use std::borrow::Cow;
 use crate::{platform::WindowHandle, renderer::RendererBackend};
 use ash::{Entry, vk};
 use commands::VulkanCommandBuffer;
+use framebuffer::VulkanFramebuffer;
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 
 mod commands;
 mod device;
+mod framebuffer;
 mod image;
 mod renderpass;
 mod swapchain;
 
 use device::VulkanDevice;
 use renderpass::VulkanRenderPass;
+use swapchain::VulkanSwapchain;
 
 struct VulkanContext {
     framebuffer_width: u32,
@@ -138,6 +141,34 @@ impl RendererBackendVulkan {
             );
         }
         context.graphics_cmds_buffers.clear();
+        Ok(())
+    }
+
+    fn recreate_framebuffers(
+        &self,
+        device: &ash::Device,
+        swapchain: &mut VulkanSwapchain,
+        renderpass: VulkanRenderPass,
+        width: u32,
+        height: u32,
+    ) -> Result<(), String> {
+        swapchain.image_views.iter().for_each(|view| {
+            let attachments = vec![view.clone(), swapchain.depth_attachment.view.clone()];
+            let framebuffer = match VulkanFramebuffer::new(
+                device,
+                width,
+                height,
+                renderpass.clone(),
+                attachments,
+            ) {
+                Ok(framebuffer) => framebuffer,
+                Err(e) => {
+                    log::error!("Failed to create Vulkan framebuffer: {:?}", e);
+                    return;
+                }
+            };
+            swapchain.framebuffers.push(framebuffer);
+        });
         Ok(())
     }
 }
@@ -338,6 +369,19 @@ impl RendererBackend for RendererBackendVulkan {
             };
             log::debug!("Vulkan render pass created successfully");
 
+            // Create Vulkan framebuffers
+            let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
+            let swapchain = context.swapchain.as_mut().unwrap();
+            let renderpass = context.main_renderpass.clone().unwrap();
+
+            match self.recreate_framebuffers(device, swapchain, renderpass, width, height) {
+                Ok(_) => {}
+                Err(e) => {
+                    log::error!("Failed to create Vulkan framebuffers: {:?}", e);
+                    return Err(format!("Failed to create Vulkan framebuffers: {:?}", e));
+                }
+            };
+
             // Create command buffers
             match self.create_commands_buffers() {
                 Ok(_) => {}
@@ -367,6 +411,16 @@ impl RendererBackend for RendererBackendVulkan {
                 }
             }
             log::debug!("Vulkan command buffers destroyed");
+
+            // Destroy Vulkan framebuffers
+            if let Some(swapchain) = context.swapchain.as_ref() {
+                for framebuffer in swapchain.framebuffers.iter() {
+                    framebuffer.destroy(
+                        context.device.as_ref().unwrap().logical_device.as_ref().unwrap(),
+                    );
+                }
+                log::debug!("Vulkan framebuffers destroyed");
+            }
 
             // Destroy Vulkan render pass
             if let Some(render_pass) = context.main_renderpass.take() {
@@ -432,14 +486,14 @@ impl RendererBackend for RendererBackendVulkan {
 
     fn resize(&mut self, width: u32, height: u32) -> Result<(), String> {
         // Handle Vulkan swapchain resizing here
-        log::debug!("Resizing...");
-        let context = self.context.as_mut().unwrap();
-        let mut swapchain = context.swapchain.take().unwrap();
-        swapchain.recreate(context, width, height)?;
-        context.swapchain = Some(swapchain);
-        context.framebuffer_width = width;
-        context.framebuffer_height = height;
-        log::debug!("Resized to {}x{}", width, height);
+        // log::debug!("Resizing...");
+        // let context = self.context.as_mut().unwrap();
+        // let mut swapchain = context.swapchain.take().unwrap();
+        // swapchain.recreate(context, width, height)?;
+        // context.swapchain = Some(swapchain);
+        // context.framebuffer_width = width;
+        // context.framebuffer_height = height;
+        // log::debug!("Resized to {}x{}", width, height);
 
         Ok(())
     }

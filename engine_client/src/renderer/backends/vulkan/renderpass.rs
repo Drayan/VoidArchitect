@@ -5,6 +5,7 @@ use super::{
     commands::{VulkanCommandBuffer, VulkanCommandBufferState},
 };
 
+#[derive(Clone)]
 enum VulkanRenderPassState {
     Ready,
     Recording,
@@ -14,8 +15,9 @@ enum VulkanRenderPassState {
     NotAllocated,
 }
 
+#[derive(Clone)]
 pub(super) struct VulkanRenderPass {
-    handle: vk::RenderPass,
+    pub handle: vk::RenderPass,
     x: f32,
     y: f32,
     w: f32,

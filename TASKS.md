@@ -140,9 +140,10 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
   - **Description:** Create a `VkRenderPass` object defining a single color attachment (matching the swapchain format) that should be cleared at the start and stored at the end, used in a single subpass.
   - **Goal:** A valid `VkRenderPass` handle suitable for rendering to the swapchain images is created.
   - **Completed:** 25-04-2025
-- [ ] **Story 2.1.5: Create Framebuffers (`VkFramebuffer`)**
+- [x] **Story 2.1.5: Create Framebuffers (`VkFramebuffer`)**
   - **Description:** Create a `VkFramebuffer` for each swapchain image view, linking it to the `VkRenderPass` and specifying the dimensions.
   - **Goal:** A list/vector of `VkFramebuffer` handles, one per swapchain image, is created and stored.
+  - **Completed:** 25-04-2025
 
 ### Epic 2.A: Migrate from Winit to SDL2
 

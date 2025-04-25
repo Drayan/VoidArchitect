@@ -1,14 +1,15 @@
 use ash::vk;
 
-use super::{VulkanContext, device::VulkanDevice, image::VulkanImage};
+use super::{VulkanContext, VulkanFramebuffer, device::VulkanDevice, image::VulkanImage};
 
 pub(super) struct VulkanSwapchain {
     pub surface_format: vk::SurfaceFormatKHR,
     max_frames_in_flight: u8,
     handle: vk::SwapchainKHR,
     pub images: Vec<vk::Image>,
-    image_views: Vec<vk::ImageView>,
-    depth_attachment: VulkanImage,
+    pub image_views: Vec<vk::ImageView>,
+    pub depth_attachment: VulkanImage,
+    pub framebuffers: Vec<VulkanFramebuffer>,
 }
 
 impl VulkanSwapchain {
@@ -296,6 +297,7 @@ impl VulkanSwapchain {
             image_views: swapchain_views,
 
             depth_attachment,
+            framebuffers: vec![],
         })
     }
 
