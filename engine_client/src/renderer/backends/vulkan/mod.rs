@@ -9,12 +9,17 @@ use std::borrow::Cow;
 
 use crate::{platform::WindowHandle, renderer::RendererBackend};
 use ash::{Entry, vk};
+use commands::VulkanCommandBuffer;
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 
+mod commands;
 mod device;
 mod image;
+mod renderpass;
 mod swapchain;
+
 use device::VulkanDevice;
+use renderpass::VulkanRenderPass;
 
 struct VulkanContext {
     framebuffer_width: u32,
@@ -22,6 +27,7 @@ struct VulkanContext {
 
     instance: Option<ash::Instance>,
     surface: Option<ash::vk::SurfaceKHR>,
+
     surface_loader: Option<ash::khr::surface::Instance>,
     swapchain_loader: Option<ash::khr::swapchain::Device>,
 
@@ -32,6 +38,10 @@ struct VulkanContext {
 
     device: Option<VulkanDevice>,
     swapchain: Option<swapchain::VulkanSwapchain>,
+    main_renderpass: Option<VulkanRenderPass>,
+
+    graphics_cmds_buffers: Vec<VulkanCommandBuffer>,
+
     image_index: u32,
     current_frame: u32,
 
@@ -88,6 +98,48 @@ impl RendererBackendVulkan {
     pub fn new() -> Self {
         Self { context: None }
     }
+
+    fn create_commands_buffers(&mut self) -> Result<(), String> {
+        // If the context already has command buffers, destroy them
+        if let Some(context) = &mut self.context {
+            let device = context.device.as_ref().unwrap();
+            for buffer in context.graphics_cmds_buffers.iter_mut() {
+                buffer.destroy(
+                    device.logical_device.as_ref().unwrap(),
+                    device.graphics_command_pool,
+                );
+            }
+            context.graphics_cmds_buffers.clear();
+        }
+        // Create new command buffers
+        if let Some(context) = &mut self.context {
+            let swapchain = context.swapchain.as_ref().unwrap();
+            let device = context.device.as_ref().unwrap();
+            for i in 0..swapchain.images.len() {
+                let buffer = VulkanCommandBuffer::new(
+                    device.logical_device.as_ref().unwrap(),
+                    device.graphics_command_pool,
+                    true,
+                )?;
+                context.graphics_cmds_buffers.push(buffer);
+            }
+        }
+
+        Ok(())
+    }
+
+    fn destroy_commands_buffers(&mut self, context: &mut VulkanContext) -> Result<(), String> {
+        // Destroy Vulkan command buffers here
+        let device = context.device.as_ref().unwrap();
+        for buffer in context.graphics_cmds_buffers.iter_mut() {
+            buffer.destroy(
+                device.logical_device.as_ref().unwrap(),
+                device.graphics_command_pool,
+            );
+        }
+        context.graphics_cmds_buffers.clear();
+        Ok(())
+    }
 }
 
 impl RendererBackend for RendererBackendVulkan {
@@ -123,7 +175,12 @@ impl RendererBackend for RendererBackendVulkan {
                 image_index: 0,
                 framebuffer_width: window_hndl.window.inner_size().width,
                 framebuffer_height: window_hndl.window.inner_size().height,
+
                 swapchain: None,
+                main_renderpass: None,
+
+                graphics_cmds_buffers: vec![],
+
                 recreating_swapchain: false,
             };
 
@@ -259,6 +316,38 @@ impl RendererBackend for RendererBackendVulkan {
                 };
             log::debug!("Vulkan swapchain created successfully");
 
+            // Create the main render pass
+            context.main_renderpass = match VulkanRenderPass::new(
+                &context,
+                0.0,
+                0.0,
+                width as f32,
+                height as f32,
+                0.0,
+                0.0,
+                0.2,
+                1.0,
+                1.0,
+                0,
+            ) {
+                Ok(render_pass) => Some(render_pass),
+                Err(e) => {
+                    log::error!("Failed to create Vulkan render pass: {:?}", e);
+                    return Err(format!("Failed to create Vulkan render pass: {:?}", e));
+                }
+            };
+            log::debug!("Vulkan render pass created successfully");
+
+            // Create command buffers
+            match self.create_commands_buffers() {
+                Ok(_) => {}
+                Err(e) => {
+                    log::error!("Failed to create Vulkan command buffers: {:?}", e);
+                    return Err(format!("Failed to create Vulkan command buffers: {:?}", e));
+                }
+            };
+            log::debug!("Vulkan command buffers created successfully");
+
             self.context = Some(context);
             log::debug!("Vulkan renderer initialized successfully");
             Ok(())
@@ -268,6 +357,23 @@ impl RendererBackend for RendererBackendVulkan {
     fn shutdown(&mut self) -> Result<(), String> {
         // Cleanup Vulkan resources here
         if let Some(mut context) = self.context.take() {
+            log::debug!("Shutting down Vulkan renderer");
+            // Destroy Vulkan command buffers
+            match self.destroy_commands_buffers(&mut context) {
+                Ok(_) => {}
+                Err(e) => {
+                    log::error!("Failed to destroy Vulkan command buffers: {:?}", e);
+                    return Err(format!("Failed to destroy Vulkan command buffers: {:?}", e));
+                }
+            }
+            log::debug!("Vulkan command buffers destroyed");
+
+            // Destroy Vulkan render pass
+            if let Some(render_pass) = context.main_renderpass.take() {
+                render_pass.destroy(&context);
+                log::debug!("Vulkan render pass destroyed");
+            }
+
             // Destroy Vulkan swapchain
             if let Some(mut swapchain) = context.swapchain.take() {
                 swapchain.destroy(&context);
@@ -324,9 +430,17 @@ impl RendererBackend for RendererBackendVulkan {
         Ok(())
     }
 
-    fn resize(&mut self, _width: u32, _height: u32) -> Result<(), String> {
+    fn resize(&mut self, width: u32, height: u32) -> Result<(), String> {
         // Handle Vulkan swapchain resizing here
-        log::debug!("Resizing Vulkan swapchain");
+        log::debug!("Resizing...");
+        let context = self.context.as_mut().unwrap();
+        let mut swapchain = context.swapchain.take().unwrap();
+        swapchain.recreate(context, width, height)?;
+        context.swapchain = Some(swapchain);
+        context.framebuffer_width = width;
+        context.framebuffer_height = height;
+        log::debug!("Resized to {}x{}", width, height);
+
         Ok(())
     }
 }

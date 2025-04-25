@@ -24,31 +24,33 @@ struct VulkanPhysicalDeviceQueueFamilyInfo {
 }
 
 pub(super) struct VulkanPhysicalDeviceSwapchainSupportInfo {
-    pub(super) capabilities: vk::SurfaceCapabilitiesKHR,
-    pub(super) formats: Vec<vk::SurfaceFormatKHR>,
-    pub(super) present_modes: Vec<vk::PresentModeKHR>,
+    pub capabilities: vk::SurfaceCapabilitiesKHR,
+    pub formats: Vec<vk::SurfaceFormatKHR>,
+    pub present_modes: Vec<vk::PresentModeKHR>,
 }
 
-pub(crate) struct VulkanDevice {
-    pub(super) physical_device: ash::vk::PhysicalDevice,
-    pub(super) logical_device: Option<ash::Device>,
-    pub(super) swapchain_support: VulkanPhysicalDeviceSwapchainSupportInfo,
+pub(super) struct VulkanDevice {
+    pub physical_device: ash::vk::PhysicalDevice,
+    pub logical_device: Option<ash::Device>,
+    pub swapchain_support: VulkanPhysicalDeviceSwapchainSupportInfo,
 
-    properties: ash::vk::PhysicalDeviceProperties,
-    features: ash::vk::PhysicalDeviceFeatures,
-    memory: ash::vk::PhysicalDeviceMemoryProperties,
+    pub properties: ash::vk::PhysicalDeviceProperties,
+    pub features: ash::vk::PhysicalDeviceFeatures,
+    pub memory: ash::vk::PhysicalDeviceMemoryProperties,
 
-    pub(super) graphics_queue_index: u32,
-    pub(super) compute_queue_index: u32,
-    pub(super) transfer_queue_index: u32,
-    pub(super) present_queue_index: u32,
+    pub graphics_queue_index: u32,
+    pub compute_queue_index: u32,
+    pub transfer_queue_index: u32,
+    pub present_queue_index: u32,
 
-    graphics_queue: ash::vk::Queue,
-    compute_queue: ash::vk::Queue,
-    transfer_queue: ash::vk::Queue,
-    present_queue: ash::vk::Queue,
+    pub graphics_queue: ash::vk::Queue,
+    pub compute_queue: ash::vk::Queue,
+    pub transfer_queue: ash::vk::Queue,
+    pub present_queue: ash::vk::Queue,
 
-    pub(super) depth_format: vk::Format,
+    pub graphics_command_pool: vk::CommandPool,
+
+    pub depth_format: vk::Format,
 }
 
 impl VulkanDevice {
@@ -166,12 +168,39 @@ impl VulkanDevice {
                 .unwrap()
                 .get_device_queue(device.present_queue_index, 0)
         };
+
+        // Create command pool for graphics queue
+        let command_pool_info = vk::CommandPoolCreateInfo::default()
+            .queue_family_index(device.graphics_queue_index)
+            .flags(vk::CommandPoolCreateFlags::RESET_COMMAND_BUFFER);
+
+        device.graphics_command_pool = match unsafe {
+            device
+                .logical_device
+                .as_ref()
+                .unwrap()
+                .create_command_pool(&command_pool_info, None)
+        } {
+            Ok(pool) => pool,
+            Err(e) => {
+                return Err(format!("Failed to create command pool: {:?}", e));
+            }
+        };
+        log::debug!("Vulkan command pool created successfully");
+
         log::debug!("Vulkan logical device created successfully");
 
         Ok(device)
     }
 
     pub(crate) fn destroy(self: &mut Self) {
+        // Destroy the command pool
+        if let Some(logical_device) = self.logical_device.as_ref() {
+            unsafe {
+                logical_device.destroy_command_pool(self.graphics_command_pool, None);
+                log::debug!("Vulkan command pool destroyed");
+            }
+        }
         // Release the queues
         self.graphics_queue = vk::Queue::null();
         self.compute_queue = vk::Queue::null();
@@ -355,6 +384,8 @@ impl VulkanDevice {
                 compute_queue: vk::Queue::null(),
                 transfer_queue: vk::Queue::null(),
                 present_queue: vk::Queue::null(),
+
+                graphics_command_pool: vk::CommandPool::null(),
 
                 depth_format: vk::Format::UNDEFINED,
             });
