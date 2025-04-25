@@ -136,9 +136,10 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
   - **Description:** Retrieve the `VkImage` handles from the created swapchain and create a corresponding `VkImageView` for each one.
   - **Goal:** A list/vector of `VkImageView` handles for the swapchain images is created and stored.
   - **Completed:** 25-04-2025
-- [ ] **Story 2.1.4: Define Basic Render Pass (`VkRenderPass`)**
+- [x] **Story 2.1.4: Define Basic Render Pass (`VkRenderPass`)**
   - **Description:** Create a `VkRenderPass` object defining a single color attachment (matching the swapchain format) that should be cleared at the start and stored at the end, used in a single subpass.
   - **Goal:** A valid `VkRenderPass` handle suitable for rendering to the swapchain images is created.
+  - **Completed:** 25-04-2025
 - [ ] **Story 2.1.5: Create Framebuffers (`VkFramebuffer`)**
   - **Description:** Create a `VkFramebuffer` for each swapchain image view, linking it to the `VkRenderPass` and specifying the dimensions.
   - **Goal:** A list/vector of `VkFramebuffer` handles, one per swapchain image, is created and stored.
@@ -250,12 +251,14 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 - [ ] **Story 2.3.3: Upload Vertex Data to GPU Buffer**
   - **Description:** Map the allocated `VkDeviceMemory`, copy the triangle vertex data from the CPU array/vector into the mapped memory, and unmap it. Handle memory flushing if necessary.
   - **Goal:** The triangle vertex data resides in the GPU buffer.
-- [ ] **Story 2.3.4: Create Command Pool (`VkCommandPool`)**
+- [x] **Story 2.3.4: Create Command Pool (`VkCommandPool`)**
   - **Description:** Create a `VkCommandPool` associated with the graphics queue family index, allowing allocation of command buffers for graphics operations.
   - **Goal:** A valid `VkCommandPool` handle is created.
-- [ ] **Story 2.3.5: Allocate Command Buffers (`VkCommandBuffer`)**
+  - **Completed:** 25-04-2025
+- [x] **Story 2.3.5: Allocate Command Buffers (`VkCommandBuffer`)**
   - **Description:** Allocate the required number of command buffers (e.g., one per swapchain image) from the command pool.
   - **Goal:** `VkCommandBuffer` handles are allocated and ready for recording.
+  - **Completed:** 25-04-2025
 - [ ] **Story 2.3.6: Record Draw Commands**
   - **Description:** Implement the logic to record the command sequence (begin render pass, bind pipeline, bind vertex buffer, draw, end render pass) into each allocated command buffer.
   - **Goal:** Command buffers contain all necessary instructions to render the triangle when submitted.
