@@ -105,25 +105,28 @@ impl RendererBackendVulkan {
     fn create_commands_buffers(&mut self) -> Result<(), String> {
         // If the context already has command buffers, destroy them
         if let Some(context) = &mut self.context {
-            let device = context.device.as_ref().unwrap();
+            // Extract needed values first to avoid multiple borrows
+            let logical_device =
+                context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
+            let command_pool = context.device.as_ref().unwrap().graphics_command_pool;
+
             for buffer in context.graphics_cmds_buffers.iter_mut() {
-                buffer.destroy(
-                    device.logical_device.as_ref().unwrap(),
-                    device.graphics_command_pool,
-                );
+                buffer.destroy(logical_device, command_pool);
             }
             context.graphics_cmds_buffers.clear();
         }
         // Create new command buffers
         if let Some(context) = &mut self.context {
+            // Extract all needed values first
             let swapchain = context.swapchain.as_ref().unwrap();
             let device = context.device.as_ref().unwrap();
-            for _i in 0..swapchain.images.len() {
-                let buffer = VulkanCommandBuffer::new(
-                    device.logical_device.as_ref().unwrap(),
-                    device.graphics_command_pool,
-                    true,
-                )?;
+            let logical_device = device.logical_device.as_ref().unwrap();
+            let command_pool = device.graphics_command_pool;
+            let image_count = swapchain.images.len();
+
+            // Now create each buffer with the extracted values
+            for _ in 0..image_count {
+                let buffer = VulkanCommandBuffer::new(logical_device, command_pool, true)?;
                 context.graphics_cmds_buffers.push(buffer);
             }
         }
@@ -133,12 +136,13 @@ impl RendererBackendVulkan {
 
     fn destroy_commands_buffers(&mut self, context: &mut VulkanContext) -> Result<(), String> {
         // Destroy Vulkan command buffers here
-        let device = context.device.as_ref().unwrap();
+        // Extract needed values first to avoid multiple borrows
+        let logical_device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
+        let command_pool = context.device.as_ref().unwrap().graphics_command_pool;
+
+        // Now destroy each buffer with the extracted values
         for buffer in context.graphics_cmds_buffers.iter_mut() {
-            buffer.destroy(
-                device.logical_device.as_ref().unwrap(),
-                device.graphics_command_pool,
-            );
+            buffer.destroy(logical_device, command_pool);
         }
         context.graphics_cmds_buffers.clear();
         Ok(())
@@ -476,11 +480,18 @@ impl RendererBackend for RendererBackendVulkan {
 
     fn begin_frame(&mut self) -> Result<(), String> {
         // Begin Vulkan frame rendering here
+        if self.context.is_none() {
+            return Err("Vulkan context is not initialized".to_string());
+        }
+
         Ok(())
     }
 
     fn end_frame(&mut self) -> Result<(), String> {
         // End Vulkan frame rendering here
+        if self.context.is_none() {
+            return Err("Vulkan context is not initialized".to_string());
+        }
         Ok(())
     }
 
@@ -494,6 +505,9 @@ impl RendererBackend for RendererBackendVulkan {
         // context.framebuffer_width = width;
         // context.framebuffer_height = height;
         // log::debug!("Resized to {}x{}", width, height);
+        if width == 0 || height == 0 {
+            return Err("Invalid width or height".to_string());
+        }
 
         Ok(())
     }
