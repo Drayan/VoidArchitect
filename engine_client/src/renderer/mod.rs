@@ -6,7 +6,7 @@
 
 mod backends;
 
-use crate::{platform::WindowHandle, renderer::backends::vulkan::RendererBackendVulkan};
+use crate::{platform_sdl::WindowHandle, renderer::backends::vulkan::RendererBackendVulkan};
 
 pub trait RendererBackend {
     /// Initializes the renderer backend with the given window handle.

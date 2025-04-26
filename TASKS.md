@@ -107,7 +107,7 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 
 ## Milestone 2: Static Vulkan Triangle
 
-- **Status:** To Plan
+- **Status:** In Progress
 - **Goal:** Render a single, static, colored triangle to the window using the Vulkan setup from Milestone 1. This involves setting up the swapchain, render pass, graphics pipeline, command buffers, vertex buffers, and the main render loop.
 
 ### Epic 2.1: Swapchain and Frame Rendering Setup
@@ -145,39 +145,40 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
   - **Goal:** A list/vector of `VkFramebuffer` handles, one per swapchain image, is created and stored.
   - **Completed:** 25-04-2025
 
-### Epic 2.A: Migrate from Winit to SDL2
+### Epic 2.A: Migrate from Winit to SDL3
 
-- **Status:** To Do (Discovered During Work)
-- **Description:** Replace the winit windowing library with SDL2 across all client components. Update the platform abstraction layer, window creation, event loop, and Vulkan surface integration to work with SDL2 instead of winit.
-- **Goal:** The client application should function identically but use SDL2 for window management and event handling instead of winit.
+- **Status:** Completed on 25-04-2025 
+- **Description:** Replace the winit windowing library with SDL3 across all client components. Update the platform abstraction layer, window creation, event loop, and Vulkan surface integration to work with SDL3 instead of winit.
+- **Goal:** The client application should function identically but use SDL3 for window management and event handling instead of winit.
 - **Definition of Done (DoD):**
-  - winit dependency is removed and SDL2 dependency is added to the `engine_client` crate.
-  - Platform abstraction layer is refactored to use SDL2 APIs.
-  - Window creation code uses SDL2 instead of winit.
-  - Event loop implementation is updated to match SDL2's polling model.
-  - Vulkan surface creation code uses SDL2's surface creation methods.
+  - winit dependency is removed and SDL3 dependency is added to the `engine_client` crate.
+  - Platform abstraction layer is refactored to use SDL3 APIs.
+  - Window creation code uses SDL3 instead of winit.
+  - Event loop implementation is updated to match SDL3's polling model.
+  - Vulkan surface creation code uses SDL3's surface creation methods.
   - All functionality from Milestone 1 remains working as before.
 
 #### Stories:
 
-- [ ] **Story 2.A.1: Add SDL2 Dependency**
-  - **Description:** Add the SDL2 crate to the `engine_client` project's Cargo.toml and remove winit.
-  - **Goal:** SDL2 library is available for use within the client code.
-- [ ] **Story 2.A.2: Refactor Platform Abstraction Layer**
-  - **Description:** Update the platform module in `engine_client` to use SDL2 instead of winit.
-  - **Goal:** The platform layer is fully converted to use SDL2 APIs.
-- [ ] **Story 2.A.3: Update Window Creation Code**
-  - **Description:** Modify the window initialization code to use SDL2's window creation methods.
-  - **Goal:** A visible window is created using SDL2 instead of winit.
-- [ ] **Story 2.A.4: Reimplement Event Loop**
-  - **Description:** Replace the winit event loop with SDL2's event polling mechanism.
-  - **Goal:** The application properly processes window events using SDL2.
-- [ ] **Story 2.A.5: Update Vulkan Surface Integration**
-  - **Description:** Update the code that creates a Vulkan surface from the window to use SDL2's methods.
-  - **Goal:** A valid `VkSurfaceKHR` is created from the SDL2 window.
-- [ ] **Story 2.A.6: Test Milestone 1 Functionality**
-  - **Description:** Verify that all functionality from Milestone 1 works correctly with SDL2.
-  - **Goal:** The application behaves identically to before but now uses SDL2.
+- [x] **Story 2.A.1: Add SDL3 Dependency**
+  - **Description:** Add the SDL3 crate to the `engine_client` project's Cargo.toml and remove winit.
+  - **Goal:** SDL3 library is available for use within the client code.
+  - **Completed:** 26-04-2025
+- [x] **Story 2.A.2: Refactor Platform Abstraction Layer**
+  - **Description:** Update the platform module in `engine_client` to use SDL3 instead of winit.
+  - **Goal:** The platform layer is fully converted to use SDL3 APIs.
+- [x] **Story 2.A.3: Update Window Creation Code**
+  - **Description:** Modify the window initialization code to use SDL3's window creation methods.
+  - **Goal:** A visible window is created using SDL3 instead of winit.
+- [x] **Story 2.A.4: Reimplement Event Loop**
+  - **Description:** Replace the winit event loop with SDL3's event polling mechanism.
+  - **Goal:** The application properly processes window events using SDL3.
+- [x] **Story 2.A.5: Update Vulkan Surface Integration**
+  - **Description:** Update the code that creates a Vulkan surface from the window to use SDL3's methods.
+  - **Goal:** A valid `VkSurfaceKHR` is created from the SDL3 window.
+- [x] **Story 2.A.6: Test Milestone 1 Functionality**
+  - **Description:** Verify that all functionality from Milestone 1 works correctly with SDL3.
+  - **Goal:** The application behaves identically to before but now uses SDL3.
 
 ### Epic 2.2: Minimal Graphics Pipeline
 
@@ -402,3 +403,6 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 
 - **Status:** To Plan
 - **Goal:** Implement basic procedural noise functions (e.g., Perlin, Simplex) within the `core` engine library, potentially demonstrating their output visually in the client later (e.g., applying noise as texture coordinates or height map).
+
+## Unplanned backlog
+- [ ] **Refactor EngineClient** currently the domain is splitted with EngineApplication which was necessary in the `winit` implementation, but now that the engine run on top of SDL3, it can be simplified.

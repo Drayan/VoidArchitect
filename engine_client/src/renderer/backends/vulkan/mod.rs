@@ -7,11 +7,14 @@
 
 use std::borrow::Cow;
 
-use crate::{platform::WindowHandle, renderer::RendererBackend};
-use ash::{Entry, vk};
+use crate::{platform_sdl::WindowHandle, renderer::RendererBackend};
+use ash::{
+    Entry,
+    vk::{self, Handle},
+};
 use commands::VulkanCommandBuffer;
 use framebuffer::VulkanFramebuffer;
-use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
+//use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 
 mod commands;
 mod device;
@@ -21,7 +24,9 @@ mod renderpass;
 mod swapchain;
 
 use device::VulkanDevice;
+use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 use renderpass::VulkanRenderPass;
+use sdl3::sys::everything::__VkInstance;
 use swapchain::VulkanSwapchain;
 
 struct VulkanContext {
@@ -180,12 +185,17 @@ impl RendererBackendVulkan {
 impl RendererBackend for RendererBackendVulkan {
     fn initialize(&mut self, window_hndl: WindowHandle) -> Result<(), String> {
         // Initialize Vulkan resources here
-        if window_hndl.window.display_handle().is_err() {
-            return Err("Window handle is invalid".to_string());
-        }
-        if window_hndl.window.window_handle().is_err() {
-            return Err("Window handle is invalid".to_string());
-        }
+        // if window_hndl.window.display_handle().is_err() {
+        //     return Err("Window handle is invalid".to_string());
+        // }
+        let window = match window_hndl.window.upgrade() {
+            Some(window) => match window.read() {
+                Ok(window) => window.clone(),
+                Err(_) => return Err("Failed to lock window".to_string()),
+            },
+            None => return Err("Window handle is invalid".to_string()),
+        };
+        let (width, height) = window.size();
 
         unsafe {
             log::debug!("Initializing Vulkan renderer");
@@ -208,8 +218,8 @@ impl RendererBackend for RendererBackendVulkan {
 
                 current_frame: 0,
                 image_index: 0,
-                framebuffer_width: window_hndl.window.inner_size().width,
-                framebuffer_height: window_hndl.window.inner_size().height,
+                framebuffer_width: width,
+                framebuffer_height: height,
 
                 swapchain: None,
                 main_renderpass: None,
@@ -230,10 +240,19 @@ impl RendererBackend for RendererBackendVulkan {
             let layer_names = vec![c"VK_LAYER_KHRONOS_validation".as_ptr()];
 
             let mut extension_names = ash_window::enumerate_required_extensions(
-                window_hndl.window.display_handle().unwrap().as_raw(),
+                window.display_handle().unwrap().as_raw(),
             )
             .unwrap()
             .to_vec();
+            // let mut extension_names = match window.vulkan_instance_extensions() {
+            //     Ok(extensions) => {
+            //         extensions.iter().map(|s| s.as_ptr() as *const i8).collect::<Vec<_>>()
+            //     }
+            //     Err(e) => {
+            //         log::error!("Failed to get Vulkan instance extensions: {:?}", e);
+            //         return Err(format!("Failed to get Vulkan instance extensions: {:?}", e));
+            //     }
+            // };
 
             extension_names.push(ash::ext::debug_utils::NAME.as_ptr());
             extension_names.push(ash::ext::debug_report::NAME.as_ptr());
@@ -298,20 +317,29 @@ impl RendererBackend for RendererBackendVulkan {
             }
 
             // Create Vulkan surface
-            let surface = ash_window::create_surface(
+            let surface = match ash_window::create_surface(
                 &entry,
                 &context.instance.as_ref().unwrap(),
-                window_hndl.window.display_handle().unwrap().as_raw(),
-                window_hndl.window.window_handle().unwrap().as_raw(),
+                window.display_handle().unwrap().as_raw(),
+                window.window_handle().unwrap().as_raw(),
                 None,
-            );
-            context.surface = match surface {
-                Ok(surface) => Some(surface),
+            ) {
+                Ok(surface) => surface,
                 Err(e) => {
                     log::error!("Failed to create Vulkan surface: {:?}", e);
                     return Err(format!("Failed to create Vulkan surface: {:?}", e));
                 }
             };
+            // let surface = match window.vulkan_create_surface(
+            //     context.instance.as_mut().unwrap().handle().as_raw() as *mut __VkInstance,
+            // ) {
+            //     Ok(surface) => vk::SurfaceKHR::from_raw(surface as u64),
+            //     Err(e) => {
+            //         log::error!("Failed to create Vulkan surface: {:?}", e);
+            //         return Err(format!("Failed to create Vulkan surface: {:?}", e));
+            //     }
+            // };
+            context.surface = Some(surface);
             log::debug!("Vulkan surface created successfully");
 
             // Create Vulkan surface loader

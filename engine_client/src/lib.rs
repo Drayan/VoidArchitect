@@ -4,10 +4,10 @@
 //! and rendering. It defines the main entry points for engine context, application trait, and
 //! orchestrates subsystem initialization and shutdown.
 
-pub mod platform;
+mod platform_sdl;
 pub mod renderer;
 
-use platform::{PlatformLayer, WindowHandle};
+use platform_sdl::{PlatformLayer, WindowHandle};
 use renderer::RendererFrontend;
 
 pub struct EngineContext {
@@ -26,7 +26,7 @@ impl EngineContext {
     }
 }
 
-pub trait EngineApplication {
+pub(crate) trait EngineApplication {
     fn initialize(&mut self, window: WindowHandle) -> Result<(), String>;
     fn shutdown(&mut self) -> Result<(), String>;
 
@@ -85,7 +85,8 @@ impl EngineApplication for EngineContext {
 /// Main entry point for the client engine. Owns the platform system and other subsystems.
 /// This struct is responsible for subsystem orchestration.
 pub struct EngineClient {
-    platform_layer: PlatformLayer<EngineContext>,
+    // platform_layer: PlatformLayer<EngineContext>,
+    platform_layer: PlatformLayer,
     context: EngineContext,
 }
 
@@ -109,15 +110,41 @@ impl<'a> EngineClient {
     /// * `window_height` - The height of the window.
     pub fn initialize(&mut self, title: &str, window_width: u32, window_height: u32) {
         self.platform_layer.initialize(title, window_width, window_height);
+        let window = match self.platform_layer.get_window_handle() {
+            Some(handle) => handle,
+            None => panic!("Failed to get window handle"),
+        };
+        self.context.initialize(window).expect("Failed to initialize context");
     }
 
     /// Runs the main event loop. This will block until the event loop exits.
     ///
     /// # Returns
     /// * `Self` - The engine client after the event loop has run.
-    pub fn run(mut self) -> Self {
-        self.context = self.platform_layer.run(self.context);
-        self
+    pub fn run(&mut self) -> Result<(), String> {
+        // self.context = self.platform_layer.run(self.context);
+        // self
+        loop {
+            match self.platform_layer.run() {
+                Ok(should_quit) => {
+                    if should_quit {
+                        break;
+                    }
+                }
+                Err(e) => {
+                    log::error!("Error in platform layer: {}", e);
+                    break;
+                }
+            }
+
+            //TODO: Calculate delta time
+            // Render the frame
+            self.context.render(0.016); // ~60fps
+            // Update the context
+            self.context.update(0.016); // ~60fps
+        }
+
+        Ok(())
     }
 
     /// Shuts down the engine subsystems.

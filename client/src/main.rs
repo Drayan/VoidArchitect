@@ -73,7 +73,13 @@ async fn main() {
     // Launch the engine and create a window (this will block until the window is closed)
     let mut engine = EngineClient::new();
     engine.initialize("Void Architect Client", 1280, 720);
-    engine = engine.run();
+    match engine.run() {
+        Ok(_) => {}
+        Err(e) => {
+            log::error!("Engine run failed: {e}");
+            return;
+        }
+    }
     engine.shutdown();
 
     stream.shutdown().await.unwrap();
