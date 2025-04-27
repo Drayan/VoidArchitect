@@ -43,7 +43,7 @@ This is a long-term, solo-developer hobby project focused on learning and explor
 - **Asynchronous Runtime:** Tokio (for network I/O and potentially other async tasks)
 - **Networking:** TCP (via `tokio::net`), UDP (for real-time updates), Protobuf (via `prost` and `prost-build`)
 - **Graphics API (Initial):** Vulkan (using `ash` or similar safe wrappers)
-- **Windowing:** `winit` (cross-platform window creation and event handling)
+- **Windowing:** `SDL3` (cross-platform window creation and event handling)
 - **Build System:** Cargo (Rust's build system and package manager)
 - **Potential Future APIs:** OpenGL, Metal, DirectX (as engine knowledge expands)
 - **AI/Procedural Generation:** Custom algorithms, potentially leveraging ML models or advanced techniques in the future.

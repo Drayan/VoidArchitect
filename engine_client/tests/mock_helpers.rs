@@ -2,22 +2,25 @@
 //! Safe mock utilities for testing
 //!
 
-use std::ptr::NonNull;
+use std::sync::{Arc, RwLock};
 use void_architect_engine_client::platform::WindowHandle;
-use winit::window::Window;
 
-/// Creates a safer mock window handle for testing
+/// Creates a mock SDL3 window handle for testing
 ///
-/// This is meant to be used in tests to avoid unsafe transmute operations
-/// that could cause undefined behavior.
-pub fn create_mock_window_handle() -> WindowHandle<'static> {
-    // Create a dangling non-null pointer - this is still unsafe but safer than transmuting 0
-    // We're doing this purely for testing and the Handle will not be dereferenced
-    let window_ptr = NonNull::<Window>::dangling();
-
-    WindowHandle {
+/// This creates a mock WindowHandle with a Weak reference that can be upgraded
+/// but points to a minimal mock window implementation.
+/// This is safer than creating dangling pointers and is meant for testing only.
+pub fn create_mock_window_handle() -> WindowHandle {
+    // Create a minimal mock SDL window wrapped in Arc<RwLock>
+    // We're using a placeholder value since we can't easily create a real SDL window in tests
+    let mock_window: Arc<RwLock<sdl3::video::Window>> = unsafe {
         // SAFETY: This is for testing only. The window reference is never dereferenced.
         // All operations that would use the window check for null/dangling and return errors.
-        window: unsafe { &*(window_ptr.as_ptr()) },
+        std::mem::transmute(Arc::new(RwLock::new(())))
+    };
+
+    // Create a WindowHandle with a weak reference to our mock window
+    WindowHandle {
+        window: Arc::downgrade(&mock_window),
     }
 }

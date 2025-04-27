@@ -9,7 +9,7 @@ use void_architect_engine_client::renderer::RendererFrontend;
 
 struct DummyWindow;
 impl DummyWindow {
-    fn handle() -> WindowHandle<'static> {
+    fn handle() -> WindowHandle {
         // SAFETY: This is a dummy, do not dereference in tests
         unsafe { std::mem::transmute(0usize) }
     }

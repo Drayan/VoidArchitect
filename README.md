@@ -6,13 +6,13 @@ VoidArchitect is a modular, Rust-based project aiming to create a 4X (eXplore, e
 
 The project is organized into several Rust crates:
 
-- **engine_client**: The cross-platform engine crate, responsible for window creation, platform abstraction, and (future) Vulkan integration. Uses `winit` for window and event loop management.
+- **engine_client**: The cross-platform engine crate, responsible for window creation, platform abstraction, and (future) Vulkan integration. Uses `SDL3` for window and event loop management.
 - **client**: The main client application crate, which instantiates and drives the engine. Acts as the user interface and entry point for client logic.
 - **(Planned) server**: Will handle game logic and world state for multiplayer (not yet implemented).
 
 ## Key Features
 
-- **Cross-platform window initialization** via `winit` (Windows, Linux, macOS supported)
+- **Cross-platform window initialization** via `SDL3` (Windows, Linux, macOS supported)
 - **Native event loop** integrated into the client application
 - **Clear separation** between engine (engine_client) and application logic (client) for testability and scalability
 - **Rust unit tests** for all major features
@@ -20,7 +20,6 @@ The project is organized into several Rust crates:
 
 ## Known Limitations
 
-- On macOS, the event loop (`winit::EventLoop`) must be created on the main thread.
 - Server logic and Vulkan rendering are not yet implemented.
 
 ## Prerequisites
@@ -35,7 +34,7 @@ The project is organized into several Rust crates:
 cargo run -p client
 ```
 
-A window will open, managed by the engine via `winit`.
+A window will open, managed by the engine via `SDL3`.
 
 ## Repository Structure
 
@@ -46,7 +45,7 @@ A window will open, managed by the engine via `winit`.
 
 ## Roadmap (extract)
 
-- [x] Cross-platform window initialization (winit)
+- [x] Cross-platform window initialization (SDL3)
 - [ ] Vulkan rendering integration
 - [ ] Rust server implementation
 - [ ] Network protocol (Protobuf)

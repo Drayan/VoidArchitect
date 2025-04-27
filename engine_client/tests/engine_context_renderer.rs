@@ -11,7 +11,7 @@ mod mock_helpers;
 mod mocks {
     use void_architect_engine_client::platform::WindowHandle;
 
-    pub fn handle() -> WindowHandle<'static> {
+    pub fn handle() -> WindowHandle {
         // Use the safer mock helper
         super::mock_helpers::create_mock_window_handle()
     }

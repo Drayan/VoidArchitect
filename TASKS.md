@@ -147,7 +147,7 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 
 ### Epic 2.A: Migrate from Winit to SDL3
 
-- **Status:** Completed on 25-04-2025 
+- **Status:** Completed on 27-04-2025
 - **Description:** Replace the winit windowing library with SDL3 across all client components. Update the platform abstraction layer, window creation, event loop, and Vulkan surface integration to work with SDL3 instead of winit.
 - **Goal:** The client application should function identically but use SDL3 for window management and event handling instead of winit.
 - **Definition of Done (DoD):**
@@ -179,7 +179,10 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 - [x] **Story 2.A.6: Test Milestone 1 Functionality**
   - **Description:** Verify that all functionality from Milestone 1 works correctly with SDL3.
   - **Goal:** The application behaves identically to before but now uses SDL3.
-
+- [x] **Task 2.A.7: Finalize SDL3 Platform Migration** (27-04-2025)
+  - **Status:** Done
+  - **Description:** Review the `platform_sdl.rs` implementation, add necessary documentation and unit tests, replace the old `platform.rs` with the new SDL3 version, update all references within the `engine_client` crate, update existing tests, run checks (`cargo check`, `cargo test`, `cargo fmt`), and update project documentation (`README.md`, `PLANNING.md`).
+  - **Completed:** 27-04-2025
 ### Epic 2.2: Minimal Graphics Pipeline
 
 - **Description:** Create a basic Vulkan graphics pipeline configured to draw simple, colored triangles. This involves loading/compiling shaders, defining vertex input, and configuring pipeline states (viewport, rasterization, etc.).
@@ -296,7 +299,7 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
   - **Description:** Call `vkQueuePresentKHR` to queue the rendered image for presentation to the screen, waiting on the render finished semaphore.
   - **Goal:** The completed frame is submitted for display on the window.
 - [ ] **Story 2.4.5: Integrate Rendering into Client Event Loop**
-  - **Description:** Modify the `client`'s main event loop (`winit`) to continuously call the rendering functions (acquire, submit, present) during `MainEventsCleared` or `RedrawRequested` events.
+  - **Description:** Modify the `client`'s main event loop (`SDL3`) to continuously call the rendering functions (acquire, submit, present) during `MainEventsCleared` or `RedrawRequested` events.
   - **Goal:** Rendering happens repeatedly, displaying the triangle continuously.
 - [ ] **Story 2.4.6: Add Basic Swapchain Resize Handling**
   - **Description:** Detect `VK_ERROR_OUT_OF_DATE_KHR` or `VK_SUBOPTIMAL_KHR` results from acquire/present calls and trigger a (potentially placeholder) swapchain recreation process. Ensure CPU waits for GPU idle before recreating.

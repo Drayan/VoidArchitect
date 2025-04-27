@@ -23,7 +23,7 @@ mod mocks {
         DEVICE_DESTROYED.load(Ordering::SeqCst)
     }
 
-    pub fn handle() -> WindowHandle<'static> {
+    pub fn handle() -> WindowHandle {
         // Use the safer mock helper
         super::mock_helpers::create_mock_window_handle()
     }
