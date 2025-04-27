@@ -204,24 +204,30 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 
 #### Stories:
 
-- [ ] **Story 2.2.1: Write Basic Vertex and Fragment Shaders**
+- [x] **Story 2.2.1: Write Basic Vertex and Fragment Shaders**
   - **Description:** Create simple GLSL shader files (`.vert`, `.frag`) for a minimal triangle rendering pipeline.
   - **Goal:** GLSL source code for vertex and fragment shaders exists in the `assets` or a dedicated shader directory.
-- [ ] **Story 2.2.2: Setup Shader Compilation (SPIR-V)**
+  - **Completed:** 27-04-2025
+- [x] **Story 2.2.2: Setup Shader Compilation (SPIR-V)**
   - **Description:** Integrate a shader compiler (like `shaderc-rs`) into the build process or runtime loading to convert GLSL shaders into SPIR-V bytecode.
   - **Goal:** SPIR-V bytecode can be generated from the GLSL source files.
-- [ ] **Story 2.2.3: Load SPIR-V into Shader Modules**
+  - **Completed:** 27-04-2025
+- [x] **Story 2.2.3: Load SPIR-V into Shader Modules**
   - **Description:** Implement code to read the SPIR-V bytecode and create `VkShaderModule` objects from it.
   - **Goal:** `VkShaderModule` handles for the vertex and fragment shaders are created.
-- [ ] **Story 2.2.4: Configure Fixed Pipeline Stages**
+  - **Completed:** 27-04-2025
+- [x] **Story 2.2.4: Configure Fixed Pipeline Stages**
   - **Description:** Define the configuration structures for vertex input, input assembly, viewport, scissor, rasterization, multisampling, and color blending states.
   - **Goal:** All necessary configuration structures for the fixed-function stages of the pipeline are populated.
-- [ ] **Story 2.2.5: Create Pipeline Layout (`VkPipelineLayout`)**
+  - **Completed:** 27-04-2025
+- [x] **Story 2.2.5: Create Pipeline Layout (`VkPipelineLayout`)**
   - **Description:** Create an empty `VkPipelineLayout` as no external resources (descriptors) or push constants are used for this basic triangle.
   - **Goal:** A valid, empty `VkPipelineLayout` handle is created.
-- [ ] **Story 2.2.6: Create Graphics Pipeline (`VkPipeline`)**
+  - **Completed:** 27-04-2025
+- [x] **Story 2.2.6: Create Graphics Pipeline (`VkPipeline`)**
   - **Description:** Assemble all the shader stages, fixed-function state configurations, pipeline layout, and render pass information to create the final `VkPipeline` object.
   - **Goal:** A valid `VkPipeline` handle for drawing the triangle is created.
+  - **Completed:** 27-04-2025
 
 ### Epic 2.3: Vertex Data and Command Buffer Recording
 
@@ -247,15 +253,18 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 
 #### Stories:
 
-- [ ] **Story 2.3.1: Define Triangle Vertex Data and Structure**
+- [x] **Story 2.3.1: Define Triangle Vertex Data and Structure**
   - **Description:** Define a Rust struct for vertices (e.g., `struct Vertex { pos: [f32; 2] }`) and create an array/vector containing the data for the three vertices of a triangle.
   - **Goal:** Triangle vertex data exists in a structured format in CPU memory.
-- [ ] **Story 2.3.2: Create Vertex Buffer (`VkBuffer`)**
+  - **Completed:** 27-04-2025
+- [x] **Story 2.3.2: Create Vertex Buffer (`VkBuffer`)**
   - **Description:** Implement a function or system to create a `VkBuffer` with `VK_BUFFER_USAGE_VERTEX_BUFFER_BIT` and allocate appropriate `VkDeviceMemory` (likely host-visible for easy upload initially).
   - **Goal:** A `VkBuffer` and associated `VkDeviceMemory` for storing vertex data are created.
-- [ ] **Story 2.3.3: Upload Vertex Data to GPU Buffer**
+  - **Completed:** 27-04-2025
+- [x] **Story 2.3.3: Upload Vertex Data to GPU Buffer**
   - **Description:** Map the allocated `VkDeviceMemory`, copy the triangle vertex data from the CPU array/vector into the mapped memory, and unmap it. Handle memory flushing if necessary.
   - **Goal:** The triangle vertex data resides in the GPU buffer.
+  - **Completed:** 27-04-2025
 - [x] **Story 2.3.4: Create Command Pool (`VkCommandPool`)**
   - **Description:** Create a `VkCommandPool` associated with the graphics queue family index, allowing allocation of command buffers for graphics operations.
   - **Goal:** A valid `VkCommandPool` handle is created.
@@ -264,9 +273,10 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
   - **Description:** Allocate the required number of command buffers (e.g., one per swapchain image) from the command pool.
   - **Goal:** `VkCommandBuffer` handles are allocated and ready for recording.
   - **Completed:** 25-04-2025
-- [ ] **Story 2.3.6: Record Draw Commands**
+- [x] **Story 2.3.6: Record Draw Commands**
   - **Description:** Implement the logic to record the command sequence (begin render pass, bind pipeline, bind vertex buffer, draw, end render pass) into each allocated command buffer.
   - **Goal:** Command buffers contain all necessary instructions to render the triangle when submitted.
+  - **Completed:** 27-04-2025
 
 ### Epic 2.4: Main Render Loop and Presentation
 

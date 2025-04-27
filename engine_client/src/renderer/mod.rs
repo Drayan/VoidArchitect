@@ -4,7 +4,7 @@
 //! an interface for rendering operations. The backend can be implemented for different graphics APIs
 //! (e.g., Vulkan). The frontend delegates rendering calls to the selected backend implementation.
 
-mod backends;
+pub mod backends;
 
 use crate::{platform::WindowHandle, renderer::backends::vulkan::RendererBackendVulkan};
 
@@ -54,7 +54,7 @@ pub trait RendererBackend {
 
 pub struct RendererFrontend {
     // Holds the selected renderer backend implementation (e.g., Vulkan).
-    backend: Box<dyn RendererBackend>,
+    pub backend: Box<dyn RendererBackend>,
 }
 
 impl RendererFrontend {
@@ -67,6 +67,11 @@ impl RendererFrontend {
     }
 
     pub fn initialize(&mut self, window: WindowHandle) -> Result<(), String> {
+        // Check if we have a valid window handle
+        if window.window.as_ptr().is_null() {
+            return Err("Invalid window handle".to_string());
+        }
+        // Initialize the backend with the provided window handle
         self.backend.initialize(window)
     }
 

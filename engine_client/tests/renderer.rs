@@ -6,20 +6,13 @@ use void_architect_engine_client::platform::WindowHandle;
 use void_architect_engine_client::renderer::RendererFrontend;
 
 // Mock WindowHandle for tests (cannot create real winit::Window in CI)
-
-struct DummyWindow;
-impl DummyWindow {
-    fn handle() -> WindowHandle {
-        // SAFETY: This is a dummy, do not dereference in tests
-        unsafe { std::mem::transmute(0usize) }
-    }
-}
+mod mock_helpers;
 
 #[test]
 fn renderer_frontend_initialize_returns_error_on_invalid_window() {
     let mut renderer = RendererFrontend::new();
     // Pass a dummy window handle, expect error or Ok (depends on backend impl)
-    let result = renderer.initialize(DummyWindow::handle());
+    let result = renderer.initialize(mock_helpers::create_mock_window_handle());
     // Accept both Ok and Err, but test does not panic
     assert!(result.is_ok() || result.is_err());
 }
@@ -49,9 +42,9 @@ fn renderer_frontend_frame_methods_do_not_panic() {
 #[test]
 fn renderer_frontend_multiple_initialize_calls() {
     let mut renderer = RendererFrontend::new();
-    let _ = renderer.initialize(DummyWindow::handle());
+    let _ = renderer.initialize(mock_helpers::create_mock_window_handle());
     // Second call should not panic, even if not supported
-    let _ = renderer.initialize(DummyWindow::handle());
+    let _ = renderer.initialize(mock_helpers::create_mock_window_handle());
 }
 
 #[test]
@@ -59,7 +52,7 @@ fn renderer_frontend_resize_before_and_after_initialize() {
     let mut renderer = RendererFrontend::new();
     // Resize before initialize
     let _ = renderer.resize(1024, 768);
-    let _ = renderer.initialize(DummyWindow::handle());
+    let _ = renderer.initialize(mock_helpers::create_mock_window_handle());
     // Resize after initialize
     let _ = renderer.resize(1280, 720);
 }
@@ -67,7 +60,7 @@ fn renderer_frontend_resize_before_and_after_initialize() {
 #[test]
 fn renderer_frontend_shutdown_after_initialize() {
     let mut renderer = RendererFrontend::new();
-    let _ = renderer.initialize(DummyWindow::handle());
+    let _ = renderer.initialize(mock_helpers::create_mock_window_handle());
     let _ = renderer.shutdown();
 }
 

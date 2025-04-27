@@ -16,14 +16,18 @@ use commands::VulkanCommandBuffer;
 use framebuffer::VulkanFramebuffer;
 //use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 
-mod commands;
+pub mod buffer;
+pub mod commands;
 mod device;
 mod framebuffer;
 mod image;
+mod pipeline;
 mod renderpass;
 mod swapchain;
 
+use buffer::{BufferType, Vertex, VulkanBuffer};
 use device::VulkanDevice;
+use pipeline::VulkanPipeline;
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 use renderpass::VulkanRenderPass;
 use swapchain::VulkanSwapchain;
@@ -51,6 +55,12 @@ struct VulkanContext {
     device: Option<VulkanDevice>,
     swapchain: Option<swapchain::VulkanSwapchain>,
     main_renderpass: Option<VulkanRenderPass>,
+
+    // Graphics pipeline for rendering.
+    graphics_pipeline: Option<pipeline::VulkanPipeline>,
+
+    // Vertex buffer for triangle data
+    vertex_buffer: Option<VulkanBuffer>,
 
     // Command buffers for graphics operations.
     graphics_cmds_buffers: Vec<VulkanCommandBuffer>,
@@ -140,10 +150,88 @@ impl RendererBackendVulkan {
             let logical_device = device.logical_device.as_ref().unwrap();
             let command_pool = device.graphics_command_pool;
             let image_count = swapchain.images.len();
+            let renderpass = context.main_renderpass.as_ref().unwrap();
+            let pipeline = context.graphics_pipeline.as_ref().unwrap();
+            let vertex_buffer = context.vertex_buffer.as_ref().unwrap();
+            let framebuffers = &swapchain.framebuffers;
+            let width = context.framebuffer_width;
+            let height = context.framebuffer_height;
 
             // Now create each buffer with the extracted values
-            for _ in 0..image_count {
+            for (i, framebuffer) in framebuffers.iter().enumerate() {
+                // Create command buffer
                 let buffer = VulkanCommandBuffer::new(logical_device, command_pool, true)?;
+
+                // Begin command buffer recording
+                let begin_info = vk::CommandBufferBeginInfo::default()
+                    .flags(vk::CommandBufferUsageFlags::SIMULTANEOUS_USE);
+
+                unsafe {
+                    logical_device
+                        .begin_command_buffer(buffer.handle, &begin_info)
+                        .map_err(|e| format!("Failed to begin command buffer: {}", e))?;
+                }
+
+                // Begin render pass
+                let clear_values = [
+                    vk::ClearValue {
+                        color: vk::ClearColorValue {
+                            float32: [0.0, 0.0, 0.0, 1.0],
+                        },
+                    },
+                    vk::ClearValue {
+                        depth_stencil: vk::ClearDepthStencilValue {
+                            depth: 1.0,
+                            stencil: 0,
+                        },
+                    },
+                ];
+
+                let render_pass_begin_info = vk::RenderPassBeginInfo::default()
+                    .render_pass(renderpass.handle)
+                    .framebuffer(framebuffer.handle)
+                    .render_area(vk::Rect2D {
+                        offset: vk::Offset2D { x: 0, y: 0 },
+                        extent: vk::Extent2D { width, height },
+                    })
+                    .clear_values(&clear_values);
+
+                unsafe {
+                    logical_device.cmd_begin_render_pass(
+                        buffer.handle,
+                        &render_pass_begin_info,
+                        vk::SubpassContents::INLINE,
+                    );
+
+                    // Bind the graphics pipeline
+                    logical_device.cmd_bind_pipeline(
+                        buffer.handle,
+                        vk::PipelineBindPoint::GRAPHICS,
+                        pipeline.pipeline,
+                    );
+
+                    // Bind the vertex buffer
+                    let vertex_buffers = [vertex_buffer.buffer];
+                    let offsets = [0];
+                    logical_device.cmd_bind_vertex_buffers(
+                        buffer.handle,
+                        0,
+                        &vertex_buffers,
+                        &offsets,
+                    );
+
+                    // Draw 3 vertices (one triangle)
+                    logical_device.cmd_draw(buffer.handle, 3, 1, 0, 0);
+
+                    // End render pass
+                    logical_device.cmd_end_render_pass(buffer.handle);
+
+                    // End command buffer recording
+                    logical_device
+                        .end_command_buffer(buffer.handle)
+                        .map_err(|e| format!("Failed to end command buffer: {}", e))?;
+                }
+
                 context.graphics_cmds_buffers.push(buffer);
             }
         }
@@ -235,6 +323,8 @@ impl RendererBackend for RendererBackendVulkan {
 
                 swapchain: None,
                 main_renderpass: None,
+                graphics_pipeline: None,
+                vertex_buffer: None,
 
                 graphics_cmds_buffers: vec![],
 
@@ -418,11 +508,54 @@ impl RendererBackend for RendererBackendVulkan {
             let swapchain = context.swapchain.as_mut().unwrap();
             let renderpass = context.main_renderpass.clone().unwrap();
 
-            match self.recreate_framebuffers(device, swapchain, renderpass, width, height) {
+            match self.recreate_framebuffers(
+                device,
+                swapchain,
+                renderpass.clone(),
+                width,
+                height,
+            ) {
                 Ok(_) => {}
                 Err(e) => {
                     log::error!("Failed to create Vulkan framebuffers: {:?}", e);
                     return Err(format!("Failed to create Vulkan framebuffers: {:?}", e));
+                }
+            };
+
+            // Create graphics pipeline
+            let shader_dir = std::path::Path::new("assets/shaders");
+            let extent = vk::Extent2D {
+                width: context.framebuffer_width,
+                height: context.framebuffer_height,
+            };
+            context.graphics_pipeline = Some(pipeline::create_graphics_pipeline(
+                device,
+                renderpass.handle,
+                extent,
+                shader_dir,
+            ));
+            log::debug!("Vulkan graphics pipeline created successfully");
+
+            // Create vertex buffer with triangle data
+            let vertices = [
+                Vertex::new([-0.5, -0.5, 0.0], [1.0, 0.0, 0.0]), // Bottom left (red)
+                Vertex::new([0.5, -0.5, 0.0], [0.0, 1.0, 0.0]),  // Bottom right (green)
+                Vertex::new([0.0, 0.5, 0.0], [0.0, 0.0, 1.0]),   // Top (blue)
+            ];
+
+            // Create vertex buffer
+            context.vertex_buffer = match VulkanBuffer::create_vertex_buffer(
+                device,
+                &vertices,
+                |type_filter, properties| context.find_memory_type(type_filter, properties),
+            ) {
+                Ok(buffer) => {
+                    log::debug!("Vulkan vertex buffer created successfully");
+                    Some(buffer)
+                }
+                Err(e) => {
+                    log::error!("Failed to create Vulkan vertex buffer: {:?}", e);
+                    return Err(format!("Failed to create Vulkan vertex buffer: {:?}", e));
                 }
             };
 
@@ -464,6 +597,24 @@ impl RendererBackend for RendererBackendVulkan {
                     );
                 }
                 log::debug!("Vulkan framebuffers destroyed");
+            }
+
+            // Destroy Vulkan vertex buffer
+            if let Some(vertex_buffer) = context.vertex_buffer.take() {
+                let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
+                vertex_buffer.destroy(device);
+                log::debug!("Vulkan vertex buffer destroyed");
+            }
+
+            // Destroy Vulkan graphics pipeline
+            if let Some(pipeline) = context.graphics_pipeline.take() {
+                unsafe {
+                    let device =
+                        context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
+                    device.destroy_pipeline(pipeline.pipeline, None);
+                    device.destroy_pipeline_layout(pipeline.layout, None);
+                }
+                log::debug!("Vulkan graphics pipeline destroyed");
             }
 
             // Destroy Vulkan render pass

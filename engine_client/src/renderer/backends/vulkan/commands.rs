@@ -9,7 +9,7 @@ pub(super) enum VulkanCommandBufferState {
     NotAllocated,
 }
 
-pub(super) struct VulkanCommandBuffer {
+pub struct VulkanCommandBuffer {
     pub handle: vk::CommandBuffer,
     pub state: VulkanCommandBufferState,
 }
