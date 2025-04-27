@@ -150,6 +150,14 @@ pub fn create_graphics_pipeline(
     let color_blending =
         PipelineColorBlendStateCreateInfo::default().attachments(&color_blend_attachments);
 
+    // Depth stencil state
+    let depth_stencil_state = PipelineDepthStencilStateCreateInfo::default()
+        .depth_test_enable(true)
+        .depth_write_enable(true)
+        .depth_compare_op(CompareOp::LESS)
+        .depth_bounds_test_enable(false)
+        .stencil_test_enable(false);
+
     // Create pipeline layout
     let pipeline_layout = create_pipeline_layout(device);
 
@@ -164,6 +172,7 @@ pub fn create_graphics_pipeline(
         .color_blend_state(&color_blending)
         .layout(pipeline_layout)
         .render_pass(render_pass)
+        .depth_stencil_state(&depth_stencil_state)
         .subpass(0);
 
     // Create pipeline
