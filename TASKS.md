@@ -408,4 +408,4 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 - **Goal:** Implement basic procedural noise functions (e.g., Perlin, Simplex) within the `core` engine library, potentially demonstrating their output visually in the client later (e.g., applying noise as texture coordinates or height map).
 
 ## Unplanned backlog
-- [ ] **Refactor EngineClient** currently the domain is splitted with EngineApplication which was necessary in the `winit` implementation, but now that the engine run on top of SDL3, it can be simplified.
+- [x] **Refactor EngineClient** currently the domain is splitted with EngineApplication which was necessary in the `winit` implementation, but now that the engine run on top of SDL3, it can be simplified. (Completed: 27-04-2025)

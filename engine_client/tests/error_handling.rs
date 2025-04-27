@@ -2,9 +2,9 @@
 //! Unit tests for error handling in the engine client
 //!
 
+use void_architect_engine_client::EngineContext;
 use void_architect_engine_client::platform::WindowHandle;
 use void_architect_engine_client::renderer::RendererFrontend;
-use void_architect_engine_client::{EngineApplication, EngineContext};
 
 // Import the common mock helpers
 mod mock_helpers;
@@ -13,7 +13,7 @@ mod mock_helpers;
 struct MockErrorWindow;
 
 impl MockErrorWindow {
-    fn handle() -> WindowHandle<'static> {
+    fn handle() -> WindowHandle {
         mock_helpers::create_mock_window_handle()
     }
 }
@@ -66,45 +66,6 @@ fn engine_handles_frame_errors() {
     // End frame without initialize should fail with an error
     let result = renderer.end_frame();
     assert!(result.is_err(), "End frame without initialize should fail");
-}
-
-/// Custom test engine context to validate error propagation
-struct TestErrorContext {
-    renderer_failed: bool,
-}
-
-impl EngineApplication for TestErrorContext {
-    fn initialize(&mut self, _window: WindowHandle) -> Result<(), String> {
-        if self.renderer_failed {
-            Err("Simulated renderer failure".to_string())
-        } else {
-            Ok(())
-        }
-    }
-
-    fn shutdown(&mut self) -> Result<(), String> {
-        if self.renderer_failed {
-            Err("Simulated shutdown failure".to_string())
-        } else {
-            Ok(())
-        }
-    }
-
-    fn update(&mut self, _delta_time: f32) {
-        // No-op for tests
-    }
-
-    fn render(&mut self, _delta_time: f32) {
-        // No-op for tests
-    }
-
-    fn resize(&mut self, _width: u32, _height: u32) -> Result<(), String> {
-        if self.renderer_failed {
-            Err("Simulated resize failure".to_string())
-        } else {
-            Ok(())
-        }
-    }
 }
 
 #[test]
