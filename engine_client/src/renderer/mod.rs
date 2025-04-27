@@ -6,7 +6,7 @@
 
 mod backends;
 
-use crate::{platform_sdl::WindowHandle, renderer::backends::vulkan::RendererBackendVulkan};
+use crate::{platform::WindowHandle, renderer::backends::vulkan::RendererBackendVulkan};
 
 pub trait RendererBackend {
     /// Initializes the renderer backend with the given window handle.
@@ -53,6 +53,7 @@ pub trait RendererBackend {
 }
 
 pub struct RendererFrontend {
+    // Holds the selected renderer backend implementation (e.g., Vulkan).
     backend: Box<dyn RendererBackend>,
 }
 
@@ -60,6 +61,7 @@ impl RendererFrontend {
     pub fn new() -> Self {
         Self {
             //TODO: This should be configurable
+            // By default, use the Vulkan backend. This should be configurable in the future.
             backend: Box::new(RendererBackendVulkan::new()),
         }
     }

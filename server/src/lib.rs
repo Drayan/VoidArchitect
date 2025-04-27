@@ -6,6 +6,21 @@
 ///
 /// Returns a tuple `(host, port)` as strings. If the environment variables `VOID_SERVER_HOST` or
 /// `VOID_SERVER_PORT` are not set or are empty, defaults to `127.0.0.1` and `4242` respectively.
+/// Reads the server host and port configuration from environment variables.
+///
+/// # Returns
+/// A tuple `(host, port)` where:
+/// - `host`: The server host as a String.
+/// - `port`: The server port as a String.
+///
+/// # Errors
+/// Panics if the environment variables `VOID_SERVER_HOST` or `VOID_SERVER_PORT` are not set.
+///
+/// # Examples
+/// ```
+/// let (host, port) = get_config();
+/// println!("Server will run on {}:{}", host, port);
+/// ```
 pub fn get_config() -> (String, String) {
     let default_host = "127.0.0.1";
     let default_port = "4242";

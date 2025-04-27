@@ -7,7 +7,7 @@
 
 use std::borrow::Cow;
 
-use crate::{platform_sdl::WindowHandle, renderer::RendererBackend};
+use crate::{platform::WindowHandle, renderer::RendererBackend};
 use ash::{
     Entry,
     vk::{self, Handle},
@@ -26,33 +26,40 @@ mod swapchain;
 use device::VulkanDevice;
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 use renderpass::VulkanRenderPass;
-use sdl3::sys::everything::__VkInstance;
 use swapchain::VulkanSwapchain;
 
 struct VulkanContext {
+    // Current framebuffer width and height.
     framebuffer_width: u32,
     framebuffer_height: u32,
 
+    // Vulkan instance and surface (None if not initialized).
     instance: Option<ash::Instance>,
     surface: Option<ash::vk::SurfaceKHR>,
 
+    // Vulkan loader handles for surface and swapchain extensions.
     surface_loader: Option<ash::khr::surface::Instance>,
     swapchain_loader: Option<ash::khr::swapchain::Device>,
 
+    // Debug utilities (only in debug builds).
     #[cfg(debug_assertions)]
     debug_callback: Option<ash::vk::DebugUtilsMessengerEXT>,
     #[cfg(debug_assertions)]
     debug_utils_loader: Option<ash::ext::debug_utils::Instance>,
 
+    // Logical device and swapchain state.
     device: Option<VulkanDevice>,
     swapchain: Option<swapchain::VulkanSwapchain>,
     main_renderpass: Option<VulkanRenderPass>,
 
+    // Command buffers for graphics operations.
     graphics_cmds_buffers: Vec<VulkanCommandBuffer>,
 
+    // Current image index and frame number.
     image_index: u32,
     current_frame: u32,
 
+    // Flag indicating if swapchain is being recreated.
     recreating_swapchain: bool,
 }
 
@@ -70,6 +77,8 @@ impl VulkanContext {
         type_filter: u32,
         properties: vk::MemoryPropertyFlags,
     ) -> Result<u32, String> {
+        // # Reason: Vulkan requires selecting a memory type that matches both a bitmask (type_filter)
+        // and required property flags. This iterates all memory types and returns the first match.
         let physical_device = self.device.as_ref().unwrap().physical_device;
         let mem_properties = unsafe {
             self.instance
@@ -79,6 +88,7 @@ impl VulkanContext {
         };
 
         for i in 0..mem_properties.memory_type_count {
+            // Check if this memory type is allowed by the filter and has the required properties.
             if (type_filter & (1 << i)) != 0
                 && mem_properties.memory_types[i as usize].property_flags.contains(properties)
             {
@@ -86,6 +96,7 @@ impl VulkanContext {
             }
         }
 
+        // No suitable memory type found.
         Err(format!(
             "Failed to find suitable memory type for filter: {} and properties: {:?}",
             type_filter, properties
@@ -95,6 +106,7 @@ impl VulkanContext {
 
 pub struct RendererBackendVulkan {
     // Vulkan context
+    // Holds the Vulkan context state for this backend.
     context: Option<VulkanContext>,
 }
 
@@ -247,7 +259,7 @@ impl RendererBackend for RendererBackendVulkan {
             // let mut extension_names = match window.vulkan_instance_extensions() {
             //     Ok(extensions) => {
             //         extensions.iter().map(|s| s.as_ptr() as *const i8).collect::<Vec<_>>()
-            //     }
+            // `   }
             //     Err(e) => {
             //         log::error!("Failed to get Vulkan instance extensions: {:?}", e);
             //         return Err(format!("Failed to get Vulkan instance extensions: {:?}", e));
