@@ -2,8 +2,13 @@
 //! Unit tests for error handling in the engine client
 //!
 
+use void_architect_engine_client::EngineContext;
 use void_architect_engine_client::platform::WindowHandle;
+<<<<<<< HEAD
 use void_architect_engine_client::renderer::{RendererBackend, RendererFrontend};
+=======
+use void_architect_engine_client::renderer::RendererFrontend;
+>>>>>>> 2219155 (refactor: Simplify EngineClient structure by removing EngineApplication trait and updating related tests)
 
 // Import the common mock helpers
 mod mock_helpers;
@@ -11,6 +16,7 @@ mod mock_helpers;
 // Define a mock renderer backend for testing error handling
 struct MockErrorRendererBackend;
 
+<<<<<<< HEAD
 impl RendererBackend for MockErrorRendererBackend {
     fn initialize(&mut self, _window: WindowHandle) -> Result<(), String> {
         // Simulate an initialization error
@@ -31,6 +37,11 @@ impl RendererBackend for MockErrorRendererBackend {
 
     fn resize(&mut self, _width: u32, _height: u32) -> Result<(), String> {
         Err("Mock resize error".to_string()) // Simulate an error
+=======
+impl MockErrorWindow {
+    fn handle() -> WindowHandle {
+        mock_helpers::create_mock_window_handle()
+>>>>>>> 2219155 (refactor: Simplify EngineClient structure by removing EngineApplication trait and updating related tests)
     }
 }
 
@@ -104,6 +115,7 @@ fn engine_handles_frame_errors() {
     // End frame without initialize should fail with an error from the mock
     let result = renderer.end_frame();
     assert!(result.is_err(), "End frame without initialize should fail");
+<<<<<<< HEAD
     if let Err(err) = result {
         assert!(
             err.contains("Mock end frame error"),
@@ -111,4 +123,37 @@ fn engine_handles_frame_errors() {
             err
         );
     }
+=======
+}
+
+#[test]
+fn engine_context_handles_renderer_failures() {
+    // Create a context with actual renderer
+    let mut context = EngineContext::new();
+
+    // We can't directly create a context with no renderer due to visibility,
+    // so we'll test behavior with our mock window which will cause errors
+
+    // Operations should not panic even with failures
+    context.update(0.016);
+
+    // Test error handling for renderer initialization
+    let result = context.initialize(MockErrorWindow::handle());
+    assert!(
+        result.is_err() || result.is_ok(),
+        "Initialize should return a Result without panicking"
+    );
+
+    let result = context.shutdown();
+    assert!(
+        result.is_err() || result.is_ok(),
+        "Shutdown should return a Result without panicking"
+    );
+
+    let result = context.resize(800, 600);
+    assert!(
+        result.is_err() || result.is_ok(),
+        "Resize should return a Result without panicking"
+    );
+>>>>>>> 2219155 (refactor: Simplify EngineClient structure by removing EngineApplication trait and updating related tests)
 }

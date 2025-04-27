@@ -71,6 +71,14 @@ struct VulkanContext {
 
     // Flag indicating if swapchain is being recreated.
     recreating_swapchain: bool,
+
+    // Maximum number of frames in flight
+    max_frames_in_flight: usize,
+
+    // Synchronization primitives
+    image_available_semaphores: Vec<ash::vk::Semaphore>,
+    render_finished_semaphores: Vec<ash::vk::Semaphore>,
+    in_flight_fences: Vec<ash::vk::Fence>,
 }
 
 impl VulkanContext {
@@ -329,7 +337,41 @@ impl RendererBackend for RendererBackendVulkan {
                 graphics_cmds_buffers: vec![],
 
                 recreating_swapchain: false,
+                max_frames_in_flight: 2, // Double buffering
+                image_available_semaphores: Vec::new(),
+                render_finished_semaphores: Vec::new(),
+                in_flight_fences: Vec::new(),
             };
+
+            let max_frames_in_flight = context.max_frames_in_flight;
+            let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
+
+            let semaphore_info = vk::SemaphoreCreateInfo::default();
+            let fence_info =
+                vk::FenceCreateInfo::default().flags(vk::FenceCreateFlags::SIGNALED);
+
+            for _ in 0..max_frames_in_flight {
+                let image_available_semaphore = unsafe {
+                    device.create_semaphore(&semaphore_info, None).map_err(|e| {
+                        format!("Failed to create image available semaphore: {}", e)
+                    })?
+                };
+                context.image_available_semaphores.push(image_available_semaphore);
+
+                let render_finished_semaphore = unsafe {
+                    device.create_semaphore(&semaphore_info, None).map_err(|e| {
+                        format!("Failed to create render finished semaphore: {}", e)
+                    })?
+                };
+                context.render_finished_semaphores.push(render_finished_semaphore);
+
+                let in_flight_fence = unsafe {
+                    device
+                        .create_fence(&fence_info, None)
+                        .map_err(|e| format!("Failed to create in flight fence: {}", e))?
+                };
+                context.in_flight_fences.push(in_flight_fence);
+            }
 
             // Create Vulkan Application Info
             let app_infos = vk::ApplicationInfo::default()
@@ -579,6 +621,17 @@ impl RendererBackend for RendererBackendVulkan {
         // Cleanup Vulkan resources here
         if let Some(mut context) = self.context.take() {
             log::debug!("Shutting down Vulkan renderer");
+
+            let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
+
+            for i in 0..context.max_frames_in_flight {
+                unsafe {
+                    device.destroy_semaphore(context.image_available_semaphores[i], None);
+                    device.destroy_semaphore(context.render_finished_semaphores[i], None);
+                    device.destroy_fence(context.in_flight_fences[i], None);
+                }
+            }
+
             // Destroy Vulkan command buffers
             match self.destroy_commands_buffers(&mut context) {
                 Ok(_) => {}
