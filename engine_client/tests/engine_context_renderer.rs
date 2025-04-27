@@ -2,7 +2,7 @@
 //! Integration tests for the RendererFrontend + EngineContext integration
 //!
 
-use void_architect_engine_client::EngineContext;
+use void_architect_engine_client::{EngineApplication, EngineContext};
 
 // Import the common mock helpers
 mod mock_helpers;
@@ -18,7 +18,6 @@ mod mocks {
 }
 
 #[test]
-#[ignore = "Requires a real SDL3 window handle; will segfault with mock."]
 fn engine_context_initialize_with_renderer() {
     let mut context = EngineContext::new();
     let result = context.initialize(mocks::handle());
@@ -31,7 +30,6 @@ fn engine_context_initialize_with_renderer() {
 }
 
 #[test]
-#[ignore = "Requires a real SDL3 window handle; will segfault with mock."]
 fn engine_context_shutdown_with_renderer() {
     let mut context = EngineContext::new();
     let _ = context.initialize(mocks::handle());
@@ -44,7 +42,6 @@ fn engine_context_shutdown_with_renderer() {
 }
 
 #[test]
-#[ignore = "Requires a real SDL3 window handle; will segfault with mock."]
 fn engine_context_update_render_with_renderer() {
     let mut context = EngineContext::new();
     let _ = context.initialize(mocks::handle());
@@ -55,7 +52,6 @@ fn engine_context_update_render_with_renderer() {
 }
 
 #[test]
-#[ignore = "Requires a real SDL3 window handle; will segfault with mock."]
 fn engine_context_resize_with_renderer() {
     let mut context = EngineContext::new();
     let _ = context.initialize(mocks::handle());
@@ -68,7 +64,6 @@ fn engine_context_resize_with_renderer() {
 }
 
 #[test]
-#[ignore = "Requires a real SDL3 window handle; will segfault with mock."]
 fn engine_context_render_cycle() {
     let mut context = EngineContext::new();
     let _ = context.initialize(mocks::handle());
@@ -94,7 +89,6 @@ fn engine_context_render_cycle() {
 
 // Changed this test to use public API only
 #[test]
-#[ignore = "Requires a real SDL3 window handle; will segfault with mock."]
 fn engine_context_error_handling() {
     // Create a context
     let mut context = EngineContext::new();

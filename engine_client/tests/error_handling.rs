@@ -2,13 +2,12 @@
 //! Unit tests for error handling in the engine client
 //!
 
-use void_architect_engine_client::EngineContext;
 use void_architect_engine_client::platform::WindowHandle;
 <<<<<<< HEAD
 use void_architect_engine_client::renderer::{RendererBackend, RendererFrontend};
 =======
 use void_architect_engine_client::renderer::RendererFrontend;
->>>>>>> 2219155 (refactor: Simplify EngineClient structure by removing EngineApplication trait and updating related tests)
+use void_architect_engine_client::{EngineApplication, EngineContext};
 
 // Import the common mock helpers
 mod mock_helpers;
@@ -39,7 +38,7 @@ impl RendererBackend for MockErrorRendererBackend {
         Err("Mock resize error".to_string()) // Simulate an error
 =======
 impl MockErrorWindow {
-    fn handle() -> WindowHandle {
+    fn handle() -> WindowHandle<'static> {
         mock_helpers::create_mock_window_handle()
 >>>>>>> 2219155 (refactor: Simplify EngineClient structure by removing EngineApplication trait and updating related tests)
     }
@@ -115,15 +114,45 @@ fn engine_handles_frame_errors() {
     // End frame without initialize should fail with an error from the mock
     let result = renderer.end_frame();
     assert!(result.is_err(), "End frame without initialize should fail");
-<<<<<<< HEAD
-    if let Err(err) = result {
-        assert!(
-            err.contains("Mock end frame error"),
-            "Error message should indicate mock end frame failure: {}",
-            err
-        );
+}
+
+/// Custom test engine context to validate error propagation
+struct TestErrorContext {
+    renderer_failed: bool,
+}
+
+impl EngineApplication for TestErrorContext {
+    fn initialize(&mut self, _window: WindowHandle) -> Result<(), String> {
+        if self.renderer_failed {
+            Err("Simulated renderer failure".to_string())
+        } else {
+            Ok(())
+        }
     }
-=======
+
+    fn shutdown(&mut self) -> Result<(), String> {
+        if self.renderer_failed {
+            Err("Simulated shutdown failure".to_string())
+        } else {
+            Ok(())
+        }
+    }
+
+    fn update(&mut self, _delta_time: f32) {
+        // No-op for tests
+    }
+
+    fn render(&mut self, _delta_time: f32) {
+        // No-op for tests
+    }
+
+    fn resize(&mut self, _width: u32, _height: u32) -> Result<(), String> {
+        if self.renderer_failed {
+            Err("Simulated resize failure".to_string())
+        } else {
+            Ok(())
+        }
+    }
 }
 
 #[test]

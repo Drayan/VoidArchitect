@@ -1,7 +1,7 @@
 //! Engine client library root module.
 //!
 //! This module re-exports the main subsystems of the engine client, including platform abstraction
-//! and rendering. It defines the main entry points for engine context, , and
+//! and rendering. It defines the main entry points for engine context, application trait, and
 //! orchestrates subsystem initialization and shutdown.
 
 pub mod platform;
@@ -29,15 +29,54 @@ impl EngineContext {
             renderer_system: Some(RendererFrontend::new()),
         }
     }
+}
 
-    /// Initializes the engine context with the given window handle.
+/// Trait for applications using the engine client.
+///
+/// Implement this trait to define the lifecycle and rendering logic for your application.
+pub(crate) trait EngineApplication {
+    // Trait for internal engine application lifecycle management.
+    /// Initializes the application with the given window handle.
     ///
     /// # Arguments
     /// * `window` - The handle to the window provided by the platform layer.
     ///
     /// # Returns
     /// * `Ok(())` if initialization succeeds, or `Err(String)` with an error message.
-    pub fn initialize(&mut self, window: WindowHandle) -> Result<(), String> {
+    fn initialize(&mut self, window: WindowHandle) -> Result<(), String>;
+
+    /// Shuts down the application and releases resources.
+    ///
+    /// # Returns
+    /// * `Ok(())` if shutdown succeeds, or `Err(String)` with an error message.
+    fn shutdown(&mut self) -> Result<(), String>;
+
+    /// Updates the application state.
+    ///
+    /// # Arguments
+    /// * `delta_time` - Time elapsed since the last update, in seconds.
+    fn update(&mut self, delta_time: f32);
+
+    /// Renders the application.
+    ///
+    /// # Arguments
+    /// * `delta_time` - Time elapsed since the last render, in seconds.
+    fn render(&mut self, delta_time: f32);
+
+    /// Handles window resizing.
+    ///
+    /// # Arguments
+    /// * `width` - The new width of the window.
+    /// * `height` - The new height of the window.
+    ///
+    /// # Returns
+    /// * `Ok(())` if resize succeeds, or `Err(String)` with an error message.
+    fn resize(&mut self, width: u32, height: u32) -> Result<(), String>;
+}
+
+impl EngineApplication for EngineContext {
+    fn initialize(&mut self, window: WindowHandle) -> Result<(), String> {
+        // Initialize the renderer system with the provided window handle.
         if let Some(renderer) = &mut self.renderer_system {
             renderer.initialize(window)
         } else {
@@ -45,11 +84,8 @@ impl EngineContext {
         }
     }
 
-    /// Shuts down the engine context and releases resources.
-    ///
-    /// # Returns
-    /// * `Ok(())` if shutdown succeeds, or `Err(String)` with an error message.
-    pub fn shutdown(&mut self) -> Result<(), String> {
+    fn shutdown(&mut self) -> Result<(), String> {
+        // Shutdown the renderer system if it exists.
         if let Some(renderer) = &mut self.renderer_system {
             renderer.shutdown()
         } else {
@@ -57,20 +93,12 @@ impl EngineContext {
         }
     }
 
-    /// Updates the engine context state.
-    ///
-    /// # Arguments
-    /// * `delta_time` - Time elapsed since the last update, in seconds.
-    pub fn update(&mut self, _delta_time: f32) {
+    fn update(&mut self, _delta_time: f32) {
         // Default implementation does nothing.
-        // Override in  if needed.
+        // Override in application-specific context if needed.
     }
 
-    /// Renders the engine context.
-    ///
-    /// # Arguments
-    /// * `delta_time` - Time elapsed since the last render, in seconds.
-    pub fn render(&mut self, _delta_time: f32) {
+    fn render(&mut self, _delta_time: f32) {
         // Begin a new rendering frame.
         self.renderer_system
             .as_mut()
@@ -87,15 +115,8 @@ impl EngineContext {
             .expect("Failed to end frame");
     }
 
-    /// Handles window resizing.
-    ///
-    /// # Arguments
-    /// * `width` - The new width of the window.
-    /// * `height` - The new height of the window.
-    ///
-    /// # Returns
-    /// * `Ok(())` if resize succeeds, or `Err(String)` with an error message.
-    pub fn resize(&mut self, width: u32, height: u32) -> Result<(), String> {
+    fn resize(&mut self, width: u32, height: u32) -> Result<(), String> {
+        // Resize the renderer system if it exists.
         if let Some(renderer) = &mut self.renderer_system {
             renderer.resize(width, height)
         } else {

@@ -2,7 +2,7 @@
 //! Integration tests for the platform layer with different configurations
 //!
 
-use void_architect_engine_client::platform::WindowHandle;
+use void_architect_engine_client::{EngineApplication, platform::WindowHandle};
 
 /// Mock application for testing different platform configurations
 struct ConfigurableApp {
@@ -25,16 +25,24 @@ impl Default for ConfigurableApp {
     }
 }
 
-impl ConfigurableApp {
-    pub fn update(&mut self, _delta_time: f32) {
+impl EngineApplication for ConfigurableApp {
+    fn initialize(&mut self, _window: WindowHandle) -> Result<(), String> {
+        Ok(())
+    }
+
+    fn shutdown(&mut self) -> Result<(), String> {
+        Ok(())
+    }
+
+    fn update(&mut self, _delta_time: f32) {
         self.update_called = true;
     }
 
-    pub fn render(&mut self, _delta_time: f32) {
+    fn render(&mut self, _delta_time: f32) {
         self.render_called = true;
     }
 
-    pub fn resize(&mut self, width: u32, height: u32) -> Result<(), String> {
+    fn resize(&mut self, width: u32, height: u32) -> Result<(), String> {
         self.width = width;
         self.height = height;
         self.resize_count += 1;
