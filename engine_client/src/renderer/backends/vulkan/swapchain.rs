@@ -4,7 +4,7 @@ use super::{VulkanContext, VulkanFramebuffer, device::VulkanDevice, image::Vulka
 
 pub(super) struct VulkanSwapchain {
     pub surface_format: vk::SurfaceFormatKHR,
-    max_frames_in_flight: u8,
+    pub max_frames_in_flight: u8,
     handle: vk::SwapchainKHR,
     pub images: Vec<vk::Image>,
     pub image_views: Vec<vk::ImageView>,

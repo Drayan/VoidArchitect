@@ -1,100 +1,102 @@
 //!
-//! Unit tests for error handling in the engine client
+//! Integration tests for error handling
 //!
-
-use void_architect_engine_client::EngineContext;
-use void_architect_engine_client::platform::WindowHandle;
+mod helpers;
+use helpers::TestResult;
+use helpers::window::create_invalid_window_handle;
 use void_architect_engine_client::renderer::RendererFrontend;
 
-// Import the common mock helpers
-mod mock_helpers;
+#[test]
+fn test_invalid_window_initialization() -> TestResult<()> {
+    let mut renderer = RendererFrontend::new();
+    let invalid_handle = create_invalid_window_handle();
 
-/// Mock window handle for testing error handling
-struct MockErrorWindow;
-
-impl MockErrorWindow {
-    fn handle() -> WindowHandle {
-        mock_helpers::create_mock_window_handle()
+    match renderer.initialize(invalid_handle) {
+        Ok(_) => Err("Expected initialization to fail with invalid handle".into()),
+        Err(err) => {
+            assert!(!err.is_empty(), "Error message should not be empty");
+            Ok(())
+        }
     }
 }
 
 #[test]
-fn engine_handles_out_of_memory_error() {
+fn test_uninitialized_operations() -> TestResult<()> {
     let mut renderer = RendererFrontend::new();
 
-    // Try to initialize with mock window (should fail)
-    let result = renderer.initialize(MockErrorWindow::handle());
+    // Test frame operations before initialization
+    assert!(renderer.begin_frame().is_err(), "Begin frame should fail");
+    assert!(renderer.end_frame().is_err(), "End frame should fail");
+    assert!(renderer.resize(800, 600).is_err(), "Resize should fail");
 
-    // Check that we get appropriate error message
-    if let Err(err) = result {
-        assert!(
-            err.contains("Window handle is invalid") || !err.is_empty(),
-            "Error messages should be descriptive: {}",
-            err
-        );
-    }
+    Ok(())
 }
 
-#[test]
-fn engine_handles_resize_errors() {
-    let mut renderer = RendererFrontend::new();
+// #[test]
+// fn test_resize_errors() -> TestResult<()> {
+//     let mut renderer = RendererFrontend::new();
+//     let handle = create_test_window_handle();
 
-    // Try to resize before initialize
-    let result = renderer.resize(0, 0);
+//     renderer.initialize(handle)?;
 
-    // Should fail with an appropriate error
-    assert!(
-        result.is_err(),
-        "Resize with invalid dimensions should fail"
-    );
-    if let Err(err) = result {
-        assert!(!err.is_empty(), "Error message should not be empty");
-    }
-}
+//     // Invalid dimensions
+//     assert!(
+//         renderer.resize(0, 0).is_err(),
+//         "Resize with zero dimensions should fail"
+//     );
 
-#[test]
-fn engine_handles_frame_errors() {
-    let mut renderer = RendererFrontend::new();
+//     // Begin a frame and try to resize
+//     renderer.begin_frame()?;
+//     assert!(
+//         renderer.resize(1024, 768).is_err(),
+//         "Resize during frame should fail"
+//     );
+//     renderer.end_frame()?;
 
-    // Begin frame without initialize should fail with an error
-    let result = renderer.begin_frame();
-    assert!(
-        result.is_err(),
-        "Begin frame without initialize should fail"
-    );
+//     Ok(())
+// }
 
-    // End frame without initialize should fail with an error
-    let result = renderer.end_frame();
-    assert!(result.is_err(), "End frame without initialize should fail");
-}
+// #[test]
+// fn test_frame_nesting_errors() -> TestResult<()> {
+//     let mut renderer = RendererFrontend::new();
+//     let handle = create_test_window_handle();
 
-#[test]
-fn engine_context_handles_renderer_failures() {
-    // Create a context with actual renderer
-    let mut context = EngineContext::new();
+//     renderer.initialize(handle)?;
 
-    // We can't directly create a context with no renderer due to visibility,
-    // so we'll test behavior with our mock window which will cause errors
+//     // Nested begin_frame
+//     renderer.begin_frame()?;
+//     assert!(
+//         renderer.begin_frame().is_err(),
+//         "Nested begin_frame should fail"
+//     );
+//     renderer.end_frame()?;
 
-    // Operations should not panic even with failures
-    context.update(0.016);
+//     // end_frame without begin
+//     assert!(
+//         renderer.end_frame().is_err(),
+//         "end_frame without begin should fail"
+//     );
 
-    // Test error handling for renderer initialization
-    let result = context.initialize(MockErrorWindow::handle());
-    assert!(
-        result.is_err() || result.is_ok(),
-        "Initialize should return a Result without panicking"
-    );
+//     Ok(())
+// }
 
-    let result = context.shutdown();
-    assert!(
-        result.is_err() || result.is_ok(),
-        "Shutdown should return a Result without panicking"
-    );
+// #[test]
+// fn test_shutdown_errors() -> TestResult<()> {
+//     let mut renderer = RendererFrontend::new();
 
-    let result = context.resize(800, 600);
-    assert!(
-        result.is_err() || result.is_ok(),
-        "Resize should return a Result without panicking"
-    );
-}
+//     // Shutdown without initialization
+//     assert!(
+//         renderer.shutdown().is_err(),
+//         "Shutdown without initialization should fail"
+//     );
+
+//     // Initialize and shutdown
+//     let handle = create_test_window_handle();
+//     renderer.initialize(handle)?;
+//     renderer.shutdown()?;
+
+//     // Double shutdown
+//     assert!(renderer.shutdown().is_err(), "Second shutdown should fail");
+
+//     Ok(())
+// }

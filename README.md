@@ -15,7 +15,12 @@ The project is organized into several Rust crates:
 - **Cross-platform window initialization** via `SDL3` (Windows, Linux, macOS supported)
 - **Native event loop** integrated into the client application
 - **Clear separation** between engine (engine_client) and application logic (client) for testability and scalability
-- **Rust unit tests** for all major features
+- **Comprehensive testing strategy** including:
+  - **Unit tests** integrated with source files
+  - **Integration tests** in dedicated test files
+  - **Property-based testing** using `proptest`
+  - **Performance benchmarks** using `criterion`
+  - **Mock objects** when needed via `mockall`
 - **Comprehensive documentation** and rustdoc comments
 
 ## Known Limitations

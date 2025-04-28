@@ -8,4 +8,7 @@ ash = { version = "0.38.0", features = ["linked", "debug", "std" ] }
 ash-window = "0.13.0"
 log = "0.4.27"
 raw-window-handle = "0.6.2"
-sdl3 = { version = "0.14.25", features = ["raw-window-handle"] }
+sdl3 = { version = "0.14.25", features = ["raw-window-handle", "test-mode"] }
+
+[dev-dependencies]
+mockall = "0.12.1"

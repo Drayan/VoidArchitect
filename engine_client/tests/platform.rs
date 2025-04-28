@@ -3,6 +3,10 @@
 // which might not work reliably in all test environments, especially on macOS.
 // These tests focus on the state management and API of PlatformLayer.
 
+use mockall::predicate::*; // Removed automock
+// Removed unused imports: PlatformError, PlatformLayer, WindowHandle
+use void_architect_engine_client::platform::PlatformLayer; // Keep PlatformLayer if needed by tests
+
 // Import the necessary items from the engine_client crate.
 // Assuming platform_sdl.rs will be renamed to platform.rs and exposed at crate::platform
 
@@ -14,11 +18,13 @@ const TEST_HEIGHT: u32 = 600;
 // We wrap this to potentially skip on macOS if needed, although SDL3 might be more flexible.
 #[cfg(not(target_os = "macos"))]
 fn initialize_test_platform() -> PlatformLayer {
+    use void_architect_engine_client::platform::{PlatformError, PlatformLayer};
+
     let mut platform = PlatformLayer::new();
     // Use assert! or expect for test setup, as panics indicate setup failure.
-    platform
-        .initialize(TEST_TITLE, TEST_WIDTH, TEST_HEIGHT)
-        .expect("PlatformLayer failed to initialize for test");
+    if let Err(e) = platform.initialize(TEST_TITLE, TEST_WIDTH, TEST_HEIGHT) {
+        panic!("PlatformLayer failed to initialize for test: {:?}", e);
+    }
     platform
 }
 

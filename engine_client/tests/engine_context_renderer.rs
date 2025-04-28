@@ -1,129 +1,96 @@
-//!
-//! Integration tests for the RendererFrontend + EngineContext integration
-//!
+mod helpers;
+use helpers::TestResult;
+use helpers::window::create_invalid_window_handle;
+use void_architect_engine_client::{EngineContext, EngineError};
 
-use void_architect_engine_client::EngineContext;
+// #[test]
+// fn test_engine_context_lifecycle() -> TestResult<()> {
+//     let mut context = EngineContext::new();
+//     let handle = create_window_handle(800, 600, "Test Window");
 
-// Import the common mock helpers
-mod mock_helpers;
+//     // Test initialization
+//     context.initialize(handle)?;
 
-/// Mock for testing EngineContext with RendererFrontend integration
-mod mocks {
-    use void_architect_engine_client::platform::WindowHandle;
+//     // Test update and render
+//     context.update(0.016)?;
+//     context.render(0.016)?;
 
-    pub fn handle() -> WindowHandle {
-        // Use the safer mock helper
-        super::mock_helpers::create_mock_window_handle()
-    }
-}
+//     // Test resize
+//     context.resize(1920, 1080)?;
 
-#[test]
-#[ignore = "Requires a real SDL3 window handle; will segfault with mock."]
-fn engine_context_initialize_with_renderer() {
-    let mut context = EngineContext::new();
-    let result = context.initialize(mocks::handle());
-
-    // Initialize through context should work or fail gracefully
-    assert!(
-        result.is_ok() || result.is_err(),
-        "EngineContext initialize should return a Result without panicking"
-    );
-}
+//     // Test shutdown
+//     context.shutdown()?;
+//     Ok(())
+// }
 
 #[test]
-#[ignore = "Requires a real SDL3 window handle; will segfault with mock."]
-fn engine_context_shutdown_with_renderer() {
-    let mut context = EngineContext::new();
-    let _ = context.initialize(mocks::handle());
-
-    let result = context.shutdown();
-    assert!(
-        result.is_ok() || result.is_err(),
-        "EngineContext shutdown should return a Result without panicking"
-    );
-}
-
-#[test]
-#[ignore = "Requires a real SDL3 window handle; will segfault with mock."]
-fn engine_context_update_render_with_renderer() {
-    let mut context = EngineContext::new();
-    let _ = context.initialize(mocks::handle());
-
-    // These shouldn't panic even with a mock window
-    context.update(0.016); // ~60fps
-    context.render(0.016);
-}
-
-#[test]
-#[ignore = "Requires a real SDL3 window handle; will segfault with mock."]
-fn engine_context_resize_with_renderer() {
-    let mut context = EngineContext::new();
-    let _ = context.initialize(mocks::handle());
-
-    let result = context.resize(1280, 720);
-    assert!(
-        result.is_ok() || result.is_err(),
-        "EngineContext resize should return a Result without panicking"
-    );
-}
-
-#[test]
-#[ignore = "Requires a real SDL3 window handle; will segfault with mock."]
-fn engine_context_render_cycle() {
-    let mut context = EngineContext::new();
-    let _ = context.initialize(mocks::handle());
-
-    // Simulate a few frames of the render cycle
-    for i in 0..5 {
-        let dt = 0.016; // ~60fps
-        context.update(dt);
-        context.render(dt);
-
-        // Occasional resize
-        if i == 2 {
-            let _ = context.resize(1600, 900);
-        }
-    }
-
-    let result = context.shutdown();
-    assert!(
-        result.is_ok() || result.is_err(),
-        "EngineContext shutdown after render cycle should return a Result without panicking"
-    );
-}
-
-// Changed this test to use public API only
-#[test]
-#[ignore = "Requires a real SDL3 window handle; will segfault with mock."]
-fn engine_context_error_handling() {
-    // Create a context
+fn test_engine_context_error_handling() -> TestResult<()> {
     let mut context = EngineContext::new();
 
-    // Test error handling for renderer initialization
-    let init_result = context.initialize(mocks::handle());
-
-    // For now we're just ensuring these don't panic - without a real window they should return errors
-    if init_result.is_err() {
-        // Expected result
-        assert!(
-            !init_result.unwrap_err().is_empty(),
-            "Error message should not be empty"
-        );
-    }
-
-    let shutdown_result = context.shutdown();
+    // Test with invalid window handle
+    let invalid_handle = create_invalid_window_handle();
     assert!(
-        shutdown_result.is_ok() || shutdown_result.is_err(),
-        "Shutdown should return a Result"
+        context.initialize(invalid_handle).is_err(),
+        "Initialize with invalid handle should fail"
     );
 
-    let resize_result = context.resize(1024, 768);
+    // Test operations before initialization
     assert!(
-        resize_result.is_ok() || resize_result.is_err(),
-        "Resize should return a Result"
+        matches!(
+            context.update(0.016),
+            Err(EngineError::InitializationError(_))
+        ),
+        "Update before init should return InitializationError"
+    );
+    assert!(
+        matches!(
+            context.render(0.016),
+            Err(EngineError::InitializationError(_))
+        ),
+        "Render before init should return InitializationError"
+    );
+    assert!(
+        matches!(
+            context.resize(1024, 768),
+            Err(EngineError::InitializationError(_))
+        ),
+        "Resize before init should return InitializationError"
+    );
+    assert!(
+        matches!(context.shutdown(), Err(EngineError::InitializationError(_))),
+        "Shutdown before init should return InitializationError"
     );
 
-    // These should not panic
-    context.update(0.016);
-    // Avoid rendering since it might panic with an invalid renderer
+    // Initialize with valid handle for further tests
+    // let handle = cwindow_handle(800, 600, "Test Window");
+    // context.initialize(handle)?;
+
+    // // Test invalid resize
+    // assert!(
+    //     context.resize(0, 0).is_err(),
+    //     "Resize with invalid dimensions should fail"
+    // );
+    Ok(())
 }
+
+// #[test]
+// fn test_engine_context_render_cycle() -> TestResult<()> {
+//     let mut context = EngineContext::new();
+//     let handle = create_window_handle(800, 600, "Test Window");
+
+//     context.initialize(handle)?;
+
+//     // Run several frames
+//     for i in 0..5 {
+//         context.update(0.016)?;
+//         context.render(0.016)?;
+
+//         // Test resize in middle of render cycle
+//         if i == 2 {
+//             context.resize(1600, 900)?;
+//         }
+//     }
+
+//     context.shutdown()?;
+//     Ok(())
+// }

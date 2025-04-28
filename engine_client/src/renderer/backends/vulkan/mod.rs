@@ -13,11 +13,13 @@ use ash::{
     vk::{self, Handle},
 };
 use commands::VulkanCommandBuffer;
+use fence::VulkanFence;
 use framebuffer::VulkanFramebuffer;
 //use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 
 mod commands;
 mod device;
+mod fence;
 mod framebuffer;
 mod image;
 mod renderpass;
@@ -28,9 +30,10 @@ use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 use renderpass::VulkanRenderPass;
 use swapchain::VulkanSwapchain;
 
+/// Holds vulkan context information
 struct VulkanContext {
     // Current framebuffer width and height.
-    framebuffer_width: u32,
+    pub framebuffer_width: u32,
     framebuffer_height: u32,
 
     // Vulkan instance and surface (None if not initialized).
@@ -54,6 +57,12 @@ struct VulkanContext {
 
     // Command buffers for graphics operations.
     graphics_cmds_buffers: Vec<VulkanCommandBuffer>,
+
+    image_available_semaphores: Vec<ash::vk::Semaphore>,
+    queue_complete_semaphores: Vec<ash::vk::Semaphore>,
+
+    in_flight_fences: Vec<VulkanFence>,
+    images_in_flight: Vec<Option<VulkanFence>>,
 
     // Current image index and frame number.
     image_index: u32,
@@ -237,6 +246,12 @@ impl RendererBackend for RendererBackendVulkan {
                 main_renderpass: None,
 
                 graphics_cmds_buffers: vec![],
+
+                image_available_semaphores: vec![],
+                queue_complete_semaphores: vec![],
+
+                in_flight_fences: vec![],
+                images_in_flight: vec![],
 
                 recreating_swapchain: false,
             };
@@ -436,6 +451,47 @@ impl RendererBackend for RendererBackendVulkan {
             };
             log::debug!("Vulkan command buffers created successfully");
 
+            // Create semaphores and fences
+            for _ in 0..swapchain.max_frames_in_flight {
+                let image_available_semaphore =
+                    match device.create_semaphore(&vk::SemaphoreCreateInfo::default(), None) {
+                        Ok(semaphore) => semaphore,
+                        Err(e) => {
+                            log::error!("Failed to create image available semaphore: {:?}", e);
+                            return Err(format!(
+                                "Failed to create image available semaphore: {:?}",
+                                e
+                            ));
+                        }
+                    };
+                context.image_available_semaphores.push(image_available_semaphore);
+
+                let queue_complete_semaphore =
+                    match device.create_semaphore(&vk::SemaphoreCreateInfo::default(), None) {
+                        Ok(semaphore) => semaphore,
+                        Err(e) => {
+                            log::error!("Failed to create queue complete semaphore: {:?}", e);
+                            return Err(format!(
+                                "Failed to create queue complete semaphore: {:?}",
+                                e
+                            ));
+                        }
+                    };
+                context.queue_complete_semaphores.push(queue_complete_semaphore);
+
+                let fence = match VulkanFence::new(device, true) {
+                    Ok(fence) => fence,
+                    Err(e) => {
+                        log::error!("Failed to create fence: {:?}", e);
+                        return Err(format!("Failed to create fence: {:?}", e));
+                    }
+                };
+                context.in_flight_fences.push(fence);
+
+                context.images_in_flight.push(None);
+            }
+            log::debug!("Vulkan semaphores and fences created successfully");
+
             self.context = Some(context);
             log::debug!("Vulkan renderer initialized successfully");
             Ok(())
@@ -446,6 +502,25 @@ impl RendererBackend for RendererBackendVulkan {
         // Cleanup Vulkan resources here
         if let Some(mut context) = self.context.take() {
             log::debug!("Shutting down Vulkan renderer");
+            // Destroy Vulkan fences
+            let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
+            for fence in context.in_flight_fences.iter() {
+                fence.destroy(device);
+            }
+            context.in_flight_fences.clear();
+            log::debug!("Vulkan fences destroyed");
+
+            // Destroy Vulkan semaphores
+            for semaphore in context.image_available_semaphores.iter() {
+                unsafe { device.destroy_semaphore(*semaphore, None) };
+            }
+            context.image_available_semaphores.clear();
+            for semaphore in context.queue_complete_semaphores.iter() {
+                unsafe { device.destroy_semaphore(*semaphore, None) };
+            }
+            context.queue_complete_semaphores.clear();
+            log::debug!("Vulkan semaphores destroyed");
+
             // Destroy Vulkan command buffers
             match self.destroy_commands_buffers(&mut context) {
                 Ok(_) => {}

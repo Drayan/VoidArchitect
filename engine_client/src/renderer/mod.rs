@@ -4,7 +4,7 @@
 //! an interface for rendering operations. The backend can be implemented for different graphics APIs
 //! (e.g., Vulkan). The frontend delegates rendering calls to the selected backend implementation.
 
-mod backends;
+pub mod backends;
 
 use crate::{platform::WindowHandle, renderer::backends::vulkan::RendererBackendVulkan};
 
@@ -55,6 +55,7 @@ pub trait RendererBackend {
 pub struct RendererFrontend {
     // Holds the selected renderer backend implementation (e.g., Vulkan).
     backend: Box<dyn RendererBackend>,
+    is_initialized: bool,
 }
 
 impl RendererFrontend {
@@ -63,26 +64,44 @@ impl RendererFrontend {
             //TODO: This should be configurable
             // By default, use the Vulkan backend. This should be configurable in the future.
             backend: Box::new(RendererBackendVulkan::new()),
+            is_initialized: false,
         }
     }
 
     pub fn initialize(&mut self, window: WindowHandle) -> Result<(), String> {
-        self.backend.initialize(window)
+        let result = self.backend.initialize(window);
+        if result.is_ok() {
+            self.is_initialized = true;
+        }
+        result
     }
 
     pub fn shutdown(&mut self) -> Result<(), String> {
+        if !self.is_initialized {
+            return Err("Renderer not initialized".to_string());
+        }
+        self.is_initialized = false;
         self.backend.shutdown()
     }
 
     pub fn begin_frame(&mut self) -> Result<(), String> {
+        if !self.is_initialized {
+            return Err("Renderer not initialized".to_string());
+        }
         self.backend.begin_frame()
     }
 
     pub fn end_frame(&mut self) -> Result<(), String> {
+        if !self.is_initialized {
+            return Err("Renderer not initialized".to_string());
+        }
         self.backend.end_frame()
     }
 
     pub fn resize(&mut self, width: u32, height: u32) -> Result<(), String> {
+        if !self.is_initialized {
+            return Err("Renderer not initialized".to_string());
+        }
         self.backend.resize(width, height)
     }
 }

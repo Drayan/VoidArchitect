@@ -183,6 +183,39 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
   - **Status:** Done
   - **Description:** Review the `platform_sdl.rs` implementation, add necessary documentation and unit tests, replace the old `platform.rs` with the new SDL3 version, update all references within the `engine_client` crate, update existing tests, run checks (`cargo check`, `cargo test`, `cargo fmt`), and update project documentation (`README.md`, `PLANNING.md`).
   - **Completed:** 27-04-2025
+### Epic 2.B: Testing Infrastructure Improvements
+
+- **Status:** Completed on 27-04-2025
+- **Description:** Enhance the project's testing infrastructure with specialized testing tools and establish clear testing patterns.
+- **Goal:** Improve test coverage, maintainability, and effectiveness through better tooling and organization.
+- **Definition of Done (DoD):**
+  - Added specialized testing tools (`proptest`, `criterion`, `mockall`)
+  - Documented testing strategy and patterns
+  - Updated existing tests to follow new guidelines
+  - Added performance benchmarks for critical operations
+
+#### Stories:
+
+- [x] **Story 2.B.1: Add Testing Dependencies**
+  - **Description:** Add `proptest`, `criterion`, and `mockall` to project dependencies.
+  - **Goal:** Required testing tools are available in the project.
+  - **Completed:** 27-04-2025
+
+- [x] **Story 2.B.2: Establish Testing Guidelines**
+  - **Description:** Document testing patterns, tool usage, and organization in project documentation.
+  - **Goal:** Clear guidelines for writing and organizing tests are available.
+  - **Completed:** 27-04-2025
+
+- [x] **Story 2.B.3: Add Property-Based Tests**
+  - **Description:** Implement property-based tests using `proptest` for suitable components.
+  - **Goal:** Critical algorithms and data structures have property tests.
+  - **Completed:** 27-04-2025
+
+- [x] **Story 2.B.4: Add Performance Benchmarks**
+  - **Description:** Set up performance benchmarks using `criterion` for critical operations.
+  - **Goal:** Performance-sensitive code has baseline benchmarks.
+  - **Completed:** 27-04-2025
+
 ### Epic 2.2: Minimal Graphics Pipeline
 
 - **Description:** Create a basic Vulkan graphics pipeline configured to draw simple, colored triangles. This involves loading/compiling shaders, defining vertex input, and configuring pipeline states (viewport, rasterization, etc.).
