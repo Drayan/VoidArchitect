@@ -1,11 +1,13 @@
 use crate::renderer::backends::vulkan::swapchain::VulkanSwapchainContext;
 
+use super::VulkanFramebuffer;
 use super::commands::VulkanCommandBuffer;
 use super::device::VulkanDevice;
 use super::fence::VulkanFence;
 use super::renderpass::VulkanRenderPass;
 use super::swapchain::VulkanSwapchain;
 use ash::vk;
+use sdl3::sys::vulkan;
 
 // VulkanContext definition and implementation moved from mod.rs
 pub(super) struct VulkanContext {
@@ -175,6 +177,38 @@ impl VulkanContext {
             buffer.destroy(logical_device, command_pool);
         }
         self.graphics_cmds_buffers.clear();
+        Ok(())
+    }
+
+    pub fn recreate_framebuffers(&mut self) -> Result<(), String> {
+        let swapchain = self.swapchain.as_mut().ok_or("Failed to get swapchain")?;
+        let device = self
+            .device
+            .as_ref()
+            .and_then(|d| d.logical_device.as_ref())
+            .ok_or("Failed to get Vulkan device")?;
+        let renderpass =
+            self.main_renderpass.as_ref().ok_or("Failed to get main renderpass")?;
+        let width = self.framebuffer_width;
+        let height = self.framebuffer_height;
+
+        swapchain.image_views.iter().for_each(|view| {
+            let attachments = vec![view.clone(), swapchain.depth_attachment.view.clone()];
+            let framebuffer = match VulkanFramebuffer::new(
+                device,
+                width,
+                height,
+                renderpass.clone(),
+                attachments,
+            ) {
+                Ok(framebuffer) => framebuffer,
+                Err(e) => {
+                    log::error!("Failed to create Vulkan framebuffer: {:?}", e);
+                    return;
+                }
+            };
+            swapchain.framebuffers.push(framebuffer);
+        });
         Ok(())
     }
 
@@ -471,6 +505,95 @@ impl VulkanContext {
 
         self.current_frame = (self.current_frame + 1)
             % self.swapchain.as_ref().ok_or("Failed to get swapchain")?.max_frames_in_flight;
+        Ok(())
+    }
+
+    pub fn recreate_swapchain(&mut self, width: u32, height: u32) -> Result<(), String> {
+        // If already recreating, skip
+        if self.recreating_swapchain {
+            return Ok(());
+        }
+
+        // Detect if the window is too small to create a swapchain
+        if self.framebuffer_width == 0 || self.framebuffer_height == 0 {
+            return Ok(());
+        }
+
+        // Set the recreating flag to true
+        self.recreating_swapchain = true;
+
+        // Wait for the device to be idle before resizing.
+        self.wait_for_device_idle()?;
+
+        // Clear images just in case
+        for image in self.images_in_flight.iter_mut() {
+            *image = None;
+        }
+
+        // Requery swapchain support details
+        {
+            let phys_device = self
+                .device
+                .as_ref()
+                .and_then(|d| Some(d.physical_device))
+                .ok_or("Failed to get Vulkan physical device")?;
+            let surface = self.surface.as_ref().ok_or("Failed to get Vulkan surface")?;
+            let surface_loader =
+                self.surface_loader.as_ref().ok_or("Failed to get Vulkan surface loader")?;
+            let swapchain_support =
+                VulkanDevice::query_swapchain_support(surface_loader, phys_device, *surface)?;
+
+            let vulkan_device = self.device.as_mut().ok_or("Failed to get Vulkan device")?;
+            vulkan_device.swapchain_support = swapchain_support;
+
+            let instance = self.instance.as_ref().ok_or("Failed to get Vulkan instance")?;
+            vulkan_device.detect_depth_format(instance)?;
+
+            self.swapchain().recreate(width, height)?;
+        }
+
+        {
+            let renderpass =
+                self.main_renderpass.as_mut().ok_or("Failed to get main renderpass")?;
+            self.framebuffer_width = width;
+            self.framebuffer_height = height;
+            renderpass.w = width as f32;
+            renderpass.h = height as f32;
+            renderpass.x = 0.0;
+            renderpass.y = 0.0;
+
+            self.framebuffer_size_last_generation = self.framebuffer_size_generation;
+        }
+
+        // Cleanup
+        {
+            let vulkan_device = self.device.as_mut().ok_or("Failed to get Vulkan device")?;
+            let device =
+                vulkan_device.logical_device.as_ref().ok_or("Failed to get Vulkan device")?;
+            for buf in self.graphics_cmds_buffers.iter_mut() {
+                buf.destroy(device, vulkan_device.graphics_command_pool);
+            }
+        }
+
+        {
+            let device = self
+                .device
+                .as_ref()
+                .and_then(|d| d.logical_device.as_ref())
+                .ok_or("Failed to get Vulkan device")?;
+            let swapchain = self.swapchain.as_mut().ok_or("Failed to get swapchain")?;
+            for buf in swapchain.framebuffers.iter_mut() {
+                buf.destroy(device);
+            }
+
+            self.recreate_framebuffers()?;
+        }
+
+        self.create_commands_buffers()?;
+
+        // Reset the recreating flag
+        self.recreating_swapchain = false;
+
         Ok(())
     }
 }

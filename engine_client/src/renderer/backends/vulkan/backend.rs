@@ -36,34 +36,6 @@ impl RendererBackendVulkan {
             cached_framebuffer_height: 0,
         }
     }
-
-    fn recreate_framebuffers(
-        &self,
-        device: &ash::Device,
-        swapchain: &mut VulkanSwapchain,
-        renderpass: VulkanRenderPass,
-        width: u32,
-        height: u32,
-    ) -> Result<(), String> {
-        swapchain.image_views.iter().for_each(|view| {
-            let attachments = vec![view.clone(), swapchain.depth_attachment.view.clone()];
-            let framebuffer = match VulkanFramebuffer::new(
-                device,
-                width,
-                height,
-                renderpass.clone(),
-                attachments,
-            ) {
-                Ok(framebuffer) => framebuffer,
-                Err(e) => {
-                    log::error!("Failed to create Vulkan framebuffer: {:?}", e);
-                    return;
-                }
-            };
-            swapchain.framebuffers.push(framebuffer);
-        });
-        Ok(())
-    }
 }
 
 impl RendererBackend for RendererBackendVulkan {
@@ -80,6 +52,8 @@ impl RendererBackend for RendererBackendVulkan {
             None => return Err("Window handle is invalid".to_string()),
         };
         let (width, height) = window.size();
+        self.cached_framebuffer_width = width;
+        self.cached_framebuffer_height = height;
 
         unsafe {
             log::debug!("Initializing Vulkan renderer");
@@ -88,6 +62,9 @@ impl RendererBackend for RendererBackendVulkan {
 
             // Create Vulkan Context
             let mut context = VulkanContext::new();
+
+            context.framebuffer_width = width;
+            context.framebuffer_height = height;
 
             // Create Vulkan Application Info
             let app_infos = vk::ApplicationInfo::default()
@@ -268,23 +245,17 @@ impl RendererBackend for RendererBackendVulkan {
             log::debug!("Vulkan render pass created successfully");
 
             // Create Vulkan framebuffers
-            {
-                let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
-                let swapchain = context.swapchain.as_mut().unwrap();
-                let renderpass = context.main_renderpass.clone().unwrap();
 
-                match self.recreate_framebuffers(device, swapchain, renderpass, width, height)
-                {
-                    Ok(_) => {}
-                    Err(e) => {
-                        log::error!("Failed to create Vulkan framebuffers: {:?}", e);
-                        return Err(format!("Failed to create Vulkan framebuffers: {:?}", e));
-                    }
-                };
+            match context.recreate_framebuffers() {
+                Ok(_) => {}
+                Err(e) => {
+                    log::error!("Failed to create Vulkan framebuffers: {:?}", e);
+                    return Err(format!("Failed to create Vulkan framebuffers: {:?}", e));
+                }
+            };
 
-                context.framebuffer_width = width;
-                context.framebuffer_height = height;
-            }
+            context.framebuffer_width = width;
+            context.framebuffer_height = height;
 
             // Create command buffers
             match context.create_commands_buffers() {
