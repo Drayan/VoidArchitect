@@ -31,7 +31,7 @@ pub trait RendererBackend {
     /// # Returns
     /// * `Ok(())` if the frame begins successfully.
     /// * `Err(String)` if an error occurs.
-    fn begin_frame(&mut self) -> Result<(), String>;
+    fn begin_frame(&mut self) -> Result<bool, String>;
 
     /// Ends the current rendering frame.
     ///
@@ -84,7 +84,7 @@ impl RendererFrontend {
         self.backend.shutdown()
     }
 
-    pub fn begin_frame(&mut self) -> Result<(), String> {
+    pub fn begin_frame(&mut self) -> Result<bool, String> {
         if !self.is_initialized {
             return Err("Renderer not initialized".to_string());
         }

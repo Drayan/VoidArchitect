@@ -134,4 +134,27 @@ impl VulkanCommandBuffer {
 
         Ok(())
     }
+
+    // --- Command Buffer Commands ---
+    pub fn set_viewports(
+        self: &mut Self,
+        device: &ash::Device,
+        viewports: Vec<vk::Viewport>,
+    ) -> Result<(), String> {
+        unsafe {
+            device.cmd_set_viewport(self.handle, 0, &viewports);
+        }
+        Ok(())
+    }
+
+    pub fn set_scissors(
+        self: &mut Self,
+        device: &ash::Device,
+        scissors: Vec<vk::Rect2D>,
+    ) -> Result<(), String> {
+        unsafe {
+            device.cmd_set_scissor(self.handle, 0, &scissors);
+        }
+        Ok(())
+    }
 }

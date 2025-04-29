@@ -1,5 +1,5 @@
 pub(super) struct VulkanFence {
-    fence: ash::vk::Fence,
+    handle: ash::vk::Fence,
     is_signaled: bool,
 }
 
@@ -9,7 +9,7 @@ impl VulkanFence {
 
         let fence = Self {
             is_signaled,
-            fence: {
+            handle: {
                 let create_info = ash::vk::FenceCreateInfo {
                     flags: if is_signaled {
                         ash::vk::FenceCreateFlags::SIGNALED
@@ -31,22 +31,25 @@ impl VulkanFence {
     }
 
     pub fn destroy(&self, device: &ash::Device) {
-        if self.fence == ash::vk::Fence::null() {
+        if self.handle == ash::vk::Fence::null() {
             return;
         }
 
         unsafe {
-            device.destroy_fence(self.fence, None);
+            device.destroy_fence(self.handle, None);
         }
     }
 
-    pub fn wait(&self, device: &ash::Device, timeout: u64) -> Result<bool, String> {
+    pub fn wait(&mut self, device: &ash::Device, timeout: u64) -> Result<bool, String> {
         if self.is_signaled {
             return Ok(true);
         }
 
-        match unsafe { device.wait_for_fences(&[self.fence], true, timeout) } {
-            Ok(_) => return Ok(true),
+        match unsafe { device.wait_for_fences(&[self.handle], true, timeout) } {
+            Ok(_) => {
+                self.is_signaled = true;
+                return Ok(true);
+            }
             Err(ash::vk::Result::TIMEOUT) => {
                 log::warn!("Fence wait timed out");
                 return Ok(false);
@@ -60,7 +63,7 @@ impl VulkanFence {
             return Ok(());
         }
 
-        let result = unsafe { device.reset_fences(&[self.fence]) };
+        let result = unsafe { device.reset_fences(&[self.handle]) };
         match result {
             Ok(_) => {}
             Err(err) => return Err(format!("Failed to reset fence: {:?}", err)),
@@ -72,5 +75,9 @@ impl VulkanFence {
 
     pub fn is_signaled(&self) -> bool {
         self.is_signaled
+    }
+
+    pub fn handle(&self) -> ash::vk::Fence {
+        self.handle
     }
 }

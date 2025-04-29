@@ -442,3 +442,8 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 
 ## Unplanned backlog
 - [x] **Refactor EngineClient** currently the domain is splitted with EngineApplication which was necessary in the `winit` implementation, but now that the engine run on top of SDL3, it can be simplified. (Completed: 27-04-2025)
+### Discovered During Work (Milestone 2)
+
+- **Task: Debug Vulkan Fence and Future Errors (29-04-2025)**
+  - **Status:** To Do
+  - **Description:** Investigate and fix runtime errors related to `VUID-vkQueueSubmit-fence-00063` (submitting signaled fences), `std::__1::future_error` (promise state already set), and `VUID-vkAcquireNextImageKHR-semaphore-01286` (submitting signaled semaphore) occurring in the Vulkan backend (`engine_client/src/renderer/backends/vulkan/`).

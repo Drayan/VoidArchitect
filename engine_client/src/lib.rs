@@ -151,13 +151,20 @@ impl EngineContext {
         )?;
 
         // Begin a new rendering frame.
-        renderer.begin_frame().map_err(EngineError::RendererError)?;
-
-        // Rendering logic for the application should be inserted here.
-
-        // End the frame.
-        // End the frame.
-        renderer.end_frame().map_err(EngineError::RendererError)?;
+        match renderer.begin_frame().map_err(EngineError::RendererError) {
+            Ok(proceed) => {
+                if proceed {
+                    // Rendering logic for the application should be inserted here.
+                    renderer.end_frame().map_err(EngineError::RendererError)?;
+                }
+            }
+            Err(e) => {
+                log::error!("Failed to begin frame: {}", e);
+                return Err(EngineError::RenderError(
+                    "Failed to begin rendering frame".to_string(),
+                ));
+            }
+        }
 
         Ok(())
     }
