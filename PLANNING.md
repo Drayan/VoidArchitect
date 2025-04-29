@@ -180,3 +180,12 @@ void-architect
 - Implementing a proper game loop, input handling, and state management within the client.
 - Developing the core rendering pipeline in Vulkan.
 - Designing and implementing the actual 4X game mechanics.
+
+## 10. Ideas
+- Science system based on "idea" generation in the population, some ideas lead to breakthrough but most doesn't (prehistorical stage). Later on, organized research could be conducted to develop targeted idea (a new propulsion system, etc) based on the current knowledge.
+- Cultural system
+- Religion system / Beliefs
+- Diplomatic system (external politic)
+- Political system (rich internal "life" of the empire)
+- Game event system (like in stellaris, crusader kings, etc)
+- Military system with "operations", the player should be able to lead, and commanders would execute the plan. At any time, the player could "take command" and give direct orders. This system should allow for large scale operation (like system/planetary invasion).

@@ -183,38 +183,6 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
   - **Status:** Done
   - **Description:** Review the `platform_sdl.rs` implementation, add necessary documentation and unit tests, replace the old `platform.rs` with the new SDL3 version, update all references within the `engine_client` crate, update existing tests, run checks (`cargo check`, `cargo test`, `cargo fmt`), and update project documentation (`README.md`, `PLANNING.md`).
   - **Completed:** 27-04-2025
-### Epic 2.B: Testing Infrastructure Improvements
-
-- **Status:** Completed on 27-04-2025
-- **Description:** Enhance the project's testing infrastructure with specialized testing tools and establish clear testing patterns.
-- **Goal:** Improve test coverage, maintainability, and effectiveness through better tooling and organization.
-- **Definition of Done (DoD):**
-  - Added specialized testing tools (`proptest`, `criterion`, `mockall`)
-  - Documented testing strategy and patterns
-  - Updated existing tests to follow new guidelines
-  - Added performance benchmarks for critical operations
-
-#### Stories:
-
-- [x] **Story 2.B.1: Add Testing Dependencies**
-  - **Description:** Add `proptest`, `criterion`, and `mockall` to project dependencies.
-  - **Goal:** Required testing tools are available in the project.
-  - **Completed:** 27-04-2025
-
-- [x] **Story 2.B.2: Establish Testing Guidelines**
-  - **Description:** Document testing patterns, tool usage, and organization in project documentation.
-  - **Goal:** Clear guidelines for writing and organizing tests are available.
-  - **Completed:** 27-04-2025
-
-- [x] **Story 2.B.3: Add Property-Based Tests**
-  - **Description:** Implement property-based tests using `proptest` for suitable components.
-  - **Goal:** Critical algorithms and data structures have property tests.
-  - **Completed:** 27-04-2025
-
-- [x] **Story 2.B.4: Add Performance Benchmarks**
-  - **Description:** Set up performance benchmarks using `criterion` for critical operations.
-  - **Goal:** Performance-sensitive code has baseline benchmarks.
-  - **Completed:** 27-04-2025
 
 ### Epic 2.2: Minimal Graphics Pipeline
 
@@ -319,22 +287,22 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 
 #### Stories:
 
-- [ ] **Story 2.4.1: Create Synchronization Primitives**
+- [x] **Story 2.4.1: Create Synchronization Primitives**
   - **Description:** Create the necessary `VkSemaphore` and `VkFence` objects required for synchronizing swapchain operations, command buffer submission, and presentation. Manage multiple sets if using multiple frames in flight.
   - **Goal:** Valid handles for required semaphores and fences are created.
-- [ ] **Story 2.4.2: Implement Frame Acquisition (`vkAcquireNextImageKHR`)**
+- [x] **Story 2.4.2: Implement Frame Acquisition (`vkAcquireNextImageKHR`)**
   - **Description:** Call `vkAcquireNextImageKHR` within the render loop to get the next available swapchain image index and signal the appropriate semaphore.
   - **Goal:** The index of the next image to render to is obtained.
-- [ ] **Story 2.4.3: Implement Command Buffer Submission (`vkQueueSubmit`)**
+- [x] **Story 2.4.3: Implement Command Buffer Submission (`vkQueueSubmit`)**
   - **Description:** Call `vkQueueSubmit` with the correct command buffer, wait/signal semaphores, and the completion fence for the current frame in flight.
   - **Goal:** The pre-recorded command buffer is submitted to the graphics queue for execution.
-- [ ] **Story 2.4.4: Implement Presentation (`vkQueuePresentKHR`)**
+- [x] **Story 2.4.4: Implement Presentation (`vkQueuePresentKHR`)**
   - **Description:** Call `vkQueuePresentKHR` to queue the rendered image for presentation to the screen, waiting on the render finished semaphore.
   - **Goal:** The completed frame is submitted for display on the window.
-- [ ] **Story 2.4.5: Integrate Rendering into Client Event Loop**
+- [x] **Story 2.4.5: Integrate Rendering into Client Event Loop**
   - **Description:** Modify the `client`'s main event loop (`SDL3`) to continuously call the rendering functions (acquire, submit, present) during `MainEventsCleared` or `RedrawRequested` events.
   - **Goal:** Rendering happens repeatedly, displaying the triangle continuously.
-- [ ] **Story 2.4.6: Add Basic Swapchain Resize Handling**
+- [x] **Story 2.4.6: Add Basic Swapchain Resize Handling**
   - **Description:** Detect `VK_ERROR_OUT_OF_DATE_KHR` or `VK_SUBOPTIMAL_KHR` results from acquire/present calls and trigger a (potentially placeholder) swapchain recreation process. Ensure CPU waits for GPU idle before recreating.
   - **Goal:** The application can gracefully handle (even if just by pausing rendering) window resize events that invalidate the swapchain.
 
@@ -425,25 +393,35 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
   - **Description:** In the client's render loop, read the latest `CubeState` received from the network thread. Calculate the Model, View (static camera for now), and Projection matrices. Compute the final MVP matrix. Update the UBO or set the push constant data with the new MVP matrix before recording/submitting the draw commands. Update draw commands for indexed drawing (`vkCmdDrawIndexed`).
   - **Goal:** The cube's transform in the rendered scene reflects the state synchronized from the server.
 
-## Milestone 4: Basic Camera Control
+## Milestone 4: Engine Systems Foundation
+
+- **Status:** Planned (30-04-2025)
+- **Goal:** Establish core systems in the engine-client to enable advanced client-side features such as camera control and user interaction.
+
+### Epic 4.1: Implement Event System in Engine-Client
+
+- **Description:** Develop a modular event system for the engine-client to facilitate communication between subsystems and support future extensibility. This is a prerequisite for implementing features like camera control and input handling.
+- **Added:** 30-04-2025
+
+### Epic 4.2: Implement Input System in Engine-Client
+
+- **Description:** Create an input system in the engine-client to process user input events (keyboard, mouse, etc.), enabling interactive features and serving as a foundation for camera and gameplay controls.
+- **Added:** 30-04-2025
+
+## Milestone 5: Basic Camera Control
 
 - **Status:** To Plan
 - **Goal:** Implement basic camera controls (e.g., orbiting, panning, zooming) on the client-side, allowing the user to change their view of the scene (containing the cube from M3).
 
-## Milestone 5: Basic Scene Representation
+## Milestone 6: Basic Scene Representation
 
 - **Status:** To Plan
 - **Goal:** Develop a rudimentary scene graph or entity management system on the client and server to handle multiple objects, not just a single cube. Synchronize the state of multiple objects.
 
-## Milestone 6: Initial Procedural Noise Generation (Core)
+## Milestone 7: Initial Procedural Noise Generation (Core)
 
 - **Status:** To Plan
 - **Goal:** Implement basic procedural noise functions (e.g., Perlin, Simplex) within the `core` engine library, potentially demonstrating their output visually in the client later (e.g., applying noise as texture coordinates or height map).
 
-## Unplanned backlog
-- [x] **Refactor EngineClient** currently the domain is splitted with EngineApplication which was necessary in the `winit` implementation, but now that the engine run on top of SDL3, it can be simplified. (Completed: 27-04-2025)
-### Discovered During Work (Milestone 2)
-
-- **Task: Debug Vulkan Fence and Future Errors (29-04-2025)**
-  - **Status:** To Do
-  - **Description:** Investigate and fix runtime errors related to `VUID-vkQueueSubmit-fence-00063` (submitting signaled fences), `std::__1::future_error` (promise state already set), and `VUID-vkAcquireNextImageKHR-semaphore-01286` (submitting signaled semaphore) occurring in the Vulkan backend (`engine_client/src/renderer/backends/vulkan/`).
+# Unplanned backlog
+*Nothing, isn't that great ?*
