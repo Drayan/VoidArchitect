@@ -9,6 +9,7 @@
             "type": "lldb-dap",
             "request": "launch",
             "program": "${workspaceFolder}/client/target/debug/void-architect_client",
+            "cwd": "${workspaceRoot}",
             "osx": {
                 "env": {
                     "DYLD_LIBRARY_PATH": "/Users/drayan/VulkanSDK/1.4.309.0/macOS/lib:${env:DYLD_LIBRARY_PATH}"
