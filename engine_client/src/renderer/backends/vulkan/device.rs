@@ -54,9 +54,17 @@ pub(super) struct VulkanDevice {
 }
 
 impl VulkanDevice {
-    pub(crate) fn new(context: &VulkanContext) -> Result<Self, String> {
+    pub(crate) fn new(
+        instance: &ash::Instance,
+        surface_loader: &ash::khr::surface::Instance,
+        surface: ash::vk::SurfaceKHR,
+    ) -> Result<Self, String> {
         // Create a new Vulkan device using the provided context
-        let mut device = match VulkanDevice::select_appropriate_physical_device(context) {
+        let mut device = match VulkanDevice::select_appropriate_physical_device(
+            instance,
+            surface_loader,
+            surface,
+        ) {
             Ok(device) => device,
             Err(e) => {
                 return Err(format!("Failed to create Vulkan device: {:?}", e));
@@ -127,11 +135,7 @@ impl VulkanDevice {
             .enabled_extension_names(&extensions_names);
 
         device.logical_device = match unsafe {
-            context.instance.as_ref().unwrap().create_device(
-                device.physical_device,
-                &device_create_info,
-                None,
-            )
+            instance.create_device(device.physical_device, &device_create_info, None)
         } {
             Ok(device) => Some(device),
             Err(e) => {
@@ -219,7 +223,7 @@ impl VulkanDevice {
     }
 
     pub(crate) fn query_swapchain_support(
-        context: &VulkanContext,
+        surface_loader: &ash::khr::surface::Instance,
         device: ash::vk::PhysicalDevice,
         surface: vk::SurfaceKHR,
     ) -> Result<VulkanPhysicalDeviceSwapchainSupportInfo, String> {
@@ -227,11 +231,7 @@ impl VulkanDevice {
         // and return the swapchain support info.
         let swapchain_info = VulkanPhysicalDeviceSwapchainSupportInfo {
             capabilities: match unsafe {
-                context
-                    .surface_loader
-                    .as_ref()
-                    .unwrap()
-                    .get_physical_device_surface_capabilities(device, surface)
+                surface_loader.get_physical_device_surface_capabilities(device, surface)
             } {
                 Ok(capabilities) => capabilities,
                 Err(e) => {
@@ -241,11 +241,7 @@ impl VulkanDevice {
 
             // Surface formats
             formats: match unsafe {
-                context
-                    .surface_loader
-                    .as_ref()
-                    .unwrap()
-                    .get_physical_device_surface_formats(device, surface)
+                surface_loader.get_physical_device_surface_formats(device, surface)
             } {
                 Ok(formats) => formats,
                 Err(e) => {
@@ -255,11 +251,7 @@ impl VulkanDevice {
 
             // Present modes
             present_modes: match unsafe {
-                context
-                    .surface_loader
-                    .as_ref()
-                    .unwrap()
-                    .get_physical_device_surface_present_modes(device, surface)
+                surface_loader.get_physical_device_surface_present_modes(device, surface)
             } {
                 Ok(present_modes) => present_modes,
                 Err(e) => {
@@ -272,11 +264,12 @@ impl VulkanDevice {
     }
 
     fn select_appropriate_physical_device(
-        context: &VulkanContext,
+        instance: &ash::Instance,
+        surface_loader: &ash::khr::surface::Instance,
+        surface: vk::SurfaceKHR,
     ) -> Result<VulkanDevice, String> {
         // Enumerate physical devices and select the appropriate one
         // based on the requirements of the application.
-        let instance = context.instance.as_ref().expect("Vulkan instance not initialized");
         let physical_devices = match unsafe { instance.enumerate_physical_devices() } {
             Ok(devices) => devices,
             Err(e) => {
@@ -292,19 +285,9 @@ impl VulkanDevice {
         // and features to find a suitable device.
         let mut selected_device: Option<VulkanDevice> = None;
         for device in physical_devices {
-            let properties = unsafe {
-                context.instance.as_ref().unwrap().get_physical_device_properties(device)
-            };
-            let features = unsafe {
-                context.instance.as_ref().unwrap().get_physical_device_features(device)
-            };
-            let memory = unsafe {
-                context
-                    .instance
-                    .as_ref()
-                    .unwrap()
-                    .get_physical_device_memory_properties(device)
-            };
+            let properties = unsafe { instance.get_physical_device_properties(device) };
+            let features = unsafe { instance.get_physical_device_features(device) };
+            let memory = unsafe { instance.get_physical_device_memory_properties(device) };
 
             //TODO: These requirements should be passed from the application
             let requirements = VulkanPhysicalDeviceRequirements {
@@ -320,7 +303,9 @@ impl VulkanDevice {
             };
             let (queue_info, swapchain_info) =
                 match VulkanDevice::check_device_support_minimal_requirements(
-                    context,
+                    instance,
+                    surface_loader,
+                    surface,
                     device,
                     properties,
                     features,
@@ -400,7 +385,9 @@ impl VulkanDevice {
     }
 
     fn check_device_support_minimal_requirements(
-        context: &VulkanContext,
+        instance: &ash::Instance,
+        surface_loader: &ash::khr::surface::Instance,
+        surface: ash::vk::SurfaceKHR,
         device: ash::vk::PhysicalDevice,
         properties: ash::vk::PhysicalDeviceProperties,
         features: ash::vk::PhysicalDeviceFeatures,
@@ -427,13 +414,8 @@ impl VulkanDevice {
             return Err("Device is not a discrete GPU".to_string());
         }
 
-        let queue_families = unsafe {
-            context
-                .instance
-                .as_ref()
-                .unwrap()
-                .get_physical_device_queue_family_properties(device)
-        };
+        let queue_families =
+            unsafe { instance.get_physical_device_queue_family_properties(device) };
         log::info!(" Graphics | Present  |  Compute | Transfer | Name");
         let mut min_transfer_score = i32::MAX;
         for family in queue_families {
@@ -461,10 +443,10 @@ impl VulkanDevice {
 
             // Present ?
             let support_present = match unsafe {
-                context.surface_loader.as_ref().unwrap().get_physical_device_surface_support(
+                surface_loader.get_physical_device_surface_support(
                     device,
                     queue_info.graphics,
-                    context.surface.unwrap(),
+                    surface,
                 )
             } {
                 Ok(support) => support,
@@ -522,16 +504,13 @@ impl VulkanDevice {
         }
 
         // Query swapchain infos
-        let swapchain_info = match VulkanDevice::query_swapchain_support(
-            context,
-            device,
-            context.surface.unwrap(),
-        ) {
-            Ok(info) => info,
-            Err(e) => {
-                return Err(format!("Failed to query swapchain support: {:?}", e));
-            }
-        };
+        let swapchain_info =
+            match VulkanDevice::query_swapchain_support(surface_loader, device, surface) {
+                Ok(info) => info,
+                Err(e) => {
+                    return Err(format!("Failed to query swapchain support: {:?}", e));
+                }
+            };
 
         // Validate swapchain support
         if swapchain_info.formats.len() < 1 || swapchain_info.present_modes.len() < 1 {
@@ -541,14 +520,13 @@ impl VulkanDevice {
         }
 
         // Check if the device supports the required extensions
-        let available_extensions = match unsafe {
-            context.instance.as_ref().unwrap().enumerate_device_extension_properties(device)
-        } {
-            Ok(extensions) => extensions,
-            Err(e) => {
-                return Err(format!("Failed to enumerate device extensions: {:?}", e));
-            }
-        };
+        let available_extensions =
+            match unsafe { instance.enumerate_device_extension_properties(device) } {
+                Ok(extensions) => extensions,
+                Err(e) => {
+                    return Err(format!("Failed to enumerate device extensions: {:?}", e));
+                }
+            };
 
         for required_extension in &requirements.extensions_names {
             let mut found = false;
@@ -578,7 +556,7 @@ impl VulkanDevice {
 
     pub(crate) fn detect_depth_format(
         self: &Self,
-        context: &VulkanContext,
+        instance: &ash::Instance,
     ) -> Result<vk::Format, String> {
         // Candidate depth formats, in order of preference
         let depth_formats = [
@@ -594,10 +572,7 @@ impl VulkanDevice {
             .iter()
             .filter(|&&format| {
                 let format_props = unsafe {
-                    context
-                        .instance
-                        .as_ref()
-                        .unwrap()
+                    instance
                         .get_physical_device_format_properties(self.physical_device, format)
                 };
                 if format_props.linear_tiling_features.contains(flags) {

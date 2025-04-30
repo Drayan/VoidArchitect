@@ -18,14 +18,14 @@ enum VulkanRenderPassState {
 #[derive(Clone)]
 pub(super) struct VulkanRenderPass {
     pub handle: vk::RenderPass,
-    x: f32,
-    y: f32,
-    w: f32,
-    h: f32,
-    r: f32,
-    g: f32,
-    b: f32,
-    a: f32,
+    pub x: f32,
+    pub y: f32,
+    pub w: f32,
+    pub h: f32,
+    pub r: f32,
+    pub g: f32,
+    pub b: f32,
+    pub a: f32,
     depth: f32,
     stencil: u32,
 
@@ -134,11 +134,10 @@ impl VulkanRenderPass {
 
     pub fn begin(
         self: &Self,
-        context: &VulkanContext,
+        device: &ash::Device,
         cmds_buf: &mut VulkanCommandBuffer,
         framebuffer: vk::Framebuffer,
     ) {
-        let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
         let clear_values = [
             vk::ClearValue {
                 color: vk::ClearColorValue {
@@ -177,8 +176,7 @@ impl VulkanRenderPass {
         cmds_buf.state = VulkanCommandBufferState::InRenderPass;
     }
 
-    pub fn end(self: &Self, context: &VulkanContext, cmds_buf: &mut VulkanCommandBuffer) {
-        let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
+    pub fn end(self: &Self, device: &ash::Device, cmds_buf: &mut VulkanCommandBuffer) {
         unsafe {
             device.cmd_end_render_pass(cmds_buf.handle);
         }

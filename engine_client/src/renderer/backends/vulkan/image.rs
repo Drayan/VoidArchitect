@@ -12,7 +12,9 @@ pub(super) struct VulkanImage {
 
 impl VulkanImage {
     pub fn new(
-        context: &VulkanContext,
+        device: &ash::Device,
+        physical_device: ash::vk::PhysicalDevice,
+        instance: &ash::Instance,
         width: u32,
         height: u32,
         format: vk::Format,
@@ -29,7 +31,7 @@ impl VulkanImage {
                 height,
                 depth: 1, //TODO: Support configurable depth
             },
-            mip_levels: 1,   //TODO: Support mip levels
+            mip_levels: 4,   //TODO: Support mip levels
             array_layers: 1, //TODO: Support array layers
             format,
             tiling,
@@ -41,7 +43,6 @@ impl VulkanImage {
             ..Default::default()
         };
 
-        let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
         let handle = match unsafe { device.create_image(&image_create_info, None) } {
             Ok(handle) => handle,
             Err(err) => return Err(format!("Failed to create image: {}", err)),
@@ -49,9 +50,12 @@ impl VulkanImage {
 
         // Query memory requirements
         let memory_requirements = unsafe { device.get_image_memory_requirements(handle) };
-        let memory_type_index = match context
-            .find_memory_type(memory_requirements.memory_type_bits, memory_flags)
-        {
+        let memory_type_index = match VulkanContext::find_memory_type(
+            physical_device,
+            instance,
+            memory_requirements.memory_type_bits,
+            memory_flags,
+        ) {
             Ok(index) => index,
             Err(e) => {
                 unsafe { device.destroy_image(handle, None) };
@@ -99,7 +103,7 @@ impl VulkanImage {
 
         // Create image view if requested
         if create_view {
-            match image.create_view_for(context, format, view_aspect_flags) {
+            match image.create_view_for(device, format, view_aspect_flags) {
                 Ok(view) => {
                     return Ok(Self {
                         handle,
@@ -122,8 +126,7 @@ impl VulkanImage {
         Ok(image)
     }
 
-    pub fn destroy(self: &Self, context: &VulkanContext) {
-        let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
+    pub fn destroy(self: &Self, device: &ash::Device) {
         unsafe {
             if self.view != vk::ImageView::null() {
                 device.destroy_image_view(self.view, None);
@@ -135,11 +138,10 @@ impl VulkanImage {
 
     fn create_view_for(
         self: &Self,
-        context: &VulkanContext,
+        device: &ash::Device,
         format: vk::Format,
         view_aspect_flags: vk::ImageAspectFlags,
     ) -> Result<vk::ImageView, String> {
-        let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
         let view_create_info = vk::ImageViewCreateInfo {
             image: self.handle,
             view_type: vk::ImageViewType::TYPE_2D, //TODO: Support 3D images

@@ -9,6 +9,35 @@ pub mod renderer;
 
 use platform::{PlatformLayer, WindowHandle};
 use renderer::RendererFrontend;
+use std::error::Error;
+use std::fmt;
+
+#[derive(Debug)]
+pub enum EngineError {
+    RendererError(String),
+    PlatformError(String),
+    InitializationError(String),
+    ShutdownError(String),
+    UpdateError(String),
+    RenderError(String),
+    ResizeError(String),
+}
+
+impl fmt::Display for EngineError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            EngineError::RendererError(e) => write!(f, "Renderer error: {}", e),
+            EngineError::PlatformError(e) => write!(f, "Platform error: {}", e),
+            EngineError::InitializationError(e) => write!(f, "Initialization error: {}", e),
+            EngineError::ShutdownError(e) => write!(f, "Shutdown error: {}", e),
+            EngineError::UpdateError(e) => write!(f, "Update error: {}", e),
+            EngineError::RenderError(e) => write!(f, "Render error: {}", e),
+            EngineError::ResizeError(e) => write!(f, "Resize error: {}", e),
+        }
+    }
+}
+
+impl Error for EngineError {}
 
 /// Holds the main state for the engine, including the renderer system.
 ///
@@ -16,6 +45,7 @@ use renderer::RendererFrontend;
 pub struct EngineContext {
     /// The renderer frontend system, if initialized.
     // Holds the renderer frontend system; None if not initialized.
+    is_initialized: bool,
     renderer_system: Option<RendererFrontend>,
 }
 
@@ -27,6 +57,7 @@ impl EngineContext {
     pub fn new() -> Self {
         EngineContext {
             renderer_system: Some(RendererFrontend::new()),
+            is_initialized: false,
         }
     }
 }
@@ -43,25 +74,106 @@ pub(crate) trait EngineApplication {
     ///
     /// # Returns
     /// * `Ok(())` if initialization succeeds, or `Err(String)` with an error message.
-    fn initialize(&mut self, window: WindowHandle) -> Result<(), String>;
+    pub fn initialize(&mut self, window: WindowHandle) -> Result<(), EngineError> {
+        if let Some(renderer) = &mut self.renderer_system {
+            match renderer.initialize(window).map_err(EngineError::RendererError) {
+                Ok(_) => {
+                    log::info!("Renderer system initialized successfully");
+                    self.is_initialized = true;
+                }
+                Err(e) => {
+                    log::error!("Failed to initialize renderer system: {}", e);
+                    return Err(EngineError::InitializationError(
+                        "Failed to initialize renderer system".to_string(),
+                    ));
+                }
+            }
+        } else {
+            return Err(EngineError::InitializationError(
+                "Renderer system not initialized".to_string(),
+            ));
+        }
 
-    /// Shuts down the application and releases resources.
+        Ok(())
+    }
+
+    /// Shuts down the engine context and releases resources.
     ///
     /// # Returns
     /// * `Ok(())` if shutdown succeeds, or `Err(String)` with an error message.
-    fn shutdown(&mut self) -> Result<(), String>;
+    pub fn shutdown(&mut self) -> Result<(), EngineError> {
+        if !self.is_initialized {
+            return Err(EngineError::InitializationError(
+                "Engine context not initialized".to_string(),
+            ));
+        }
 
-    /// Updates the application state.
+        if let Some(renderer) = &mut self.renderer_system {
+            renderer.shutdown().map_err(EngineError::RendererError)
+        } else {
+            Err(EngineError::InitializationError(
+                "Renderer system not initialized".to_string(),
+            ))
+        }
+    }
+
+    /// Updates the engine context state.
     ///
     /// # Arguments
     /// * `delta_time` - Time elapsed since the last update, in seconds.
-    fn update(&mut self, delta_time: f32);
+    ///
+    /// # Returns
+    /// * `Ok(())` if update succeeds, or `Err(String)` with an error message.
+    pub fn update(&mut self, _delta_time: f32) -> Result<(), EngineError> {
+        if !self.is_initialized {
+            return Err(EngineError::InitializationError(
+                "Engine context not initialized".to_string(),
+            ));
+        }
+        let renderer = self.renderer_system.as_mut().ok_or(
+            EngineError::InitializationError("Renderer system not initialized".to_string()),
+        )?;
+        // Default implementation does nothing.
+        // Override in  if needed.
+        // For now, just return Ok, but propagate errors if update logic is added.
+        Ok(())
+    }
 
-    /// Renders the application.
+    /// Renders the engine context.
     ///
     /// # Arguments
     /// * `delta_time` - Time elapsed since the last render, in seconds.
-    fn render(&mut self, delta_time: f32);
+    ///
+    /// # Returns
+    /// * `Ok(())` if render succeeds, or `Err(String)` with an error message.
+    pub fn render(&mut self, _delta_time: f32) -> Result<(), EngineError> {
+        if !self.is_initialized {
+            return Err(EngineError::InitializationError(
+                "Engine context not initialized".to_string(),
+            ));
+        }
+        let renderer = self.renderer_system.as_mut().ok_or(
+            EngineError::InitializationError("Renderer system not initialized".to_string()),
+        )?;
+
+        // Begin a new rendering frame.
+        match renderer.begin_frame().map_err(EngineError::RendererError) {
+            Ok(proceed) => {
+                if proceed {
+                    // Rendering logic for the application should be inserted here.
+                    renderer.end_frame().map_err(EngineError::RendererError)?;
+                }
+            }
+            Err(e) => {
+                log::error!("Failed to begin frame: {}", e);
+                return Err(EngineError::RenderError(
+                    "Failed to begin rendering frame".to_string(),
+                ));
+            }
+        }
+
+        Ok(())
+    }
 
     /// Handles window resizing.
     ///
@@ -71,56 +183,19 @@ pub(crate) trait EngineApplication {
     ///
     /// # Returns
     /// * `Ok(())` if resize succeeds, or `Err(String)` with an error message.
-    fn resize(&mut self, width: u32, height: u32) -> Result<(), String>;
-}
-
-impl EngineApplication for EngineContext {
-    fn initialize(&mut self, window: WindowHandle) -> Result<(), String> {
-        // Initialize the renderer system with the provided window handle.
-        if let Some(renderer) = &mut self.renderer_system {
-            renderer.initialize(window)
-        } else {
-            Err("Renderer system not initialized".to_string())
+    pub fn resize(&mut self, width: u32, height: u32) -> Result<(), EngineError> {
+        if !self.is_initialized {
+            return Err(EngineError::InitializationError(
+                "Engine context not initialized".to_string(),
+            ));
         }
-    }
 
-    fn shutdown(&mut self) -> Result<(), String> {
-        // Shutdown the renderer system if it exists.
         if let Some(renderer) = &mut self.renderer_system {
-            renderer.shutdown()
+            renderer.resize(width, height).map_err(EngineError::RendererError)
         } else {
-            Err("Renderer system not initialized".to_string())
-        }
-    }
-
-    fn update(&mut self, _delta_time: f32) {
-        // Default implementation does nothing.
-        // Override in application-specific context if needed.
-    }
-
-    fn render(&mut self, _delta_time: f32) {
-        // Begin a new rendering frame.
-        self.renderer_system
-            .as_mut()
-            .expect("Renderer system not initialized")
-            .begin_frame()
-            .expect("Failed to begin frame");
-
-        // Rendering logic for the application should be inserted here.
-
-        self.renderer_system
-            .as_mut()
-            .expect("Renderer system not initialized")
-            .end_frame()
-            .expect("Failed to end frame");
-    }
-
-    fn resize(&mut self, width: u32, height: u32) -> Result<(), String> {
-        // Resize the renderer system if it exists.
-        if let Some(renderer) = &mut self.renderer_system {
-            renderer.resize(width, height)
-        } else {
-            Err("Renderer system not initialized".to_string())
+            Err(EngineError::InitializationError(
+                "Renderer system not initialized".to_string(),
+            ))
         }
     }
 }

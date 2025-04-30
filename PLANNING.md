@@ -77,7 +77,77 @@ void-architect
 - **Engine Server:** Lib crate implementing the server-side engine, aka void-architect_engine_server. Will implement server-side engine systems (networking, game logic, etc.) that can be generalised and reused in other projects.
 - **Core:** Lib crate implementing the engine core, aka void-architect_engine. Will implement the core engine systems which can be shared between client and server (ProcGen algorithms, math utilities, etc.).
 
-## 8. Defined Milestones
+## 8. Testing Architecture
+
+### Test Organization
+
+- **Unit Tests (`#[cfg(test)]` modules):**
+  - Located alongside source code in the same file
+  - Test pure functions, algorithms, and isolated components
+  - Focus on validating individual function behavior
+  - Validate invariants and edge cases
+  - Test private implementation details
+
+- **Integration Tests (`./tests/` directory):**
+  - Test interaction between multiple components
+  - Complex setup requirements or scenarios
+  - End-to-end functionality tests
+  - Performance benchmarks
+  - User workflows and scenarios
+
+### Specialized Testing Tools
+
+- **Property-Based Testing (proptest):**
+  - Used for testing functions with well-defined properties
+  - Generates random inputs to validate invariants
+  - Particularly useful for:
+    - Math operations and algorithms
+    - Data structure operations
+    - Parsing and serialization
+    - State machine transitions
+
+- **Performance Benchmarking (criterion):**
+  - Measure performance of critical operations
+  - Track performance changes over time
+  - Compare different implementations
+  - Focus areas:
+    - Procedural generation algorithms
+    - Rendering operations
+    - Network serialization/deserialization
+    - Physics calculations
+
+- **Mock Objects (mockall):**
+  - Create test doubles for external dependencies
+  - Simulate different scenarios and edge cases
+  - Verify interaction patterns
+  - Common uses:
+    - Network operations
+    - File system operations
+    - Hardware interfaces
+    - External services
+
+### Testing Guidelines
+
+1. **Coverage Goals:**
+   - All public APIs must have tests
+   - Critical paths require both unit and integration tests
+   - Performance-sensitive code needs benchmarks
+   - Edge cases and error conditions must be tested
+
+2. **Test Organization:**
+   - Group related tests in submodules
+   - Use descriptive test names
+   - Follow `test_<what>_<scenario>` naming convention
+   - Keep test code clean and maintainable
+
+3. **Best Practices:**
+   - Write tests alongside new code
+   - Update tests when modifying functionality
+   - Use fixtures and helpers to reduce duplication
+   - Document complex test setups
+   - Include both positive and negative test cases
+
+## 9. Defined Milestones
 
 - **Milestone 0: Basic Console Communication (Client/Server)**
   - **Goal:** Establish a minimal, working TCP connection between a Rust client and Rust server. Send/receive simple "Hello" messages serialized with Protobuf. Use `tokio` for async networking. Implement the `void-architect_shared` crate.
@@ -110,3 +180,12 @@ void-architect
 - Implementing a proper game loop, input handling, and state management within the client.
 - Developing the core rendering pipeline in Vulkan.
 - Designing and implementing the actual 4X game mechanics.
+
+## 10. Ideas
+- Science system based on "idea" generation in the population, some ideas lead to breakthrough but most doesn't (prehistorical stage). Later on, organized research could be conducted to develop targeted idea (a new propulsion system, etc) based on the current knowledge.
+- Cultural system
+- Religion system / Beliefs
+- Diplomatic system (external politic)
+- Political system (rich internal "life" of the empire)
+- Game event system (like in stellaris, crusader kings, etc)
+- Military system with "operations", the player should be able to lead, and commanders would execute the plan. At any time, the player could "take command" and give direct orders. This system should allow for large scale operation (like system/planetary invasion).
