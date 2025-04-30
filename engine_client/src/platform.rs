@@ -8,17 +8,37 @@ a unified API for the rest of the engine.
 
 use std::{
     error::Error,
-    fmt,
+    fmt::{self, Debug},
     sync::{Arc, RwLock, Weak},
 };
 
 /// A handle providing non-owning access to the SDL window.
 /// Used to prevent reference cycles.
+/// A handle providing non-owning access to the SDL window.
+/// Used to prevent reference cycles.
 #[derive(Clone)]
 pub struct WindowHandle {
-    // Made public
-    /// A weak reference to the SDL window, wrapped in Arc/RwLock for thread safety.
+    /// A weak reference to the window, wrapped in Arc/RwLock for thread safety.
     pub window: Weak<RwLock<sdl3::video::Window>>,
+}
+
+impl Debug for WindowHandle {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.window.upgrade() {
+            Some(window) => {
+                let window = window.read().unwrap();
+                let (width, height) = window.size();
+                write!(
+                    f,
+                    "WindowHandle {{ width: {}, height: {}, title: {} }}",
+                    width,
+                    height,
+                    window.title()
+                )
+            }
+            None => write!(f, "WindowHandle {{ <dangling> }}"),
+        }
+    }
 }
 
 /// Manages the platform-specific operations, primarily window creation and event handling using SDL3.
@@ -30,7 +50,7 @@ pub struct PlatformLayer {
     window_width: u32,
     /// The current height of the window's client area.
     window_height: u32,
-    /// A thread-safe reference-counted pointer to the SDL window. `None` if not initialized.
+    /// A thread-safe reference-counted pointer to the window. `None` if not initialized.
     window: Option<Arc<RwLock<sdl3::video::Window>>>,
     /// The main SDL context handle. `None` if not initialized.
     sdl_context: Option<sdl3::Sdl>,
@@ -217,44 +237,57 @@ impl PlatformLayer {
                             self.window_width = width as u32; // Update internal state
                             self.window_height = height as u32;
                             // TODO: Propagate resize event to the renderer/engine
-                            // Example: self.event_sender.send(EngineEvent::WindowResized(width, height)).log_err();
                         }
-                        // Add other window events as needed (e.g., FocusGained, FocusLost)
-                        _ => {}
+                        _ => {} // Ignore other window events for now
                     }
                 }
-                sdl3::event::Event::KeyDown { keycode, .. } => {
-                    if let Some(key) = keycode {
-                        // Key pressed event received.
-                        // log::debug!("Key down: {:?}", key);
-                        // TODO: Propagate key down event to input system
-                    }
+                sdl3::event::Event::KeyDown {
+                    keycode: _keycode, ..
+                } => {
+                    // Key pressed event received.
+                    // TODO: Propagate key down event to input system
                 }
-                sdl3::event::Event::KeyUp { keycode, .. } => {
-                    if let Some(key) = keycode {
-                        // Key released event received.
-                        // log::debug!("Key up: {:?}", key);
-                        // TODO: Propagate key up event to input system
-                    }
+                sdl3::event::Event::KeyUp {
+                    keycode: _keycode, ..
+                } => {
+                    // Key released event received.
+                    // TODO: Propagate key up event to input system
                 }
-                sdl3::event::Event::MouseButtonDown { .. } => {
+                sdl3::event::Event::MouseButtonDown {
+                    mouse_btn: _mouse_btn,
+                    x: _x,
+                    y: _y,
+                    ..
+                } => {
                     // Mouse button pressed event.
-                    // log::debug!("Mouse button down: {:?} at ({}, {})", mouse_btn, x, y);
                     // TODO: Propagate mouse button down event to input system
                 }
-                sdl3::event::Event::MouseButtonUp { .. } => {
+                sdl3::event::Event::MouseButtonUp {
+                    mouse_btn: _mouse_btn,
+                    x: _x,
+                    y: _y,
+                    ..
+                } => {
                     // Mouse button released event.
-                    // log::debug!("Mouse button up: {:?} at ({}, {})", mouse_btn, x, y);
                     // TODO: Propagate mouse button up event to input system
                 }
-                sdl3::event::Event::MouseMotion { .. } => {
+                sdl3::event::Event::MouseMotion {
+                    x: _x,
+                    y: _y,
+                    xrel: _xrel,
+                    yrel: _yrel,
+                    ..
+                } => {
                     // Mouse moved event.
-                    // log::debug!("Mouse motion: at ({}, {}) relative ({}, {})", x, y, xrel, yrel);
                     // TODO: Propagate mouse motion event to input system
                 }
-                sdl3::event::Event::MouseWheel { .. } => {
+                sdl3::event::Event::MouseWheel {
+                    x: _x,
+                    y: _y,
+                    direction: _direction,
+                    ..
+                } => {
                     // Mouse wheel scrolled event.
-                    // log::debug!("Mouse wheel: ({}, {}) direction {:?}", x, y, direction);
                     // TODO: Propagate mouse wheel event to input system
                 }
                 _ => {} // Ignore other event types for now
@@ -271,15 +304,11 @@ impl PlatformLayer {
         if let Some(window_arc) = self.window.take() {
             // Attempt to acquire write lock and hide the window before dropping.
             // This ensures the window is hidden before SDL context is destroyed.
-            match window_arc.write() {
-                Ok(mut window) => {
-                    log::debug!("Hiding window");
-                    window.hide();
-                }
-                Err(e) => log::error!(
-                    "Failed to acquire write lock on window during shutdown: {}",
-                    e
-                ),
+            if let Ok(mut window) = window_arc.write() {
+                log::debug!("Hiding window");
+                window.hide();
+            } else {
+                log::error!("Failed to acquire write lock on window during shutdown");
             }
             drop(window_arc); // Drop the Arc explicitly to release window resources.
             log::debug!("Window Arc dropped");

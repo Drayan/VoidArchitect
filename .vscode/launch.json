@@ -17,6 +17,19 @@
             },
         },
         {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Launch",
+            "program": "${workspaceFolder}/client/target/debug/void-architect_client",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "osx": {
+                "env": {
+                    "DYLD_LIBRARY_PATH": "/Users/drayan/VulkanSDK/1.4.309.0/macOS/lib:${env:DYLD_LIBRARY_PATH}"
+                }
+            },
+        },
+        {
             "name": "Launch Server",
             "type": "lldb-dap",
             "request": "launch",

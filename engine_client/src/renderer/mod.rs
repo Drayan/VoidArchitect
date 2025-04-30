@@ -31,7 +31,7 @@ pub trait RendererBackend {
     /// # Returns
     /// * `Ok(())` if the frame begins successfully.
     /// * `Err(String)` if an error occurs.
-    fn begin_frame(&mut self) -> Result<(), String>;
+    fn begin_frame(&mut self) -> Result<bool, String>;
 
     /// Ends the current rendering frame.
     ///
@@ -54,7 +54,8 @@ pub trait RendererBackend {
 
 pub struct RendererFrontend {
     // Holds the selected renderer backend implementation (e.g., Vulkan).
-    pub backend: Box<dyn RendererBackend>,
+    backend: Box<dyn RendererBackend>,
+    is_initialized: bool,
 }
 
 impl RendererFrontend {
@@ -63,31 +64,44 @@ impl RendererFrontend {
             //TODO: This should be configurable
             // By default, use the Vulkan backend. This should be configurable in the future.
             backend: Box::new(RendererBackendVulkan::new()),
+            is_initialized: false,
         }
     }
 
     pub fn initialize(&mut self, window: WindowHandle) -> Result<(), String> {
-        // Check if we have a valid window handle
-        if window.window.as_ptr().is_null() {
-            return Err("Invalid window handle".to_string());
+        let result = self.backend.initialize(window);
+        if result.is_ok() {
+            self.is_initialized = true;
         }
-        // Initialize the backend with the provided window handle
-        self.backend.initialize(window)
+        result
     }
 
     pub fn shutdown(&mut self) -> Result<(), String> {
+        if !self.is_initialized {
+            return Err("Renderer not initialized".to_string());
+        }
+        self.is_initialized = false;
         self.backend.shutdown()
     }
 
-    pub fn begin_frame(&mut self) -> Result<(), String> {
+    pub fn begin_frame(&mut self) -> Result<bool, String> {
+        if !self.is_initialized {
+            return Err("Renderer not initialized".to_string());
+        }
         self.backend.begin_frame()
     }
 
     pub fn end_frame(&mut self) -> Result<(), String> {
+        if !self.is_initialized {
+            return Err("Renderer not initialized".to_string());
+        }
         self.backend.end_frame()
     }
 
     pub fn resize(&mut self, width: u32, height: u32) -> Result<(), String> {
+        if !self.is_initialized {
+            return Err("Renderer not initialized".to_string());
+        }
         self.backend.resize(width, height)
     }
 }

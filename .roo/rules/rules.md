@@ -11,11 +11,59 @@
 ### 🧪 Testing & Reliability
 - **Always create Rust unit tests for new features** (functions, classes, routes, etc).
 - **After updating any logic**, check whether existing unit tests need to be updated. If so, do it.
-- **Tests should live in a `/tests` folder** mirroring the main app structure.
-  - Include at least:
-    - 1 test for expected use
-    - 1 edge case
-    - 1 failure case
+- **Unit tests in source files for:**
+  - Should test the "private" API
+  - Pure functions and algorithms
+  - Simple structure validations
+  - Isolated behavior tests
+  - Invariant checks
+  - Private function
+  ```rust
+  // Example: src/procedural/noise.rs
+  pub fn perlin(x: f32, y: f32, z: f32) -> f32 { /* ... */ }
+
+  #[cfg(test)]
+  mod tests {
+    use super::*;
+
+    #[test]
+    fn perlin_range_check() {
+      for i in 0..100 {
+        let value = perlin(i as f32 * 0.1, 0.0, 0.0);
+        assert!(value >= -1.0 && value <= 1.0);
+      }
+    }
+  }
+  ```
+- **Integration tests in `./tests/` for:**
+  - Should test the public API only (no private)
+  - Integration tests between components
+  - Tests requiring complex setup
+  - End-to-end procedural generation tests
+  - User scenarios
+  - Performance tests
+  ```rust
+  // Example: tests/galaxy_generation_tests.rs
+  use void_architect::procedural::{GalaxyGenerator, GalaxySettings}; // Assuming GalaxySettings exists
+  use void_architect::celestial::{Galaxy, Star}; // Assuming these types exist
+
+  #[test]
+  fn test_complete_galaxy_generation() {
+    let mut generator = GalaxyGenerator::new(42, GalaxySettings::spiral()); // Assuming spiral() exists
+    let galaxy = generator.generate();
+
+    assert!(galaxy.star_count() > 1000); // Assuming star_count() exists
+    assert!(galaxy.has_habitable_planets()); // Assuming has_habitable_planets() exists
+
+    // Verify spiral structure
+    let stars = galaxy.get_stars(); // Assuming get_stars() exists
+    // Statistical tests on distribution...
+  }
+  ```
+- **Use specialized tools:**
+  - `proptest` for random generation and property-based testing.
+  - `criterion` for performance benchmarks.
+  - `mockall` for mocks when necessary.
 
 ### ✅ Task Completion
 - **Mark completed tasks in `TASKS.md`** immediately after finishing them.

@@ -9,7 +9,7 @@ pub(super) enum VulkanCommandBufferState {
     NotAllocated,
 }
 
-pub struct VulkanCommandBuffer {
+pub(super) struct VulkanCommandBuffer {
     pub handle: vk::CommandBuffer,
     pub state: VulkanCommandBufferState,
 }
@@ -132,6 +132,29 @@ impl VulkanCommandBuffer {
 
         self.destroy(device, command_pool);
 
+        Ok(())
+    }
+
+    // --- Command Buffer Commands ---
+    pub fn set_viewports(
+        self: &mut Self,
+        device: &ash::Device,
+        viewports: Vec<vk::Viewport>,
+    ) -> Result<(), String> {
+        unsafe {
+            device.cmd_set_viewport(self.handle, 0, &viewports);
+        }
+        Ok(())
+    }
+
+    pub fn set_scissors(
+        self: &mut Self,
+        device: &ash::Device,
+        scissors: Vec<vk::Rect2D>,
+    ) -> Result<(), String> {
+        unsafe {
+            device.cmd_set_scissor(self.handle, 0, &scissors);
+        }
         Ok(())
     }
 }
