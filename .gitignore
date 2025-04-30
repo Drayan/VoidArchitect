@@ -122,4 +122,5 @@ Cargo.lock
 
 # Project specific
 assets
+!assets/shaders/*.glsl
 vendor
