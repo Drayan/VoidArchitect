@@ -60,12 +60,7 @@ impl EngineContext {
             is_initialized: false,
         }
     }
-}
 
-/// Trait for applications using the engine client.
-///
-/// Implement this trait to define the lifecycle and rendering logic for your application.
-pub(crate) trait EngineApplication {
     // Trait for internal engine application lifecycle management.
     /// Initializes the application with the given window handle.
     ///
