@@ -1,44 +1,19 @@
-//! Vulkan backend implementation - backend.rs
-
-use super::context::VulkanContext;
-use super::device::VulkanDevice;
-use super::fence::VulkanFence;
-use super::framebuffer::VulkanFramebuffer;
-use super::renderpass::VulkanRenderPass;
-use super::swapchain::VulkanSwapchain;
-use crate::platform::WindowHandle;
-use crate::renderer::RendererBackend;
-use crate::renderer::backends::vulkan::swapchain::VulkanSwapchainContext;
-use ash::Entry;
-use ash::vk;
+use ash::{Entry, vk};
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
-use std::borrow::Cow;
-// RendererBackendVulkan definition and implementation moved from mod.rs
 
-pub struct RendererBackendVulkan {
-    // Vulkan context
-    // Holds the Vulkan context state for this backend.
-    context: Option<VulkanContext>,
+use crate::{device, instance, surface_loader, swapchain, swapchain_mut, vulkan_device};
+use crate::{platform::WindowHandle, renderer::RendererBackend};
 
-    cached_framebuffer_width: u32,
-    cached_framebuffer_height: u32,
-}
+use super::VulkanRendererBackend;
+use super::commands::VulkanCommandBufferContext;
+use super::device::VulkanDevice;
+use super::device::VulkanDeviceContext;
+use super::fence::{VulkanFence, VulkanFenceContext};
+use super::framebuffer::VulkanFramebufferContext;
+use super::renderpass::{VulkanRenderPass, VulkanRenderPassContext};
+use super::swapchain::VulkanSwapchainContext;
 
-impl RendererBackendVulkan {
-    /// Creates a new Vulkan renderer backend instance.
-    ///
-    /// # Returns
-    /// * `RendererBackendVulkan` - A new Vulkan backend instance.
-    pub fn new() -> Self {
-        Self {
-            context: None,
-            cached_framebuffer_width: 0,
-            cached_framebuffer_height: 0,
-        }
-    }
-}
-
-impl RendererBackend for RendererBackendVulkan {
+impl RendererBackend for VulkanRendererBackend {
     fn initialize(&mut self, window_hndl: WindowHandle) -> Result<(), String> {
         // Initialize Vulkan resources here
         // if window_hndl.window.display_handle().is_err() {
@@ -61,10 +36,8 @@ impl RendererBackend for RendererBackendVulkan {
             let entry = Entry::linked();
 
             // Create Vulkan Context
-            let mut context = VulkanContext::new();
-
-            context.framebuffer_width = width;
-            context.framebuffer_height = height;
+            self.framebuffer_width = width;
+            self.framebuffer_height = height;
 
             // Create Vulkan Application Info
             let app_infos = vk::ApplicationInfo::default()
@@ -113,7 +86,7 @@ impl RendererBackend for RendererBackendVulkan {
                 .enabled_extension_names(&extension_names)
                 .flags(create_flags);
 
-            context.instance = match entry.create_instance(&instance_create_info, None) {
+            self.instance = match entry.create_instance(&instance_create_info, None) {
                 Ok(instance) => Some(instance),
                 Err(e) => {
                     log::error!("Failed to create Vulkan instance: {:?}", e);
@@ -138,27 +111,48 @@ impl RendererBackend for RendererBackendVulkan {
                     )
                     .pfn_user_callback(Some(vulkan_debug_callback));
 
-                context.debug_utils_loader = Some(ash::ext::debug_utils::Instance::new(
+                self.debug_utils_loader = Some(ash::ext::debug_utils::Instance::new(
                     &entry,
-                    &context.instance.as_ref().unwrap(),
+                    &self.instance.as_ref().unwrap(),
                 ));
-                context.debug_callback = Some(
-                    context
-                        .debug_utils_loader
-                        .as_ref()
-                        .expect("Vulkan debugger loader not initialized")
-                        .create_debug_utils_messenger(&debug_info, None)
-                        .expect("Debug callback creation failed"),
-                );
+                self.debug_callback = match self
+                    .debug_utils_loader
+                    .as_ref()
+                    .ok_or("Debug utils loader not initialized")?
+                    .create_debug_utils_messenger(&debug_info, None)
+                {
+                    Ok(debug_callback) => Some(debug_callback),
+                    Err(e) => {
+                        log::error!("Failed to create Vulkan debug messenger: {:?}", e);
+                        return Err(format!(
+                            "Failed to create Vulkan debug messenger: {:?}",
+                            e
+                        ));
+                    }
+                };
                 log::debug!("Vulkan debug callback created successfully");
             }
 
             // Create Vulkan surface
+            let display_handle = match window.display_handle() {
+                Ok(display_hndl) => display_hndl.as_raw(),
+                Err(e) => {
+                    log::error!("Failed to get display handle: {:?}", e);
+                    return Err(format!("Failed to get display handle: {:?}", e));
+                }
+            };
+            let window_handle = match window.window_handle() {
+                Ok(window_hndl) => window_hndl.as_raw(),
+                Err(e) => {
+                    log::error!("Failed to get window handle: {:?}", e);
+                    return Err(format!("Failed to get window handle: {:?}", e));
+                }
+            };
             let surface = match ash_window::create_surface(
                 &entry,
-                &context.instance.as_ref().unwrap(),
-                window.display_handle().unwrap().as_raw(),
-                window.window_handle().unwrap().as_raw(),
+                instance!(self),
+                display_handle,
+                window_handle,
                 None,
             ) {
                 Ok(surface) => surface,
@@ -168,7 +162,7 @@ impl RendererBackend for RendererBackendVulkan {
                 }
             };
             // let surface = match window.vulkan_create_surface(
-            //     context.instance.as_mut().unwrap().handle().as_raw() as *mut __VkInstance,
+            //     self.instance.as_mut().unwrap().handle().as_raw() as *mut __VkInstance,
             // ) {
             //     Ok(surface) => vk::SurfaceKHR::from_raw(surface as u64),
             //     Err(e) => {
@@ -176,44 +170,38 @@ impl RendererBackend for RendererBackendVulkan {
             //         return Err(format!("Failed to create Vulkan surface: {:?}", e));
             //     }
             // };
-            context.surface = Some(surface);
+            self.surface = Some(surface);
             log::debug!("Vulkan surface created successfully");
 
             // Create Vulkan surface loader
-            context.surface_loader = Some(ash::khr::surface::Instance::new(
+            self.surface_loader = Some(ash::khr::surface::Instance::new(
                 &entry,
-                &context.instance.as_ref().unwrap(),
+                &self.instance.as_ref().unwrap(),
             ));
             log::debug!("Vulkan surface loader created successfully");
 
             // Create Vulkan device
-            context.device = match VulkanDevice::new(
-                context.instance.as_ref().ok_or("Vulkan instance not initialized")?,
-                context
-                    .surface_loader
-                    .as_ref()
-                    .ok_or("Vulkan surface loader not initialized")?,
-                surface,
-            ) {
-                Ok(device) => Some(device),
-                Err(e) => {
-                    log::error!("Failed to create Vulkan device: {:?}", e);
-                    return Err(format!("Failed to create Vulkan device: {:?}", e));
-                }
-            };
+            self.device =
+                match VulkanDevice::new(instance!(self), surface_loader!(self), surface) {
+                    Ok(device) => Some(device),
+                    Err(e) => {
+                        log::error!("Failed to create Vulkan device: {:?}", e);
+                        return Err(format!("Failed to create Vulkan device: {:?}", e));
+                    }
+                };
             log::debug!("Vulkan device created successfully");
 
             // Create Vulkan swapchain loader
-            context.swapchain_loader = Some(ash::khr::swapchain::Device::new(
-                context.instance.as_ref().unwrap(),
-                context.device.as_ref().unwrap().logical_device.as_ref().unwrap(),
+            self.swapchain_loader = Some(ash::khr::swapchain::Device::new(
+                instance!(self),
+                device!(self),
             ));
             log::debug!("Vulkan swapchain loader created successfully");
 
             // Create Vulkan swapchain
-            //let width = context.framebuffer_width;
-            //let height = context.framebuffer_height;
-            match context.swapchain().create(width, height) {
+            //let width = self.framebuffer_width;
+            //let height = self.framebuffer_height;
+            match self.swapchain().create(width, height) {
                 Ok(_) => {}
                 Err(e) => {
                     log::error!("Failed to create Vulkan swapchain: {:?}", e);
@@ -223,8 +211,10 @@ impl RendererBackend for RendererBackendVulkan {
             log::debug!("Vulkan swapchain created successfully");
 
             // Create the main render pass
-            context.main_renderpass = match VulkanRenderPass::new(
-                &context,
+            self.main_renderpass = match VulkanRenderPass::new(
+                device!(self),
+                swapchain!(self).surface_format.format,
+                vulkan_device!(self).depth_format,
                 0.0,
                 0.0,
                 width as f32,
@@ -246,7 +236,7 @@ impl RendererBackend for RendererBackendVulkan {
 
             // Create Vulkan framebuffers
 
-            match context.recreate_framebuffers() {
+            match self.framebuffer().recreate_framebuffers() {
                 Ok(_) => {}
                 Err(e) => {
                     log::error!("Failed to create Vulkan framebuffers: {:?}", e);
@@ -254,11 +244,11 @@ impl RendererBackend for RendererBackendVulkan {
                 }
             };
 
-            context.framebuffer_width = width;
-            context.framebuffer_height = height;
+            self.framebuffer_width = width;
+            self.framebuffer_height = height;
 
             // Create command buffers
-            match context.create_commands_buffers() {
+            match self.commands().create_commands_buffers() {
                 Ok(_) => {}
                 Err(e) => {
                     log::error!("Failed to create Vulkan command buffers: {:?}", e);
@@ -267,8 +257,8 @@ impl RendererBackend for RendererBackendVulkan {
             };
             log::debug!("Vulkan command buffers created successfully");
 
-            let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
-            let swapchain = context.swapchain.as_mut().unwrap();
+            let device = device!(self);
+            let swapchain = swapchain_mut!(self);
 
             // Create semaphores and fences
             for _ in 0..swapchain.max_frames_in_flight {
@@ -283,7 +273,7 @@ impl RendererBackend for RendererBackendVulkan {
                             ));
                         }
                     };
-                context.image_available_semaphores.push(image_available_semaphore);
+                self.image_available_semaphores.push(image_available_semaphore);
 
                 let queue_complete_semaphore =
                     match device.create_semaphore(&vk::SemaphoreCreateInfo::default(), None) {
@@ -296,7 +286,7 @@ impl RendererBackend for RendererBackendVulkan {
                             ));
                         }
                     };
-                context.queue_complete_semaphores.push(queue_complete_semaphore);
+                self.queue_complete_semaphores.push(queue_complete_semaphore);
 
                 let fence = match VulkanFence::new(device, true) {
                     Ok(fence) => fence,
@@ -305,15 +295,14 @@ impl RendererBackend for RendererBackendVulkan {
                         return Err(format!("Failed to create fence: {:?}", e));
                     }
                 };
-                context.in_flight_fences.push(fence);
+                self.in_flight_fences.push(fence);
             }
 
             for _ in 0..swapchain.images.len() {
-                context.images_in_flight.push(None);
+                self.images_in_flight.push(None);
             }
             log::debug!("Vulkan semaphores and fences created successfully");
 
-            self.context = Some(context);
             log::debug!("Vulkan renderer initialized successfully");
             Ok(())
         }
@@ -321,95 +310,90 @@ impl RendererBackend for RendererBackendVulkan {
 
     fn shutdown(&mut self) -> Result<(), String> {
         // Cleanup Vulkan resources here
-        if let Some(mut context) = self.context.take() {
-            log::debug!("Shutting down Vulkan renderer");
-            context.wait_for_device_idle()?;
+        log::debug!("Shutting down Vulkan renderer");
+        self.device().wait_for_device_idle()?;
 
-            // Destroy Vulkan fences
-            let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
-            for fence in context.in_flight_fences.iter() {
-                fence.destroy(device);
-            }
-            context.in_flight_fences.clear();
-            log::debug!("Vulkan fences destroyed");
+        // Destroy Vulkan fences
+        for fence in self.in_flight_fences.iter() {
+            fence.destroy(device!(self));
+        }
+        self.in_flight_fences.clear();
+        log::debug!("Vulkan fences destroyed");
 
-            // Destroy Vulkan semaphores
-            for semaphore in context.image_available_semaphores.iter() {
-                unsafe { device.destroy_semaphore(*semaphore, None) };
-            }
-            context.image_available_semaphores.clear();
-            for semaphore in context.queue_complete_semaphores.iter() {
-                unsafe { device.destroy_semaphore(*semaphore, None) };
-            }
-            context.queue_complete_semaphores.clear();
-            log::debug!("Vulkan semaphores destroyed");
+        // Destroy Vulkan semaphores
+        for semaphore in self.image_available_semaphores.iter() {
+            unsafe { device!(self).destroy_semaphore(*semaphore, None) };
+        }
+        self.image_available_semaphores.clear();
+        for semaphore in self.queue_complete_semaphores.iter() {
+            unsafe { device!(self).destroy_semaphore(*semaphore, None) };
+        }
+        self.queue_complete_semaphores.clear();
+        log::debug!("Vulkan semaphores destroyed");
 
-            // Destroy Vulkan command buffers
-            match context.destroy_commands_buffers() {
-                Ok(_) => {}
-                Err(e) => {
-                    log::error!("Failed to destroy Vulkan command buffers: {:?}", e);
-                    return Err(format!("Failed to destroy Vulkan command buffers: {:?}", e));
-                }
+        // Destroy Vulkan command buffers
+        match self.commands().destroy_commands_buffers() {
+            Ok(_) => {}
+            Err(e) => {
+                log::error!("Failed to destroy Vulkan command buffers: {:?}", e);
+                return Err(format!("Failed to destroy Vulkan command buffers: {:?}", e));
             }
-            log::debug!("Vulkan command buffers destroyed");
+        }
+        log::debug!("Vulkan command buffers destroyed");
 
-            // Destroy Vulkan framebuffers
-            if let Some(swapchain) = context.swapchain.as_ref() {
-                for framebuffer in swapchain.framebuffers.iter() {
-                    framebuffer.destroy(
-                        context.device.as_ref().unwrap().logical_device.as_ref().unwrap(),
-                    );
-                }
-                log::debug!("Vulkan framebuffers destroyed");
+        // Destroy Vulkan framebuffers
+        if let Some(swapchain) = self.swapchain.as_ref() {
+            for framebuffer in swapchain.framebuffers.iter() {
+                framebuffer
+                    .destroy(self.device.as_ref().unwrap().logical_device.as_ref().unwrap());
             }
+            log::debug!("Vulkan framebuffers destroyed");
+        }
 
-            // Destroy Vulkan render pass
-            if let Some(render_pass) = context.main_renderpass.take() {
-                render_pass.destroy(&context);
-                log::debug!("Vulkan render pass destroyed");
+        // Destroy Vulkan render pass
+        if let Some(render_pass) = self.main_renderpass.take() {
+            render_pass.destroy(device!(self));
+            log::debug!("Vulkan render pass destroyed");
+        }
+
+        // Destroy Vulkan swapchain
+        if self.swapchain.is_some() {
+            self.swapchain().destroy()?;
+            log::debug!("Vulkan swapchain destroyed");
+        }
+
+        // Destroy Vulkan device
+        if let Some(mut device) = self.device.take() {
+            device.destroy();
+            log::debug!("Vulkan device destroyed");
+        }
+
+        // Destroy Vulkan surface
+        if let Some(surface) = self.surface {
+            unsafe {
+                surface_loader!(self).destroy_surface(surface, None);
+                log::debug!("Vulkan surface destroyed");
             }
+        }
 
-            // Destroy Vulkan swapchain
-            if context.swapchain.is_some() {
-                context.swapchain().destroy()?;
-                log::debug!("Vulkan swapchain destroyed");
-            }
-
-            // Destroy Vulkan device
-            if let Some(mut device) = context.device.take() {
-                device.destroy();
-                log::debug!("Vulkan device destroyed");
-            }
-
-            // Destroy Vulkan surface
-            if let Some(surface) = context.surface {
+        // If this is a debug build, destroy debug messenger
+        #[cfg(debug_assertions)]
+        {
+            if let Some(debug_callback) = self.debug_callback {
                 unsafe {
-                    context.surface_loader.as_ref().unwrap().destroy_surface(surface, None);
-                    log::debug!("Vulkan surface destroyed");
+                    self.debug_utils_loader
+                        .as_ref()
+                        .unwrap()
+                        .destroy_debug_utils_messenger(debug_callback, None);
+                    log::debug!("Vulkan debug callback destroyed");
                 }
             }
+        }
 
-            // If this is a debug build, destroy debug messenger
-            #[cfg(debug_assertions)]
-            {
-                if let Some(debug_callback) = context.debug_callback {
-                    unsafe {
-                        context
-                            .debug_utils_loader
-                            .as_ref()
-                            .unwrap()
-                            .destroy_debug_utils_messenger(debug_callback, None);
-                        log::debug!("Vulkan debug callback destroyed");
-                    }
-                }
-            }
-
-            if let Some(instance) = context.instance {
-                unsafe {
-                    instance.destroy_instance(None);
-                    log::debug!("Vulkan instance destroyed");
-                }
+        if let Some(instance) = &self.instance {
+            unsafe {
+                instance.destroy_instance(None);
+                log::debug!("Vulkan instance destroyed");
             }
         }
         log::debug!("Vulkan renderer shut down successfully");
@@ -418,46 +402,35 @@ impl RendererBackend for RendererBackendVulkan {
 
     fn begin_frame(&mut self) -> Result<bool, String> {
         // Begin Vulkan frame rendering here
-        if self.context.is_none() {
-            return Err("Vulkan context is not initialized".to_string());
-        }
-
-        let ctx = self.context.as_mut().ok_or("Context not initialized")?;
-
         // Check if we need to resize the swapchain, if yes, resize it and skip the frame.
-        if !ctx.resize_swapchain_if_needed()? {
+        if !self.swapchain().resize_swapchain_if_needed()? {
             return Ok(false); // Skip this frame.
         }
 
         // Acquire the next image from the swapchain
-        ctx.acquire_next_image()?;
+        self.swapchain().acquire_next_image()?;
 
         // Begin command buffer recording
-        ctx.begin_gfx_commands_buffer()?;
+        self.commands().begin_gfx_commands_buffer()?;
 
         // Dynamic state
-        ctx.begin_main_render_pass()?;
+        self.renderpass().begin_main_render_pass()?;
 
         Ok(true)
     }
 
     fn end_frame(&mut self) -> Result<(), String> {
         // End Vulkan frame rendering here
-        if self.context.is_none() {
-            return Err("Vulkan context is not initialized".to_string());
-        }
-
         // End the renderpass
-        let ctx = self.context.as_mut().ok_or("Context not initialized")?;
-        ctx.end_main_render_pass()?;
-        ctx.end_gfx_commands_buffer()?;
+        self.renderpass().end_main_render_pass()?;
+        self.commands().end_gfx_commands_buffer()?;
 
-        ctx.wait_for_previous_frame_to_complete()?;
+        self.fence().wait_for_previous_frame_to_complete()?;
 
-        ctx.update_image_sync()?;
+        self.fence().update_image_sync()?;
 
-        ctx.submit_gfx_command_buf()?;
-        ctx.present()?;
+        self.commands().submit_gfx_command_buf()?;
+        self.swapchain().present()?;
 
         Ok(())
     }
@@ -471,11 +444,10 @@ impl RendererBackend for RendererBackendVulkan {
         self.cached_framebuffer_width = width;
         self.cached_framebuffer_height = height;
 
-        let mut current_gen = 0;
-        if let Some(context) = &mut self.context {
-            context.framebuffer_size_generation += 1;
-            current_gen = context.framebuffer_size_generation;
-        }
+        // Update the framebuffer generation, this will be used to recreate the swapchain
+        // when the main loop detects that the framebuffer size has changed.
+        self.framebuffer_size_generation += 1;
+        let current_gen = self.framebuffer_size_generation;
 
         log::debug!(
             "Vulkan swapchain resized to {}x{}, gen {}",
@@ -495,6 +467,8 @@ unsafe extern "system" fn vulkan_debug_callback(
     p_callback_data: *const vk::DebugUtilsMessengerCallbackDataEXT<'_>,
     _p_user_data: *mut std::ffi::c_void,
 ) -> vk::Bool32 {
+    use std::borrow::Cow;
+
     unsafe {
         let callback_data = *p_callback_data;
         let message_id_number = callback_data.message_id_number;

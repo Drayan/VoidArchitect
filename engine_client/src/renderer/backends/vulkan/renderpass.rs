@@ -1,7 +1,9 @@
 use ash::vk::{self, Handle, Rect2D};
 
+use crate::{command_buffer_mut, device, framebuffer, main_renderpass, main_renderpass_mut};
+
 use super::{
-    VulkanContext,
+    VulkanRendererBackend,
     commands::{VulkanCommandBuffer, VulkanCommandBufferState},
 };
 
@@ -32,10 +34,26 @@ pub(super) struct VulkanRenderPass {
     state: VulkanRenderPassState,
 }
 
+pub(super) struct VulkanRenderPassOperations<'backend> {
+    backend: &'backend mut VulkanRendererBackend,
+}
+
+pub(super) trait VulkanRenderPassContext {
+    fn renderpass(&mut self) -> VulkanRenderPassOperations<'_>;
+}
+
+impl VulkanRenderPassContext for VulkanRendererBackend {
+    fn renderpass(&mut self) -> VulkanRenderPassOperations<'_> {
+        VulkanRenderPassOperations { backend: self }
+    }
+}
+
 impl VulkanRenderPass {
     // TODO: Replace with a proper Vector / Color definition ?
     pub fn new(
-        context: &VulkanContext,
+        device: &ash::Device,
+        color_format: vk::Format,
+        depth_format: vk::Format,
         x: f32,
         y: f32,
         w: f32,
@@ -47,13 +65,11 @@ impl VulkanRenderPass {
         depth: f32,
         stencil: u32,
     ) -> Result<Self, String> {
-        let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
-
         // --- Output attachement (Color, Depth, Stencil) ---
         let attachment_descriptions = [
             // Color attachment
             vk::AttachmentDescription {
-                format: context.swapchain.as_ref().unwrap().surface_format.format,
+                format: color_format,
                 samples: vk::SampleCountFlags::TYPE_1,
                 load_op: vk::AttachmentLoadOp::CLEAR,
                 store_op: vk::AttachmentStoreOp::STORE,
@@ -65,7 +81,7 @@ impl VulkanRenderPass {
             },
             // Depth attachment
             vk::AttachmentDescription {
-                format: context.device.as_ref().unwrap().depth_format,
+                format: depth_format,
                 samples: vk::SampleCountFlags::TYPE_1,
                 load_op: vk::AttachmentLoadOp::CLEAR,
                 store_op: vk::AttachmentStoreOp::DONT_CARE,
@@ -123,10 +139,9 @@ impl VulkanRenderPass {
         }
     }
 
-    pub fn destroy(self: &Self, context: &VulkanContext) {
+    pub fn destroy(self: &Self, device: &ash::Device) {
         if !self.handle.is_null() {
             unsafe {
-                let device = context.device.as_ref().unwrap().logical_device.as_ref().unwrap();
                 device.destroy_render_pass(self.handle, None);
             }
         }
@@ -181,5 +196,50 @@ impl VulkanRenderPass {
             device.cmd_end_render_pass(cmds_buf.handle);
         }
         cmds_buf.state = VulkanCommandBufferState::Recording;
+    }
+}
+
+impl<'backend> VulkanRenderPassOperations<'backend> {
+    pub fn begin_main_render_pass(&mut self) -> Result<(), String> {
+        let width = self.backend.framebuffer_width;
+        let height = self.backend.framebuffer_height;
+        let framebuffer = framebuffer!(self.backend, self.backend.image_index);
+        let device = device!(self.backend);
+        let command_buffer = command_buffer_mut!(self.backend, self.backend.image_index);
+
+        // Set viewport and scissor
+        let viewport = vk::Viewport {
+            x: 0.0,
+            y: height as f32,
+            width: width as f32,
+            height: -(height as f32),
+            min_depth: 0.0,
+            max_depth: 1.0,
+        };
+
+        let scissor = vk::Rect2D {
+            offset: vk::Offset2D { x: 0, y: 0 },
+            extent: vk::Extent2D { width, height },
+        };
+
+        let renderpass = main_renderpass_mut!(self.backend);
+        renderpass.w = self.backend.framebuffer_width as f32;
+        renderpass.h = self.backend.framebuffer_height as f32;
+
+        command_buffer.set_viewports(device, [viewport].to_vec())?;
+        command_buffer.set_scissors(device, [scissor].to_vec())?;
+
+        renderpass.begin(device, command_buffer, framebuffer.handle);
+
+        Ok(())
+    }
+
+    pub fn end_main_render_pass(&mut self) -> Result<(), String> {
+        let cmdsbuf = command_buffer_mut!(self.backend, self.backend.image_index);
+        let device = device!(self.backend);
+        let renderpass = main_renderpass!(self.backend);
+
+        renderpass.end(device, cmdsbuf);
+        Ok(())
     }
 }

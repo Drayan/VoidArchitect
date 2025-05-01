@@ -1,6 +1,18 @@
 use ash::vk;
 
-use super::{VulkanContext, VulkanFramebuffer, device::VulkanDevice, image::VulkanImage};
+use crate::{
+    device, instance, main_renderpass_mut, surface, surface_loader, swapchain,
+    swapchain_loader, swapchain_mut, vulkan_device, vulkan_device_mut,
+};
+
+use super::{
+    VulkanFramebuffer, VulkanRendererBackend,
+    commands::VulkanCommandBufferContext,
+    device::{VulkanDevice, VulkanDeviceContext},
+    fence::VulkanFenceContext,
+    framebuffer::VulkanFramebufferContext,
+    image::VulkanImage,
+};
 
 pub(super) struct VulkanSwapchain {
     pub surface_format: vk::SurfaceFormatKHR,
@@ -12,31 +24,31 @@ pub(super) struct VulkanSwapchain {
     pub framebuffers: Vec<VulkanFramebuffer>,
 }
 
-pub(super) struct VulkanSwapchainOperations<'ctx> {
-    context: &'ctx mut VulkanContext,
+pub(super) struct VulkanSwapchainOperations<'backend> {
+    backend: &'backend mut VulkanRendererBackend,
 }
 
 pub(super) trait VulkanSwapchainContext {
     fn swapchain(&mut self) -> VulkanSwapchainOperations<'_>;
 }
 
-impl VulkanSwapchainContext for VulkanContext {
+impl VulkanSwapchainContext for VulkanRendererBackend {
     fn swapchain(&mut self) -> VulkanSwapchainOperations<'_> {
-        VulkanSwapchainOperations { context: self }
+        VulkanSwapchainOperations { backend: self }
     }
 }
 
-impl<'ctx> VulkanSwapchainOperations<'ctx> {
+impl<'backend> VulkanSwapchainOperations<'backend> {
     pub fn create(&mut self, width: u32, height: u32) -> Result<(), String> {
         let mut extents = vk::Extent2D { width, height };
-        let device = self.context.device.as_ref().ok_or("Failed to get Vulkan device")?;
+        let device = self.backend.device.as_ref().ok_or("Failed to get Vulkan device")?;
         let surface_loader = self
-            .context
+            .backend
             .surface_loader
             .as_ref()
             .ok_or("Failed to get Vulkan surface loader")?;
         let surface =
-            self.context.surface.as_ref().ok_or("Failed to get Vulkan surface")?.clone();
+            self.backend.surface.as_ref().ok_or("Failed to get Vulkan surface")?.clone();
 
         // Choose the swapchain surface format
         let formats = &device.swapchain_support.formats;
@@ -117,7 +129,7 @@ impl<'ctx> VulkanSwapchainOperations<'ctx> {
             .clipped(true);
 
         let swapchain_loader = self
-            .context
+            .backend
             .swapchain_loader
             .as_ref()
             .ok_or("Failed to get Vulkan swapchain loader")?;
@@ -174,7 +186,7 @@ impl<'ctx> VulkanSwapchainOperations<'ctx> {
         };
 
         let instance =
-            self.context.instance.as_ref().ok_or("Failed to get Vulkan instance")?;
+            self.backend.instance.as_ref().ok_or("Failed to get Vulkan instance")?;
         // Detect the depth format
         //TODO: Recover from error ?
         let depth_format = match device.detect_depth_format(instance) {
@@ -200,12 +212,12 @@ impl<'ctx> VulkanSwapchainOperations<'ctx> {
             Err(e) => return Err(format!("Failed to create depth image: {}", e)),
         };
 
-        let device = self.context.device.as_mut().ok_or("Failed to get Vulkan device")?;
-        self.context.current_frame = 0;
+        let device = self.backend.device.as_mut().ok_or("Failed to get Vulkan device")?;
+        self.backend.current_frame = 0;
         device.swapchain_support = swapchain_support;
         device.depth_format = depth_format;
 
-        self.context.swapchain = Some(VulkanSwapchain {
+        self.backend.swapchain = Some(VulkanSwapchain {
             max_frames_in_flight: 2,
 
             surface_format: swapchain_format,
@@ -220,22 +232,12 @@ impl<'ctx> VulkanSwapchainOperations<'ctx> {
     }
 
     pub fn destroy(&mut self) -> Result<(), String> {
-        self.context.wait_for_device_idle()?;
+        self.backend.device().wait_for_device_idle()?;
 
         // Destroy the depth image and view
-        let device = self
-            .context
-            .device
-            .as_ref()
-            .and_then(|dev| dev.logical_device.as_ref())
-            .ok_or("Failed to get Vulkan device")?;
-        let swapchain =
-            self.context.swapchain.as_mut().ok_or("Failed to get Vulkan swapchain")?;
-        let swapchain_loader = self
-            .context
-            .swapchain_loader
-            .as_ref()
-            .ok_or("Failed to get Vulkan swapchain loader")?;
+        let device = device!(self.backend);
+        let swapchain = swapchain_mut!(self.backend);
+        let swapchain_loader = swapchain_loader!(self.backend);
 
         swapchain.depth_attachment.destroy(device);
 
@@ -254,14 +256,14 @@ impl<'ctx> VulkanSwapchainOperations<'ctx> {
         Ok(())
     }
 
-    pub fn recreate(&mut self, width: u32, height: u32) -> Result<(), String> {
+    fn recreate(&mut self, width: u32, height: u32) -> Result<(), String> {
         self.destroy()?;
         self.create(width, height)?;
 
         Ok(())
     }
 
-    pub fn acquire_next_image_index(
+    fn acquire_next_image_index(
         &mut self,
         width: u32,
         height: u32,
@@ -270,9 +272,9 @@ impl<'ctx> VulkanSwapchainOperations<'ctx> {
         fence: Option<vk::Fence>,
     ) -> Result<usize, String> {
         let swapchain =
-            self.context.swapchain.as_ref().ok_or("Failed to get Vulkan swapchain")?;
+            self.backend.swapchain.as_ref().ok_or("Failed to get Vulkan swapchain")?;
         let swapchain_loader = self
-            .context
+            .backend
             .swapchain_loader
             .as_ref()
             .ok_or("Failed to get Vulkan swapchain loader")?;
@@ -294,7 +296,7 @@ impl<'ctx> VulkanSwapchainOperations<'ctx> {
         }
     }
 
-    pub fn present(
+    fn swapchain_present(
         &mut self,
         framebuffer_width: u32,
         framebuffer_height: u32,
@@ -302,8 +304,8 @@ impl<'ctx> VulkanSwapchainOperations<'ctx> {
         render_completed_semaphore: vk::Semaphore,
         image_index: usize,
     ) {
-        let swapchain = self.context.swapchain.as_mut().unwrap();
-        let swapchain_loader = self.context.swapchain_loader.as_ref().unwrap();
+        let swapchain = self.backend.swapchain.as_mut().unwrap();
+        let swapchain_loader = self.backend.swapchain_loader.as_ref().unwrap();
         let swapchain_handles = [swapchain.handle];
         let semaphores = [render_completed_semaphore];
         let image_indices = [image_index as u32];
@@ -325,5 +327,172 @@ impl<'ctx> VulkanSwapchainOperations<'ctx> {
                 log::error!("Failed to present swapchain: {:?}", e);
             }
         }
+    }
+
+    pub fn resize_swapchain_if_needed(&mut self) -> Result<bool, String> {
+        // Check if recreating the swapchain is in progress and skip the frame is so.
+        if self.backend.recreating_swapchain {
+            // Wait for the device to be idle before resizing.
+            let device = device!(self.backend);
+            match unsafe { device.device_wait_idle() } {
+                Ok(_) => {}
+                Err(err) => return Err(format!("Failed to wait for device idle: {:?}", err)),
+            }
+
+            log::debug!("Recreating swapchain, skipping frame");
+            return Ok(false); // Skip the frame.
+        }
+
+        // Check if the framebuffer size has changed.
+        if self.backend.framebuffer_size_generation
+            != self.backend.framebuffer_size_last_generation
+        {
+            let width = self.backend.framebuffer_width;
+            let height = self.backend.framebuffer_height;
+            log::debug!("Framebuffer size changed: {}x{}", width, height);
+
+            // Wait for the device to be idle before resizing.
+            let device = device!(self.backend);
+            match unsafe { device.device_wait_idle() } {
+                Ok(_) => {}
+                Err(err) => return Err(format!("Failed to wait for device idle: {:?}", err)),
+            }
+
+            // Recreate the swapchain.
+            match self.recreate(width, height) {
+                Ok(_) => {
+                    log::debug!("Swapchain recreated: {}x{}", width, height);
+                    return Ok(false); // Skip the frame.
+                }
+                Err(err) => {
+                    return Err(format!(
+                        "Failed to recreate swapchain: {}x{}: {:?}",
+                        width, height, err
+                    ));
+                }
+            }
+        }
+
+        Ok(true) // Continue with the frame.
+    }
+
+    pub fn acquire_next_image(&mut self) -> Result<bool, String> {
+        // Wait for the execution of the current frame to finish.
+        let current_frame = self.backend.current_frame;
+        match self.backend.fence().wait_for_image_fence(current_frame) {
+            Ok(_) => {}
+            Err(err) => return Err(format!("Failed to wait for image fence: {:?}", err)),
+        }
+
+        let width = self.backend.framebuffer_width;
+        let height = self.backend.framebuffer_height;
+        let semaphore = self.backend.image_available_semaphores[self.backend.current_frame];
+        match self.acquire_next_image_index(width, height, u64::MAX, &semaphore, None) {
+            Ok(index) => {
+                self.backend.image_index = index;
+            }
+            Err(e) => {
+                log::warn!("Failed to acquire image index: {:?}", e);
+                return Ok(false); // Skip the frame.
+            }
+        }
+
+        Ok(true) // Continue with the frame.
+    }
+
+    pub fn present(&mut self) -> Result<(), String> {
+        let width = self.backend.framebuffer_width;
+        let height = self.backend.framebuffer_height;
+        let present_queue = vulkan_device!(self.backend).present_queue;
+        let render_completed_semaphore =
+            self.backend.queue_complete_semaphores[self.backend.current_frame];
+        let image_index = self.backend.image_index;
+
+        self.swapchain_present(
+            width,
+            height,
+            present_queue,
+            render_completed_semaphore,
+            image_index,
+        );
+
+        self.backend.current_frame =
+            (self.backend.current_frame + 1) % swapchain!(self.backend).max_frames_in_flight;
+        Ok(())
+    }
+
+    pub fn recreate_swapchain(&mut self, width: u32, height: u32) -> Result<(), String> {
+        // If already recreating, skip
+        if self.backend.recreating_swapchain {
+            return Ok(());
+        }
+
+        // Detect if the window is too small to create a swapchain
+        if self.backend.framebuffer_width == 0 || self.backend.framebuffer_height == 0 {
+            return Ok(());
+        }
+
+        // Set the recreating flag to true
+        self.backend.recreating_swapchain = true;
+
+        // Wait for the device to be idle before resizing.
+        self.backend.device().wait_for_device_idle()?;
+
+        // Clear images just in case
+        for image in self.backend.images_in_flight.iter_mut() {
+            *image = None;
+        }
+
+        // Requery swapchain support details
+        {
+            let phys_device = vulkan_device!(self.backend).physical_device;
+            let surface = surface!(self.backend);
+            let surface_loader = surface_loader!(self.backend);
+
+            vulkan_device_mut!(self.backend).swapchain_support =
+                VulkanDevice::query_swapchain_support(surface_loader, phys_device, *surface)?;
+
+            vulkan_device!(self.backend).detect_depth_format(instance!(self.backend))?;
+
+            self.recreate(width, height)?;
+        }
+
+        {
+            let renderpass = main_renderpass_mut!(self.backend);
+            self.backend.framebuffer_width = width;
+            self.backend.framebuffer_height = height;
+            renderpass.w = width as f32;
+            renderpass.h = height as f32;
+            renderpass.x = 0.0;
+            renderpass.y = 0.0;
+
+            self.backend.framebuffer_size_last_generation =
+                self.backend.framebuffer_size_generation;
+        }
+
+        // Cleanup
+        {
+            for buf in self.backend.graphics_cmds_buffers.iter_mut() {
+                buf.destroy(
+                    device!(self.backend),
+                    vulkan_device!(self.backend).graphics_command_pool,
+                );
+            }
+        }
+
+        {
+            for buf in swapchain_mut!(self.backend).framebuffers.iter_mut() {
+                buf.destroy(device!(self.backend));
+            }
+
+            self.backend.framebuffer().recreate_framebuffers()?;
+        }
+
+        self.backend.commands().create_commands_buffers()?;
+
+        // Reset the recreating flag
+        self.backend.recreating_swapchain = false;
+
+        Ok(())
     }
 }

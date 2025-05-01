@@ -1,6 +1,6 @@
 use ash::vk;
 
-use super::VulkanContext;
+use super::VulkanRendererBackend;
 
 pub(super) struct VulkanImage {
     handle: vk::Image,
@@ -50,7 +50,7 @@ impl VulkanImage {
 
         // Query memory requirements
         let memory_requirements = unsafe { device.get_image_memory_requirements(handle) };
-        let memory_type_index = match VulkanContext::find_memory_type(
+        let memory_type_index = match VulkanRendererBackend::find_memory_type(
             physical_device,
             instance,
             memory_requirements.memory_type_bits,

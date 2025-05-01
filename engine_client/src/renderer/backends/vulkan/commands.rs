@@ -1,5 +1,9 @@
 use ash::vk::{self, CommandBufferUsageFlags};
 
+use crate::{command_buffer, command_buffer_mut, device, fence, swapchain, vulkan_device};
+
+use super::VulkanRendererBackend;
+
 pub(super) enum VulkanCommandBufferState {
     Ready,
     Recording,
@@ -12,6 +16,20 @@ pub(super) enum VulkanCommandBufferState {
 pub(super) struct VulkanCommandBuffer {
     pub handle: vk::CommandBuffer,
     pub state: VulkanCommandBufferState,
+}
+
+pub(super) struct VulkanCommandBufferOperations<'backend> {
+    backend: &'backend mut VulkanRendererBackend,
+}
+
+pub(super) trait VulkanCommandBufferContext {
+    fn commands(&mut self) -> VulkanCommandBufferOperations<'_>;
+}
+
+impl VulkanCommandBufferContext for VulkanRendererBackend {
+    fn commands(&mut self) -> VulkanCommandBufferOperations<'_> {
+        VulkanCommandBufferOperations { backend: self }
+    }
 }
 
 impl VulkanCommandBuffer {
@@ -155,6 +173,96 @@ impl VulkanCommandBuffer {
         unsafe {
             device.cmd_set_scissor(self.handle, 0, &scissors);
         }
+        Ok(())
+    }
+}
+
+impl<'backend> VulkanCommandBufferOperations<'backend> {
+    pub fn create_commands_buffers(&mut self) -> Result<(), String> {
+        // If the context already has command buffers, destroy them
+        // Extract needed values first to avoid multiple borrows
+        let logical_device = device!(self.backend);
+        let command_pool = vulkan_device!(self.backend).graphics_command_pool;
+
+        for buffer in self.backend.graphics_cmds_buffers.iter_mut() {
+            buffer.destroy(logical_device, command_pool);
+        }
+        self.backend.graphics_cmds_buffers.clear();
+
+        // Create new command buffers
+        // Extract all needed values first
+        let swapchain = swapchain!(self.backend);
+        let device = vulkan_device!(self.backend);
+        let logical_device = device!(self.backend);
+        let command_pool = device.graphics_command_pool;
+        let image_count = swapchain.images.len();
+
+        // Now create each buffer with the extracted values
+        for _ in 0..image_count {
+            let buffer = VulkanCommandBuffer::new(logical_device, command_pool, true)?;
+            self.backend.graphics_cmds_buffers.push(buffer);
+        }
+
+        Ok(())
+    }
+
+    pub fn destroy_commands_buffers(&mut self) -> Result<(), String> {
+        // Destroy Vulkan command buffers here
+        // Extract needed values first to avoid multiple borrows
+        let logical_device = device!(self.backend);
+        let command_pool = vulkan_device!(self.backend).graphics_command_pool;
+
+        // Now destroy each buffer with the extracted values
+        for buffer in self.backend.graphics_cmds_buffers.iter_mut() {
+            buffer.destroy(logical_device, command_pool);
+        }
+        self.backend.graphics_cmds_buffers.clear();
+        Ok(())
+    }
+
+    pub fn begin_gfx_commands_buffer(&mut self) -> Result<(), String> {
+        let command_buffer = command_buffer_mut!(self.backend, self.backend.image_index);
+        let device = device!(self.backend);
+
+        command_buffer.reset();
+        command_buffer.begin(device, false, false, false)
+    }
+
+    pub fn end_gfx_commands_buffer(&mut self) -> Result<(), String> {
+        let cmdsbuf = command_buffer_mut!(self.backend, self.backend.image_index);
+        let device = device!(self.backend);
+
+        cmdsbuf.end(device)?;
+        Ok(())
+    }
+
+    pub fn submit_gfx_command_buf(&mut self) -> Result<(), String> {
+        let device = device!(self.backend);
+        let cmdsbuf = command_buffer!(self.backend, self.backend.image_index);
+        let queue = vulkan_device!(self.backend).graphics_queue;
+        let fence = fence!(self.backend, self.backend.current_frame);
+
+        let commands_buffers = [cmdsbuf.handle];
+        let wait_semaphores =
+            [self.backend.image_available_semaphores[self.backend.current_frame]];
+        let signal_semaphores =
+            [self.backend.queue_complete_semaphores[self.backend.current_frame]];
+        let pipeline_stage_flags = [vk::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT];
+
+        let submit_info = vk::SubmitInfo::default()
+            .command_buffers(&commands_buffers)
+            .wait_semaphores(&wait_semaphores)
+            .signal_semaphores(&signal_semaphores)
+            .wait_dst_stage_mask(&pipeline_stage_flags);
+
+        match unsafe { device.queue_submit(queue, &[submit_info], fence.handle()) } {
+            Ok(_) => {}
+            Err(err) => return Err(format!("Failed to submit command buffer: {:?}", err)),
+        }
+
+        let cmdsbuf = command_buffer_mut!(self.backend, self.backend.image_index);
+        cmdsbuf.update_submitted();
+
         Ok(())
     }
 }

@@ -208,7 +208,7 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 - [ ] **Story 2.2.1: Write Basic Vertex and Fragment Shaders**
   - **Description:** Create simple GLSL shader files (`.vert`, `.frag`) for a minimal triangle rendering pipeline.
   - **Goal:** GLSL source code for vertex and fragment shaders exists in the `assets` or a dedicated shader directory.
-- [ ] **Story 2.2.2: Setup Shader Compilation (SPIR-V)**
+- [x] **Story 2.2.2: Setup Shader Compilation (SPIR-V)**
   - **Description:** Integrate a shader compiler (like `shaderc-rs`) into the build process or runtime loading to convert GLSL shaders into SPIR-V bytecode.
   - **Goal:** SPIR-V bytecode can be generated from the GLSL source files.
 - [ ] **Story 2.2.3: Load SPIR-V into Shader Modules**
@@ -305,6 +305,32 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 - [x] **Story 2.4.6: Add Basic Swapchain Resize Handling**
   - **Description:** Detect `VK_ERROR_OUT_OF_DATE_KHR` or `VK_SUBOPTIMAL_KHR` results from acquire/present calls and trigger a (potentially placeholder) swapchain recreation process. Ensure CPU waits for GPU idle before recreating.
   - **Goal:** The application can gracefully handle (even if just by pausing rendering) window resize events that invalidate the swapchain.
+
+### Epic 2.5: Refactor VulkanContext into RendererBackendVulkan
+
+- **Description:** Merge the `VulkanContext` struct and its logic directly into `RendererBackendVulkan` to reduce unnecessary indirection and improve clarity, as recommended by the architectural analysis. This refactor aims to simplify the backend structure and make responsibilities more explicit.
+- **Goal:** All relevant logic from `VulkanContext` is integrated into `RendererBackendVulkan`, with the resulting code modularized by feature if it approaches 500 lines, and all references, tests, and documentation updated accordingly.
+- **Definition of Done (DoD):**
+  - All logic from `VulkanContext` is merged into `RendererBackendVulkan`.
+  - The resulting file is modularized by feature if it approaches 500 lines.
+  - All references to `VulkanContext` are updated or removed.
+  - All tests pass.
+  - Documentation is updated to reflect the new structure.
+
+#### Stories:
+
+- [x] **Story 2.5.1: Plan and outline the refactor**
+  - **Description:** Analyze the current responsibilities of `VulkanContext` and `RendererBackendVulkan`, and create a detailed plan for merging and modularizing the code.
+  - **Goal:** A clear outline and checklist for the refactor is produced.
+
+- [x] **Story 2.5.2: Perform the merge and modularization**
+  - **Description:** Move all logic from `VulkanContext` into `RendererBackendVulkan`, splitting into modules if the file approaches 500 lines, and ensure all features are preserved.
+  - **Goal:** The merge is complete, and the code is modular and maintainable.
+
+- [ ] **Story 2.5.3: Update references, tests, and documentation**
+  - **Description:** Update all code references, unit and integration tests, and documentation to use the new structure. Ensure all tests pass and documentation is accurate.
+  - **Goal:** The project builds, tests pass, and documentation is up to date.
+
 
 ## Milestone 3: Persistent Mobile Cube
 

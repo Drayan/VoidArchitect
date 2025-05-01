@@ -1,6 +1,24 @@
+use crate::{device, fence_mut};
+
+use super::VulkanRendererBackend;
+
 pub(super) struct VulkanFence {
     handle: ash::vk::Fence,
     is_signaled: bool,
+}
+
+pub(super) struct VulkanFenceOperations<'backend> {
+    backend: &'backend mut VulkanRendererBackend,
+}
+
+pub(super) trait VulkanFenceContext {
+    fn fence(&mut self) -> VulkanFenceOperations<'_>;
+}
+
+impl VulkanFenceContext for VulkanRendererBackend {
+    fn fence(&mut self) -> VulkanFenceOperations<'_> {
+        VulkanFenceOperations { backend: self }
+    }
 }
 
 impl VulkanFence {
@@ -79,5 +97,36 @@ impl VulkanFence {
 
     pub fn handle(&self) -> ash::vk::Fence {
         self.handle
+    }
+}
+
+impl<'backend> VulkanFenceOperations<'backend> {
+    pub fn wait_for_previous_frame_to_complete(&mut self) -> Result<(), String> {
+        if self.backend.images_in_flight[self.backend.image_index].is_some() {
+            self.wait_for_image_fence(self.backend.image_index)?;
+        }
+
+        Ok(())
+    }
+
+    pub fn wait_for_image_fence(&mut self, fence_index: usize) -> Result<(), String> {
+        let fence = fence_mut!(self.backend, fence_index);
+        let device = device!(self.backend);
+
+        fence.wait(device, u64::MAX)?;
+        Ok(())
+    }
+
+    pub fn update_image_sync(&mut self) -> Result<(), String> {
+        let current_fence_index = self.backend.current_frame;
+        let image_index = self.backend.image_index;
+
+        self.backend.images_in_flight[image_index] = Some(current_fence_index);
+
+        // Reset the fence for the *current* frame, which will be used next time this frame index comes up.
+        let device = device!(self.backend);
+
+        self.backend.in_flight_fences[current_fence_index].reset(device)?;
+        Ok(())
     }
 }

@@ -2,7 +2,9 @@ use std::ffi::CStr;
 
 use ash::vk;
 
-use super::VulkanContext;
+use crate::device;
+
+use super::VulkanRendererBackend;
 
 struct VulkanPhysicalDeviceRequirements {
     graphics: bool,
@@ -51,6 +53,20 @@ pub(super) struct VulkanDevice {
     pub graphics_command_pool: vk::CommandPool,
 
     pub depth_format: vk::Format,
+}
+
+pub(super) struct VulkanDeviceOperations<'backend> {
+    backend: &'backend mut VulkanRendererBackend,
+}
+
+pub(super) trait VulkanDeviceContext {
+    fn device(&mut self) -> VulkanDeviceOperations<'_>;
+}
+
+impl VulkanDeviceContext for VulkanRendererBackend {
+    fn device(&mut self) -> VulkanDeviceOperations<'_> {
+        VulkanDeviceOperations { backend: self }
+    }
 }
 
 impl VulkanDevice {
@@ -590,5 +606,18 @@ impl VulkanDevice {
         } else {
             Err("No suitable depth format found".to_string())
         }
+    }
+}
+
+impl<'backend> VulkanDeviceOperations<'backend> {
+    pub fn wait_for_device_idle(&self) -> Result<(), String> {
+        // Wait for the device to be idle.
+        let device = device!(self.backend);
+        match unsafe { device.device_wait_idle() } {
+            Ok(_) => {}
+            Err(err) => return Err(format!("Failed to wait for device idle: {:?}", err)),
+        }
+
+        Ok(())
     }
 }
