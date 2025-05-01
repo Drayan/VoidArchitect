@@ -103,7 +103,9 @@ impl VulkanFence {
 impl<'backend> VulkanFenceOperations<'backend> {
     pub fn wait_for_previous_frame_to_complete(&mut self) -> Result<(), String> {
         if self.backend.images_in_flight[self.backend.image_index].is_some() {
-            self.wait_for_image_fence(self.backend.image_index)?;
+            let fence_index = self.backend.images_in_flight[self.backend.image_index]
+                .ok_or("Failed to get fence index")?;
+            self.wait_for_image_fence(fence_index)?;
         }
 
         Ok(())

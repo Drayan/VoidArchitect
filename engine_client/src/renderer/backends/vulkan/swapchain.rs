@@ -386,7 +386,7 @@ impl<'backend> VulkanSwapchainOperations<'backend> {
 
         let width = self.backend.framebuffer_width;
         let height = self.backend.framebuffer_height;
-        let semaphore = self.backend.image_available_semaphores[self.backend.current_frame];
+        let semaphore = self.backend.image_available_semaphores[current_frame];
         match self.acquire_next_image_index(width, height, u64::MAX, &semaphore, None) {
             Ok(index) => {
                 self.backend.image_index = index;
