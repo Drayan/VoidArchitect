@@ -434,6 +434,31 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 - **Description:** Create an input system in the engine-client to process user input events (keyboard, mouse, etc.), enabling interactive features and serving as a foundation for camera and gameplay controls.
 - **Added:** 30-04-2025
 
+### Epic 4.3: Implement Filesystem Abstraction Layer
+
+- **Status:** To Plan
+- **Description:** Create an abstraction layer for filesystem operations within the engine. This allows using platform-specific efficient methods where available (e.g., OS-specific APIs) while providing a consistent interface. It also paves the way for potential future integration of a Virtual File System (VFS) for accessing packed game assets or other sources.
+- **Goal:** A defined trait or set of traits representing filesystem operations (read, write, list, exists, etc.) exists, with an initial implementation potentially using the standard Rust library (`std::fs`).
+- **Definition of Done (DoD):**
+  - Filesystem abstraction trait(s) defined (e.g., `FileSystemProvider`).
+  - Initial implementation using `std::fs` created.
+  - The abstraction is integrated into relevant engine parts where file access might be needed later (e.g., configuration loading, initial asset loading - specific integration points can be detailed in stories).
+  - Basic unit tests for the abstraction layer exist.
+
+#### Stories:
+
+- [ ] **Story 4.3.1: Define Filesystem Trait(s)**
+  - **Description:** Define the core Rust trait(s) (e.g., `FileSystemProvider`) that outline the necessary filesystem operations (read, write, exists, list_directory, etc.).
+  - **Goal:** A clear and comprehensive trait definition exists in the engine's core or platform module.
+
+- [ ] **Story 4.3.2: Implement `std::fs` Backend**
+  - **Description:** Create the first concrete implementation of the `FileSystemProvider` trait using Rust's standard library `std::fs` module.
+  - **Goal:** A functional filesystem provider using `std::fs` is available and passes basic tests.
+
+- [ ] **Story 4.3.3: Basic Integration Point (e.g., Config Loading)**
+  - **Description:** Refactor an existing part of the engine that uses file I/O (like configuration loading or a simple asset loader) to use the new `FileSystemProvider` trait instead of directly calling `std::fs`.
+  - **Goal:** At least one engine component utilizes the filesystem abstraction, demonstrating its usability.
+
 ## Milestone 5: Basic Camera Control
 
 - **Status:** To Plan

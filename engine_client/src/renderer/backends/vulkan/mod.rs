@@ -13,14 +13,18 @@ mod device;
 mod fence;
 mod framebuffer;
 mod image;
+mod pipeline;
 mod renderpass;
+mod shaders;
 mod swapchain;
 
 use ash::vk;
 use commands::VulkanCommandBuffer;
 use device::VulkanDevice;
 use fence::VulkanFence;
+use pipeline::VulkanPipeline;
 use renderpass::VulkanRenderPass;
+use shaders::VulkanShaderModule;
 use swapchain::VulkanSwapchain;
 
 pub struct VulkanRendererBackend {
@@ -51,10 +55,15 @@ pub struct VulkanRendererBackend {
     device: Option<VulkanDevice>,
     swapchain: Option<VulkanSwapchain>,
     main_renderpass: Option<VulkanRenderPass>,
+    graphics_pipeline: Option<VulkanPipeline>,
+
+    // Builtin shader modules (vertex and fragment).
+    shader_modules: Vec<VulkanShaderModule>,
 
     // Command buffers for graphics operations.
     graphics_cmds_buffers: Vec<VulkanCommandBuffer>,
 
+    // Frame synchronization objects.
     image_available_semaphores: Vec<vk::Semaphore>,
     queue_complete_semaphores: Vec<vk::Semaphore>,
 
@@ -97,6 +106,10 @@ impl VulkanRendererBackend {
             device: None,
             swapchain: None,
             main_renderpass: None,
+            graphics_pipeline: None,
+
+            shader_modules: Vec::new(),
+
             graphics_cmds_buffers: Vec::new(),
 
             image_available_semaphores: Vec::new(),
@@ -308,5 +321,47 @@ macro_rules! fence {
 macro_rules! fence_mut {
     ($self:expr, $index:expr) => {
         $self.in_flight_fences.get_mut($index).ok_or("Failed to get in-flight fence")?
+    };
+}
+
+#[macro_export]
+macro_rules! shader_modules {
+    ($self:expr) => {
+        $self.shader_modules.as_ref().ok_or("Failed to get shader modules")?
+    };
+}
+
+#[macro_export]
+macro_rules! shader_module {
+    ($self:expr, $index:expr) => {
+        $self.shader_modules.get($index).ok_or("Failed to get shader module")?
+    };
+}
+
+#[macro_export]
+macro_rules! shader_modules_mut {
+    ($self:expr) => {
+        $self.shader_modules.as_mut().ok_or("Failed to get shader modules")?
+    };
+}
+
+#[macro_export]
+macro_rules! shader_module_mut {
+    ($self:expr, $index:expr) => {
+        $self.shader_modules.get_mut($index).ok_or("Failed to get shader module")?
+    };
+}
+
+#[macro_export]
+macro_rules! graphics_pipeline {
+    ($self:expr) => {
+        $self.graphics_pipeline.as_ref().ok_or("Failed to get graphics pipeline")?
+    };
+}
+
+#[macro_export]
+macro_rules! graphics_pipeline_mut {
+    ($self:expr) => {
+        $self.graphics_pipeline.as_mut().ok_or("Failed to get graphics pipeline")?
     };
 }

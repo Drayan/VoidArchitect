@@ -1,6 +1,7 @@
 use ash::{Entry, vk};
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 
+use crate::renderer::backends::vulkan::shaders::VulkanShaderModuleContext;
 use crate::{device, instance, surface_loader, swapchain, swapchain_mut, vulkan_device};
 use crate::{platform::WindowHandle, renderer::RendererBackend};
 
@@ -10,6 +11,7 @@ use super::device::VulkanDevice;
 use super::device::VulkanDeviceContext;
 use super::fence::{VulkanFence, VulkanFenceContext};
 use super::framebuffer::VulkanFramebufferContext;
+use super::pipeline::VulkanPipelineContext;
 use super::renderpass::{VulkanRenderPass, VulkanRenderPassContext};
 use super::swapchain::VulkanSwapchainContext;
 
@@ -49,20 +51,24 @@ impl RendererBackend for VulkanRendererBackend {
 
             let layer_names = vec![c"VK_LAYER_KHRONOS_validation".as_ptr()];
 
-            let mut extension_names = ash_window::enumerate_required_extensions(
-                window.display_handle().unwrap().as_raw(),
-            )
-            .unwrap()
-            .to_vec();
-            // let mut extension_names = match window.vulkan_instance_extensions() {
-            //     Ok(extensions) => {
-            //         extensions.iter().map(|s| s.as_ptr() as *const i8).collect::<Vec<_>>()
-            // `   }
-            //     Err(e) => {
-            //         log::error!("Failed to get Vulkan instance extensions: {:?}", e);
-            //         return Err(format!("Failed to get Vulkan instance extensions: {:?}", e));
-            //     }
-            // };
+            let display_handle = match window.display_handle() {
+                Ok(display_hndl) => display_hndl.as_raw(),
+                Err(e) => {
+                    log::error!("Failed to get display handle: {:?}", e);
+                    return Err(format!("Failed to get display handle: {:?}", e));
+                }
+            };
+            let mut extension_names =
+                match ash_window::enumerate_required_extensions(display_handle) {
+                    Ok(extension_names) => extension_names.to_vec(),
+                    Err(e) => {
+                        log::error!("Failed to enumerate required extensions: {:?}", e);
+                        return Err(format!(
+                            "Failed to enumerate required extensions: {:?}",
+                            e
+                        ));
+                    }
+                };
 
             extension_names.push(ash::ext::debug_utils::NAME.as_ptr());
             extension_names.push(ash::ext::debug_report::NAME.as_ptr());
@@ -134,13 +140,7 @@ impl RendererBackend for VulkanRendererBackend {
             }
 
             // Create Vulkan surface
-            let display_handle = match window.display_handle() {
-                Ok(display_hndl) => display_hndl.as_raw(),
-                Err(e) => {
-                    log::error!("Failed to get display handle: {:?}", e);
-                    return Err(format!("Failed to get display handle: {:?}", e));
-                }
-            };
+
             let window_handle = match window.window_handle() {
                 Ok(window_hndl) => window_hndl.as_raw(),
                 Err(e) => {
@@ -161,23 +161,12 @@ impl RendererBackend for VulkanRendererBackend {
                     return Err(format!("Failed to create Vulkan surface: {:?}", e));
                 }
             };
-            // let surface = match window.vulkan_create_surface(
-            //     self.instance.as_mut().unwrap().handle().as_raw() as *mut __VkInstance,
-            // ) {
-            //     Ok(surface) => vk::SurfaceKHR::from_raw(surface as u64),
-            //     Err(e) => {
-            //         log::error!("Failed to create Vulkan surface: {:?}", e);
-            //         return Err(format!("Failed to create Vulkan surface: {:?}", e));
-            //     }
-            // };
             self.surface = Some(surface);
             log::debug!("Vulkan surface created successfully");
 
             // Create Vulkan surface loader
-            self.surface_loader = Some(ash::khr::surface::Instance::new(
-                &entry,
-                &self.instance.as_ref().unwrap(),
-            ));
+            self.surface_loader =
+                Some(ash::khr::surface::Instance::new(&entry, instance!(self)));
             log::debug!("Vulkan surface loader created successfully");
 
             // Create Vulkan device
@@ -219,9 +208,9 @@ impl RendererBackend for VulkanRendererBackend {
                 0.0,
                 width as f32,
                 height as f32,
-                0.0,
-                0.0,
-                0.2,
+                0.694,
+                0.760,
+                0.113,
                 1.0,
                 1.0,
                 0,
@@ -303,6 +292,29 @@ impl RendererBackend for VulkanRendererBackend {
             }
             log::debug!("Vulkan semaphores and fences created successfully");
 
+            // Load built-in shaders
+            match self.shader_module().load_builtin_shaders() {
+                Ok(_) => {}
+                Err(e) => {
+                    log::error!("Failed to load built-in shaders: {:?}", e);
+                    return Err(format!("Failed to load built-in shaders: {:?}", e));
+                }
+            };
+            log::debug!("Vulkan built-in shaders loaded successfully");
+
+            // Create the graphics pipeline
+            match self.pipeline().create_graphics_pipeline() {
+                Ok(_) => {}
+                Err(e) => {
+                    log::error!("Failed to create Vulkan graphics pipeline: {:?}", e);
+                    return Err(format!(
+                        "Failed to create Vulkan graphics pipeline: {:?}",
+                        e
+                    ));
+                }
+            };
+            log::debug!("Vulkan graphics pipeline created successfully");
+
             log::debug!("Vulkan renderer initialized successfully");
             Ok(())
         }
@@ -312,6 +324,26 @@ impl RendererBackend for VulkanRendererBackend {
         // Cleanup Vulkan resources here
         log::debug!("Shutting down Vulkan renderer");
         self.device().wait_for_device_idle()?;
+
+        // Destroy Vulkan pipeline
+        match self.pipeline().destroy_graphics_pipeline() {
+            Ok(_) => {}
+            Err(e) => {
+                log::error!("Failed to destroy Vulkan pipeline: {:?}", e);
+                return Err(format!("Failed to destroy Vulkan pipeline: {:?}", e));
+            }
+        }
+        log::debug!("Vulkan graphics pipeline destroyed");
+
+        // Destroy built-in shaders
+        match self.shader_module().destroy_builtin_shaders() {
+            Ok(_) => {}
+            Err(e) => {
+                log::error!("Failed to destroy built-in shaders: {:?}", e);
+                return Err(format!("Failed to destroy built-in shaders: {:?}", e));
+            }
+        }
+        log::debug!("Vulkan built-in shaders destroyed");
 
         // Destroy Vulkan fences
         for fence in self.in_flight_fences.iter() {

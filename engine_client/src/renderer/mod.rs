@@ -8,6 +8,10 @@ pub mod backends;
 
 use crate::{platform::WindowHandle, renderer::backends::vulkan::VulkanRendererBackend};
 
+pub struct Vertex {
+    pub position: [f32; 3],
+}
+
 pub trait RendererBackend {
     /// Initializes the renderer backend with the given window handle.
     ///

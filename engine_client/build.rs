@@ -25,7 +25,7 @@ fn collect_glsl_files(dir: &Path, files: &mut Vec<PathBuf>) {
 
 /// Determine ShaderKind from file name (expects name.stage.glsl).
 fn shader_kind_from_filename(filename: &str) -> Option<ShaderKind> {
-    let stage = filename.rsplitn(2, '.').nth(1).and_then(|s| s.split('.').nth_back(0));
+    let stage = filename.rsplitn(3, '.').nth(0);
     match stage {
         Some("vert") => Some(ShaderKind::Vertex),
         Some("frag") => Some(ShaderKind::Fragment),
@@ -71,7 +71,25 @@ fn main() {
             .compile_into_spirv(&src, kind, &filename, "main", None)
             .unwrap_or_else(|e| panic!("Failed to compile {:?}: {}", src_path, e));
 
-        let spv_path = out_dir.join(format!("{}.spv", filename));
+        // Replace the last extension with .spv (e.g., shader.frag.glsl -> shader.frag.spv)
+        let mut spv_file_stem = src_path.file_stem().unwrap().to_os_string();
+        if let Some(parent) = src_path.parent() {
+            // If there are multiple extensions, reconstruct the stem with all but the last extension
+            let mut stem_path = parent.join(&spv_file_stem);
+            while let Some(ext) = stem_path.extension() {
+                if ext == "glsl" {
+                    stem_path = stem_path.with_extension("");
+                } else {
+                    break;
+                }
+            }
+            spv_file_stem = stem_path.file_name().unwrap().to_os_string();
+        }
+        let spv_path = out_dir.join({
+            let mut stem = spv_file_stem.clone();
+            stem.push(".spv");
+            stem
+        });
         fs::write(&spv_path, binary_result.as_binary_u8())
             .unwrap_or_else(|_| panic!("Failed to write SPIR-V: {:?}", spv_path));
         println!("cargo:rerun-if-changed={}", src_path.display());
