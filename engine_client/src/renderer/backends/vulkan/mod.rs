@@ -5,9 +5,11 @@
 //! and related resources, and provides methods for initialization, frame rendering, resizing,
 //! and shutdown. Debug utilities are enabled in debug builds.
 
+use buffers::VulkanBuffer;
 use framebuffer::VulkanFramebuffer;
 
 mod backend;
+mod buffers;
 mod commands;
 mod device;
 mod fence;
@@ -55,6 +57,10 @@ pub struct VulkanRendererBackend {
     device: Option<VulkanDevice>,
     swapchain: Option<VulkanSwapchain>,
     main_renderpass: Option<VulkanRenderPass>,
+
+    object_vertex_buffer: Option<VulkanBuffer>,
+    object_index_buffer: Option<VulkanBuffer>,
+
     graphics_pipeline: Option<VulkanPipeline>,
 
     // Builtin shader modules (vertex and fragment).
@@ -106,6 +112,10 @@ impl VulkanRendererBackend {
             device: None,
             swapchain: None,
             main_renderpass: None,
+
+            object_vertex_buffer: None,
+            object_index_buffer: None,
+
             graphics_pipeline: None,
 
             shader_modules: Vec::new(),

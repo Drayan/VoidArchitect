@@ -1,11 +1,14 @@
 use ash::{Entry, vk};
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 
+use crate::renderer::backends::vulkan::buffers::VulkanBufferContext;
 use crate::renderer::backends::vulkan::shaders::VulkanShaderModuleContext;
-use crate::{device, instance, surface_loader, swapchain, swapchain_mut, vulkan_device};
+use crate::{
+    command_buffer, command_buffer_mut, device, graphics_pipeline, instance, surface_loader,
+    swapchain, swapchain_mut, vulkan_device,
+};
 use crate::{platform::WindowHandle, renderer::RendererBackend};
 
-use super::VulkanRendererBackend;
 use super::commands::VulkanCommandBufferContext;
 use super::device::VulkanDevice;
 use super::device::VulkanDeviceContext;
@@ -14,6 +17,7 @@ use super::framebuffer::VulkanFramebufferContext;
 use super::pipeline::VulkanPipelineContext;
 use super::renderpass::{VulkanRenderPass, VulkanRenderPassContext};
 use super::swapchain::VulkanSwapchainContext;
+use super::{VulkanRendererBackend, device};
 
 impl RendererBackend for VulkanRendererBackend {
     fn initialize(&mut self, window_hndl: WindowHandle) -> Result<(), String> {
@@ -315,6 +319,32 @@ impl RendererBackend for VulkanRendererBackend {
             };
             log::debug!("Vulkan graphics pipeline created successfully");
 
+            // --- TEMP CODE - REMOVE THIS LATER ---
+            let vertices = vec![
+                glam::Vec3::new(-0.5, -0.5, 0.0),
+                glam::Vec3::new(0.5, -0.5, 0.0),
+                glam::Vec3::new(0.0, 0.5, 0.0),
+            ];
+            let indices = vec![0, 1, 2];
+            match self.buffer().create_vertices_buffer(vertices) {
+                Ok(_) => {}
+                Err(e) => {
+                    log::error!("Failed to create vertices buffer: {:?}", e);
+                    return Err(format!("Failed to create vertices buffer: {:?}", e));
+                }
+            }
+            log::debug!("Vulkan vertices buffer created successfully");
+
+            match self.buffer().create_indices_buffer(indices) {
+                Ok(_) => {}
+                Err(e) => {
+                    log::error!("Failed to create indices buffer: {:?}", e);
+                    return Err(format!("Failed to create indices buffer: {:?}", e));
+                }
+            }
+            log::debug!("Vulkan indices buffer created successfully");
+            // --- END TEMP CODE ---
+
             log::debug!("Vulkan renderer initialized successfully");
             Ok(())
         }
@@ -324,6 +354,16 @@ impl RendererBackend for VulkanRendererBackend {
         // Cleanup Vulkan resources here
         log::debug!("Shutting down Vulkan renderer");
         self.device().wait_for_device_idle()?;
+
+        // Destroy Vulkan buffers
+        match self.buffer().destroy_buffers() {
+            Ok(_) => {}
+            Err(e) => {
+                log::error!("Failed to destroy Vulkan buffers: {:?}", e);
+                return Err(format!("Failed to destroy Vulkan buffers: {:?}", e));
+            }
+        }
+        log::debug!("Vulkan buffers destroyed");
 
         // Destroy Vulkan pipeline
         match self.pipeline().destroy_graphics_pipeline() {
@@ -447,6 +487,39 @@ impl RendererBackend for VulkanRendererBackend {
 
         // Dynamic state
         self.renderpass().begin_main_render_pass()?;
+
+        //TODO: --- TEMP CODE - REMOVE THIS LATER ---
+        // Bind the graphics pipeline
+        graphics_pipeline!(self).bind(
+            device!(self),
+            command_buffer!(self, self.image_index).handle,
+        );
+
+        // Bind the buffer
+        unsafe {
+            device!(self).cmd_bind_vertex_buffers(
+                command_buffer!(self, self.image_index).handle,
+                0,
+                &[self.object_vertex_buffer.as_ref().unwrap().handle],
+                &[0],
+            );
+            device!(self).cmd_bind_index_buffer(
+                command_buffer!(self, self.image_index).handle,
+                self.object_index_buffer.as_ref().unwrap().handle,
+                0,
+                vk::IndexType::UINT32,
+            );
+
+            device!(self).cmd_draw_indexed(
+                command_buffer!(self, self.image_index).handle,
+                3,
+                1,
+                0,
+                0,
+                0,
+            );
+        };
+        //TODO: --- END TEMP CODE ---
 
         Ok(true)
     }

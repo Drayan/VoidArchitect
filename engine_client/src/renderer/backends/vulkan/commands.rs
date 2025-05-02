@@ -134,12 +134,13 @@ impl VulkanCommandBuffer {
         device: &ash::Device,
         command_pool: vk::CommandPool,
         queue: vk::Queue,
+        fence: vk::Fence,
     ) -> Result<(), String> {
         self.end(device)?;
 
         let buffers = [self.handle.clone()];
         let submit_info = [vk::SubmitInfo::default().command_buffers(&buffers)];
-        match unsafe { device.queue_submit(queue, &submit_info, vk::Fence::null()) } {
+        match unsafe { device.queue_submit(queue, &submit_info, fence) } {
             Ok(_) => {}
             Err(err) => return Err(format!("Failed to submit command buffer: {}", err)),
         }
@@ -172,6 +173,40 @@ impl VulkanCommandBuffer {
     ) -> Result<(), String> {
         unsafe {
             device.cmd_set_scissor(self.handle, 0, &scissors);
+        }
+        Ok(())
+    }
+
+    pub fn copy_buffer(
+        self: &mut Self,
+        device: &ash::Device,
+        src_buffer: vk::Buffer,
+        dst_buffer: vk::Buffer,
+        src_offset: vk::DeviceSize,
+        dst_offset: vk::DeviceSize,
+        size: vk::DeviceSize,
+    ) -> Result<(), String> {
+        let copy_region = vk::BufferCopy {
+            src_offset,
+            dst_offset,
+            size,
+            ..Default::default()
+        };
+
+        unsafe {
+            device.cmd_copy_buffer(self.handle, src_buffer, dst_buffer, &[copy_region]);
+        }
+        Ok(())
+    }
+
+    pub fn bind_pipeline(
+        self: &mut Self,
+        device: &ash::Device,
+        pipeline: vk::Pipeline,
+        pipeline_type: vk::PipelineBindPoint,
+    ) -> Result<(), String> {
+        unsafe {
+            device.cmd_bind_pipeline(self.handle, pipeline_type, pipeline);
         }
         Ok(())
     }

@@ -61,20 +61,6 @@ impl VulkanShaderModule {
             device.destroy_shader_module(self.handle, None);
         }
     }
-
-    pub fn bind(
-        &self,
-        device: &ash::Device,
-        command_buffer: vk::CommandBuffer,
-    ) -> Result<(), String> {
-        // Bind the shader module to the command buffer
-        let bind_info = vk::PipelineShaderStageCreateInfo::default()
-            .stage(self.shader_type)
-            .module(self.handle)
-            .name(c"main");
-
-        Ok(())
-    }
 }
 
 impl<'backend> VulkanShaderModuleOperations<'backend> {
