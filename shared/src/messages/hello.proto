@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package messages;
-
-message HelloServer { string client_info = 1; }
-
-message HelloClient { string server_info = 1; }

@@ -25,7 +25,8 @@ fn collect_glsl_files(dir: &Path, files: &mut Vec<PathBuf>) {
 
 /// Determine ShaderKind from file name (expects name.stage.glsl).
 fn shader_kind_from_filename(filename: &str) -> Option<ShaderKind> {
-    let stage = filename.rsplitn(3, '.').nth(0);
+    let stage = filename.rsplitn(3, '.').nth(1);
+    println!("Stage: {:?}", stage);
     match stage {
         Some("vert") => Some(ShaderKind::Vertex),
         Some("frag") => Some(ShaderKind::Fragment),
@@ -46,6 +47,11 @@ fn main() {
 
     let mut glsl_files = Vec::new();
     collect_glsl_files(shader_dir, &mut glsl_files);
+    println!("Found {} shader files", glsl_files.len());
+    println!("Listing shader files:");
+    for file in &glsl_files {
+        println!("{:?}", file);
+    }
 
     let compiler = Compiler::new().expect("Failed to create shader compiler");
 
@@ -71,6 +77,7 @@ fn main() {
             .compile_into_spirv(&src, kind, &filename, "main", None)
             .unwrap_or_else(|e| panic!("Failed to compile {:?}: {}", src_path, e));
 
+        println!("cargo:rerun-if-changed={:?}", src_path);
         // Replace the last extension with .spv (e.g., shader.frag.glsl -> shader.frag.spv)
         let mut spv_file_stem = src_path.file_stem().unwrap().to_os_string();
         if let Some(parent) = src_path.parent() {
@@ -92,6 +99,5 @@ fn main() {
         });
         fs::write(&spv_path, binary_result.as_binary_u8())
             .unwrap_or_else(|_| panic!("Failed to write SPIR-V: {:?}", spv_path));
-        println!("cargo:rerun-if-changed={}", src_path.display());
     }
 }

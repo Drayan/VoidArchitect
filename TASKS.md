@@ -349,7 +349,7 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
 
 #### Stories:
 
-- [ ] **Story 3.1.1: Define Shared Cube State Structure**
+- [x] **Story 3.1.1: Define Shared Cube State Structure**
   - **Description:** Add the `CubeState` struct (including necessary math types like vectors/quaternions, perhaps from `glam` or `nalgebra`) to the `void-architect_shared` crate.
   - **Goal:** A common definition for the cube's transform exists and is accessible by both client and server.
 - [ ] **Story 3.1.2: Implement Server-Side State Storage**

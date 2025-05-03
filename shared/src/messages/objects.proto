@@ -1,0 +1,29 @@
+syntax = "proto3";
+package messages;
+
+import "math.proto";
+
+message ObjectIdentifier {
+  bytes object_id = 1;  // 16-bytes UUID for the object
+  int32 session_id = 2; // ID of the session
+}
+
+message ObjectTransform {
+  enum MessageType {
+    OBJECT_TRANSFORM_UPDATE = 0; // Update the transform of an object
+  }
+
+  enum Attribute {
+    POSITION = 0; // Update the position of the object
+    ROTATION = 1; // Update the rotation of the object
+    SCALE = 2;    // Update the scale of the object
+  }
+
+  int32 object_session_id = 1;       // ID of the object to update
+  repeated Attribute attributes = 2; // Attributes to update
+
+  MessageType type = 3;
+  optional Vector3 position = 4;
+  optional Quaternion rotation = 5;
+  optional Vector3 scale = 6;
+}

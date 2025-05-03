@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package messages;
+
+message ClientHello {
+  string client_version = 1;
+  string protocol_version = 2;
+  string client_uuid = 3;
+}
+
+message ServerChallenge {
+  string server_version = 1;
+  string protocol_version = 2;
+  bytes challenge_nonce = 3;
+}
+
+message ClientResponse { bytes challenge_response = 1; }
+
+message HandshakeSucess {
+  int32 session_id = 1;
+  optional string server_name = 2;
+  optional string game_version = 3;
+}
+
+message HandshakeFailure { string reason = 1; }

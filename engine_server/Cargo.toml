@@ -1,0 +1,16 @@
+[package]
+name = "void-architect_engine_server"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+void-architect_shared = { path = "../shared" }
+env_logger = "0.11.8"
+log = "0.4.27"
+nalgebra = "0.33.2"
+serde = "1.0.219"
+serde_json = "1.0.140"
+tokio = { version="1.44.2", features = ["full"] }
+uuid = "1.16.0"
+prost = "0.13.5"
+rand = "0.9.1"

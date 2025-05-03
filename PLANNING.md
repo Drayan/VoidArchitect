@@ -6,9 +6,9 @@ This document outlines the planning for a hobbyist 4X space strategy game built 
 
 The game aims to blend deep procedural generation inspired by _No Man's Sky_ (planets, stars, civilizations, cultures, history, ships, species, and more) with strategic management, diplomacy, and empire-building elements reminiscent of _Civilization_, _Anno_, _Cities Skylines_, and _Stellaris_.
 
-The player will create a species and guide it from its tribal origins on a home planet through technological eras, eventually reaching the space age and interacting with a procedurally generated galaxy.
+The player will create a species and guide it from its tribal origins on a home planet through technological eras, eventually reaching the space age and interacting with a procedurally generated galaxy, some elements that can find their reminiscences of _Spore_.
 
-This is a long-term, solo-developer hobby project focused on learning and exploration of game development concepts, particularly in procedural generation and engine architecture. The development timeline is flexible ("Dwarf Fortress"-like).
+This is a long-term, solo-developer hobby project focused on learning and exploration of game development concepts, particularly in procedural generation and engine architecture. The development timeline is flexible ("_Dwarf Fortress_"-like).
 
 ## 2. High-Level Goals
 

@@ -319,7 +319,7 @@ impl RendererBackend for VulkanRendererBackend {
             };
             log::debug!("Vulkan graphics pipeline created successfully");
 
-            // --- TEMP CODE - REMOVE THIS LATER ---
+            //TODO: --- TEMP CODE - REMOVE THIS LATER ---
             let vertices = vec![
                 glam::Vec3::new(-0.5, -0.5, 0.0),
                 glam::Vec3::new(0.5, -0.5, 0.0),
@@ -343,7 +343,7 @@ impl RendererBackend for VulkanRendererBackend {
                 }
             }
             log::debug!("Vulkan indices buffer created successfully");
-            // --- END TEMP CODE ---
+            //TODO: --- END TEMP CODE ---
 
             log::debug!("Vulkan renderer initialized successfully");
             Ok(())
@@ -495,7 +495,7 @@ impl RendererBackend for VulkanRendererBackend {
             command_buffer!(self, self.image_index).handle,
         );
 
-        // Bind the buffer
+        // Bind the buffers
         unsafe {
             device!(self).cmd_bind_vertex_buffers(
                 command_buffer!(self, self.image_index).handle,
