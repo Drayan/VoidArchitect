@@ -332,92 +332,144 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
   - **Goal:** The project builds, tests pass, and documentation is up to date.
 
 
-## Milestone 3: Persistent Mobile Cube
+## Milestone 3: Persistent Mobile Cube (Planned - 2025-05-05)
 
-- **Status:** To Plan
-- **Goal:** Display a 3D cube in the client window that can be moved based on state information received from the server. The cube's state is maintained on the server and synchronized over the network.
+**Goal:** Implement basic functionality for one persistent object (a cube), managed by the server using the Actix actor model and visualized by clients. The cube's state should be loaded on server start, potentially updated by the server, saved periodically/on shutdown, and synchronized to all connected clients for rendering.
 
-### Epic 3.1: Server-Side Object State Management
+**Architecture:** Actix Actor Model (as defined in `DOCS.md`)
 
-- **Description:** Define and manage the state (position, rotation) of a simple game object (a cube) on the server. Implement logic for the server to hold and potentially update this state.
-- **Goal:** The server has an authoritative representation of the cube's transform in its memory.
-- **Definition of Done (DoD):**
-  - A data structure representing the cube's state (e.g., `struct CubeState { position: Vec3, rotation: Quat }`) is defined in the `void-architect_shared` crate.
-  - The `server` application maintains at least one instance of this `CubeState`.
-  - A basic mechanism exists within the server to modify this state (e.g., a simple periodic update in a `tokio` task, or placeholder for future input).
-  - State management code resides in the `server` crate (or `engine_server` if abstracting).
+**Diagram: M3 Epic Dependencies**
 
-#### Stories:
+```mermaid
+graph TD
+    subgraph M3 - Persistent Mobile Cube
+        direction LR
+        E1[Epic: Core Actor Setup] --> E2;
+        E1 --> E3;
+        E1 --> E4;
+        E2[Epic: Game State Management (Cube)] --> E3;
+        E2 --> E4;
+        E3[Epic: Persistence Integration (Cube)] --> E2;
+        E4[Epic: Network State Synchronization (Cube)] --> E5;
+        E5[Epic: Client-Side Rendering Integration (Cube)];
+    end
 
-- [x] **Story 3.1.1: Define Shared Cube State Structure**
-  - **Description:** Add the `CubeState` struct (including necessary math types like vectors/quaternions, perhaps from `glam` or `nalgebra`) to the `void-architect_shared` crate.
-  - **Goal:** A common definition for the cube's transform exists and is accessible by both client and server.
-- [ ] **Story 3.1.2: Implement Server-Side State Storage**
-  - **Description:** In the `server` crate, create and manage the lifecycle of the `CubeState` data (e.g., within the server's main state or associated with a client connection).
-  - **Goal:** The server holds the authoritative `CubeState` in its memory.
-- [ ] **Story 3.1.3: Implement Basic Server-Side State Update Logic**
-  - **Description:** Add simple logic to the server to modify the `CubeState` over time (e.g., slowly rotate the cube or move it along an axis on a timer).
-  - **Goal:** The cube's state on the server changes dynamically.
+    style E1 fill:#f9f,stroke:#333,stroke-width:2px
+    style E2 fill:#ccf,stroke:#333,stroke-width:2px
+    style E3 fill:#cfc,stroke:#333,stroke-width:2px
+    style E4 fill:#ffc,stroke:#333,stroke-width:2px
+    style E5 fill:#fcc,stroke:#333,stroke-width:2px
 
-### Epic 3.2: Network State Synchronization
+```
 
-- **Description:** Define Protobuf messages for sending the cube's state. Implement server logic to send updates to connected clients and client logic to receive and process these updates.
-- **Goal:** The client application receives timely updates of the cube's state from the server via the network.
-- **Definition of Done (DoD):**
-  - A Protobuf message (e.g., `message CubeStateUpdate { Vector3 position; Quaternion rotation; }`) is defined in `shared/proto`.
-  - The `void-architect_shared` crate is updated with the generated Rust code for this message.
-  - The server periodically (or on change) serializes its `CubeState` into the Protobuf message and sends it over the established TCP connection to the client.
-  - The client's network task receives the `CubeStateUpdate` message, deserializes it, and updates its local copy of the cube's state.
-  - Network communication logic is updated in `server` and `client` (potentially abstracted into `engine_server`/`engine_client`).
+### Epics & Stories:
 
-#### Stories:
+**Epic 1: Core Actor Setup (Server - `engine_server`)**
+*Goal: Establish the fundamental Actix actors required for session and basic world management.*
 
-- [ ] **Story 3.2.1: Define Cube State Protobuf Message**
-  - **Description:** Create the `.proto` definition for the `CubeStateUpdate` message, including necessary nested types for vectors/quaternions if not using primitive types. Regenerate `shared` crate code.
-  - **Goal:** Protobuf definition and corresponding Rust code for state synchronization exist.
-- [ ] **Story 3.2.2: Implement Server Logic to Send State Updates**
-  - **Description:** Modify the server's network logic to periodically read the current `CubeState`, serialize it using `prost`, and send it to the connected client(s).
-  - **Goal:** The server transmits cube state updates over the network.
-- [ ] **Story 3.2.3: Implement Client Logic to Receive State Updates**
-  - **Description:** Modify the client's network logic to listen for `CubeStateUpdate` messages, deserialize them using `prost`, and store the received state (e.g., in an `Arc<Mutex<...>>` or channel accessible by the render thread).
-  - **Goal:** The client receives and stores the cube state updates from the network.
+*   [x] **Story 1.1: Implement `NetworkListenerActor` Skeleton** (Completed: 2025-05-05)
+    *   **Description:** Create the basic structure for the `NetworkListenerActor` responsible for accepting incoming TCP connections using Tokio and Actix.
+    *   **Goal:** A functional `NetworkListenerActor` exists that can bind to a port and accept connections, ready to hand them off.
+*   [x] **Story 1.2: Implement `HandshakeActor` Skeleton** (Completed: 2025-05-05)
+    *   **Description:** Create the `HandshakeActor` structure. Implement the basic state machine or logic flow to handle the handshake protocol steps defined in `DOCS.md` (receiving `ClientHello`, sending `ServerChallenge`, etc.), without full validation yet.
+    *   **Goal:** An actor exists that can be spawned per connection to manage the handshake sequence.
+*   [x] **Story 1.3: Implement `SessionManagerActor` Skeleton** (Completed: 2025-05-05)
+    *   **Description:** Create the `SessionManagerActor` responsible for receiving successful handshake results (`HandshakeResult`) and managing the lifecycle (creation, tracking, potential cleanup) of `SessionActor`s. Includes basic message handling for `HandshakeResult` and `UnregisterSession`.
+    *   **Goal:** A central actor exists to manage active client sessions.
+*   [ ] **Story 1.4: Implement `SessionActor` Skeleton**
+    *   **Description:** Create the `SessionActor` structure. Implement basic connection handling (receiving the stream/codec), placeholder message processing logic, and handling connection termination.
+    *   **Goal:** An actor exists that can represent and manage the connection state for a single client.
+*   [ ] **Story 1.5: Implement `UniverseActor` Skeleton**
+    *   **Description:** Create the `UniverseActor` structure. Define placeholder state and message handlers relevant to managing the overall game world (initially just the cube).
+    *   **Goal:** An actor exists to serve as the central authority for game state.
+*   [ ] **Story 1.6: Implement `PersistenceActor` Skeleton**
+    *   **Description:** Create the `PersistenceActor` structure. Define placeholder message handlers for loading and saving state, without implementing the actual file I/O yet.
+    *   **Goal:** An actor exists dedicated to handling state persistence operations.
+*   [ ] **Story 1.7: Integrate Core Actor Startup and Handoff**
+    *   **Description:** Modify the server's main function to initialize the Actix system, start the `NetworkListenerActor`, `SessionManagerActor`, `UniverseActor`, and `PersistenceActor`. Implement the message passing for `NetworkListener` -> `HandshakeActor` (on connection) -> `SessionManagerActor` (on success) -> `SessionActor` (creation).
+    *   **Goal:** The core actor system starts correctly, and new connections are successfully handed off to create `SessionActor` instances.
 
-### Epic 3.3: Client-Side 3D Rendering with Transforms
+**Epic 2: Game State Management (Server - `engine_server`, `shared`)**
+*Goal: Manage the state of the single persistent cube within the `UniverseActor`.*
 
-- **Description:** Update the client's rendering pipeline to draw a 3D cube instead of a 2D triangle. Use the synchronized state received from the server to calculate and apply model transformations (position, rotation) to the cube before rendering.
-- **Goal:** The client renders a 3D cube whose position and orientation in the scene match the state received from the server.
-- **Definition of Done (DoD):**
-  - Vertex and potentially index data for a 3D cube mesh are defined.
-  - GPU buffers (vertex, index) are created and populated with the cube mesh data.
-  - Vertex shader is updated to accept 3D positions and apply a Model-View-Projection (MVP) transformation matrix.
-  - A mechanism to provide the MVP matrix to the vertex shader is implemented (e.g., Uniform Buffer Object - UBO, or Push Constants).
-  - The client's rendering logic reads the latest received `CubeState`.
-  - Model matrix is calculated based on the cube's position/rotation. View and Projection matrices are set up (simple static camera initially). MVP matrix is calculated.
-  - The MVP matrix is updated in the UBO or pushed via push constants before the draw call.
-  - Command buffers are updated to bind the cube's vertex/index buffers and use the new pipeline/shaders.
-  - A 3D cube is visibly rendered in the client window, and its position/rotation updates according to the data received from the server.
-  - Rendering updates reside primarily in `engine_client`, state reading/matrix calculation might be in `client` or `engine_client`.
+*   [ ] **Story 2.1: Define Shared Cube State Structure**
+    *   **Description:** Define a Rust struct (e.g., `CubeState { id: u64, position: Vec3, rotation: Quat, color: Color }`) in the `shared` crate to represent the cube's properties. Ensure necessary math types (`glam::Vec3`, `glam::Quat`) are included and serializable if needed later (e.g., with `serde`).
+    *   **Goal:** A common, shared definition of the cube's state exists, usable by both server and potentially client logic.
+*   [ ] **Story 2.2: Define Cube-Related Actix Messages**
+    *   **Description:** Define the necessary Actix message types in `engine_server` (or `shared` if needed elsewhere) for interactions related to the cube, such as `GetCurrentCubeState` (request), `UpdateCubeState` (command), `SubscribeToCubeUpdates` (request), `CubeStateUpdate` (notification).
+    *   **Goal:** Clear message contracts exist for actors to communicate about the cube's state.
+*   [ ] **Story 2.3: Implement Cube State Storage in `UniverseActor`**
+    *   **Description:** Add state to the `UniverseActor` to hold the single `CubeState` instance. Initialize it with default values or prepare for loading (Epic 3).
+    *   **Goal:** The `UniverseActor` holds the authoritative state for the cube.
+*   [ ] **Story 2.4: Implement Cube State Update Logic in `UniverseActor`**
+    *   **Description:** Implement handlers in `UniverseActor` for messages that modify the cube's state (e.g., `UpdateCubeState`). If M3 requires automatic movement, implement an internal timer (e.g., `ctx.run_interval`) to periodically update the position/rotation and trigger notifications.
+    *   **Goal:** The `UniverseActor` can modify the cube's state based on messages or internal logic.
+*   [ ] **Story 2.5: Implement Direct Subscription Mechanism in `UniverseActor`**
+    *   **Description:** Implement the "Direct Messaging" (Option A from `DOCS.md`) notification mechanism. Add a `HashSet<Addr<SessionActor>>` to `UniverseActor` state. Implement handlers for `SubscribeToCubeUpdates` (adds sender's address to set) and potentially `Unsubscribe` (removes address). Modify state update logic (Story 2.4) to iterate the set and send `CubeStateUpdate` messages to subscribed `SessionActor`s.
+    *   **Goal:** `SessionActor`s can subscribe to and receive updates about the cube's state directly from the `UniverseActor`.
 
-#### Stories:
+**Epic 3: Persistence Integration (Server - `engine_server`)**
+*Goal: Load and save the cube's state using the `PersistenceActor` and the JSON backend.*
 
-- [ ] **Story 3.3.1: Define Cube Mesh Data (Vertices, Indices)**
-  - **Description:** Define the vertex positions (and potentially colors or normals) and index order for rendering a 3D cube.
-  - **Goal:** Data arrays for the cube's vertices and indices exist in CPU memory.
-- [ ] **Story 3.3.2: Create/Update GPU Buffers for Cube**
-  - **Description:** Create or update the `VkBuffer`s and associated memory for storing the cube's vertex and index data on the GPU. Upload the data.
-  - **Goal:** Cube mesh data resides in GPU buffers ready for rendering.
-- [ ] **Story 3.3.3: Update Shaders for 3D and MVP Transforms**
-  - **Description:** Modify the vertex shader to take 3D vertex positions and an MVP matrix (e.g., via UBO or push constant) and calculate `gl_Position`. Modify fragment shader if needed (e.g., basic lighting based on normals, or just flat color). Compile shaders to SPIR-V.
-  - **Goal:** Shaders capable of rendering a transformed 3D mesh exist.
-- [ ] **Story 3.3.4: Implement MVP Matrix Uniform (UBO or Push Constant)**
-  - **Description:** Choose a method (UBO preferred for matrices, Push Constant for smaller/frequent data) to pass the MVP matrix to the vertex shader. Implement the necessary Vulkan setup (Descriptor Set Layout, Descriptor Pool/Set, UBO buffer creation/update OR Pipeline Layout update for Push Constants).
-  - **Goal:** A mechanism exists to send the MVP matrix data to the GPU for use by the vertex shader.
-- [ ] **Story 3.3.5: Update Graphics Pipeline for 3D Cube**
-  - **Description:** Recreate or update the `VkPipeline` and potentially `VkPipelineLayout` to use the new 3D shaders, updated vertex input definitions (3D position), and the MVP uniform mechanism. Enable depth testing.
-  - **Goal:** A graphics pipeline configured for rendering the transformed 3D cube exists.
-- [ ] **Story 3.3.6: Update Render Loop to Apply Networked State**
-  - **Description:** In the client's render loop, read the latest `CubeState` received from the network thread. Calculate the Model, View (static camera for now), and Projection matrices. Compute the final MVP matrix. Update the UBO or set the push constant data with the new MVP matrix before recording/submitting the draw commands. Update draw commands for indexed drawing (`vkCmdDrawIndexed`).
-  - **Goal:** The cube's transform in the rendered scene reflects the state synchronized from the server.
+*   [ ] **Story 3.1: Define Persistence Load/Save Messages**
+    *   **Description:** Define Actix messages for persistence operations: `LoadStateRequest` (sent by `UniverseActor`), `LoadStateResponse` (sent by `PersistenceActor` with loaded state or error), and `SaveStateRequest` (sent by `UniverseActor` with state to save). Ensure the state structure (`CubeState`) is serializable/deserializable (e.g., derive `serde::Serialize`, `serde::Deserialize`).
+    *   **Goal:** Clear message contracts exist for requesting state load/save operations.
+*   [ ] **Story 3.2: Implement `PersistenceActor` JSON Load/Save Logic**
+    *   **Description:** Implement the `handle` methods in `PersistenceActor` for `LoadStateRequest` and `SaveStateRequest`. Use `tokio::fs` for async file I/O and `serde_json` to read/write the `CubeState` (or the relevant part of the `UniverseActor`'s state containing it) to/from a defined file path (e.g., `world_state.json`). Handle file not found errors during load (e.g., return default state). Send `LoadStateResponse` back to the requester.
+    *   **Goal:** The `PersistenceActor` can load and save the cube's state to a JSON file asynchronously.
+*   [ ] **Story 3.3: Implement `UniverseActor` Load on Startup**
+    *   **Description:** In the `UniverseActor`'s `started` method (or equivalent initialization point), send a `LoadStateRequest` message to the `PersistenceActor`'s address. Implement the handler for the `LoadStateResponse` to update the `UniverseActor`'s internal cube state upon receiving the loaded data.
+    *   **Goal:** The `UniverseActor` attempts to load the cube's state from the persistence layer when it starts.
+*   [ ] **Story 3.4: Implement `UniverseActor` Save Trigger**
+    *   **Description:** Implement logic in `UniverseActor` to trigger saving. This could be periodic (using `ctx.run_interval`), on specific events, or during shutdown (handling `System::current().stop()`). When triggered, send a `SaveStateRequest` message with the current cube state to the `PersistenceActor`.
+    *   **Goal:** The `UniverseActor` periodically or on shutdown requests the `PersistenceActor` to save the current cube state.
+
+**Epic 4: Network State Synchronization (Server & Client - `engine_server`, `engine_client`, `shared`)**
+*Goal: Synchronize the cube's state from the server to connected clients using Protobuf messages.*
+
+*   [ ] **Story 4.1: Define Protobuf Object Update Message**
+    *   **Description:** Define a Protobuf message (e.g., `ObjectUpdate { uint64 object_id; Vector3 position; Quaternion rotation; ... }`) in a relevant `.proto` file (e.g., `shared/src/messages/objects.proto`). Include necessary nested types for math primitives if not already defined. Regenerate Protobuf code using `prost-build` in `shared/build.rs`.
+    *   **Goal:** A Protobuf message definition exists for efficiently sending object state updates over the network.
+*   [ ] **Story 4.2: Implement `SessionActor` Subscription Logic**
+    *   **Description:** Upon successful handshake completion and `SessionActor` startup, send the `SubscribeToCubeUpdates` message to the `UniverseActor`.
+    *   **Goal:** Newly connected and authenticated clients automatically register for cube state updates.
+*   [ ] **Story 4.3: Implement `SessionActor` State Update Handling**
+    *   **Description:** Implement the `Handler<CubeStateUpdate>` for `SessionActor`. When this message is received from `UniverseActor`, prepare the data for network transmission.
+    *   **Goal:** `SessionActor` reacts to internal state update notifications.
+*   [ ] **Story 4.4: Implement `SessionActor` Protobuf Serialization & Sending**
+    *   **Description:** Inside the `CubeStateUpdate` handler, convert the received `CubeState` data into the Protobuf `ObjectUpdate` message format. Serialize the Protobuf message using `prost`. Send the serialized bytes over the client's network connection (using the appropriate Tokio/Actix networking stream/codec).
+    *   **Goal:** The server sends serialized cube state updates to the connected client.
+*   [ ] **Story 4.5: Implement Client Network Reception & Deserialization**
+    *   **Description:** In the client's network handling logic (`engine_client` or `client`), receive the raw bytes for the `ObjectUpdate` message. Deserialize the bytes back into the Protobuf `ObjectUpdate` struct using `prost`.
+    *   **Goal:** The client successfully receives and deserializes cube state updates from the server.
+*   [ ] **Story 4.6: Implement Client-Side State Storage/Forwarding**
+    *   **Description:** Implement a mechanism on the client to store the received `ObjectUpdate` data or forward it to the rendering/game logic thread. Options include: updating a shared state variable (e.g., `Arc<Mutex<HashMap<u64, CubeState>>>`), sending it through a channel (e.g., `tokio::sync::mpsc`), or using a dedicated state management system if one exists.
+    *   **Goal:** The deserialized cube state is made available to the client's rendering logic.
+
+**Epic 5: Client-Side Rendering Integration (Client - `engine_client`, `client`)**
+*Goal: Render the 3D cube on the client using the synchronized state received via the network.* (Updates existing Epic 3.3 from `TASKS.md`)
+
+*   [ ] **Story 5.1: Define Cube Mesh Data (Vertices, Indices)** (Was Story 3.3.1)
+    *   **Description:** Define the vertex positions (3D) and index order for rendering a 3D cube. Store this data, potentially in the `client` or `engine_client` crate.
+    *   **Goal:** Data arrays for the cube's vertices and indices exist in CPU memory.
+*   [ ] **Story 5.2: Create/Update GPU Buffers for Cube** (Was Story 3.3.2)
+    *   **Description:** Create `VkBuffer`s and associated `VkDeviceMemory` for storing the cube's vertex and index data on the GPU. Implement logic to upload the mesh data from the CPU to these buffers.
+    *   **Goal:** Cube mesh data resides in GPU buffers ready for rendering.
+*   [ ] **Story 5.3: Update Shaders for 3D and MVP Transforms** (Was Story 3.3.3)
+    *   **Description:** Modify the vertex shader (`.vert`) to accept 3D vertex positions (`vec3`) and a Model-View-Projection (MVP) matrix (e.g., `mat4` via UBO or push constant). Calculate `gl_Position = MVP * vec4(vertex_position, 1.0)`. Modify the fragment shader (`.frag`) as needed (e.g., output fixed color). Compile shaders to SPIR-V.
+    *   **Goal:** Shaders capable of rendering a transformed 3D mesh exist.
+*   [ ] **Story 5.4: Implement MVP Matrix Uniform (UBO or Push Constant)** (Was Story 3.3.4)
+    *   **Description:** Implement the Vulkan setup to pass the MVP matrix to the vertex shader. If using UBO: define descriptor set layout, create descriptor pool/set, create UBO buffer, update pipeline layout. If using Push Constant: update pipeline layout.
+    *   **Goal:** A mechanism exists to send the MVP matrix data to the GPU for use by the vertex shader.
+*   [ ] **Story 5.5: Update Graphics Pipeline for 3D Cube** (Was Story 3.3.5)
+    *   **Description:** Recreate or update the `VkPipeline` and `VkPipelineLayout` to use the new 3D shaders, updated vertex input state description (for 3D position), the MVP uniform mechanism, and enable depth testing/writing.
+    *   **Goal:** A graphics pipeline configured for rendering the transformed 3D cube with depth exists.
+*   [ ] **Story 5.6: Integrate Synchronized State into Render Loop** (Combines parts of 3.3.6)
+    *   **Description:** In the client's render loop, access the latest cube state received from the network (from Story 4.6). Calculate the Model matrix based on the cube's position/rotation. Set up static View and Projection matrices (for a fixed camera initially). Compute the final MVP matrix.
+    *   **Goal:** The MVP matrix reflecting the server's state is calculated each frame.
+*   [ ] **Story 5.7: Update UBO/Push Constants and Draw Commands** (Combines parts of 3.3.6)
+    *   **Description:** Before recording draw commands, update the UBO buffer content or set the push constant data with the newly calculated MVP matrix. Record command buffer commands to bind the 3D cube pipeline, bind the cube's vertex/index buffers, bind descriptor sets (if using UBOs), set push constants (if used), and issue an indexed draw call (`vkCmdDrawIndexed`).
+    *   **Goal:** The GPU is instructed to draw the cube using the correct mesh data and the latest transformation matrix.
 
 ## Milestone 4: Engine Systems Foundation
 

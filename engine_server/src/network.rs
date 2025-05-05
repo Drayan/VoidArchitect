@@ -67,7 +67,17 @@ impl NetworkSystem {
         log::info!("Handling connection from {:#?}", stream.peer_addr());
 
         //TODO: Create the session and give the stream to the session.
-        NetworkSystem::handle_handshake(&mut stream).await;
+        match NetworkSystem::handle_handshake(&mut stream).await {
+            Ok(_) => {
+                log::info!("Handshake successful");
+            }
+            Err(e) => {
+                log::error!("Handshake failed: {e:#?}");
+                return;
+            }
+        }
+
+        // Now we can create the session and give the stream to the session
     }
 
     async fn handle_handshake(stream: &mut tokio::net::TcpStream) -> Result<(), String> {

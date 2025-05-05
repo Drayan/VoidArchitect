@@ -5,7 +5,7 @@
 //! from environment variables. It ensures correct fallback to defaults and proper reading of environment values.
 // Import the function to test
 use serial_test::serial;
-use void_architect_server::get_config;
+use void_architect_engine_server::config::get_config;
 
 fn with_env_vars<F: FnOnce()>(host: Option<String>, port: Option<String>, test: F) {
     let orig_host = ::std::env::var("VOID_SERVER_HOST").ok();

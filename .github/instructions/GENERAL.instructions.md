@@ -1,6 +1,7 @@
 ### 🔄 Project Awareness & Context
 - **Always read `PLANNING.md`** at the start of a new conversation to understand the project's architecture, goals, style, and constraints.
-- **Check `TASKS.md`** before starting a new task. If the task isn’t listed, add it with a brief description and today's date.
+- **Check `TASKS.md`** before starting a new task. If it's a modification to the code (not architectural tasks) and if the task isn’t listed, add it with a brief description and today's date.
+- **Check `DOCS.md`** for any relevant documentation or notes that might help with the task.
 - **Use consistent naming conventions, file structure, and architecture patterns** as described in `PLANNING.md`.
 
 ### 🧱 Code Structure & Modularity
