@@ -17,12 +17,8 @@ fn main() {
     };
 
     match engine.run() {
-        Ok(_) => {
-            log::info!("Engine server stopped successfully.");
-        }
-        Err(e) => {
-            log::error!("Engine server stopped with error: {e:#?}");
-        }
+        Ok(_) => log::info!("Engine server stopped successfully."),
+        Err(e) => log::error!("Engine server encountered an error: {e:#?}"),
     }
 }
 

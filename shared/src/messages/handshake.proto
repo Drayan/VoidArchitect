@@ -16,7 +16,7 @@ message ServerChallenge {
 
 message ClientResponse { bytes challenge_response = 1; }
 
-message HandshakeSucess {
+message HandshakeSuccess {
   int32 session_id = 1;
   optional string server_name = 2;
   optional string game_version = 3;

@@ -1,233 +1,319 @@
-//! Actor responsible for handling the client-server handshake protocol.
-
-use actix::{Actor, ActorContext, Addr, Context, Handler, Message}; // Added ActorContext
+use actix::{
+    Actor, ActorContext, ActorFutureExt, AsyncContext, Context, StreamHandler,
+    dev::ContextFutureSpawner, fut,
+};
+use futures::{
+    SinkExt, StreamExt,
+    stream::{SplitSink, SplitStream},
+};
+use prost::{
+    Message,
+    bytes::{BufMut, BytesMut},
+};
+use rand::Rng;
 use tokio::net::TcpStream;
-use uuid::Uuid;
+use tokio_util::codec::{Decoder, Encoder, Framed};
+use void_architect_shared::messages::{
+    ClientHello, ClientResponse, HandshakeFailure, HandshakeSuccess, ServerChallenge,
+};
 
-use crate::actors::session_manager::SessionManagerActor; // Assuming SessionManagerActor exists
+const SECRET_KEY: [u8; 16] = [
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
+    0x0F,
+];
 
-/// Represents the possible states during the handshake process.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug)]
+enum HandshakeMessage {
+    ClientHello(ClientHello),
+    ServerChallenge(ServerChallenge), // Add other message types as needed
+    ClientResponse(ClientResponse),
+    HandshakeFailure(HandshakeFailure),
+    HandshakeSuccess(HandshakeSuccess),
+}
+
+struct HandshakeCodec;
+
+impl HandshakeCodec {
+    fn new() -> Self {
+        HandshakeCodec
+    }
+
+    fn identify_message_type(
+        bytes: &mut BytesMut,
+    ) -> Result<HandshakeMessage, std::io::Error> {
+        // Check if the message is a ClientHello
+        if bytes.len() < 4 {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Message too short",
+            ));
+        }
+
+        if let Ok(decode) = ClientHello::decode(bytes.as_ref()) {
+            return Ok(HandshakeMessage::ClientHello(decode));
+        } else if let Ok(decode) = ClientResponse::decode(bytes.as_ref()) {
+            return Ok(HandshakeMessage::ClientResponse(decode));
+        } else {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "Unknown message type",
+            ));
+        }
+    }
+}
+
+impl Decoder for HandshakeCodec {
+    type Item = HandshakeMessage;
+    type Error = std::io::Error;
+
+    fn decode(&mut self, src: &mut BytesMut) -> Result<Option<Self::Item>, Self::Error> {
+        if src.is_empty() {
+            return Ok(None);
+        }
+
+        // Try to identify the message type
+        let msg_type = Self::identify_message_type(src)?;
+        src.clear(); // Clear the buffer after decoding
+        Ok(Some(msg_type))
+    }
+}
+
+impl Encoder<HandshakeMessage> for HandshakeCodec {
+    type Error = std::io::Error;
+
+    fn encode(
+        &mut self,
+        msg: HandshakeMessage,
+        dst: &mut BytesMut,
+    ) -> Result<(), Self::Error> {
+        let encoded = match msg {
+            HandshakeMessage::ServerChallenge(challenge) => challenge.encode_to_vec(),
+            HandshakeMessage::HandshakeSuccess(success) => success.encode_to_vec(),
+            HandshakeMessage::HandshakeFailure(failure) => failure.encode_to_vec(),
+            _ => {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    "Cannot encode this message type",
+                ));
+            }
+        };
+
+        dst.reserve(encoded.len());
+        dst.put_slice(&encoded);
+
+        Ok(())
+    }
+}
+
 enum HandshakeState {
-    /// Waiting for the client to send ClientHello.
     WaitingClientHello,
-    /// Waiting for the client to send ClientResponse after ServerChallenge.
+    SendingChallenge,
     WaitingClientResponse,
-    /// Handshake completed successfully.
     Completed,
-    /// Handshake failed.
     Failed,
 }
 
-/// Actor responsible for managing the handshake process for a single connection.
-///
-/// It follows the protocol defined in `DOCS.md`:
-/// 1. Receives `ClientHello` (with client UUID).
-/// 2. Checks UUID against an allow list (via PersistenceActor - TODO).
-/// 3. Sends `ServerChallenge`.
-/// 4. Receives `ClientResponse`.
-/// 5. Verifies response.
-/// 6. If successful, notifies `SessionManagerActor` to create a `SessionActor`.
-/// 7. If failed at any point, terminates.
-#[derive(Debug)]
 pub struct HandshakeActor {
-    /// The TCP stream associated with the client connection.
-    /// This will likely be wrapped in a codec later.
-    stream: Option<TcpStream>, // Option because it will be taken by SessionActor on success
-    /// Address of the SessionManagerActor to notify on success.
-    session_manager: Addr<SessionManagerActor>,
-    /// The unique identifier provided by the client.
-    client_uuid: Option<Uuid>,
-    /// The random nonce sent in the ServerChallenge.
-    challenge_nonce: Option<Vec<u8>>, // Placeholder type
-    /// The current state of the handshake process.
+    framed_stream: Option<SplitStream<Framed<TcpStream, HandshakeCodec>>>,
+    framed_sink: Option<SplitSink<Framed<TcpStream, HandshakeCodec>, HandshakeMessage>>,
+    challenge: Vec<u8>,
     state: HandshakeState,
-    // TODO: Add Addr<PersistenceActor> for UUID check
 }
 
 impl HandshakeActor {
     /// Creates a new HandshakeActor.
-    pub fn new(
-        stream: TcpStream,
-        session_manager: Addr<SessionManagerActor>,
-        // persistence_actor: Addr<PersistenceActor>, // TODO: Add persistence actor
-    ) -> Self {
+    pub fn new(stream: TcpStream) -> Self {
+        let framed = Framed::new(stream, HandshakeCodec::new());
+        let (stream_sink, stream_read) = framed.split();
         HandshakeActor {
-            stream: Some(stream),
-            session_manager,
-            client_uuid: None,
-            challenge_nonce: None,
+            framed_stream: Some(stream_read),
+            framed_sink: Some(stream_sink),
+            challenge: Self::generate_challenge(),
             state: HandshakeState::WaitingClientHello,
-            // persistence_actor, // TODO
         }
     }
 
-    /// Placeholder for handling ClientHello reception.
-    fn handle_client_hello(&mut self, _ctx: &mut Context<Self>, _uuid: Uuid) {
-        // TODO:
-        // 1. Request UUID check from PersistenceActor.
-        // 2. On success:
-        //    - Store client_uuid.
-        //    - Generate nonce.
-        //    - Store nonce.
-        //    - Send ServerChallenge over stream.
-        //    - Change state to WaitingClientResponse.
-        // 3. On failure (UUID not allowed):
-        //    - Send Disconnect message over stream.
-        //    - Change state to Failed.
-        //    - Stop the actor.
-        log::info!("HandshakeActor: Received ClientHello (placeholder)");
-        self.state = HandshakeState::WaitingClientResponse; // Placeholder transition
+    fn generate_challenge() -> Vec<u8> {
+        // Generate a random challenge nonce
+        let mut rng = rand::rng();
+        let mut challenge_bytes = [0u8; 16];
+        rng.fill(&mut challenge_bytes);
+        challenge_bytes.to_vec()
     }
 
-    /// Placeholder for handling ClientResponse reception.
-    fn handle_client_response(&mut self, ctx: &mut Context<Self>, _response: Vec<u8>) {
-        // TODO:
-        // 1. Verify response against stored nonce.
-        // 2. On success:
-        //    - Generate server_session_id.
-        //    - Send HandshakeSuccess over stream.
-        //    - Notify SessionManagerActor (send stream, client_uuid, session_id).
-        //    - Change state to Completed.
-        //    - Stop the actor (SessionActor takes over).
-        // 3. On failure:
-        //    - Send Disconnect message over stream.
-        //    - Change state to Failed.
-        //    - Stop the actor.
-        log::info!("HandshakeActor: Received ClientResponse (placeholder)");
+    fn send_challenge(&mut self, ctx: &mut Context<Self>) {
+        let challenge = ServerChallenge {
+            challenge_nonce: self.challenge.clone(),
+            protocol_version: "0.1.0".to_string(),
+            server_version: "0.1.0".to_string(),
+        };
 
-        // Placeholder: Assume success for skeleton
-        if let Some(stream) = self.stream.take() {
-            let client_uuid = self.client_uuid.unwrap_or_else(Uuid::new_v4); // Placeholder
-            // # Reason: Using rand::random for a placeholder u32 session ID.
-            // This needs proper generation logic later.
-            let session_id: u32 = rand::random(); // Placeholder server-generated session ID
+        match self.send_message(HandshakeMessage::ServerChallenge(challenge), false, ctx) {
+            Ok(_) => {
+                log::info!("Challenge sent successfully");
+            }
+            Err(e) => {
+                log::error!("Failed to send challenge: {}", e);
+                ctx.stop();
+            }
+        }
+    }
 
-            // Notify Session Manager
-            self.session_manager.do_send(HandshakeResult::Success {
-                stream,
-                client_uuid,
-                session_id,
-            });
+    fn calculate_challenge_response(
+        challenge: &[u8],
+        secret_key: &[u8],
+    ) -> Result<Vec<u8>, String> {
+        if challenge.len() != 16 {
+            return Err("Challenge must be 16 bytes".to_string());
+        }
+        if secret_key.len() != 16 {
+            return Err("Secret key must be 16 bytes".to_string());
+        }
+        let mut response = [0u8; 16];
+        for i in 0..16 {
+            response[i] = challenge[i] ^ secret_key[i];
+        }
+        Ok(response.to_vec())
+    }
 
-            self.state = HandshakeState::Completed;
-            log::info!("HandshakeActor: Handshake successful (placeholder), stopping.");
-            ctx.stop();
+    fn verify_response(&self, response: ClientResponse) -> bool {
+        // Verify the response using the SECRET_KEY
+        let expected_response =
+            match Self::calculate_challenge_response(&self.challenge, &SECRET_KEY) {
+                Ok(resp) => resp,
+                Err(e) => {
+                    log::error!("Failed to calculate challenge response: {}", e);
+                    return false;
+                }
+            };
+        response.challenge_response == expected_response
+    }
+
+    fn send_message(
+        &mut self,
+        msg: HandshakeMessage,
+        should_stop: bool,
+        ctx: &mut Context<Self>,
+    ) -> Result<(), String> {
+        log::debug!("Sending message: {:?}", msg);
+        if let Some(mut framed) = self.framed_sink.take() {
+            let fut = async move {
+                let result = framed.send(msg).await;
+                (framed, result)
+            };
+
+            fut::wrap_future(fut)
+                .map(move |(framed, result), act: &mut HandshakeActor, ctx| {
+                    act.framed_sink = Some(framed);
+
+                    match result {
+                        Ok(_) => {
+                            log::info!("Message sent successfully");
+                            if should_stop {
+                                ctx.stop();
+                            }
+                        }
+                        Err(e) => {
+                            log::error!("Failed to send message: {}", e)
+                        }
+                    }
+                })
+                .wait(ctx);
+            Ok(())
         } else {
-            log::error!("HandshakeActor: Stream already taken, cannot complete handshake.");
-            self.state = HandshakeState::Failed;
+            log::error!("Failed to send message");
             ctx.stop();
+            return Err("Failed to send message".to_string());
         }
-    }
-
-    /// Placeholder for handling network read events.
-    fn handle_network_read(&mut self, ctx: &mut Context<Self>, data: Vec<u8>) {
-        log::debug!("HandshakeActor: Received data ({} bytes)", data.len());
-        // TODO: Deserialize message based on current state
-        match self.state {
-            HandshakeState::WaitingClientHello => {
-                // Placeholder: Assume it's a valid ClientHello containing a UUID
-                let uuid = Uuid::new_v4(); // Placeholder
-                self.handle_client_hello(ctx, uuid);
-            }
-            HandshakeState::WaitingClientResponse => {
-                // Placeholder: Assume it's a valid ClientResponse
-                self.handle_client_response(ctx, data);
-            }
-            _ => {
-                log::warn!(
-                    "HandshakeActor: Received data in unexpected state: {:?}",
-                    self.state
-                );
-            }
-        }
-    }
-
-    /// Placeholder for handling network errors or disconnection.
-    fn handle_disconnect(&mut self, ctx: &mut Context<Self>) {
-        log::info!("HandshakeActor: Client disconnected during handshake.");
-        self.state = HandshakeState::Failed;
-        ctx.stop();
     }
 }
 
 impl Actor for HandshakeActor {
     type Context = Context<Self>;
 
-    fn started(&mut self, ctx: &mut Context<Self>) {
-        log::info!("HandshakeActor started.");
-        // TODO: Start reading from the stream.
-        // This requires integrating with Actix's stream handling,
-        // possibly using actix-codec or manual async read loops within the actor.
-        // For the skeleton, we'll simulate receiving messages via handlers.
+    fn started(&mut self, ctx: &mut Self::Context) {
+        log::info!("HandshakeActor started, waiting for ClientHello");
 
-        // Example of simulating receiving ClientHello after a short delay
-        // In a real scenario, this would be driven by actual network reads.
-        // ctx.run_later(std::time::Duration::from_secs(1), |act, ctx| {
-        //     act.handle_network_read(ctx, vec![]); // Simulate read
-        // });
-    }
-
-    fn stopping(&mut self, _ctx: &mut Context<Self>) -> actix::Running {
-        log::info!("HandshakeActor stopping. Final state: {:?}", self.state);
-        actix::Running::Stop
+        if let Some(framed) = self.framed_stream.take() {
+            ctx.add_stream(framed);
+        } else {
+            log::error!("Failed to create framed stream");
+            ctx.stop();
+        }
     }
 }
 
-// --- Messages ---
-
-/// Message to initiate the handshake process for this actor.
-/// Sent by the NetworkListenerActor (or equivalent).
-#[derive(Message)]
-#[rtype(result = "()")]
-pub struct StartHandshake; // May not be needed if actor starts immediately
-
-impl Handler<StartHandshake> for HandshakeActor {
-    type Result = ();
-
-    fn handle(&mut self, _msg: StartHandshake, _ctx: &mut Context<Self>) -> Self::Result {
-        log::info!("HandshakeActor: Explicit StartHandshake received (may be redundant).");
-        // Actor already starts reading in `started` or via stream handling setup.
-    }
-}
-
-/// Message sent by the HandshakeActor to the SessionManagerActor upon successful handshake.
-#[derive(Message, Debug)]
-#[rtype(result = "()")]
-pub enum HandshakeResult {
-    Success {
-        stream: TcpStream,
-        client_uuid: Uuid,
-        session_id: u32, // Server-assigned session ID
-    },
-    Failure {
-        // Could include reason
-    },
-}
-
-// --- Basic Tests ---
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::actors::session_manager::SessionManagerActor;
-    use actix::Actor;
-    use tokio::net::TcpListener; // Import the actual actor
-
-    // Note: MockSessionManager removed as the creation test can use the real one.
-    // Mocks might be needed for more complex interaction tests later.
-
-    #[actix::test] // Use actix::test for consistency
-    async fn test_handshake_actor_creation() {
-        // Bind to a local port to get a TcpStream
-        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-        let addr = listener.local_addr().unwrap();
-        let stream = TcpStream::connect(addr).await.unwrap();
-        let _other_stream = listener.accept().await.unwrap().0; // Accept the connection
-
-        let session_manager_addr = SessionManagerActor::new().start(); // Use the actual actor
-        let actor = HandshakeActor::new(stream, session_manager_addr.clone());
-
-        assert_eq!(actor.state, HandshakeState::WaitingClientHello);
-        // Basic creation test, doesn't test the full flow yet.
+impl StreamHandler<Result<HandshakeMessage, std::io::Error>> for HandshakeActor {
+    fn handle(
+        &mut self,
+        msg: Result<HandshakeMessage, std::io::Error>,
+        ctx: &mut Context<Self>,
+    ) {
+        log::trace!("Received message: {:?}", msg);
+        match msg {
+            Ok(msg) => match (&self.state, msg) {
+                (
+                    HandshakeState::WaitingClientHello,
+                    HandshakeMessage::ClientHello(client_hello),
+                ) => {
+                    log::debug!("Received ClientHello: {:?}", client_hello);
+                    self.state = HandshakeState::SendingChallenge;
+                    self.send_challenge(ctx);
+                    self.state = HandshakeState::WaitingClientResponse;
+                }
+                (
+                    HandshakeState::WaitingClientResponse,
+                    HandshakeMessage::ClientResponse(client_response),
+                ) => {
+                    log::debug!("Received ClientResponse: {:?}", client_response);
+                    if self.verify_response(client_response) {
+                        log::info!("Client response verified successfully");
+                        self.state = HandshakeState::Completed;
+                        //TODO: Handoff to SessionManagerActor
+                    } else {
+                        log::error!("Client response verification failed");
+                        self.state = HandshakeState::Failed;
+                        self.send_message(
+                            HandshakeMessage::HandshakeFailure(HandshakeFailure {
+                                reason: "Invalid response".to_string(),
+                            }),
+                            true,
+                            ctx,
+                        )
+                        .unwrap_or_else(|e| {
+                            log::error!("Failed to send handshake failure: {}", e);
+                        });
+                    }
+                }
+                _ => {
+                    log::warn!("Unexpected message");
+                    self.state = HandshakeState::Failed;
+                    self.send_message(
+                        HandshakeMessage::HandshakeFailure(HandshakeFailure {
+                            reason: "Unexpected message".to_string(),
+                        }),
+                        true,
+                        ctx,
+                    )
+                    .unwrap_or_else(|e| {
+                        log::error!("Failed to send handshake failure: {}", e);
+                    });
+                }
+            },
+            Err(e) => {
+                log::error!("Error while processing message: {}", e);
+                self.state = HandshakeState::Failed;
+                self.send_message(
+                    HandshakeMessage::HandshakeFailure(HandshakeFailure {
+                        reason: "Error processing message".to_string(),
+                    }),
+                    true,
+                    ctx,
+                )
+                .unwrap_or_else(|e| {
+                    log::error!("Failed to send handshake failure: {}", e);
+                });
+            }
+        }
     }
 }

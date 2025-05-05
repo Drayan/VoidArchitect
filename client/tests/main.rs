@@ -3,7 +3,7 @@
 //!
 use prost::Message;
 use void_architect_shared::messages::{
-    ClientHello, ClientResponse, HandshakeFailure, HandshakeSucess, ServerChallenge,
+    ClientHello, ClientResponse, HandshakeFailure, HandshakeSuccess, ServerChallenge,
 };
 
 #[test]

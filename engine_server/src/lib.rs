@@ -1,3 +1,6 @@
+use actix::Actor;
+use actors::network_listener::NetworkListenerActor;
+
 mod actors;
 mod config;
 
@@ -11,9 +14,23 @@ impl EngineServer {
         Ok(EngineServer {})
     }
 
-    #[tokio::main]
-    pub async fn run(&self) -> Result<(), String> {
+    pub fn run(&self) -> Result<(), String> {
+        let actor_system = actix::System::new();
+        actor_system.block_on(Self::run_loop());
+
+        actor_system.run().map_err(|e| {
+            log::error!("Failed to run actor system: {e:#?}");
+            format!("Actor system error: {e:#?}")
+        })?;
         Ok(())
+    }
+
+    async fn run_loop() {
+        //TODO: Retrieve the address from the config
+        let network_listener =
+            NetworkListenerActor::new(std::net::SocketAddr::from(([127, 0, 0, 1], 4242)));
+        network_listener.start();
+        log::info!("Engine server is running...");
     }
 }
 

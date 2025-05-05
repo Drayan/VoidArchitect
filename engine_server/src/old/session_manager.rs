@@ -3,12 +3,21 @@ use std::collections::HashMap;
 use tokio::net::TcpStream;
 use uuid::Uuid;
 
-use crate::actors::handshake::HandshakeResult; // Import the result message
 // use crate::actors::session::SessionActor; // TODO: Uncomment when SessionActor is implemented
 
 // --- Messages ---
 
-// RegisterSession removed, HandshakeResult is used instead.
+/// Message sent to the SessionManagerActor to register a new session.
+#[derive(Message)]
+#[rtype(result = "()")]
+pub struct RegisterSession {
+    /// The ID of the session to register.
+    pub session_id: u32,
+    /// The stream associated with the session.
+    pub stream: TcpStream,
+    /// The UUID of the client.
+    pub client_uuid: Uuid,
+}
 
 /// Message sent by SessionActor when it stops or disconnects.
 #[derive(Message)]
@@ -91,17 +100,23 @@ impl Actor for SessionManagerActor {
 
 // --- Handlers ---
 
-impl Handler<HandshakeResult> for SessionManagerActor {
+impl Handler<RegisterSession> for SessionManagerActor {
     type Result = ();
 
-    fn handle(&mut self, msg: HandshakeResult, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(&mut self, msg: RegisterSession, ctx: &mut Self::Context) -> Self::Result {
         match msg {
-            HandshakeResult::Success { stream, client_uuid, session_id: _ } => { // Ignore session_id from handshake for now, assign our own
+            RegisterSession {
+                stream,
+                client_uuid,
+                session_id: _,
+            } => {
+                // Ignore session_id from handshake for now, assign our own
                 let new_session_id = self.get_next_session_id();
 
                 log::info!(
                     "Handshake successful for client {}. Assigning session ID: {}",
-                    client_uuid, new_session_id
+                    client_uuid,
+                    new_session_id
                 );
 
                 // TODO: Uncomment collision check when sessions map is active
@@ -129,18 +144,16 @@ impl Handler<HandshakeResult> for SessionManagerActor {
                 // ).start();
 
                 // Placeholder: Log that we would start the actor.
-                log::info!("Placeholder: Would start SessionActor for session {}", new_session_id);
+                log::info!(
+                    "Placeholder: Would start SessionActor for session {}",
+                    new_session_id
+                );
                 // let placeholder_addr = ctx.address().recipient::<UnregisterSession>().clone(); // Dummy recipient not needed now
 
                 // TODO: Insert the actual Addr<SessionActor> when implemented.
                 // self.sessions.insert(new_session_id, session_addr);
 
                 // log::info!("Total active sessions: {}", self.sessions.len()); // Can't report count yet
-            }
-            HandshakeResult::Failure { /* reason */ } => {
-                // Handshake failed, log it. The HandshakeActor should have already handled disconnection.
-                log::info!("Handshake failed. No session created.");
-                // Optionally log the reason if included in the message
             }
         }
     }
