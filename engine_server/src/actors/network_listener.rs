@@ -1,18 +1,24 @@
 use std::net::SocketAddr;
 
-use actix::{Actor, ActorContext, AsyncContext, Context, fut::future};
+use actix::{Actor, ActorContext, Addr, AsyncContext, Context, fut::future};
 use tokio::net::TcpListener;
 
 use crate::actors::handshake;
 
+use super::session_manager::SessionManagerActor;
+
 pub struct NetworkListenerActor {
     addr: SocketAddr,
+    session_manager_addr: Addr<SessionManagerActor>,
 }
 
 impl NetworkListenerActor {
     /// Creates a new NetworkListenerActor.
-    pub fn new(addr: SocketAddr) -> Self {
-        NetworkListenerActor { addr }
+    pub fn new(addr: SocketAddr, session_manager_addr: Addr<SessionManagerActor>) -> Self {
+        NetworkListenerActor {
+            addr,
+            session_manager_addr,
+        }
     }
 }
 
@@ -51,13 +57,16 @@ impl Actor for NetworkListenerActor {
         };
         log::info!("Successfully bound listener to {}", self.addr);
 
-        ctx.spawn(future::wrap_future(async move {
+        let session_manager_addr = self.session_manager_addr.clone();
+        let fut = async move {
             loop {
                 match listener.accept().await {
                     Ok((stream, addr)) => {
                         log::info!("Accepted connection from {}", addr);
-                        //TODO: Handoff 'stream' to a new HandshakeActor.
-                        let handshake_actor = handshake::HandshakeActor::new(stream);
+                        let handshake_actor = handshake::HandshakeActor::new(
+                            stream,
+                            session_manager_addr.clone(),
+                        );
                         handshake_actor.start();
                     }
                     Err(e) => {
@@ -66,6 +75,8 @@ impl Actor for NetworkListenerActor {
                     }
                 }
             }
-        }));
+        };
+
+        ctx.spawn(future::wrap_future(fut));
     }
 }

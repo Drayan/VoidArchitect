@@ -1,5 +1,7 @@
+use std::str::FromStr;
+
 use actix::{
-    Actor, ActorContext, ActorFutureExt, AsyncContext, Context, StreamHandler,
+    Actor, ActorContext, ActorFutureExt, Addr, AsyncContext, Context, Handler, StreamHandler,
     dev::ContextFutureSpawner, fut,
 };
 use futures::{
@@ -13,15 +15,21 @@ use prost::{
 use rand::Rng;
 use tokio::net::TcpStream;
 use tokio_util::codec::{Decoder, Encoder, Framed};
+use uuid::Uuid;
 use void_architect_shared::messages::{
     ClientHello, ClientResponse, HandshakeFailure, HandshakeSuccess, ServerChallenge,
 };
+
+use crate::actors::session_manager::RegisterSession;
+
+use super::session_manager::SessionManagerActor;
 
 const SECRET_KEY: [u8; 16] = [
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
     0x0F,
 ];
 
+// --- Messages Codec ---
 #[derive(Debug)]
 enum HandshakeMessage {
     ClientHello(ClientHello),
@@ -105,6 +113,7 @@ impl Encoder<HandshakeMessage> for HandshakeCodec {
     }
 }
 
+// --- Actor ---
 enum HandshakeState {
     WaitingClientHello,
     SendingChallenge,
@@ -118,11 +127,13 @@ pub struct HandshakeActor {
     framed_sink: Option<SplitSink<Framed<TcpStream, HandshakeCodec>, HandshakeMessage>>,
     challenge: Vec<u8>,
     state: HandshakeState,
+    client_uuid: Option<Uuid>,
+    session_manager_addr: Addr<SessionManagerActor>,
 }
 
 impl HandshakeActor {
     /// Creates a new HandshakeActor.
-    pub fn new(stream: TcpStream) -> Self {
+    pub fn new(stream: TcpStream, addr: Addr<SessionManagerActor>) -> Self {
         let framed = Framed::new(stream, HandshakeCodec::new());
         let (stream_sink, stream_read) = framed.split();
         HandshakeActor {
@@ -130,6 +141,8 @@ impl HandshakeActor {
             framed_sink: Some(stream_sink),
             challenge: Self::generate_challenge(),
             state: HandshakeState::WaitingClientHello,
+            client_uuid: None,
+            session_manager_addr: addr,
         }
     }
 
@@ -226,6 +239,19 @@ impl HandshakeActor {
             return Err("Failed to send message".to_string());
         }
     }
+
+    fn send_failure(&mut self, reason: String, ctx: &mut Context<Self>) {
+        let failure = HandshakeFailure { reason };
+        match self.send_message(HandshakeMessage::HandshakeFailure(failure), true, ctx) {
+            Ok(_) => {
+                log::info!("Failure message sent successfully");
+            }
+            Err(e) => {
+                log::error!("Failed to send failure message: {}", e);
+                ctx.stop();
+            }
+        }
+    }
 }
 
 impl Actor for HandshakeActor {
@@ -243,6 +269,7 @@ impl Actor for HandshakeActor {
     }
 }
 
+// --- Handlers ---
 impl StreamHandler<Result<HandshakeMessage, std::io::Error>> for HandshakeActor {
     fn handle(
         &mut self,
@@ -252,68 +279,131 @@ impl StreamHandler<Result<HandshakeMessage, std::io::Error>> for HandshakeActor 
         log::trace!("Received message: {:?}", msg);
         match msg {
             Ok(msg) => match (&self.state, msg) {
+                // Handle the ClientHello message
                 (
                     HandshakeState::WaitingClientHello,
                     HandshakeMessage::ClientHello(client_hello),
                 ) => {
                     log::debug!("Received ClientHello: {:?}", client_hello);
                     self.state = HandshakeState::SendingChallenge;
+                    // Validate the UUID
+                    match Uuid::from_str(client_hello.client_uuid.as_str()) {
+                        Ok(uuid) => {
+                            self.client_uuid = Some(uuid);
+                        }
+                        Err(e) => {
+                            log::error!("Invalid UUID: {}", e);
+                            self.state = HandshakeState::Failed;
+                            self.send_failure("Invalid UUID".to_string(), ctx);
+                            return;
+                        }
+                    }
+                    // Send the challenge to the client
                     self.send_challenge(ctx);
                     self.state = HandshakeState::WaitingClientResponse;
                 }
+                // Handle the ClientResponse message
                 (
                     HandshakeState::WaitingClientResponse,
                     HandshakeMessage::ClientResponse(client_response),
                 ) => {
                     log::debug!("Received ClientResponse: {:?}", client_response);
+                    // Verifiy the response from the client against the challenge
                     if self.verify_response(client_response) {
                         log::info!("Client response verified successfully");
                         self.state = HandshakeState::Completed;
-                        //TODO: Handoff to SessionManagerActor
+                        // Send a RegisterSession message to the session manager
+                        // with the client UUID and stream
+                        if let Some(uuid) = self.client_uuid {
+                            fut::wrap_future(self.session_manager_addr.send(
+                                RegisterSession {
+                                    handshake_addr: ctx.address(),
+                                    client_uuid: uuid,
+                                },
+                            ))
+                            .map(|result, actor: &mut HandshakeActor, ctx| match result {
+                                Ok(res) => {
+                                    log::info!("Session registered successfully: {:?}", res);
+                                    // Send HandshakeSuccess message to the client
+                                    let success = HandshakeSuccess {
+                                        session_id: res.session_id,
+                                        game_version: Some("0.1.0".to_string()),
+                                        server_name: Some("Void Architect".to_string()),
+                                    };
+                                    match actor.send_message(
+                                        HandshakeMessage::HandshakeSuccess(success),
+                                        true,
+                                        ctx,
+                                    ) {
+                                        Ok(_) => {
+                                            log::info!("Handshake success message sent");
+                                            //TODO: Transfer the stream to the session actor
+                                        }
+                                        Err(e) => {
+                                            log::error!(
+                                                "Failed to send handshake success: {}",
+                                                e
+                                            );
+                                            actor.state = HandshakeState::Failed;
+                                            actor.send_failure(
+                                                "Failed to send handshake success".to_string(),
+                                                ctx,
+                                            );
+                                        }
+                                    }
+                                }
+                                Err(e) => {
+                                    log::error!("Failed to register session: {}", e);
+                                    actor.state = HandshakeState::Failed;
+                                    actor.send_failure(
+                                        "Failed to register session".to_string(),
+                                        ctx,
+                                    );
+                                }
+                            })
+                            .wait(ctx);
+                        } else {
+                            log::error!("Client UUID is not set");
+                            self.state = HandshakeState::Failed;
+                            self.send_failure("Client UUID is not set".to_string(), ctx);
+                        }
                     } else {
                         log::error!("Client response verification failed");
                         self.state = HandshakeState::Failed;
-                        self.send_message(
-                            HandshakeMessage::HandshakeFailure(HandshakeFailure {
-                                reason: "Invalid response".to_string(),
-                            }),
-                            true,
+                        self.send_failure(
+                            "Client response verification failed".to_string(),
                             ctx,
-                        )
-                        .unwrap_or_else(|e| {
-                            log::error!("Failed to send handshake failure: {}", e);
-                        });
+                        );
                     }
                 }
+                // If we got to this point, we received a message that we didn't expect
                 _ => {
                     log::warn!("Unexpected message");
                     self.state = HandshakeState::Failed;
-                    self.send_message(
-                        HandshakeMessage::HandshakeFailure(HandshakeFailure {
-                            reason: "Unexpected message".to_string(),
-                        }),
-                        true,
-                        ctx,
-                    )
-                    .unwrap_or_else(|e| {
-                        log::error!("Failed to send handshake failure: {}", e);
-                    });
+                    self.send_failure("Unexpected message".to_string(), ctx);
                 }
             },
+            // Handle the error case
             Err(e) => {
                 log::error!("Error while processing message: {}", e);
                 self.state = HandshakeState::Failed;
-                self.send_message(
-                    HandshakeMessage::HandshakeFailure(HandshakeFailure {
-                        reason: "Error processing message".to_string(),
-                    }),
-                    true,
-                    ctx,
-                )
-                .unwrap_or_else(|e| {
-                    log::error!("Failed to send handshake failure: {}", e);
-                });
+                self.send_failure("Error while processing message".to_string(), ctx);
             }
         }
     }
 }
+
+// impl Handler<SessionRegistrationSuccess> for HandshakeActor {
+//     type Result = ();
+
+//     fn handle(
+//         &mut self,
+//         msg: SessionRegistrationSuccess,
+//         ctx: &mut Self::Context,
+//     ) -> Self::Result {
+//         log::info!(
+//             "Session registered successfully with ID: {}",
+//             msg.session_id
+//         );
+//     }
+// }

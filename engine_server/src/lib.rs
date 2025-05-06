@@ -1,5 +1,5 @@
 use actix::Actor;
-use actors::network_listener::NetworkListenerActor;
+use actors::{network_listener::NetworkListenerActor, session_manager::SessionManagerActor};
 
 mod actors;
 mod config;
@@ -26,9 +26,13 @@ impl EngineServer {
     }
 
     async fn run_loop() {
+        let session_manager = SessionManagerActor::new();
+        let session_manager_addr = session_manager.start();
         //TODO: Retrieve the address from the config
-        let network_listener =
-            NetworkListenerActor::new(std::net::SocketAddr::from(([127, 0, 0, 1], 4242)));
+        let network_listener = NetworkListenerActor::new(
+            std::net::SocketAddr::from(([127, 0, 0, 1], 4242)),
+            session_manager_addr,
+        );
         network_listener.start();
         log::info!("Engine server is running...");
     }

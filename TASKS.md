@@ -373,7 +373,7 @@ graph TD
 *   [x] **Story 1.2: Implement `HandshakeActor` Skeleton** (Completed: 2025-05-05)
     *   **Description:** Create the `HandshakeActor` structure. Implement the basic state machine or logic flow to handle the handshake protocol steps defined in `DOCS.md` (receiving `ClientHello`, sending `ServerChallenge`, etc.), without full validation yet.
     *   **Goal:** An actor exists that can be spawned per connection to manage the handshake sequence.
-*   [ ] **Story 1.3: Implement `SessionManagerActor` Skeleton** (Completed: 2025-05-05)
+*   [x] **Story 1.3: Implement `SessionManagerActor` Skeleton** (Completed: 2025-05-05)
     *   **Description:** Create the `SessionManagerActor` responsible for receiving successful handshake results (`HandshakeResult`) and managing the lifecycle (creation, tracking, potential cleanup) of `SessionActor`s. Includes basic message handling for `HandshakeResult` and `UnregisterSession`.
     *   **Goal:** A central actor exists to manage active client sessions.
 *   [ ] **Story 1.4: Implement `SessionActor` Skeleton**
