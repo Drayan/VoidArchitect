@@ -439,10 +439,10 @@ graph TD
 *   [x] **Story 4.4: Implement `SessionActor` Protobuf Serialization & Sending**
     *   **Description:** Inside the `CubeStateUpdate` handler, convert the received `CubeState` data into the Protobuf `ObjectUpdate` message format. Serialize the Protobuf message using `prost`. Send the serialized bytes over the client's network connection (using the appropriate Tokio/Actix networking stream/codec).
     *   **Goal:** The server sends serialized cube state updates to the connected client.
-*   [ ] **Story 4.5: Implement Client Network Reception & Deserialization**
+*   [x] **Story 4.5: Implement Client Network Reception & Deserialization**
     *   **Description:** In the client's network handling logic (`engine_client` or `client`), receive the raw bytes for the `ObjectUpdate` message. Deserialize the bytes back into the Protobuf `ObjectUpdate` struct using `prost`.
     *   **Goal:** The client successfully receives and deserializes cube state updates from the server.
-*   [ ] **Story 4.6: Implement Client-Side State Storage/Forwarding**
+*   [x] **Story 4.6: Implement Client-Side State Storage/Forwarding**
     *   **Description:** Implement a mechanism on the client to store the received `ObjectUpdate` data or forward it to the rendering/game logic thread. Options include: updating a shared state variable (e.g., `Arc<Mutex<HashMap<u64, CubeState>>>`), sending it through a channel (e.g., `tokio::sync::mpsc`), or using a dedicated state management system if one exists.
     *   **Goal:** The deserialized cube state is made available to the client's rendering logic.
 

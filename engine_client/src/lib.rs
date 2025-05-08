@@ -53,6 +53,7 @@ pub struct EngineContext {
     is_initialized: bool,
     renderer_system: Option<RendererFrontend>,
     network_system: Option<NetworkSystem>,
+    event_receiver: std::sync::mpsc::Receiver<network::MessageType>,
 }
 
 impl EngineContext {
@@ -61,10 +62,12 @@ impl EngineContext {
     /// # Returns
     /// * `EngineContext` - A new engine context instance.
     pub fn new() -> Self {
+        let (sender, receiver) = std::sync::mpsc::channel();
         EngineContext {
             renderer_system: Some(RendererFrontend::new()),
-            network_system: Some(NetworkSystem::new()),
+            network_system: Some(NetworkSystem::new(sender)),
             is_initialized: false,
+            event_receiver: receiver,
         }
     }
 
@@ -160,12 +163,21 @@ impl EngineContext {
                 "Engine context not initialized".to_string(),
             ));
         }
-        let renderer = self.renderer_system.as_mut().ok_or(
-            EngineError::InitializationError("Renderer system not initialized".to_string()),
-        )?;
-        // Default implementation does nothing.
-        // Override in  if needed.
-        // For now, just return Ok, but propagate errors if update logic is added.
+
+        //TODO: This should be replaced with the event system.
+        while let Ok(msg) = self.event_receiver.try_recv() {
+            match msg {
+                network::MessageType::ObjectTransform(msg) => {
+                    // Process the network message.
+                    log::info!("Received network message: {:?}", msg);
+                }
+                _ => {
+                    log::warn!("Unknown message type received");
+                }
+            }
+        }
+
+        // Retrieve packets from the network system.
         Ok(())
     }
 
@@ -295,6 +307,27 @@ impl EngineClient {
     /// * `Self` - The engine client after the event loop has run.
     pub fn run(&mut self) -> Result<(), String> {
         // Main event loop: runs until the platform layer signals to quit.
+        // Spawn the network running task in the background.
+        let (network_return_sender, network_return_receiver) = tokio::sync::oneshot::channel();
+        let (shutdown_sender, shutdown_receiver) = tokio::sync::oneshot::channel();
+        let mut network_handle: Option<tokio::task::JoinHandle<()>> = None;
+        if self.context.network_system.is_some() {
+            let mut network_system = self.context.network_system.take().unwrap();
+            network_handle = Some(self.runtime.spawn(async move {
+                let result = network_system.run(shutdown_receiver).await;
+
+                // Always send the network system back, regardless of success or failure.
+                if let Err(_) = network_return_sender.send(network_system) {
+                    log::error!("Failed to send network system back");
+                }
+
+                if let Err(e) = result {
+                    log::error!("Network system error: {}", e);
+                }
+            }));
+        }
+
+        // Start the main loop.
         self.runtime.block_on(async {
             loop {
                 match self.platform_layer.run() {
@@ -316,6 +349,35 @@ impl EngineClient {
                 self.context.update(0.016); // ~60fps
             }
         });
+
+        // Send the shutdown signal to the network task.
+        if let Some(handle) = &network_handle {
+            let _ = shutdown_sender.send(());
+
+            // Wait for the network task to finish.
+            let network_system_result = self.runtime.block_on(async {
+                match tokio::time::timeout(
+                    std::time::Duration::from_millis(500),
+                    network_return_receiver,
+                )
+                .await
+                {
+                    Ok(result) => result.ok(),
+                    Err(_) => None,
+                }
+            });
+
+            // Abort the network task if it is still running.
+            // This is a safety measure to ensure the task is cleaned up.
+            handle.abort();
+
+            // Try to get the network system back.
+            if let Some(network_system) = network_system_result {
+                self.context.network_system = Some(network_system);
+            } else {
+                log::error!("Failed to retrieve network system");
+            }
+        }
 
         Ok(())
     }

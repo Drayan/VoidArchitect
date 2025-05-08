@@ -18,7 +18,7 @@ const SECRET_KEY: [u8; 16] = [
 ];
 
 #[derive(Debug)]
-enum MessageType {
+pub(super) enum MessageType {
     ClientHello(ClientHello),
     ServerChallenge(ServerChallenge),
     ClientResponse(ClientResponse),
@@ -83,7 +83,7 @@ impl Decoder for ClientCodec {
         }
 
         let msg = Self::identify_message_type(src)?;
-        log::trace!("Decoded message: {:?}", msg);
+        // log::trace!("Decoded message: {:?}", msg);
         src.clear();
         Ok(Some(msg))
     }
@@ -118,12 +118,14 @@ impl Encoder<MessageType> for ClientCodec {
 }
 
 pub(super) struct NetworkSystem {
+    sender: std::sync::mpsc::Sender<MessageType>,
     framed_stream: Option<Framed<TcpStream, ClientCodec>>,
 }
 
 impl NetworkSystem {
-    pub fn new() -> Self {
+    pub fn new(sender: std::sync::mpsc::Sender<MessageType>) -> Self {
         NetworkSystem {
+            sender,
             framed_stream: None,
         }
     }
@@ -139,6 +141,34 @@ impl NetworkSystem {
         self.framed_stream = Some(framed);
 
         self.perform_handshake().await?;
+        Ok(())
+    }
+
+    pub async fn run(
+        &mut self,
+        mut shutdown_signal: tokio::sync::oneshot::Receiver<()>,
+    ) -> Result<()> {
+        // Main loop for the network system
+        loop {
+            // Check for shutdown signal
+            if let Ok(()) = shutdown_signal.try_recv() {
+                log::info!("Shutdown signal received");
+                break;
+            }
+
+            // Check for incoming messages
+            match self.receive_message().await {
+                Ok(msg) => {
+                    // Process the message
+                    self.sender.send(msg)?
+                }
+                Err(e) => {
+                    log::error!("Failed to decode message: {}", e);
+                    bail!("Failed to decode message");
+                }
+            }
+        }
+
         Ok(())
     }
 
