@@ -3,10 +3,12 @@ use std::collections::HashMap;
 use actix::{Actor, Addr, AsyncContext, Handler, Message, MessageResult};
 use uuid::Uuid;
 
-use super::{handshake::HandshakeActor, session::SessionActor};
+use super::{handshake::HandshakeActor, session::SessionActor, universe::UniverseActor};
 
 // --- Actor ---
 pub struct SessionManagerActor {
+    /// Address of the UniverseActor.
+    universe_addr: Addr<UniverseActor>,
     /// Map of active sessions: session_id (u32) -> Address of SessionActor.
     sessions: HashMap<u32, Addr<SessionActor>>,
     users: HashMap<Uuid, u32>, // Map of client UUIDs to session IDs
@@ -14,8 +16,9 @@ pub struct SessionManagerActor {
 
 impl SessionManagerActor {
     /// Creates a new SessionManagerActor.
-    pub fn new() -> Self {
+    pub fn new(universe_addr: Addr<UniverseActor>) -> Self {
         SessionManagerActor {
+            universe_addr,
             sessions: HashMap::new(),
             users: HashMap::new(),
         }
@@ -31,8 +34,6 @@ impl SessionManagerActor {
         }
 
         let mut proposed_id = self.sessions.len() as u32;
-        proposed_id = proposed_id.wrapping_add(1); // Start from the next ID
-
         while self.sessions.contains_key(&proposed_id) {
             proposed_id = proposed_id.wrapping_add(1); // Increment until we find an unused ID, wrapping around if necessary
         }
@@ -78,8 +79,8 @@ pub struct SessionRegistrationSuccess {
 #[derive(Message)]
 #[rtype(result = "()")]
 pub struct UnregisterSession {
-    session_id: u32,
-    client_uuid: Uuid,
+    pub session_id: u32,
+    pub client_uuid: Uuid,
 }
 
 // --- Handlers ---
@@ -97,7 +98,12 @@ impl Handler<RegisterSession> for SessionManagerActor {
 
         // Generate a new session ID
         let session_id = self.get_next_session_id();
-        let session = SessionActor::new(session_id, msg.client_uuid, ctx.address());
+        let session = SessionActor::new(
+            session_id,
+            msg.client_uuid,
+            ctx.address(),
+            self.universe_addr.clone(),
+        );
         // Start the session actor
         let session_addr = session.start();
         // Store the session address in the sessions map
@@ -122,6 +128,7 @@ impl Handler<UnregisterSession> for SessionManagerActor {
             msg.client_uuid
         );
 
-        //TODO: Implement session unregistration logic
+        self.sessions.remove(&msg.session_id);
+        self.users.remove(&msg.client_uuid);
     }
 }

@@ -183,9 +183,12 @@ void-architect
 
 ## 10. Ideas
 - Science system based on "idea" generation in the population, some ideas lead to breakthrough but most doesn't (prehistorical stage). Later on, organized research could be conducted to develop targeted idea (a new propulsion system, etc) based on the current knowledge.
+- Strong economy, with resources productions, transport (flow), consumption, between population center on planets, between planet and space (space stations, etc), and between planets. Designing good transport infrastructure is therefore important.
 - Cultural system
 - Religion system / Beliefs
 - Diplomatic system (external politic)
 - Political system (rich internal "life" of the empire)
+- Some kind of "flow" visual "scripting" to combine different effects for cultural, religion, political system ?
 - Game event system (like in stellaris, crusader kings, etc)
 - Military system with "operations", the player should be able to lead, and commanders would execute the plan. At any time, the player could "take command" and give direct orders. This system should allow for large scale operation (like system/planetary invasion).
+- Automation possible (like minister or something) that allow the player to focus (if he want) on the big picture rather than on the microdetails (but with micromanagement possible).

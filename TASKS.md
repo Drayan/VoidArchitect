@@ -376,35 +376,35 @@ graph TD
 *   [x] **Story 1.3: Implement `SessionManagerActor` Skeleton** (Completed: 2025-05-05)
     *   **Description:** Create the `SessionManagerActor` responsible for receiving successful handshake results (`HandshakeResult`) and managing the lifecycle (creation, tracking, potential cleanup) of `SessionActor`s. Includes basic message handling for `HandshakeResult` and `UnregisterSession`.
     *   **Goal:** A central actor exists to manage active client sessions.
-*   [ ] **Story 1.4: Implement `SessionActor` Skeleton**
+*   [x] **Story 1.4: Implement `SessionActor` Skeleton**
     *   **Description:** Create the `SessionActor` structure. Implement basic connection handling (receiving the stream/codec), placeholder message processing logic, and handling connection termination.
     *   **Goal:** An actor exists that can represent and manage the connection state for a single client.
-*   [ ] **Story 1.5: Implement `UniverseActor` Skeleton**
+*   [x] **Story 1.5: Implement `UniverseActor` Skeleton**
     *   **Description:** Create the `UniverseActor` structure. Define placeholder state and message handlers relevant to managing the overall game world (initially just the cube).
     *   **Goal:** An actor exists to serve as the central authority for game state.
 *   [ ] **Story 1.6: Implement `PersistenceActor` Skeleton**
     *   **Description:** Create the `PersistenceActor` structure. Define placeholder message handlers for loading and saving state, without implementing the actual file I/O yet.
     *   **Goal:** An actor exists dedicated to handling state persistence operations.
-*   [ ] **Story 1.7: Integrate Core Actor Startup and Handoff**
+*   [x] **Story 1.7: Integrate Core Actor Startup and Handoff**
     *   **Description:** Modify the server's main function to initialize the Actix system, start the `NetworkListenerActor`, `SessionManagerActor`, `UniverseActor`, and `PersistenceActor`. Implement the message passing for `NetworkListener` -> `HandshakeActor` (on connection) -> `SessionManagerActor` (on success) -> `SessionActor` (creation).
     *   **Goal:** The core actor system starts correctly, and new connections are successfully handed off to create `SessionActor` instances.
 
 **Epic 2: Game State Management (Server - `engine_server`, `shared`)**
 *Goal: Manage the state of the single persistent cube within the `UniverseActor`.*
 
-*   [ ] **Story 2.1: Define Shared Cube State Structure**
+*   [x] **Story 2.1: Define Shared Cube State Structure**
     *   **Description:** Define a Rust struct (e.g., `CubeState { id: u64, position: Vec3, rotation: Quat, color: Color }`) in the `shared` crate to represent the cube's properties. Ensure necessary math types (`glam::Vec3`, `glam::Quat`) are included and serializable if needed later (e.g., with `serde`).
     *   **Goal:** A common, shared definition of the cube's state exists, usable by both server and potentially client logic.
-*   [ ] **Story 2.2: Define Cube-Related Actix Messages**
+*   [x] **Story 2.2: Define Cube-Related Actix Messages**
     *   **Description:** Define the necessary Actix message types in `engine_server` (or `shared` if needed elsewhere) for interactions related to the cube, such as `GetCurrentCubeState` (request), `UpdateCubeState` (command), `SubscribeToCubeUpdates` (request), `CubeStateUpdate` (notification).
     *   **Goal:** Clear message contracts exist for actors to communicate about the cube's state.
-*   [ ] **Story 2.3: Implement Cube State Storage in `UniverseActor`**
+*   [x] **Story 2.3: Implement Cube State Storage in `UniverseActor`**
     *   **Description:** Add state to the `UniverseActor` to hold the single `CubeState` instance. Initialize it with default values or prepare for loading (Epic 3).
     *   **Goal:** The `UniverseActor` holds the authoritative state for the cube.
-*   [ ] **Story 2.4: Implement Cube State Update Logic in `UniverseActor`**
+*   [x] **Story 2.4: Implement Cube State Update Logic in `UniverseActor`**
     *   **Description:** Implement handlers in `UniverseActor` for messages that modify the cube's state (e.g., `UpdateCubeState`). If M3 requires automatic movement, implement an internal timer (e.g., `ctx.run_interval`) to periodically update the position/rotation and trigger notifications.
     *   **Goal:** The `UniverseActor` can modify the cube's state based on messages or internal logic.
-*   [ ] **Story 2.5: Implement Direct Subscription Mechanism in `UniverseActor`**
+*   [x] **Story 2.5: Implement Direct Subscription Mechanism in `UniverseActor`**
     *   **Description:** Implement the "Direct Messaging" (Option A from `DOCS.md`) notification mechanism. Add a `HashSet<Addr<SessionActor>>` to `UniverseActor` state. Implement handlers for `SubscribeToCubeUpdates` (adds sender's address to set) and potentially `Unsubscribe` (removes address). Modify state update logic (Story 2.4) to iterate the set and send `CubeStateUpdate` messages to subscribed `SessionActor`s.
     *   **Goal:** `SessionActor`s can subscribe to and receive updates about the cube's state directly from the `UniverseActor`.
 
@@ -427,16 +427,16 @@ graph TD
 **Epic 4: Network State Synchronization (Server & Client - `engine_server`, `engine_client`, `shared`)**
 *Goal: Synchronize the cube's state from the server to connected clients using Protobuf messages.*
 
-*   [ ] **Story 4.1: Define Protobuf Object Update Message**
+*   [x] **Story 4.1: Define Protobuf Object Update Message**
     *   **Description:** Define a Protobuf message (e.g., `ObjectUpdate { uint64 object_id; Vector3 position; Quaternion rotation; ... }`) in a relevant `.proto` file (e.g., `shared/src/messages/objects.proto`). Include necessary nested types for math primitives if not already defined. Regenerate Protobuf code using `prost-build` in `shared/build.rs`.
     *   **Goal:** A Protobuf message definition exists for efficiently sending object state updates over the network.
-*   [ ] **Story 4.2: Implement `SessionActor` Subscription Logic**
+*   [x] **Story 4.2: Implement `SessionActor` Subscription Logic**
     *   **Description:** Upon successful handshake completion and `SessionActor` startup, send the `SubscribeToCubeUpdates` message to the `UniverseActor`.
     *   **Goal:** Newly connected and authenticated clients automatically register for cube state updates.
-*   [ ] **Story 4.3: Implement `SessionActor` State Update Handling**
+*   [x] **Story 4.3: Implement `SessionActor` State Update Handling**
     *   **Description:** Implement the `Handler<CubeStateUpdate>` for `SessionActor`. When this message is received from `UniverseActor`, prepare the data for network transmission.
     *   **Goal:** `SessionActor` reacts to internal state update notifications.
-*   [ ] **Story 4.4: Implement `SessionActor` Protobuf Serialization & Sending**
+*   [x] **Story 4.4: Implement `SessionActor` Protobuf Serialization & Sending**
     *   **Description:** Inside the `CubeStateUpdate` handler, convert the received `CubeState` data into the Protobuf `ObjectUpdate` message format. Serialize the Protobuf message using `prost`. Send the serialized bytes over the client's network connection (using the appropriate Tokio/Actix networking stream/codec).
     *   **Goal:** The server sends serialized cube state updates to the connected client.
 *   [ ] **Story 4.5: Implement Client Network Reception & Deserialization**
@@ -527,4 +527,4 @@ graph TD
 - **Goal:** Implement basic procedural noise functions (e.g., Perlin, Simplex) within the `core` engine library, potentially demonstrating their output visually in the client later (e.g., applying noise as texture coordinates or height map).
 
 # Unplanned backlog
-*Nothing, isn't that great ?*
+- [ ] Server version and protocol version should match between client and server, no checking is made at this moment.

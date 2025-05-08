@@ -4,17 +4,21 @@
 //! and rendering. It defines the main entry points for engine context, application trait, and
 //! orchestrates subsystem initialization and shutdown.
 
+pub mod network;
 pub mod platform;
 pub mod renderer;
 
+use network::NetworkSystem;
 use platform::{PlatformLayer, WindowHandle};
 use renderer::RendererFrontend;
 use std::error::Error;
 use std::fmt;
+use tokio::runtime::Runtime;
 
 #[derive(Debug)]
 pub enum EngineError {
     RendererError(String),
+    NetworkError(anyhow::Error),
     PlatformError(String),
     InitializationError(String),
     ShutdownError(String),
@@ -27,6 +31,7 @@ impl fmt::Display for EngineError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             EngineError::RendererError(e) => write!(f, "Renderer error: {}", e),
+            EngineError::NetworkError(e) => write!(f, "Network error: {}", e),
             EngineError::PlatformError(e) => write!(f, "Platform error: {}", e),
             EngineError::InitializationError(e) => write!(f, "Initialization error: {}", e),
             EngineError::ShutdownError(e) => write!(f, "Shutdown error: {}", e),
@@ -47,6 +52,7 @@ pub struct EngineContext {
     // Holds the renderer frontend system; None if not initialized.
     is_initialized: bool,
     renderer_system: Option<RendererFrontend>,
+    network_system: Option<NetworkSystem>,
 }
 
 impl EngineContext {
@@ -57,6 +63,7 @@ impl EngineContext {
     pub fn new() -> Self {
         EngineContext {
             renderer_system: Some(RendererFrontend::new()),
+            network_system: Some(NetworkSystem::new()),
             is_initialized: false,
         }
     }
@@ -69,7 +76,25 @@ impl EngineContext {
     ///
     /// # Returns
     /// * `Ok(())` if initialization succeeds, or `Err(String)` with an error message.
-    pub fn initialize(&mut self, window: WindowHandle) -> Result<(), EngineError> {
+    pub async fn initialize(&mut self, window: WindowHandle) -> Result<(), EngineError> {
+        // Initialize the network system.
+        if let Some(network) = &mut self.network_system {
+            match network.initialize().await.map_err(EngineError::NetworkError) {
+                Ok(_) => log::info!("Network system initialized successfully"),
+                Err(e) => {
+                    log::error!("Failed to initialize network system: {}", e);
+                    return Err(EngineError::InitializationError(
+                        "Failed to initialize network system".to_string(),
+                    ));
+                }
+            }
+        } else {
+            return Err(EngineError::InitializationError(
+                "Network system not initialized".to_string(),
+            ));
+        }
+
+        // Initialize the renderer system with the provided window handle.
         if let Some(renderer) = &mut self.renderer_system {
             match renderer.initialize(window).map_err(EngineError::RendererError) {
                 Ok(_) => {
@@ -96,7 +121,7 @@ impl EngineContext {
     ///
     /// # Returns
     /// * `Ok(())` if shutdown succeeds, or `Err(String)` with an error message.
-    pub fn shutdown(&mut self) -> Result<(), EngineError> {
+    pub async fn shutdown(&mut self) -> Result<(), EngineError> {
         if !self.is_initialized {
             return Err(EngineError::InitializationError(
                 "Engine context not initialized".to_string(),
@@ -104,12 +129,22 @@ impl EngineContext {
         }
 
         if let Some(renderer) = &mut self.renderer_system {
-            renderer.shutdown().map_err(EngineError::RendererError)
+            renderer.shutdown().map_err(EngineError::RendererError)?;
         } else {
-            Err(EngineError::InitializationError(
+            return Err(EngineError::InitializationError(
                 "Renderer system not initialized".to_string(),
-            ))
+            ));
         }
+
+        if let Some(network) = &mut self.network_system {
+            network.shutdown().await.map_err(EngineError::NetworkError)?;
+        } else {
+            return Err(EngineError::InitializationError(
+                "Network system not initialized".to_string(),
+            ));
+        }
+
+        Ok(())
     }
 
     /// Updates the engine context state.
@@ -201,6 +236,7 @@ impl EngineContext {
 ///
 /// This struct is responsible for subsystem orchestration.
 pub struct EngineClient {
+    runtime: Runtime,
     /// The platform abstraction layer (window, events, etc).
     // Platform abstraction layer (window, events, etc).
     platform_layer: PlatformLayer,
@@ -215,7 +251,13 @@ impl EngineClient {
     /// # Returns
     /// * `EngineClient` - A new engine client instance.
     pub fn new() -> Self {
+        let runtime = tokio::runtime::Builder::new_multi_thread()
+            .worker_threads(4)
+            .enable_all()
+            .build()
+            .expect("Failed to create Tokio runtime");
         EngineClient {
+            runtime,
             platform_layer: PlatformLayer::new(),
             context: EngineContext::new(),
         }
@@ -242,7 +284,9 @@ impl EngineClient {
             None => panic!("Failed to get window handle"),
         };
         // Initialize the engine context with the window handle.
-        self.context.initialize(window).expect("Failed to initialize context");
+        self.runtime
+            .block_on(self.context.initialize(window))
+            .expect("Failed to initialize context");
     }
 
     /// Runs the main event loop. This will block until the event loop exits.
@@ -251,25 +295,27 @@ impl EngineClient {
     /// * `Self` - The engine client after the event loop has run.
     pub fn run(&mut self) -> Result<(), String> {
         // Main event loop: runs until the platform layer signals to quit.
-        loop {
-            match self.platform_layer.run() {
-                Ok(should_quit) => {
-                    if should_quit {
+        self.runtime.block_on(async {
+            loop {
+                match self.platform_layer.run() {
+                    Ok(should_quit) => {
+                        if should_quit {
+                            break;
+                        }
+                    }
+                    Err(e) => {
+                        log::error!("Error in platform layer: {}", e);
                         break;
                     }
                 }
-                Err(e) => {
-                    log::error!("Error in platform layer: {}", e);
-                    break;
-                }
-            }
 
-            // TODO: Calculate delta time for frame timing.
-            // Render the frame (fixed timestep for now).
-            self.context.render(0.016); // ~60fps
-            // Update the context (fixed timestep for now).
-            self.context.update(0.016); // ~60fps
-        }
+                // TODO: Calculate delta time for frame timing.
+                // Render the frame (fixed timestep for now).
+                self.context.render(0.016); // ~60fps
+                // Update the context (fixed timestep for now).
+                self.context.update(0.016); // ~60fps
+            }
+        });
 
         Ok(())
     }
@@ -277,7 +323,7 @@ impl EngineClient {
     /// Shuts down the engine subsystems.
     pub fn shutdown(&mut self) {
         // Shutdown the engine context and platform layer.
-        self.context.shutdown().expect("Failed to shutdown context");
+        self.runtime.block_on(self.context.shutdown()).expect("Failed to shutdown context");
         self.platform_layer.shutdown();
         log::info!("Engine shutdown");
     }

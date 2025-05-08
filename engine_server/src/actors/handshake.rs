@@ -1,9 +1,10 @@
 use std::str::FromStr;
 
 use actix::{
-    Actor, ActorContext, ActorFutureExt, Addr, AsyncContext, Context, Handler, StreamHandler,
+    Actor, ActorContext, ActorFutureExt, Addr, AsyncContext, Context, StreamHandler,
     dev::ContextFutureSpawner, fut,
 };
+use anyhow::Result;
 use futures::{
     SinkExt, StreamExt,
     stream::{SplitSink, SplitStream},
@@ -17,12 +18,13 @@ use tokio::net::TcpStream;
 use tokio_util::codec::{Decoder, Encoder, Framed};
 use uuid::Uuid;
 use void_architect_shared::messages::{
-    ClientHello, ClientResponse, HandshakeFailure, HandshakeSuccess, ServerChallenge,
+    ClientHello, ClientResponse, HandshakeFailure, HandshakeSuccess, NetworkPacket,
+    ServerChallenge, network_packet,
 };
 
 use crate::actors::session_manager::RegisterSession;
 
-use super::session_manager::SessionManagerActor;
+use super::{messages::StreamTransfer, session_manager::SessionManagerActor};
 
 const SECRET_KEY: [u8; 16] = [
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
@@ -53,19 +55,26 @@ impl HandshakeCodec {
         if bytes.len() < 4 {
             return Err(std::io::Error::new(
                 std::io::ErrorKind::InvalidData,
-                "Message too short",
+                "Not enough data to read length",
             ));
         }
 
-        if let Ok(decode) = ClientHello::decode(bytes.as_ref()) {
-            return Ok(HandshakeMessage::ClientHello(decode));
-        } else if let Ok(decode) = ClientResponse::decode(bytes.as_ref()) {
-            return Ok(HandshakeMessage::ClientResponse(decode));
-        } else {
-            return Err(std::io::Error::new(
+        let packet = NetworkPacket::decode(bytes.as_ref())?;
+        match packet.payload {
+            Some(network_packet::Payload::ClientHello(client_hello)) => {
+                Ok(HandshakeMessage::ClientHello(client_hello))
+            }
+            Some(network_packet::Payload::ClientResponse(client_response)) => {
+                Ok(HandshakeMessage::ClientResponse(client_response))
+            }
+            Some(_) => Err(std::io::Error::new(
                 std::io::ErrorKind::InvalidData,
                 "Unknown message type",
-            ));
+            )),
+            None => Err(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                "No payload found in packet",
+            )),
         }
     }
 }
@@ -94,10 +103,16 @@ impl Encoder<HandshakeMessage> for HandshakeCodec {
         msg: HandshakeMessage,
         dst: &mut BytesMut,
     ) -> Result<(), Self::Error> {
-        let encoded = match msg {
-            HandshakeMessage::ServerChallenge(challenge) => challenge.encode_to_vec(),
-            HandshakeMessage::HandshakeSuccess(success) => success.encode_to_vec(),
-            HandshakeMessage::HandshakeFailure(failure) => failure.encode_to_vec(),
+        let packet = match msg {
+            HandshakeMessage::ServerChallenge(challenge) => NetworkPacket {
+                payload: Some(network_packet::Payload::ServerChallenge(challenge)),
+            },
+            HandshakeMessage::HandshakeSuccess(success) => NetworkPacket {
+                payload: Some(network_packet::Payload::HandshakeSuccess(success)),
+            },
+            HandshakeMessage::HandshakeFailure(failure) => NetworkPacket {
+                payload: Some(network_packet::Payload::HandshakeFailure(failure)),
+            },
             _ => {
                 return Err(std::io::Error::new(
                     std::io::ErrorKind::InvalidData,
@@ -106,6 +121,7 @@ impl Encoder<HandshakeMessage> for HandshakeCodec {
             }
         };
 
+        let encoded = packet.encode_to_vec();
         dst.reserve(encoded.len());
         dst.put_slice(&encoded);
 
@@ -123,6 +139,7 @@ enum HandshakeState {
 }
 
 pub struct HandshakeActor {
+    stream: std::net::TcpStream,
     framed_stream: Option<SplitStream<Framed<TcpStream, HandshakeCodec>>>,
     framed_sink: Option<SplitSink<Framed<TcpStream, HandshakeCodec>, HandshakeMessage>>,
     challenge: Vec<u8>,
@@ -133,17 +150,25 @@ pub struct HandshakeActor {
 
 impl HandshakeActor {
     /// Creates a new HandshakeActor.
-    pub fn new(stream: TcpStream, addr: Addr<SessionManagerActor>) -> Self {
-        let framed = Framed::new(stream, HandshakeCodec::new());
+    pub fn new(stream: TcpStream, addr: Addr<SessionManagerActor>) -> Result<Self> {
+        let stream_std = stream.into_std()?;
+
+        let std_stream_clone = stream_std.try_clone()?;
+
+        let stream_for_framed = TcpStream::from_std(stream_std)?;
+
+        let framed = Framed::new(stream_for_framed, HandshakeCodec::new());
         let (stream_sink, stream_read) = framed.split();
-        HandshakeActor {
+
+        Ok(HandshakeActor {
+            stream: std_stream_clone,
             framed_stream: Some(stream_read),
             framed_sink: Some(stream_sink),
             challenge: Self::generate_challenge(),
             state: HandshakeState::WaitingClientHello,
             client_uuid: None,
             session_manager_addr: addr,
-        }
+        })
     }
 
     fn generate_challenge() -> Vec<u8> {
@@ -338,6 +363,24 @@ impl StreamHandler<Result<HandshakeMessage, std::io::Error>> for HandshakeActor 
                                         Ok(_) => {
                                             log::info!("Handshake success message sent");
                                             //TODO: Transfer the stream to the session actor
+                                            let stream_clone = match actor.stream.try_clone() {
+                                                Ok(stream) => stream,
+                                                Err(e) => {
+                                                    log::error!(
+                                                        "Failed to clone stream: {}",
+                                                        e
+                                                    );
+                                                    actor.state = HandshakeState::Failed;
+                                                    actor.send_failure(
+                                                        "Failed to clone stream".to_string(),
+                                                        ctx,
+                                                    );
+                                                    return;
+                                                }
+                                            };
+                                            res.session_addr.do_send(StreamTransfer {
+                                                stream: stream_clone,
+                                            });
                                         }
                                         Err(e) => {
                                             log::error!(
@@ -392,18 +435,3 @@ impl StreamHandler<Result<HandshakeMessage, std::io::Error>> for HandshakeActor 
         }
     }
 }
-
-// impl Handler<SessionRegistrationSuccess> for HandshakeActor {
-//     type Result = ();
-
-//     fn handle(
-//         &mut self,
-//         msg: SessionRegistrationSuccess,
-//         ctx: &mut Self::Context,
-//     ) -> Self::Result {
-//         log::info!(
-//             "Session registered successfully with ID: {}",
-//             msg.session_id
-//         );
-//     }
-// }

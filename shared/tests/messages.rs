@@ -6,7 +6,7 @@ use void_architect_shared::messages::{
     ClientHello,
     ClientResponse,
     HandshakeFailure,
-    HandshakeSucess,
+    HandshakeSuccess,
     ServerChallenge, // Note: HandshakeSucess has a typo in proto
 };
 
@@ -50,14 +50,14 @@ fn client_response_roundtrip() {
 
 #[test]
 fn handshake_success_roundtrip() {
-    let msg = HandshakeSucess {
+    let msg = HandshakeSuccess {
         // Using typo'd name from proto
         session_id: 12345,
         server_name: Some("TestServer".to_string()),
         game_version: Some("0.0.1".to_string()),
     };
     let bytes = msg.encode_to_vec();
-    let decoded = HandshakeSucess::decode(&*bytes).expect("decode failed");
+    let decoded = HandshakeSuccess::decode(&*bytes).expect("decode failed");
     assert_eq!(decoded.session_id, 12345);
     assert_eq!(decoded.server_name, Some("TestServer".to_string()));
     assert_eq!(decoded.game_version, Some("0.0.1".to_string()));
@@ -65,14 +65,14 @@ fn handshake_success_roundtrip() {
 
 #[test]
 fn handshake_success_roundtrip_optional_empty() {
-    let msg = HandshakeSucess {
+    let msg = HandshakeSuccess {
         // Using typo'd name from proto
         session_id: 67890,
         server_name: None,
         game_version: None,
     };
     let bytes = msg.encode_to_vec();
-    let decoded = HandshakeSucess::decode(&*bytes).expect("decode failed");
+    let decoded = HandshakeSuccess::decode(&*bytes).expect("decode failed");
     assert_eq!(decoded.session_id, 67890);
     assert_eq!(decoded.server_name, None);
     assert_eq!(decoded.game_version, None);

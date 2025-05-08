@@ -4,5 +4,40 @@
     ],
     "workbench.colorCustomizations": {
         "editorRuler.foreground": "#ef596f"
-    }
+    },
+    "todohighlight.include": [
+        "**/*.rs"
+    ],
+    "todohighlight.keywords": [
+        {
+            "text": "OPTIMIZE:",
+            "color": "#FFFFFF",
+            "backgroundColor": "#61AFEF",
+            "overviewRulerColor": "#61AFEF"
+        },
+        {
+            "text": "REVIEW:",
+            "color": "#FFFFFF",
+            "backgroundColor": "#D55FDE",
+            "overviewRulerColor": "#D55FDE"
+        },
+        {
+            "text": "NOTE:",
+            "color": "#FFFFFF",
+            "backgroundColor": "#98C379",
+            "overviewRulerColor": "#98C379"
+        },
+        {
+            "text": "BUG:",
+            "color": "#FFFFFF",
+            "backgroundColor": "#F44747",
+            "overviewRulerColor": "#F44747"
+        },
+        {
+            "text": "HACK:",
+            "color": "#FFFFFF",
+            "backgroundColor": "#D19A66",
+            "overviewRulerColor": "#D19A66"
+        }
+    ],
 }

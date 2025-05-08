@@ -63,10 +63,16 @@ impl Actor for NetworkListenerActor {
                 match listener.accept().await {
                     Ok((stream, addr)) => {
                         log::info!("Accepted connection from {}", addr);
-                        let handshake_actor = handshake::HandshakeActor::new(
+                        let handshake_actor = match handshake::HandshakeActor::new(
                             stream,
                             session_manager_addr.clone(),
-                        );
+                        ) {
+                            Ok(actor) => actor,
+                            Err(e) => {
+                                log::error!("Failed to create HandshakeActor: {}", e);
+                                continue;
+                            }
+                        };
                         handshake_actor.start();
                     }
                     Err(e) => {

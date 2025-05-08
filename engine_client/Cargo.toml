@@ -4,12 +4,20 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+anyhow = "1.0.98"
 ash = { version = "0.38.0", features = ["linked", "debug", "std" ] }
 ash-window = "0.13.0"
+futures = "0.3.31"
 glam = "0.30.2"
 log = "0.4.27"
+prost = "0.13.5"
 raw-window-handle = "0.6.2"
 sdl3 = { version = "0.14.25", features = ["raw-window-handle", "test-mode"] }
+tokio = { version = "1.45.0", features= ["full"] }
+tokio-util = { version = "0.7.15", features = ["codec"] }
+uuid = { version = "1.16.0", features= ["v4"]}
+void-architect_shared = { path="../shared" }
+
 [build-dependencies]
 shaderc = "0.8"
 

@@ -1,5 +1,8 @@
 use actix::Actor;
-use actors::{network_listener::NetworkListenerActor, session_manager::SessionManagerActor};
+use actors::{
+    network_listener::NetworkListenerActor, session_manager::SessionManagerActor,
+    universe::UniverseActor,
+};
 
 mod actors;
 mod config;
@@ -26,7 +29,10 @@ impl EngineServer {
     }
 
     async fn run_loop() {
-        let session_manager = SessionManagerActor::new();
+        //TODO: Start the persistence actor
+        let universe = UniverseActor::new();
+        let universe_addr = universe.start();
+        let session_manager = SessionManagerActor::new(universe_addr);
         let session_manager_addr = session_manager.start();
         //TODO: Retrieve the address from the config
         let network_listener = NetworkListenerActor::new(

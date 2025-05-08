@@ -1,0 +1,17 @@
+syntax = "proto3";
+package messages;
+
+import "handshake.proto";
+import "objects.proto";
+import "session.proto";
+
+message NetworkPacket {
+  oneof payload {
+    ClientHello client_hello = 1;
+    ServerChallenge server_challenge = 2;
+    ClientResponse client_response = 3;
+    HandshakeSuccess handshake_success = 4;
+    HandshakeFailure handshake_failure = 5;
+    ObjectTransform object_transform = 6;
+  }
+}
