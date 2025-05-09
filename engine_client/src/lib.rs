@@ -195,11 +195,6 @@ impl EngineContext {
                 network::MessageType::ObjectTransform(msg) => {
                     // Process the network message.
                     // Update the model matrix based on the message.
-                    // model = Mat4::from_translation(Vec3::new(
-                    //     msg.position.x,
-                    //     msg.position.y,
-                    //     msg.position.z,
-                    // )) * Mat4::from_rotation_y(f32::to_radians(msg.rotation.y));
                     let mut model = Mat4::IDENTITY;
                     match msg.position {
                         Some(pos) => {

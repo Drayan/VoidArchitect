@@ -332,8 +332,9 @@ _(No detailed stories listed with checkboxes as the milestone is complete)._
   - **Goal:** The project builds, tests pass, and documentation is up to date.
 
 
-## Milestone 3: Persistent Mobile Cube (Planned - 2025-05-05)
+## Milestone 3: Persistent Mobile Cube 
 
+**Status** In progress. 
 **Goal:** Implement basic functionality for one persistent object (a cube), managed by the server using the Actix actor model and visualized by clients. The cube's state should be loaded on server start, potentially updated by the server, saved periodically/on shutdown, and synchronized to all connected clients for rendering.
 
 **Architecture:** Actix Actor Model (as defined in `DOCS.md`)
@@ -449,44 +450,211 @@ graph TD
 **Epic 5: Client-Side Rendering Integration (Client - `engine_client`, `client`)**
 *Goal: Render the 3D cube on the client using the synchronized state received via the network.* (Updates existing Epic 3.3 from `TASKS.md`)
 
-*   [ ] **Story 5.1: Define Cube Mesh Data (Vertices, Indices)** (Was Story 3.3.1)
+*   [x] **Story 5.1: Define Cube Mesh Data (Vertices, Indices)** (Was Story 3.3.1)
     *   **Description:** Define the vertex positions (3D) and index order for rendering a 3D cube. Store this data, potentially in the `client` or `engine_client` crate.
     *   **Goal:** Data arrays for the cube's vertices and indices exist in CPU memory.
-*   [ ] **Story 5.2: Create/Update GPU Buffers for Cube** (Was Story 3.3.2)
+*   [x] **Story 5.2: Create/Update GPU Buffers for Cube** (Was Story 3.3.2)
     *   **Description:** Create `VkBuffer`s and associated `VkDeviceMemory` for storing the cube's vertex and index data on the GPU. Implement logic to upload the mesh data from the CPU to these buffers.
     *   **Goal:** Cube mesh data resides in GPU buffers ready for rendering.
-*   [ ] **Story 5.3: Update Shaders for 3D and MVP Transforms** (Was Story 3.3.3)
+*   [x] **Story 5.3: Update Shaders for 3D and MVP Transforms** (Was Story 3.3.3)
     *   **Description:** Modify the vertex shader (`.vert`) to accept 3D vertex positions (`vec3`) and a Model-View-Projection (MVP) matrix (e.g., `mat4` via UBO or push constant). Calculate `gl_Position = MVP * vec4(vertex_position, 1.0)`. Modify the fragment shader (`.frag`) as needed (e.g., output fixed color). Compile shaders to SPIR-V.
     *   **Goal:** Shaders capable of rendering a transformed 3D mesh exist.
-*   [ ] **Story 5.4: Implement MVP Matrix Uniform (UBO or Push Constant)** (Was Story 3.3.4)
+*   [x] **Story 5.4: Implement MVP Matrix Uniform (UBO or Push Constant)** (Was Story 3.3.4)
     *   **Description:** Implement the Vulkan setup to pass the MVP matrix to the vertex shader. If using UBO: define descriptor set layout, create descriptor pool/set, create UBO buffer, update pipeline layout. If using Push Constant: update pipeline layout.
     *   **Goal:** A mechanism exists to send the MVP matrix data to the GPU for use by the vertex shader.
-*   [ ] **Story 5.5: Update Graphics Pipeline for 3D Cube** (Was Story 3.3.5)
+*   [x] **Story 5.5: Update Graphics Pipeline for 3D Cube** (Was Story 3.3.5)
     *   **Description:** Recreate or update the `VkPipeline` and `VkPipelineLayout` to use the new 3D shaders, updated vertex input state description (for 3D position), the MVP uniform mechanism, and enable depth testing/writing.
     *   **Goal:** A graphics pipeline configured for rendering the transformed 3D cube with depth exists.
-*   [ ] **Story 5.6: Integrate Synchronized State into Render Loop** (Combines parts of 3.3.6)
+*   [x] **Story 5.6: Integrate Synchronized State into Render Loop** (Combines parts of 3.3.6)
     *   **Description:** In the client's render loop, access the latest cube state received from the network (from Story 4.6). Calculate the Model matrix based on the cube's position/rotation. Set up static View and Projection matrices (for a fixed camera initially). Compute the final MVP matrix.
     *   **Goal:** The MVP matrix reflecting the server's state is calculated each frame.
-*   [ ] **Story 5.7: Update UBO/Push Constants and Draw Commands** (Combines parts of 3.3.6)
+*   [x] **Story 5.7: Update UBO/Push Constants and Draw Commands** (Combines parts of 3.3.6)
     *   **Description:** Before recording draw commands, update the UBO buffer content or set the push constant data with the newly calculated MVP matrix. Record command buffer commands to bind the 3D cube pipeline, bind the cube's vertex/index buffers, bind descriptor sets (if using UBOs), set push constants (if used), and issue an indexed draw call (`vkCmdDrawIndexed`).
     *   **Goal:** The GPU is instructed to draw the cube using the correct mesh data and the latest transformation matrix.
 
-## Milestone 4: Engine Systems Foundation
+## Milestone 4: ECS Framework Implementation (Phase 1 - Archetype Based Foundational Framework)
+
+- **Status:** Planned (09-05-2025)
+- **Goal:** Implement the foundational core of a custom, archetype-based Entity Component System (ECS) inspired by Bevy's ergonomics. This ECS will serve as a general-purpose data and logic management framework for various engine systems. Phase 1 focuses on core primitives, a basic **Registry** API, a simple query mechanism, global resources, and a basic **Operation** runner.
+- **Added:** 09-05-2025
+
+### Epic 4.1: ECS Core Primitives and Registry API
+
+- **Description:** Define the fundamental ECS types (`Entity`, `Component` trait, `Registry`) and implement the initial `Registry` API for entity and component manipulation using an archetype-based storage model. This API should be generic and not tied to any specific game feature like scene representation at this stage.
+- **Goal:** A `Registry` struct exists that can spawn entities, add/remove/get components for entities, and despawn entities. Component data is stored in archetypes. The API is designed for general engine use.
+- **Definition of Done (DoD):**
+  - `Entity` struct (ID + generation) is defined.
+  - `Component` trait (`'static + Send + Sync`) is defined.
+  - `Registry` struct is defined, capable of managing archetypes internally.
+  - `registry.spawn() -> Entity` is implemented.
+  - `registry.insert(Entity, (ComponentA, ...))` is implemented, moving entities to appropriate archetypes.
+  - `registry.get::<C>(Entity) -> Option<&C>` and `registry.get_mut::<C>(Entity) -> Option<&mut C>` are implemented, accessing component data from archetypes.
+  - `registry.remove::<C>(Entity)` is implemented, moving entities to appropriate archetypes.
+  - `registry.despawn(Entity)` is implemented, removing entities and their components from archetypes.
+  - Basic unit tests cover all API functions for generic data.
+  - Decision on location: `core` crate or a new `void_architect_ecs` crate.
+
+#### Stories:
+
+- [x] **Story 4.1.1: Define `Entity` Identifier, `Component` Trait, and `#[derive(Component)]` Macro**
+    *   **Status:** Completed on 09-05-2025
+    *   **Description:** Establish the basic data structures for uniquely identifying entities, for defining components, and provide an ergonomic derive macro for the `Component` trait. The `Entity` ID should support reuse. The `Component` trait and derive macro should enforce necessary bounds (`'static + Send + Sync`) for storage and thread safety.
+    *   **Goal:**
+        *   An `Entity` struct is defined (e.g., `u32` index + `u32` generation), with standard derive traits (`Copy`, `Hash`, `Eq`, etc.).
+        *   A public marker trait `pub trait Component: 'static + Send + Sync {}` is defined.
+        *   A procedural derive macro `#[derive(Component)]` is implemented in a separate macro crate (e.g., `void_engine_macros` or `void_ecs_macros`).
+        *   The derive macro correctly implements the `Component` trait for user-defined structs and ensures they meet the required bounds.
+        *   The main ECS module (e.g., in `core::ecs` or a `void_ecs` crate) re-exports `Entity`, `Component`, and the `Component` derive macro.
+    *   **Tasks:**
+        *   Implement the `Entity` struct (e.g., in `core/src/ecs/entity.rs`).
+        *   Define the `pub trait Component: 'static + Send + Sync {}` (e.g., in `core/src/ecs/component.rs`).
+        *   Create a new crate for procedural macros (e.g., `void_engine_macros` or `void_ecs_macros`) with `proc-macro = true` and `syn`, `quote` dependencies.
+        *   Implement the `#[derive(Component)]` procedural macro in the new macro crate.
+        *   Ensure the main ECS module (e.g., `core::ecs`) depends on the macro crate and correctly re-exports the derive macro.
+        *   Add basic documentation for `Entity`, `Component` trait, and usage of `#[derive(Component)]`.
+        *   Add basic unit tests for `Entity` and for the `#[derive(Component)]` macro (success and failure cases for bounds).
+
+- [x] **Story 4.1.2: Implement Archetype Storage Foundation (Internal to `Registry`)**
+    *   **Status:** Completed on 09/05/2025
+    *   **Description:** Design and implement the internal data structures within the `Registry` to store components based on archetypes. This includes how archetypes are identified, created, and how component data is stored within them (e.g., `Vec<T>` for each component type in an archetype). This story focuses on the *storage* aspect, not yet the public API for manipulation.
+    *   **Goal:**
+        *   The `Registry` struct has internal mechanisms to manage a collection of `Archetype`s.
+        *   Each `Archetype` can store multiple types of components in a type-erased way (e.g., using `Box<dyn Any>` or similar techniques for `Vec<T>`) or via generic type parameters if a more concrete structure is chosen per archetype.
+        *   A way to uniquely identify an archetype based on its set of `Component` types (e.g., using a sorted list of `TypeId`s).
+        *   A mapping from `Entity` ID to its `Archetype` and its row index within that archetype.
+    *   **Tasks:**
+        *   Define an `ArchetypeId` (e.g., based on `TypeId`s of components).
+        *   Define an `Archetype` struct/enum that can hold columns of component data (e.g., `HashMap<TypeId, Box<dyn Any>>` where `Any` is a `Vec<C>`).
+        *   Implement `Registry` struct to hold `HashMap<ArchetypeId, Archetype>` and `HashMap<Entity, (ArchetypeId, usize)>` (entity location map).
+        *   Implement internal functions for creating new archetypes and potentially for moving component data between archetypes (to be used by `insert`/`remove`).
+
+- [x] **Story 4.1.3: Implement `registry.spawn()` and `registry.despawn()`** (Completed - 09/05/2025)
+    *   **Description:** Implement the public API methods on `Registry` for creating new entities (`spawn`) and removing existing entities along with all their components (`despawn`). `spawn` should ideally find or create an archetype for entities with no components initially, or handle this as a special case. `despawn` needs to correctly remove the entity from its archetype and free its ID for reuse (respecting the generation count).
+    *   **Goal:**
+        *   `registry.spawn() -> Entity` method is implemented, returning a new, unique `Entity` ID. It should manage a free list of entity IDs or increment a counter, and handle generation updates.
+        *   `registry.despawn(Entity)` method is implemented. It removes the entity from its current archetype (if any) and marks the `Entity` ID as available for reuse with an incremented generation.
+    *   **Tasks:**
+        *   Implement an entity ID allocator within `Registry` (e.g., a `Vec<u32>` for generations and a free list of indices).
+        *   Implement `spawn()`: allocate ID, potentially add to a "null" archetype or prepare for component insertion.
+        *   Implement `despawn()`: find entity's archetype, remove its data from all component columns in that archetype, update entity location map, free ID.
+
+- [ ] **Story 4.1.4: Implement `registry.insert(entity, components)`**
+    *   **Description:** Implement the `registry.insert()` method to add one or more components to an existing entity. This is a critical operation that will involve determining the entity's new archetype (based on its existing components plus the new ones), potentially creating that new archetype if it doesn't exist, and moving all of the entity's component data from its old archetype to the new one.
+    *   **Goal:**
+        *   `registry.insert(Entity, (ComponentA, ComponentB, ...))` method (likely using a tuple or a bundle trait) is implemented.
+        *   The method correctly identifies or creates the target archetype.
+        *   Component data for the entity is moved from the old archetype to the new one.
+        *   The new components are added to their respective columns in the new archetype.
+        *   The entity's location (archetype and row) is updated in the `Registry`.
+    *   **Tasks:**
+        *   Implement logic to calculate the target `ArchetypeId` when components are added.
+        *   Implement logic to transition an entity between archetypes:
+            *   Copy existing component data from old to new archetype.
+            *   Add new component data to new archetype.
+            *   Remove entity from old archetype (handle data shifting).
+        *   Handle cases where the target archetype doesn't exist (create it).
+
+- [ ] **Story 4.1.5: Implement `registry.get()` and `registry.get_mut()`**
+    *   **Description:** Implement the methods for retrieving read-only (`get`) and mutable (`get_mut`) references to a specific component type for a given entity. These methods need to locate the entity within its archetype and then access the correct component column.
+    *   **Goal:**
+        *   `registry.get::<C: Component>(Entity) -> Option<&C>` is implemented.
+        *   `registry.get_mut::<C: Component>(Entity) -> Option<&mut C>` is implemented.
+        *   These methods efficiently find the entity's archetype and row, then return a reference to the component data if it exists.
+    *   **Tasks:**
+        *   Use the entity location map to find the entity's `Archetype` and row index.
+        *   Access the correct component column within the `Archetype`.
+        *   Perform necessary type casting/downcasting to return `&C` or `&mut C`.
+        *   Ensure borrow checking rules are respected, especially for `get_mut`.
+
+- [ ] **Story 4.1.6: Implement `registry.remove::<C>(entity)`**
+    *   **Description:** Implement the `registry.remove::<C>()` method to remove a specific component type from an entity. Similar to `insert`, this will involve determining the entity's new archetype (based on its existing components minus the removed one), potentially creating that new archetype, and moving the entity's remaining component data.
+    *   **Goal:**
+        *   `registry.remove::<C: Component>(Entity)` method is implemented.
+        *   The method correctly identifies or creates the target archetype (without component `C`).
+        *   Remaining component data for the entity is moved from the old archetype to the new one.
+        *   The entity's location is updated.
+    *   **Tasks:**
+        *   Implement logic to calculate the target `ArchetypeId` when a component is removed.
+        *   Implement logic to transition an entity between archetypes (similar to insert, but removing a component type during the copy).
+        *   Handle cases where the target archetype doesn't exist (create it).
+
+- [ ] **Story 4.1.7: Unit Tests for Core Registry API with Generic Components**
+    *   **Description:** Create a comprehensive suite of unit tests that verify the functionality of all public API methods of the `Registry` (`spawn`, `despawn`, `insert`, `get`, `get_mut`, `remove`). Tests should use various combinations of generic components to ensure correctness and cover edge cases.
+    *   **Goal:** High test coverage for the core `Registry` API, ensuring its reliability and correctness under various scenarios (e.g., adding/removing multiple components, entities with no components, entities with many components, despawning and re-spawning entities).
+    *   **Tasks:**
+        *   Define several simple test component structs (e.g., `Position {x,y}`, `Velocity {dx,dy}`, `TagA`, `TagB`).
+        *   Write tests for `spawn` and `despawn`, checking entity ID reuse and generation.
+        *   Write tests for `insert` with single and multiple components.
+        *   Write tests for `get` and `get_mut`, verifying data integrity and mutability.
+        *   Write tests for `remove`, checking component removal and data integrity of remaining components.
+        *   Test sequences of operations (e.g., spawn -> insert -> get -> remove -> get -> despawn).
+        *   Test edge cases like trying to get/remove non-existent components or operating on despawned entities.
+
+### Epic 4.2: ECS Query Mechanism & Global Resources
+
+- **Description:** Implement a simple query mechanism for iterating over entities with specific component combinations and a system for managing global resources. These should be general-purpose.
+- **Goal:** Operations can iterate efficiently over entities matching component queries, and access shared global resources, applicable to any kind of data managed by the ECS.
+- **Definition of Done (DoD):**
+  - `registry.query::<(&ComponentA, &mut ComponentB)>()` mechanism is implemented, returning an iterator.
+  - Query iteration is efficient, leveraging the archetype model.
+  - `registry.insert_resource(MyResource)`, `registry.get_resource::<R>()`, `registry.get_resource_mut::<R>()` are implemented.
+  - Unit tests cover query functionality with various generic component combinations and resource access.
+
+#### Stories:
+
+- [ ] **Story 4.2.1: Implement Query Iterator Logic for Archetypes**
+- [ ] **Story 4.2.2: Implement `registry.query()` API**
+- [ ] **Story 4.2.3: Implement Global Resource Storage and API in `Registry`**
+- [ ] **Story 4.2.4: Unit Tests for Queries and Resources with Generic Data**
+
+### Epic 4.3: Basic Operation Definition and Runner
+
+- **Description:** Define a pattern for **Operations** (functions operating on `Registry` data via queries and resources) and implement a simple sequential **Operation** runner. **Operations** are envisioned as generic logic units.
+- **Goal:** A clear way to define **Operations** exists, and the `Registry` can execute a list of registered **Operations** in order.
+- **Definition of Done (DoD):**
+  - A convention for **Operation** functions is established (e.g., `fn my_operation(query: Query<...>, res: Res<...>)`).
+  - `Registry` can store a list of **Operations**.
+  - `registry.run_operations()` (or similar) method executes registered **Operations** sequentially.
+  - Basic unit tests demonstrate **Operation** registration and execution with generic test **Operations**.
+
+#### Stories:
+
+- [ ] **Story 4.3.1: Define Operation Function Signature/Trait**
+- [ ] **Story 4.3.2: Implement Operation Registration in `Registry`**
+- [ ] **Story 4.3.3: Implement Sequential Operation Runner**
+- [ ] **Story 4.3.4: Unit Tests for Operation Runner with Generic Operations**
+
+### Epic 4.4: Initial Application: Basic Scene Representation (Demonstrates ECS utility)
+
+- **Description:** As a first *application* of the general-purpose ECS framework (Epics 4.1-4.3), represent a basic scene, for example, the "Persistent Mobile Cube" from Milestone 3. This involves defining specific components like `Position`, `Renderable`, `NetworkSync` and **Operations** to manage them. This demonstrates the ECS's utility for scene management but does not define its sole purpose.
+- **Goal:** The ECS framework is actively used to manage the state of at least one type of game object, showcasing its applicability for scene representation as one of many potential uses.
+- **Definition of Done (DoD):**
+  - Relevant components for a basic scene object (e.g., `Position`, `Velocity`, `MeshID`) are defined *using* the ECS.
+  - At least one **Operation** is created *using* the ECS to operate on these components (e.g., a movement **Operation**).
+  - The client can spawn and manage a "cube" entity *using* the ECS.
+  - (Stretch Goal) Basic synchronization logic with the server for these ECS-managed components is outlined or prototyped.
+
+#### Stories:
+
+- [ ] **Story 4.4.1: Define Core Scene Components (Position, Renderable, etc.) as ECS Components**
+- [ ] **Story 4.4.2: Implement a Basic Movement Operation as an ECS Operation**
+- [ ] **Story 4.4.3: Integrate ECS for Managing the "Mobile Cube" State (Client-Side)**
+## Milestone 5: Engine Systems Foundation
 
 - **Status:** Planned (30-04-2025)
-- **Goal:** Establish core systems in the engine-client to enable advanced client-side features such as camera control and user interaction.
+- **Goal:** Establish core systems in the engine-client to enable advanced client-side features such as camera control and user interaction. These systems will leverage the ECS framework where appropriate.
 
-### Epic 4.1: Implement Event System in Engine-Client
+### Epic 5.1: Implement Event System in Engine-Client
 
-- **Description:** Develop a modular event system for the engine-client to facilitate communication between subsystems and support future extensibility. This is a prerequisite for implementing features like camera control and input handling.
+- **Description:** Develop a modular event system for the engine-client to facilitate communication between subsystems and support future extensibility. This system may utilize ECS events or integrate with the ECS world.
 - **Added:** 30-04-2025
 
-### Epic 4.2: Implement Input System in Engine-Client
+### Epic 5.2: Implement Input System in Engine-Client
 
-- **Description:** Create an input system in the engine-client to process user input events (keyboard, mouse, etc.), enabling interactive features and serving as a foundation for camera and gameplay controls.
+- **Description:** Create an input system in the engine-client to process user input events (keyboard, mouse, etc.), enabling interactive features and serving as a foundation for camera and gameplay controls. Input events could be published into the ECS or a dedicated event bus.
 - **Added:** 30-04-2025
 
-### Epic 4.3: Implement Filesystem Abstraction Layer
+### Epic 5.3: Implement Filesystem Abstraction Layer
 
 - **Status:** To Plan
 - **Description:** Create an abstraction layer for filesystem operations within the engine. This allows using platform-specific efficient methods where available (e.g., OS-specific APIs) while providing a consistent interface. It also paves the way for potential future integration of a Virtual File System (VFS) for accessing packed game assets or other sources.
@@ -499,28 +667,22 @@ graph TD
 
 #### Stories:
 
-- [ ] **Story 4.3.1: Define Filesystem Trait(s)**
+- [ ] **Story 5.3.1: Define Filesystem Trait(s)**
   - **Description:** Define the core Rust trait(s) (e.g., `FileSystemProvider`) that outline the necessary filesystem operations (read, write, exists, list_directory, etc.).
   - **Goal:** A clear and comprehensive trait definition exists in the engine's core or platform module.
 
-- [ ] **Story 4.3.2: Implement `std::fs` Backend**
+- [ ] **Story 5.3.2: Implement `std::fs` Backend**
   - **Description:** Create the first concrete implementation of the `FileSystemProvider` trait using Rust's standard library `std::fs` module.
   - **Goal:** A functional filesystem provider using `std::fs` is available and passes basic tests.
 
-- [ ] **Story 4.3.3: Basic Integration Point (e.g., Config Loading)**
+- [ ] **Story 5.3.3: Basic Integration Point (e.g., Config Loading)**
   - **Description:** Refactor an existing part of the engine that uses file I/O (like configuration loading or a simple asset loader) to use the new `FileSystemProvider` trait instead of directly calling `std::fs`.
   - **Goal:** At least one engine component utilizes the filesystem abstraction, demonstrating its usability.
 
-## Milestone 5: Basic Camera Control
+## Milestone 6: Basic Camera Control
 
 - **Status:** To Plan
-- **Goal:** Implement basic camera controls (e.g., orbiting, panning, zooming) on the client-side, allowing the user to change their view of the scene (containing the cube from M3).
-
-## Milestone 6: Basic Scene Representation
-
-- **Status:** To Plan
-- **Goal:** Develop a rudimentary scene graph or entity management system on the client and server to handle multiple objects, not just a single cube. Synchronize the state of multiple objects.
-- Could also be the first opportunity to see how to handle multiple objects : session_id to object_uuid mapping (to reduce on the bandwidth), dynamic updates (far objects probably doesn't need a lot of update, but near one could), priority updates (players, projectiles, ...), hierarchical updates ?
+- **Goal:** Implement basic camera controls (e.g., orbiting, panning, zooming) on the client-side, allowing the user to change their view of the scene (containing the cube from M3). Camera state and logic can be managed via the ECS.
 
 ## Milestone 7: Initial Procedural Noise Generation (Core)
 

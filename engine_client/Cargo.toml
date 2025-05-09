@@ -17,6 +17,7 @@ tokio = { version = "1.45.0", features= ["full"] }
 tokio-util = { version = "0.7.15", features = ["codec"] }
 uuid = { version = "1.16.0", features= ["v4"]}
 void-architect_shared = { path="../shared" }
+void-architect_ecs = { path="../shared/ecs" }
 
 [build-dependencies]
 shaderc = "0.8"
