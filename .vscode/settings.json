@@ -38,6 +38,12 @@
             "color": "#FFFFFF",
             "backgroundColor": "#D19A66",
             "overviewRulerColor": "#D19A66"
+        },
+        {
+            "text": "TEMP:",
+            "color": "#FFFFFF",
+            "backgroundColor": "#E06C75",
+            "overviewRulerColor": "#E06C75"
         }
     ],
 }

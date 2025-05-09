@@ -26,7 +26,7 @@ use device::VulkanDevice;
 use fence::VulkanFence;
 use pipeline::VulkanPipeline;
 use renderpass::VulkanRenderPass;
-use shaders::VulkanShaderModule;
+use shaders::{VulkanObjectShader, VulkanShaderModule};
 use swapchain::VulkanSwapchain;
 
 pub struct VulkanRendererBackend {
@@ -64,7 +64,7 @@ pub struct VulkanRendererBackend {
     graphics_pipeline: Option<VulkanPipeline>,
 
     // Builtin shader modules (vertex and fragment).
-    shader_modules: Vec<VulkanShaderModule>,
+    builtin_object_shader: Option<VulkanObjectShader>,
 
     // Command buffers for graphics operations.
     graphics_cmds_buffers: Vec<VulkanCommandBuffer>,
@@ -118,7 +118,7 @@ impl VulkanRendererBackend {
 
             graphics_pipeline: None,
 
-            shader_modules: Vec::new(),
+            builtin_object_shader: None,
 
             graphics_cmds_buffers: Vec::new(),
 
@@ -335,30 +335,16 @@ macro_rules! fence_mut {
 }
 
 #[macro_export]
-macro_rules! shader_modules {
+macro_rules! builtin_object_shader {
     ($self:expr) => {
-        $self.shader_modules.as_ref().ok_or("Failed to get shader modules")?
+        $self.builtin_object_shader.as_ref().ok_or("Failed to get shader modules")?
     };
 }
 
 #[macro_export]
-macro_rules! shader_module {
-    ($self:expr, $index:expr) => {
-        $self.shader_modules.get($index).ok_or("Failed to get shader module")?
-    };
-}
-
-#[macro_export]
-macro_rules! shader_modules_mut {
+macro_rules! builtin_object_shader_mut {
     ($self:expr) => {
-        $self.shader_modules.as_mut().ok_or("Failed to get shader modules")?
-    };
-}
-
-#[macro_export]
-macro_rules! shader_module_mut {
-    ($self:expr, $index:expr) => {
-        $self.shader_modules.get_mut($index).ok_or("Failed to get shader module")?
+        $self.builtin_object_shader.as_mut().ok_or("Failed to get shader modules")?
     };
 }
 

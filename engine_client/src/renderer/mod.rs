@@ -6,10 +6,21 @@
 
 pub mod backends;
 
+use glam::{Mat4, Vec3, Vec4};
+
 use crate::{platform::WindowHandle, renderer::backends::vulkan::VulkanRendererBackend};
 
 pub struct Vertex {
     pub position: [f32; 3],
+}
+
+//NOTE: This should be 256 bytes in size.
+#[derive(Clone, Copy)]
+pub struct GlobalUniformObject {
+    pub projection: Mat4, // 64 bytes
+    pub view: Mat4,       // 64 bytes
+    _reserved0: Mat4,     // 64 bytes
+    _reserved1: Mat4,     // 64 bytes
 }
 
 pub trait RendererBackend {
@@ -37,12 +48,23 @@ pub trait RendererBackend {
     /// * `Err(String)` if an error occurs.
     fn begin_frame(&mut self) -> Result<bool, String>;
 
+    fn update_global_state(
+        &mut self,
+        projection: Mat4,
+        view: Mat4,
+        view_position: Vec3,
+        ambient_color: Vec4,
+        mode: i32,
+    ) -> Result<(), String>;
+
     /// Ends the current rendering frame.
     ///
     /// # Returns
     /// * `Ok(())` if the frame ends successfully.
     /// * `Err(String)` if an error occurs.
     fn end_frame(&mut self) -> Result<(), String>;
+
+    fn update_object(&mut self, model: Mat4) -> Result<(), String>;
 
     /// Handles window resizing for the renderer backend.
     ///
@@ -95,11 +117,32 @@ impl RendererFrontend {
         self.backend.begin_frame()
     }
 
+    pub fn update_global_state(
+        &mut self,
+        projection: Mat4,
+        view: Mat4,
+        view_position: Vec3,
+        ambient_color: Vec4,
+        mode: i32,
+    ) -> Result<(), String> {
+        if !self.is_initialized {
+            return Err("Renderer not initialized".to_string());
+        }
+        self.backend.update_global_state(projection, view, view_position, ambient_color, mode)
+    }
+
     pub fn end_frame(&mut self) -> Result<(), String> {
         if !self.is_initialized {
             return Err("Renderer not initialized".to_string());
         }
         self.backend.end_frame()
+    }
+
+    pub fn update_object(&mut self, model: Mat4) -> Result<(), String> {
+        if !self.is_initialized {
+            return Err("Renderer not initialized".to_string());
+        }
+        self.backend.update_object(model)
     }
 
     pub fn resize(&mut self, width: u32, height: u32) -> Result<(), String> {

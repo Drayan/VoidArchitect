@@ -520,6 +520,7 @@ graph TD
 
 - **Status:** To Plan
 - **Goal:** Develop a rudimentary scene graph or entity management system on the client and server to handle multiple objects, not just a single cube. Synchronize the state of multiple objects.
+- Could also be the first opportunity to see how to handle multiple objects : session_id to object_uuid mapping (to reduce on the bandwidth), dynamic updates (far objects probably doesn't need a lot of update, but near one could), priority updates (players, projectiles, ...), hierarchical updates ?
 
 ## Milestone 7: Initial Procedural Noise Generation (Core)
 
@@ -528,3 +529,4 @@ graph TD
 
 # Unplanned backlog
 - [ ] Server version and protocol version should match between client and server, no checking is made at this moment.
+- [ ] Gracefully send a ClientDisconnect message to the server when exiting ?

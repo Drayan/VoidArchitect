@@ -1,3 +1,5 @@
+use std::f32::consts::{PI, TAU};
+
 use actix::{Actor, Addr, AsyncContext, Handler, Message};
 use nalgebra::{Quaternion, UnitQuaternion, Vector3};
 use tokio::time::{Duration, Instant};
@@ -17,6 +19,7 @@ pub struct UniverseActor {
     // Or even a hierarchical and spatial partitioning of the universe, each with its own event bus.
     // But for now, we'll just keep it simple.
     subscriptions: Vec<Addr<SessionActor>>,
+    elapsed_time: Duration,
     last_update: Instant,
 }
 
@@ -31,6 +34,7 @@ impl UniverseActor {
 
             subscriptions: Vec::new(),
             last_update: Instant::now(),
+            elapsed_time: Duration::new(0, 0),
         }
     }
 }
@@ -46,6 +50,7 @@ impl Actor for UniverseActor {
         ctx.run_interval(Duration::from_secs_f32(1.0 / 60.0), |actor, ctx| {
             let delta_time = actor.last_update.elapsed().as_secs_f32();
             actor.last_update = Instant::now();
+            actor.elapsed_time += Duration::from_secs_f32(delta_time);
 
             ctx.notify(UniverseTick { delta_time });
         });
@@ -116,16 +121,13 @@ impl Handler<UniverseTick> for UniverseActor {
         // log::trace!("Universe tick: delta_time = {}", msg.delta_time);
 
         // For now, we'll just update the cube's position with a simple sine wave
-        self.position.y += msg.delta_time.sin() * 0.1 * msg.delta_time;
+        let amplitude = 1.0;
+        let frequency = 0.5;
+        self.position.y =
+            (self.elapsed_time.as_secs_f32() * frequency * TAU).sin() * amplitude;
         // And rotate the cube around the Y axis
-        self.rotation *= nalgebra::UnitQuaternion::from_axis_angle(
-            &Vector3::y_axis(),
-            msg.delta_time * 0.5,
-        );
-        // And scale the cube up and down
-        self.scale.x = 1.0 + (msg.delta_time * 2.0).sin() * 0.5;
-        self.scale.y = 1.0 + (msg.delta_time * 2.0).cos() * 0.5;
-        self.scale.z = 1.0 + (msg.delta_time * 2.0).sin() * 0.5;
+        self.rotation *=
+            nalgebra::UnitQuaternion::from_axis_angle(&Vector3::y_axis(), msg.delta_time);
 
         // Send updates to all subscribed sessions
         for session_addr in &self.subscriptions {

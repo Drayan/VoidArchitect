@@ -210,6 +210,44 @@ impl VulkanCommandBuffer {
         }
         Ok(())
     }
+
+    pub fn bind_descriptor_sets(
+        self: &mut Self,
+        device: &ash::Device,
+        pipeline_layout: vk::PipelineLayout,
+        descriptor_sets: &[vk::DescriptorSet],
+    ) -> Result<(), String> {
+        unsafe {
+            device.cmd_bind_descriptor_sets(
+                self.handle,
+                vk::PipelineBindPoint::GRAPHICS,
+                pipeline_layout,
+                0,
+                descriptor_sets,
+                &[],
+            );
+        }
+        Ok(())
+    }
+
+    pub fn push_constants(
+        self: &mut Self,
+        device: &ash::Device,
+        pipeline_layout: vk::PipelineLayout,
+        offset: u32,
+        data: &[u8],
+    ) -> Result<(), String> {
+        unsafe {
+            device.cmd_push_constants(
+                self.handle,
+                pipeline_layout,
+                vk::ShaderStageFlags::VERTEX,
+                offset,
+                data,
+            );
+        }
+        Ok(())
+    }
 }
 
 impl<'backend> VulkanCommandBufferOperations<'backend> {

@@ -1,11 +1,14 @@
 use ash::{Entry, vk};
+use glam::{Mat4, Vec3, Vec4};
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 
+use crate::renderer::GlobalUniformObject;
 use crate::renderer::backends::vulkan::buffers::VulkanBufferContext;
 use crate::renderer::backends::vulkan::shaders::VulkanShaderModuleContext;
 use crate::{
-    command_buffer, command_buffer_mut, device, graphics_pipeline, instance, surface_loader,
-    swapchain, swapchain_mut, vulkan_device,
+    builtin_object_shader, builtin_object_shader_mut, command_buffer, command_buffer_mut,
+    device, graphics_pipeline, instance, surface_loader, swapchain, swapchain_mut,
+    vulkan_device,
 };
 use crate::{platform::WindowHandle, renderer::RendererBackend};
 
@@ -319,13 +322,14 @@ impl RendererBackend for VulkanRendererBackend {
             };
             log::debug!("Vulkan graphics pipeline created successfully");
 
-            //TODO: --- TEMP CODE - REMOVE THIS LATER ---
+            //TEMP: --- TEMP CODE - REMOVE THIS LATER ---
             let vertices = vec![
                 glam::Vec3::new(-0.5, -0.5, 0.0),
                 glam::Vec3::new(0.5, -0.5, 0.0),
-                glam::Vec3::new(0.0, 0.5, 0.0),
+                glam::Vec3::new(-0.5, 0.5, 0.0),
+                glam::Vec3::new(0.5, 0.5, 0.0),
             ];
-            let indices = vec![0, 1, 2];
+            let indices = vec![0, 1, 2, 1, 3, 2];
             match self.buffer().create_vertices_buffer(vertices) {
                 Ok(_) => {}
                 Err(e) => {
@@ -343,7 +347,7 @@ impl RendererBackend for VulkanRendererBackend {
                 }
             }
             log::debug!("Vulkan indices buffer created successfully");
-            //TODO: --- END TEMP CODE ---
+            //TEMP: --- END TEMP CODE ---
 
             log::debug!("Vulkan renderer initialized successfully");
             Ok(())
@@ -488,13 +492,74 @@ impl RendererBackend for VulkanRendererBackend {
         // Dynamic state
         self.renderpass().begin_main_render_pass()?;
 
-        //TODO: --- TEMP CODE - REMOVE THIS LATER ---
+        Ok(true)
+    }
+
+    fn update_global_state(
+        &mut self,
+        projection: Mat4,
+        view: Mat4,
+        _view_position: Vec3,
+        _ambient_color: Vec4,
+        _mode: i32,
+    ) -> Result<(), String> {
+        // Update global state here
+        // This is where you would update any global state for the renderer
+        // For example, updating uniform buffers, etc.
+
         // Bind the graphics pipeline
         graphics_pipeline!(self).bind(
             device!(self),
             command_buffer!(self, self.image_index).handle,
         );
 
+        // Update the global_uniform_object
+        if let Some(global_uo) = &mut builtin_object_shader_mut!(self).global_uo {
+            global_uo.projection = projection;
+            global_uo.view = view;
+            // global_uo.view_position = view_position;
+            // global_uo.ambient_color = ambient_color;
+            // global_uo.mode = mode;
+        } else {
+            // This is the first time we are updating the global uniform object,
+            // so we need to create it.
+            builtin_object_shader_mut!(self).global_uo = Some(GlobalUniformObject {
+                projection,
+                view,
+                _reserved0: Mat4::IDENTITY,
+                _reserved1: Mat4::IDENTITY,
+            });
+        };
+
+        self.shader_module().update_global_state()?;
+
+        Ok(())
+    }
+
+    fn end_frame(&mut self) -> Result<(), String> {
+        // End Vulkan frame rendering here
+        // End the renderpass
+        self.renderpass().end_main_render_pass()?;
+        self.commands().end_gfx_commands_buffer()?;
+
+        self.fence().wait_for_previous_frame_to_complete()?;
+
+        self.fence().update_image_sync()?;
+
+        self.commands().submit_gfx_command_buf()?;
+        self.swapchain().present()?;
+
+        Ok(())
+    }
+
+    fn update_object(&mut self, model: Mat4) -> Result<(), String> {
+        // Update object state here
+        // This is where you would update any object-specific state for the renderer
+        // For example, updating uniform buffers, etc.
+
+        self.shader_module().update_object(model)?;
+
+        //TEMP: --- TEMP CODE - REMOVE THIS LATER ---
         // Bind the buffers
         unsafe {
             device!(self).cmd_bind_vertex_buffers(
@@ -512,31 +577,14 @@ impl RendererBackend for VulkanRendererBackend {
 
             device!(self).cmd_draw_indexed(
                 command_buffer!(self, self.image_index).handle,
-                3,
+                6,
                 1,
                 0,
                 0,
                 0,
             );
         };
-        //TODO: --- END TEMP CODE ---
-
-        Ok(true)
-    }
-
-    fn end_frame(&mut self) -> Result<(), String> {
-        // End Vulkan frame rendering here
-        // End the renderpass
-        self.renderpass().end_main_render_pass()?;
-        self.commands().end_gfx_commands_buffer()?;
-
-        self.fence().wait_for_previous_frame_to_complete()?;
-
-        self.fence().update_image_sync()?;
-
-        self.commands().submit_gfx_command_buf()?;
-        self.swapchain().present()?;
-
+        //TEMP: --- END TEMP CODE ---
         Ok(())
     }
 

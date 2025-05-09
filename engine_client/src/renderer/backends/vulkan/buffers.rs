@@ -2,9 +2,11 @@ use std::ffi;
 
 use ash::vk;
 use glam::Vec3;
-use sdl3::sys::vulkan;
 
-use crate::{device, instance, renderer::Vertex, vulkan_device};
+use crate::{
+    builtin_object_shader, builtin_object_shader_mut, device, instance, renderer::Vertex,
+    vulkan_device,
+};
 
 use super::{VulkanCommandBuffer, VulkanFence, VulkanRendererBackend};
 
@@ -351,7 +353,22 @@ impl<'backend> VulkanBufferOperations<'backend> {
         Ok(())
     }
 
-    pub fn create_uniform_buffer(&self) -> Result<(), String> {
+    pub fn create_uniform_buffer(&mut self) -> Result<(), String> {
+        let size =
+            std::mem::size_of::<crate::renderer::GlobalUniformObject>() as vk::DeviceSize;
+        let buffer = VulkanBuffer::new(
+            vulkan_device!(self.backend).physical_device,
+            instance!(self.backend),
+            device!(self.backend),
+            size * 3,
+            vk::BufferUsageFlags::UNIFORM_BUFFER | vk::BufferUsageFlags::TRANSFER_DST,
+            vk::MemoryPropertyFlags::DEVICE_LOCAL
+                | vk::MemoryPropertyFlags::HOST_VISIBLE
+                | vk::MemoryPropertyFlags::HOST_COHERENT,
+            true,
+        )?;
+
+        builtin_object_shader_mut!(self.backend).global_ubo = Some(buffer);
         Ok(())
     }
 

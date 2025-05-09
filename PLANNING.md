@@ -188,7 +188,14 @@ void-architect
 - Religion system / Beliefs
 - Diplomatic system (external politic)
 - Political system (rich internal "life" of the empire)
+  - Important characters within the empire (Emperor/President, Ministers, Generals, Amirals, etc.)
+    - Each characters has its own personnality, belief, political alignment, stats (health, age, ...) that will affect the other parts of the game (trigger events, ...), familly, relations, background, ...
+    - Characters have a position, can move... (If the emperor is on a spaceship, and this spaceship is destroyed, there is a possibility that the emperor die (or reach a capsule...), etc.)
 - Some kind of "flow" visual "scripting" to combine different effects for cultural, religion, political system ?
+  - Allowing the player to combine properties to design its custom political system, religion, culture, ...
+  - Sharing blueprints between players (for everythings)
 - Game event system (like in stellaris, crusader kings, etc)
 - Military system with "operations", the player should be able to lead, and commanders would execute the plan. At any time, the player could "take command" and give direct orders. This system should allow for large scale operation (like system/planetary invasion).
+  - Vehicle design (on ground, on sea, in the air, in space)
 - Automation possible (like minister or something) that allow the player to focus (if he want) on the big picture rather than on the microdetails (but with micromanagement possible).
+- UI should be very helpful, like in Crusader Kings, Stellaris or Cities Skylines. The player need informations to manage it's empire efficiently.

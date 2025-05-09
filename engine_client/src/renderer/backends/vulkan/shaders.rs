@@ -1,17 +1,36 @@
 use std::io::Read;
 
-use ash::vk::{self, Handle, ShaderStageFlags};
+use ash::vk::{self, Handle, MemoryMapFlags, ShaderStageFlags};
+use glam::Mat4;
 
-use crate::device;
+use crate::{
+    builtin_object_shader, builtin_object_shader_mut, command_buffer, command_buffer_mut,
+    device, graphics_pipeline, renderer::GlobalUniformObject,
+};
 
-use super::VulkanRendererBackend;
+use super::{VulkanBuffer, VulkanRendererBackend, buffers::VulkanBufferContext};
 
 //TODO: This could be made configurable ?
 const SHADER_DIR: &str = "assets/shaders/compiled";
 const SHADER_EXTENSION: &str = "spv";
 
+pub(super) struct VulkanObjectShader {
+    pub shader_modules: Vec<VulkanShaderModule>,
+
+    pub global_descriptor_pool: vk::DescriptorPool,
+    pub global_descriptor_set_layout: vk::DescriptorSetLayout,
+    // One descriptor set per frame - max 3 for triple buffering
+    pub global_descriptor_set: Vec<vk::DescriptorSet>,
+
+    pub global_uo: Option<GlobalUniformObject>,
+    pub global_ubo: Option<VulkanBuffer>,
+    pub global_descriptor_updated: Vec<bool>,
+
+    pub pipeline: vk::Pipeline,
+}
+
 pub(super) struct VulkanShaderModule {
-    pub handle: ash::vk::ShaderModule,
+    pub handle: vk::ShaderModule,
     pub entry_point: String,
     pub shader_type: vk::ShaderStageFlags,
 }
@@ -74,6 +93,7 @@ impl<'backend> VulkanShaderModuleOperations<'backend> {
         // Load the built-in shaders
         let shaders = ["default.builtin.vert", "default.builtin.frag"];
 
+        let mut shader_modules = vec![];
         for shader_name in shaders.iter() {
             let (shader_code, shader_type) = self.load(shader_name)?;
 
@@ -85,22 +105,189 @@ impl<'backend> VulkanShaderModuleOperations<'backend> {
                 shader_type,
             )?;
 
-            // Store the shader module in the backend
-            self.backend.shader_modules.push(shader_module);
+            shader_modules.push(shader_module);
         }
 
-        //TODO: Descriptors ?
+        // Global descriptors
+        let global_ubo_layout_binding = [vk::DescriptorSetLayoutBinding {
+            binding: 0,
+            descriptor_type: vk::DescriptorType::UNIFORM_BUFFER,
+            descriptor_count: 1,
+            stage_flags: vk::ShaderStageFlags::VERTEX,
+            ..Default::default()
+        }];
+
+        let global_layout_create_info =
+            vk::DescriptorSetLayoutCreateInfo::default().bindings(&global_ubo_layout_binding);
+
+        let global_descriptor_set_layout = match unsafe {
+            device!(self.backend)
+                .create_descriptor_set_layout(&global_layout_create_info, None)
+        } {
+            Ok(layout) => layout,
+            Err(err) => {
+                return Err(format!("Failed to create descriptor set layout: {}", err));
+            }
+        };
+
+        let global_pool_size = [vk::DescriptorPoolSize {
+            ty: vk::DescriptorType::UNIFORM_BUFFER,
+            descriptor_count: self.backend.images_in_flight.len() as u32,
+            ..Default::default()
+        }];
+
+        let global_pool_create_info = vk::DescriptorPoolCreateInfo::default()
+            .pool_sizes(&global_pool_size)
+            .max_sets(self.backend.images_in_flight.len() as u32);
+
+        let global_descriptor_pool = match unsafe {
+            device!(self.backend).create_descriptor_pool(&global_pool_create_info, None)
+        } {
+            Ok(pool) => pool,
+            Err(err) => {
+                return Err(format!("Failed to create descriptor pool: {}", err));
+            }
+        };
+
+        // Allocate the descriptor sets
+        let global_layouts =
+            vec![global_descriptor_set_layout; self.backend.images_in_flight.len()];
+
+        let alloc_info = vk::DescriptorSetAllocateInfo::default()
+            .descriptor_pool(global_descriptor_pool)
+            .set_layouts(&global_layouts);
+
+        let global_descriptor_set =
+            match unsafe { device!(self.backend).allocate_descriptor_sets(&alloc_info) } {
+                Ok(sets) => sets,
+                Err(err) => {
+                    return Err(format!("Failed to allocate descriptor sets: {}", err));
+                }
+            };
+
+        // Create the VulkanObjectShader
+        self.backend.builtin_object_shader = Some(VulkanObjectShader {
+            shader_modules,
+            global_descriptor_pool,
+            global_descriptor_set_layout,
+            global_descriptor_set,
+            global_uo: None,
+            global_ubo: None,
+            global_descriptor_updated: vec![false; self.backend.images_in_flight.len()],
+            pipeline: vk::Pipeline::null(),
+        });
+
+        //NOTE: This need to be done after the descriptor set is created
+        self.backend.buffer().create_uniform_buffer()?;
 
         Ok(())
     }
 
-    pub fn destroy_builtin_shaders(self: &mut Self) -> Result<(), String> {
-        // Destroy the built-in shaders
-        for shader_module in self.backend.shader_modules.iter() {
-            shader_module.destroy(device!(self.backend));
+    pub fn update_global_state(&mut self) -> Result<(), String> {
+        let image_index = self.backend.image_index;
+        let cmds_buf = command_buffer_mut!(self.backend, image_index);
+        let global_descriptor =
+            [builtin_object_shader!(self.backend).global_descriptor_set[image_index]];
+
+        // Configure the descriptors for the given index.
+        // Update the global uniform buffer
+        let builtin_object_shader = builtin_object_shader!(self.backend);
+        if !builtin_object_shader.global_descriptor_updated[image_index] {
+            if let Some(ubo) = &builtin_object_shader.global_ubo {
+                // Copy the data to buffer
+                if let Some(global_uo) = builtin_object_shader.global_uo {
+                    let size = std::mem::size_of::<GlobalUniformObject>() as u64;
+                    let offset = size * image_index as u64;
+                    ubo.load_data(
+                        device!(self.backend),
+                        offset,
+                        size,
+                        MemoryMapFlags::empty(),
+                        vec![global_uo],
+                    )?;
+
+                    let buffer_info = [vk::DescriptorBufferInfo {
+                        buffer: ubo.handle,
+                        offset,
+                        range: size,
+                    }];
+
+                    let descriptor_write = vk::WriteDescriptorSet::default()
+                        .dst_set(global_descriptor[0])
+                        .dst_binding(0)
+                        .descriptor_count(1)
+                        .descriptor_type(vk::DescriptorType::UNIFORM_BUFFER)
+                        .buffer_info(&buffer_info);
+
+                    unsafe {
+                        device!(self.backend).update_descriptor_sets(&[descriptor_write], &[]);
+                    }
+                }
+            }
+            builtin_object_shader_mut!(self.backend).global_descriptor_updated[image_index] =
+                true;
         }
 
-        self.backend.shader_modules.clear();
+        // Bind the global descriptor set to be updated.
+        // NOTE: Some new GPU drivers require to bind the descriptor set only after the update
+        cmds_buf.bind_descriptor_sets(
+            device!(self.backend),
+            graphics_pipeline!(self.backend).layout,
+            &global_descriptor,
+        )?;
+
+        Ok(())
+    }
+
+    pub fn update_object(&mut self, model: Mat4) -> Result<(), String> {
+        let image_index = self.backend.image_index;
+        let cmds_buf = command_buffer_mut!(self.backend, image_index);
+
+        // Convert the model matrix to a byte array
+        let model_bytes = unsafe {
+            std::slice::from_raw_parts(
+                &model as *const Mat4 as *const u8,
+                std::mem::size_of::<Mat4>(),
+            )
+        };
+
+        // Update the push constant with the model matrix
+        cmds_buf.push_constants(
+            device!(self.backend),
+            graphics_pipeline!(self.backend).layout,
+            0,
+            model_bytes,
+        )
+    }
+
+    pub fn destroy_builtin_shaders(self: &mut Self) -> Result<(), String> {
+        // Destroy the built-in shaders
+        if let Some(mut object_shader) = self.backend.builtin_object_shader.take() {
+            // Destroy the uniform buffer
+            if let Some(ubo) = object_shader.global_ubo.take() {
+                ubo.destroy(device!(self.backend));
+            }
+
+            // Destroy the global descriptor pool
+            unsafe {
+                device!(self.backend)
+                    .destroy_descriptor_pool(object_shader.global_descriptor_pool, None);
+            }
+
+            // Destroy the global descriptor set layout
+            unsafe {
+                device!(self.backend).destroy_descriptor_set_layout(
+                    object_shader.global_descriptor_set_layout,
+                    None,
+                );
+            }
+
+            for shader_module in object_shader.shader_modules.iter() {
+                shader_module.destroy(device!(self.backend));
+            }
+        }
+        self.backend.builtin_object_shader = None;
+
         Ok(())
     }
 

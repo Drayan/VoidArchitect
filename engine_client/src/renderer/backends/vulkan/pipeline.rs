@@ -1,6 +1,7 @@
 use ash::vk;
+use glam::Mat4;
 
-use crate::{device, main_renderpass, renderer::Vertex};
+use crate::{builtin_object_shader, device, main_renderpass, renderer::Vertex};
 
 use super::{VulkanRenderPass, VulkanRendererBackend};
 
@@ -101,8 +102,16 @@ impl VulkanPipeline {
             .topology(vk::PrimitiveTopology::TRIANGLE_LIST)
             .primitive_restart_enable(false);
 
-        let pipeline_layout_info =
-            vk::PipelineLayoutCreateInfo::default().set_layouts(&descriptor_set_layouts);
+        // Push constant
+        let push_constant_ranges = [vk::PushConstantRange {
+            stage_flags: vk::ShaderStageFlags::VERTEX,
+            offset: 0,
+            size: std::mem::size_of::<Mat4>() as u32 * 2, // 128 bytes, which is the maximum garenteed by the spec.
+        }];
+
+        let pipeline_layout_info = vk::PipelineLayoutCreateInfo::default()
+            .set_layouts(&descriptor_set_layouts)
+            .push_constant_ranges(&push_constant_ranges);
 
         // Create the pipeline layout
         let pipeline_layout = unsafe {
@@ -209,24 +218,31 @@ impl<'backend> VulkanPipelineOperations<'backend> {
 
         // Stages
         // NOTE: Should match the number of shader stages.
+        // TODO: We could probably use a loop here to create the stages dynamically.
         let shader_stages = vec![
             // Vertex shader
             vk::PipelineShaderStageCreateInfo {
-                stage: vk::ShaderStageFlags::VERTEX,
-                module: self.backend.shader_modules[0].handle,
-                p_name: self.backend.shader_modules[0].entry_point.as_ptr() as *const i8,
+                stage: builtin_object_shader!(self.backend).shader_modules[0].shader_type,
+                module: builtin_object_shader!(self.backend).shader_modules[0].handle,
+                p_name: builtin_object_shader!(self.backend).shader_modules[0]
+                    .entry_point
+                    .as_ptr() as *const i8,
                 ..Default::default()
             },
             // Fragment shader
             vk::PipelineShaderStageCreateInfo {
-                stage: vk::ShaderStageFlags::FRAGMENT,
-                module: self.backend.shader_modules[1].handle,
-                p_name: self.backend.shader_modules[1].entry_point.as_ptr() as *const i8,
+                stage: builtin_object_shader!(self.backend).shader_modules[1].shader_type,
+                module: builtin_object_shader!(self.backend).shader_modules[1].handle,
+                p_name: builtin_object_shader!(self.backend).shader_modules[1]
+                    .entry_point
+                    .as_ptr() as *const i8,
                 ..Default::default()
             },
         ];
 
-        // Descriptors
+        // Descriptors set layout
+        let descriptor_set_layouts =
+            vec![builtin_object_shader!(self.backend).global_descriptor_set_layout];
 
         self.backend.graphics_pipeline = Some(VulkanPipeline::new(
             device!(self.backend),
@@ -234,7 +250,7 @@ impl<'backend> VulkanPipelineOperations<'backend> {
             vec![viewport],
             vec![scissor],
             attribute_descriptions,
-            vec![],
+            descriptor_set_layouts,
             shader_stages,
             main_renderpass!(self.backend),
             false,

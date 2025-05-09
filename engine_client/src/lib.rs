@@ -8,6 +8,7 @@ pub mod network;
 pub mod platform;
 pub mod renderer;
 
+use glam::{Mat4, Quat, Vec3, Vec4};
 use network::NetworkSystem;
 use platform::{PlatformLayer, WindowHandle};
 use renderer::RendererFrontend;
@@ -54,6 +55,8 @@ pub struct EngineContext {
     renderer_system: Option<RendererFrontend>,
     network_system: Option<NetworkSystem>,
     event_receiver: std::sync::mpsc::Receiver<network::MessageType>,
+    //TEMP: Remove me.
+    model: Mat4,
 }
 
 impl EngineContext {
@@ -68,6 +71,7 @@ impl EngineContext {
             network_system: Some(NetworkSystem::new(sender)),
             is_initialized: false,
             event_receiver: receiver,
+            model: Mat4::IDENTITY,
         }
     }
 
@@ -164,19 +168,6 @@ impl EngineContext {
             ));
         }
 
-        //TODO: This should be replaced with the event system.
-        while let Ok(msg) = self.event_receiver.try_recv() {
-            match msg {
-                network::MessageType::ObjectTransform(msg) => {
-                    // Process the network message.
-                    log::info!("Received network message: {:?}", msg);
-                }
-                _ => {
-                    log::warn!("Unknown message type received");
-                }
-            }
-        }
-
         // Retrieve packets from the network system.
         Ok(())
     }
@@ -198,10 +189,72 @@ impl EngineContext {
             EngineError::InitializationError("Renderer system not initialized".to_string()),
         )?;
 
+        //TODO: This should be replaced with the event system. And moved to another place.
+        while let Ok(msg) = self.event_receiver.try_recv() {
+            match msg {
+                network::MessageType::ObjectTransform(msg) => {
+                    // Process the network message.
+                    // Update the model matrix based on the message.
+                    // model = Mat4::from_translation(Vec3::new(
+                    //     msg.position.x,
+                    //     msg.position.y,
+                    //     msg.position.z,
+                    // )) * Mat4::from_rotation_y(f32::to_radians(msg.rotation.y));
+                    let mut model = Mat4::IDENTITY;
+                    match msg.position {
+                        Some(pos) => {
+                            model =
+                                model * Mat4::from_translation(Vec3::new(pos.x, pos.y, pos.z));
+                        }
+                        None => {}
+                    }
+
+                    match msg.rotation {
+                        Some(rot) => {
+                            model = model
+                                * Mat4::from_quat(Quat::from_xyzw(rot.x, rot.y, rot.z, rot.w));
+                        }
+                        None => {}
+                    }
+
+                    match msg.scale {
+                        Some(scale) => {
+                            model =
+                                model * Mat4::from_scale(Vec3::new(scale.x, scale.y, scale.z));
+                        }
+                        None => {}
+                    }
+
+                    self.model = model;
+                }
+                _ => {
+                    log::warn!("Unknown message type received");
+                }
+            }
+        }
+
         // Begin a new rendering frame.
         match renderer.begin_frame().map_err(EngineError::RendererError) {
             Ok(proceed) => {
                 if proceed {
+                    // Set the projection and view matrices.
+                    renderer
+                        .update_global_state(
+                            Mat4::perspective_rh(
+                                f32::to_radians(45.0),
+                                1280.0 / 720.0,
+                                0.1,
+                                1000.0,
+                            ),
+                            Mat4::from_translation(Vec3::new(0.0, 0.0, -5.0)),
+                            Vec3::ZERO,
+                            Vec4::ZERO,
+                            0,
+                        )
+                        .map_err(EngineError::RendererError)?;
+
+                    // Update the model matrix.
+                    renderer.update_object(self.model).map_err(EngineError::RendererError)?;
                     // Rendering logic for the application should be inserted here.
                     renderer.end_frame().map_err(EngineError::RendererError)?;
                 }
