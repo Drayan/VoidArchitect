@@ -554,7 +554,7 @@ graph TD
             *   Remove entity from old archetype (handle data shifting).
         *   Handle cases where the target archetype doesn't exist (create it).
 
-- [ ] **Story 4.1.5: Implement `registry.get()` and `registry.get_mut()`**
+- [x] **Story 4.1.5: Implement `registry.get()` and `registry.get_mut()`** (Completed - 10/05/2025)
     *   **Description:** Implement the methods for retrieving read-only (`get`) and mutable (`get_mut`) references to a specific component type for a given entity. These methods need to locate the entity within its archetype and then access the correct component column.
     *   **Goal:**
         *   `registry.get::<C: Component>(Entity) -> Option<&C>` is implemented.
@@ -566,7 +566,7 @@ graph TD
         *   Perform necessary type casting/downcasting to return `&C` or `&mut C`.
         *   Ensure borrow checking rules are respected, especially for `get_mut`.
 
-- [ ] **Story 4.1.6: Implement `registry.remove::<C>(entity)`**
+- [x] **Story 4.1.6: Implement `registry.remove::<C>(entity)`** (Completed - 10/05/2025)
     *   **Description:** Implement the `registry.remove::<C>()` method to remove a specific component type from an entity. Similar to `insert`, this will involve determining the entity's new archetype (based on its existing components minus the removed one), potentially creating that new archetype, and moving the entity's remaining component data.
     *   **Goal:**
         *   `registry.remove::<C: Component>(Entity)` method is implemented.
