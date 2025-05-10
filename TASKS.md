@@ -603,17 +603,17 @@ graph TD
 
 #### Stories:
 
-- [ ] **Story 4.2.1: Implement Query Iterator Logic for Archetypes**
+- [x] **Story 4.2.1: Implement Query Iterator Logic for Archetypes** (Completed on May 10, 2025)
   - **Description:** Design and implement the core iterator logic that walks through archetypes containing entities that match a specific component query. The query should support both immutable (`&Component`) and mutable (`&mut Component`) references to components and properly handle borrowing rules (e.g., cannot have `&mut A` and `&A` simultaneously). The iterator should efficiently skip archetypes that don't contain all requested components.
   - **Goal:** An internal iterator mechanism exists that can efficiently walk through matching archetypes and produce references to the requested component types for each entity.
   - **Tasks:**
-    - Design a `QueryDescriptor` or similar concept that describes which components are being queried and how (read-only vs. mutable).
-    - Implement a mechanism to filter archetypes based on their component signature against the query's requirements.
-    - Implement an iterator struct that knows how to access the appropriate component columns from each matching archetype.
-    - Ensure the iterator correctly handles Rust's borrowing rules, particularly for queries with multiple mutable component accesses.
-    - Implement a method to iterate matched entities in a way that returns tuples of references to the requested components (e.g., `(&Position, &mut Velocity)`).
-    - Add support for entity references in queries (to return the entity ID alongside components).
-    - Consider implementing a component access pattern to prevent conflicting borrows at compile time.
+    - ✅ Design a `QueryDescriptor` or similar concept that describes which components are being queried and how (read-only vs. mutable).
+    - ✅ Implement a mechanism to filter archetypes based on their component signature against the query's requirements.
+    - ✅ Implement an iterator struct that knows how to access the appropriate component columns from each matching archetype.
+    - ✅ Ensure the iterator correctly handles Rust's borrowing rules, particularly for queries with multiple mutable component accesses.
+    - ✅ Implement a method to iterate matched entities in a way that returns tuples of references to the requested components (e.g., `(&Position, &mut Velocity)`).
+    - ✅ Add support for entity references in queries (to return the entity ID alongside components).
+    - ✅ Consider implementing a component access pattern to prevent conflicting borrows at compile time.
 
 - [ ] **Story 4.2.2: Implement `registry.query()` API**
   - **Description:** Create a public API on the `Registry` that allows users to create and use queries. The API should be ergonomic, type-safe, and support both read-only and mutable component access. The query type parameters should determine which components are accessed and how.

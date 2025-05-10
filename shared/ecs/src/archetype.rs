@@ -333,6 +333,32 @@ impl Archetype {
         self.component_types.binary_search(component_type_id).is_ok()
     }
 
+    /// Returns a reference to the type-erased storage for a given component type, if it exists in this archetype.
+    /// This is intended for internal use by query logic or advanced operations.
+    pub(crate) fn get_storage_by_id(
+        &self,
+        component_type_id: ComponentTypeId,
+    ) -> Option<&dyn AnyStorage> {
+        match self.component_types.binary_search(&component_type_id) {
+            Ok(idx) => self.component_storage.get(idx).map(|boxed_storage| &**boxed_storage),
+            Err(_) => None,
+        }
+    }
+
+    /// Returns a mutable reference to the type-erased storage for a given component type, if it exists in this archetype.
+    /// This is intended for internal use by query logic or advanced operations.
+    pub(crate) fn get_storage_by_id_mut(
+        &mut self,
+        component_type_id: ComponentTypeId,
+    ) -> Option<&mut dyn AnyStorage> {
+        match self.component_types.binary_search(&component_type_id) {
+            Ok(idx) => {
+                self.component_storage.get_mut(idx).map(|boxed_storage| &mut **boxed_storage)
+            }
+            Err(_) => None,
+        }
+    }
+
     /// Returns the number of entities currently stored in this archetype.
     pub fn entities_count(&self) -> usize {
         self.entities.len()

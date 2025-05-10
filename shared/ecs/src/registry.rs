@@ -3,7 +3,7 @@ use std::collections::{BTreeSet, HashMap, VecDeque};
 use crate::archetype::{AnyStorage, Archetype, ArchetypeId, Storage};
 use crate::component::{Component, ComponentBundle, ComponentTypeId};
 use crate::entity::Entity;
-// use std::any::Any; // Unused import
+use crate::query::{QueryIter, QueryParam};
 
 /// Errors that can occur during component insertion.
 #[derive(Debug, PartialEq, Eq)]
@@ -42,7 +42,7 @@ pub enum UpdateError {
 /// adding/removing components, and querying for entities with specific components.
 pub struct Registry {
     /// Stores all archetypes, keyed by their `ArchetypeId`.
-    archetypes: HashMap<ArchetypeId, Archetype>,
+    pub(crate) archetypes: HashMap<ArchetypeId, Archetype>,
 
     /// Maps a sorted set of `ComponentTypeId`s (the signature) to an `ArchetypeId`.
     /// This allows finding an existing archetype or determining if a new one needs to be created.
