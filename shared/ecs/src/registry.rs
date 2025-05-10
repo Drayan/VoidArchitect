@@ -1,8 +1,30 @@
 use std::collections::{BTreeSet, HashMap, VecDeque};
 
-use crate::archetype::{AnyStorage, Archetype, ArchetypeId};
-use crate::component::ComponentTypeId;
+use crate::archetype::{AnyStorage, Archetype, ArchetypeId, Storage};
+use crate::component::{Component, ComponentBundle, ComponentTypeId};
 use crate::entity::Entity;
+use std::any::Any;
+
+/// Errors that can occur during component insertion.
+#[derive(Debug, PartialEq, Eq)]
+pub enum InsertError {
+    /// The specified entity was not found or is not alive.
+    EntityNotFound,
+    /// A component in the bundle has not been registered with the `Registry`.
+    ComponentTypeNotRegistered(ComponentTypeId),
+}
+
+/// Errors that can occur during component removal.
+#[derive(Debug, PartialEq, Eq)]
+pub enum RemoveError {
+    /// The specified entity was not found or is not alive.
+    EntityNotFound,
+    /// The component to be removed was not present on the entity.
+    ComponentNotPresent,
+    /// Internal error: Failed to downcast the component data to the expected type.
+    /// This typically indicates an inconsistency in the ECS internal state.
+    DowncastFailed,
+}
 
 /// Manages entities, components, and their organization into archetypes.
 /// The `Registry` is the primary point of interaction for creating entities,
@@ -21,6 +43,10 @@ pub struct Registry {
     /// Tracks the location (archetype and row within that archetype) of each entity.
     entity_locations: HashMap<Entity, (ArchetypeId, usize)>,
 
+    /// Stores factories for creating component storages.
+    /// Keyed by `ComponentTypeId`, the value is a function that returns a new, empty `Box<dyn AnyStorage>`.
+    component_factories: HashMap<ComponentTypeId, Box<dyn Fn() -> Box<dyn AnyStorage>>>,
+
     // --- Entity Allocation ---
     /// Stores entities that have been destroyed and can be reused.
     free_entities: VecDeque<usize>, // Stores reusable entity IDs (indices)
@@ -38,10 +64,21 @@ impl Registry {
             signature_to_archetype_id: HashMap::new(),
             next_archetype_id: 0,
             entity_locations: HashMap::new(),
+            component_factories: HashMap::new(),
             free_entities: VecDeque::new(),
             next_entity_id: 0,
             entity_generations: Vec::new(),
         }
+    }
+
+    /// Registers a component type with the `Registry`.
+    /// This allows the `Registry` to create storage for this component type when needed.
+    /// It should be called for each component type that will be used with the ECS.
+    pub fn register_component<C: Component>(&mut self) {
+        let component_type_id = ComponentTypeId::of::<C>();
+        self.component_factories.entry(component_type_id).or_insert_with(|| {
+            Box::new(|| Box::new(Storage::<C>::new()) as Box<dyn AnyStorage>)
+        });
     }
 
     /// Generates a new, unique `ArchetypeId`.
@@ -160,12 +197,6 @@ impl Registry {
     /// Finds an existing archetype ID that matches the given component signature,
     /// or creates a new one (including the Archetype struct instance) if no match is found.
     ///
-    /// IMPORTANT: This function currently can only create archetypes with NO components.
-    /// Attempting to create an archetype for a non-empty set of component types will panic,
-    /// as the mechanism to instantiate the correctly typed `Storage<T>` objects from
-    /// `ComponentTypeId`s is not yet implemented here. That logic will be part of
-    /// component addition methods that have generic type information.
-    ///
     /// # Arguments
     /// * `component_types_set` - A `BTreeSet` of `ComponentTypeId`s representing the desired signature.
     ///
@@ -173,7 +204,8 @@ impl Registry {
     /// The `ArchetypeId` of the found or created archetype.
     ///
     /// # Panics
-    /// Panics if `component_types_set` is not empty, as storage creation is not yet supported here.
+    /// Panics if a `ComponentTypeId` in `component_types_set` has not been registered
+    /// via `register_component`, as the `Registry` would not know how to create its storage.
     fn find_or_create_archetype(
         &mut self,
         component_types_set: BTreeSet<ComponentTypeId>,
@@ -185,24 +217,29 @@ impl Registry {
             let component_types_vec: Vec<ComponentTypeId> =
                 component_types_set.iter().cloned().collect();
 
-            // This is the critical point: creating the actual Storage<T> instances.
-            // Without a factory mechanism or generic context here, we cannot know what `T` to use.
-            let storages: Vec<Box<dyn AnyStorage>>;
-            if component_types_vec.is_empty() {
-                storages = Vec::new();
-            } else {
-                // This function, in its current isolated form, cannot create these.
-                // This responsibility will be handled by higher-level functions
-                // (e.g., when adding components with known types).
-                // For now, to make progress and allow testing of ID management for empty archetypes:
-                panic!(
-                    "find_or_create_archetype cannot yet create storages for non-empty signatures ({:?}). This requires a component factory mechanism.",
-                    component_types_vec
-                );
+            let mut storages: Vec<Box<dyn AnyStorage>> =
+                Vec::with_capacity(component_types_vec.len());
+            for component_type_id in &component_types_vec {
+                match self.component_factories.get(component_type_id) {
+                    Some(factory_fn) => {
+                        storages.push(factory_fn());
+                    }
+                    None => {
+                        // This case should ideally be prevented by checks in higher-level functions
+                        // like `insert`, ensuring all components in a bundle are registered.
+                        // Or, if this function is called directly, the caller must ensure registration.
+                        panic!(
+                            "Attempted to create archetype with unregistered component type: {:?}. \
+                             Ensure all components are registered using `registry.register_component::<C>()` before use.",
+                            component_type_id
+                        );
+                    }
+                }
             }
 
-            let archetype = Archetype::new(new_archetype_id, component_types_vec, storages);
-            self.archetypes.insert(new_archetype_id, archetype);
+            let new_archetype =
+                Archetype::new(new_archetype_id, component_types_vec, storages);
+            self.archetypes.insert(new_archetype_id, new_archetype);
             self.signature_to_archetype_id.insert(component_types_set, new_archetype_id);
             new_archetype_id
         }
@@ -214,6 +251,284 @@ impl Registry {
             self.entity_locations.get(&entity).map(|(arch_id, _)| *arch_id)
         } else {
             None
+        }
+    }
+
+    /// Inserts a bundle of components for a given entity.
+    ///
+    /// This method will:
+    /// 1. Validate the entity.
+    /// 2. Check if all components in the bundle are registered.
+    /// 3. Calculate the new archetype signature for the entity (existing components + new components).
+    /// 4. If the new archetype is the same as the current one, update components in-place.
+    /// 5. If the new archetype is different, migrate the entity:
+    ///    a. Remove the entity and its existing components from the old archetype.
+    ///    b. Add the entity with all its components (old + new) to the new archetype.
+    ///    c. Update the entity's location.
+    ///
+    /// # Arguments
+    /// * `entity` - The `Entity` to add components to.
+    /// * `bundle` - A `ComponentBundle` containing the components to add.
+    ///
+    /// # Returns
+    /// * `Ok(())` if the insertion was successful.
+    /// * `Err(InsertError)` if an error occurred (e.g., entity not found, component not registered).
+    pub fn insert<B: ComponentBundle>(
+        &mut self,
+        entity: Entity,
+        bundle: B,
+    ) -> Result<(), InsertError> {
+        // 1. Validate entity
+        if !self.is_entity_alive(entity) {
+            return Err(InsertError::EntityNotFound);
+        }
+
+        let bundle_component_type_ids = bundle.get_component_type_ids();
+        let mut new_components_data = bundle.into_components_data();
+
+        // 2. Check bundle component registration
+        for component_type_id in &bundle_component_type_ids {
+            if !self.component_factories.contains_key(component_type_id) {
+                return Err(InsertError::ComponentTypeNotRegistered(*component_type_id));
+            }
+        }
+
+        let (current_archetype_id, current_row_index) = self
+            .entity_locations
+            .get(&entity)
+            .copied()
+            .expect("Entity is alive but not found in entity_locations. This indicates an ECS bug.");
+
+        let current_archetype = self.archetypes.get(&current_archetype_id).expect(
+            "Current archetype ID from entity_locations not found. This indicates an ECS bug.",
+        );
+
+        // 3. Calculate new archetype signature
+        let mut new_archetype_signature = current_archetype.signature().clone();
+        let mut in_place_update = true;
+
+        for component_type_id in &bundle_component_type_ids {
+            if !new_archetype_signature.contains(component_type_id) {
+                new_archetype_signature.insert(*component_type_id);
+                in_place_update = false; // Archetype will change if we add a new type
+            }
+        }
+
+        // 4. Handle same-archetype updates (in-place component update) vs. archetype migration.
+        if in_place_update {
+            // All components in the bundle already exist on the entity. Update them in place.
+            let archetype = self
+                .archetypes
+                .get_mut(&current_archetype_id)
+                .expect("Current archetype disappeared. This indicates an ECS bug.");
+
+            for (component_type_id, component_data) in new_components_data {
+                archetype.update_component_at_row(
+                    current_row_index,
+                    component_type_id,
+                    component_data,
+                );
+            }
+            Ok(())
+        } else {
+            // Archetype transition is needed.
+            let new_archetype_id = self.find_or_create_archetype(new_archetype_signature);
+
+            // 5a. Remove the entity and its existing components from the old archetype.
+            let (removed_entity, mut existing_components_map, swapped_entity_opt) = self
+                .archetypes
+                .get_mut(&current_archetype_id)
+                .expect("Old archetype disappeared. This indicates an ECS bug.")
+                .remove_entity_by_row(current_row_index);
+
+            assert_eq!(removed_entity, entity, "Removed entity mismatch. ECS bug.");
+
+            if let Some(swapped_entity) = swapped_entity_opt {
+                self.entity_locations
+                    .insert(swapped_entity, (current_archetype_id, current_row_index));
+            }
+
+            // Combine existing components with new components. New components overwrite existing ones if types match.
+            for (type_id, data) in new_components_data {
+                existing_components_map.insert(type_id, data);
+            }
+
+            // 5b. Add the entity with all its components (old + new) to the new archetype.
+            let new_archetype = self
+                .archetypes
+                .get_mut(&new_archetype_id)
+                .expect("New archetype disappeared. This indicates an ECS bug.");
+
+            let new_row_index = new_archetype
+                .add_entity_with_all_components(entity, &mut existing_components_map);
+
+            // 5c. Update the entity's location.
+            self.entity_locations.insert(entity, (new_archetype_id, new_row_index));
+
+            Ok(())
+        }
+    }
+
+    /// Retrieves an immutable reference to a component of type `T` for a given entity.
+    ///
+    /// # Arguments
+    /// * `entity` - The `Entity` whose component is to be retrieved.
+    ///
+    /// # Returns
+    /// * `Some(&T)` if the entity is alive, belongs to an archetype that has component `T`,
+    ///   and the component data is found.
+    /// * `None` otherwise (e.g., entity not alive, entity doesn't have component `T`).
+    ///
+    /// # Panics
+    /// Panics internally if the ECS is in an inconsistent state (e.g., entity location points
+    /// to a non-existent archetype, or storage downcast fails unexpectedly).
+    pub fn get_component<T: Component>(&self, entity: Entity) -> Option<&T> {
+        if !self.is_entity_alive(entity) {
+            return None;
+        }
+
+        // Get the location, ? will return None if entity is not in entity_locations
+        let (archetype_id_ref, row_index_ref) = self.entity_locations.get(&entity)?;
+        // Dereference to get actual values, as ArchetypeId and usize are Copy.
+        let actual_archetype_id = *archetype_id_ref;
+        let actual_row_index = *row_index_ref;
+
+        let archetype = self.archetypes.get(&actual_archetype_id)?;
+
+        // Check if the archetype even has this component type.
+        if !archetype.has_component_type(&ComponentTypeId::of::<T>()) {
+            return None;
+        }
+
+        // Safety: We've confirmed the entity is alive, its location is valid,
+        // and the archetype is expected to contain this component type.
+        unsafe {
+            archetype
+                .get_storage::<T>(ComponentTypeId::of::<T>())
+                .and_then(|storage| storage.get(actual_row_index))
+        }
+    }
+
+    /// Retrieves a mutable reference to a component of type `T` for a given entity.
+    ///
+    /// # Arguments
+    /// * `entity` - The `Entity` whose component is to be retrieved.
+    ///
+    /// # Returns
+    /// * `Some(&mut T)` if the entity is alive, belongs to an archetype that has component `T`,
+    ///   and the component data is found.
+    /// * `None` otherwise (e.g., entity not alive, entity doesn't have component `T`).
+    ///
+    /// # Panics
+    /// Panics internally if the ECS is in an inconsistent state.
+    pub fn get_component_mut<T: Component>(&mut self, entity: Entity) -> Option<&mut T> {
+        if !self.is_entity_alive(entity) {
+            return None;
+        }
+
+        let (archetype_id, row_index) = self.entity_locations.get(&entity)?;
+
+        // Need to get archetype_id and row_index before the mutable borrow of self.archetypes
+        let archetype_id_cloned = *archetype_id;
+        let row_index_cloned = *row_index;
+
+        let archetype = self.archetypes.get_mut(&archetype_id_cloned)?;
+
+        if !archetype.has_component_type(&ComponentTypeId::of::<T>()) {
+            return None;
+        }
+
+        // Safety: Similar to get_component.
+        unsafe {
+            archetype
+                .get_storage_mut::<T>(ComponentTypeId::of::<T>())
+                .and_then(|storage| storage.get_mut(row_index_cloned))
+        }
+    }
+
+    /// Removes a component of type `T` from the given entity.
+    ///
+    /// If the component is successfully removed, the entity might be moved to a different archetype.
+    ///
+    /// # Arguments
+    /// * `entity` - The `Entity` from which to remove the component.
+    ///
+    /// # Returns
+    /// * `Ok(T)` containing the removed component instance if successful.
+    /// * `Err(RemoveError)` if an error occurred (e.g., entity not found, component not present).
+    ///
+    /// # Panics
+    /// Panics internally if the ECS is in an inconsistent state.
+    pub fn remove_component<T: Component>(
+        &mut self,
+        entity: Entity,
+    ) -> Result<T, RemoveError> {
+        if !self.is_entity_alive(entity) {
+            return Err(RemoveError::EntityNotFound);
+        }
+
+        let component_type_to_remove = ComponentTypeId::of::<T>();
+
+        let (current_archetype_id, current_row_index) = self
+            .entity_locations
+            .get(&entity)
+            .copied()
+            .expect("Entity is alive but not found in entity_locations. This indicates an ECS bug.");
+
+        let current_archetype = self.archetypes.get(&current_archetype_id).expect(
+            "Current archetype ID from entity_locations not found. This indicates an ECS bug.",
+        );
+
+        if !current_archetype.has_component_type(&component_type_to_remove) {
+            return Err(RemoveError::ComponentNotPresent);
+        }
+
+        // Calculate the new archetype signature (current signature - removed component type)
+        let mut new_archetype_signature = current_archetype.signature().clone();
+        if !new_archetype_signature.remove(&component_type_to_remove) {
+            // This should not happen if has_component_type check passed.
+            panic!(
+                "Component type to remove was not found in current archetype's signature despite passing has_component_type. ECS bug."
+            );
+        }
+
+        let new_archetype_id = self.find_or_create_archetype(new_archetype_signature);
+
+        // Remove the entity and all its components from the old archetype.
+        let (removed_entity, mut all_components_map, swapped_entity_opt) = self
+            .archetypes
+            .get_mut(&current_archetype_id)
+            .expect("Old archetype disappeared during remove_component. This indicates an ECS bug.")
+            .remove_entity_by_row(current_row_index);
+
+        assert_eq!(removed_entity, entity, "Removed entity mismatch. ECS bug.");
+
+        if let Some(swapped_entity) = swapped_entity_opt {
+            self.entity_locations
+                .insert(swapped_entity, (current_archetype_id, current_row_index));
+        }
+
+        // Extract the component instance we are removing.
+        let removed_component_data =
+            all_components_map.remove(&component_type_to_remove).expect(
+                "Component to remove was not found in the extracted components map. ECS bug.",
+            );
+
+        // Add the entity with its remaining components to the new archetype.
+        let new_archetype = self.archetypes.get_mut(&new_archetype_id).expect(
+            "New archetype disappeared during remove_component. This indicates an ECS bug.",
+        );
+
+        let new_row_index =
+            new_archetype.add_entity_with_all_components(entity, &mut all_components_map);
+
+        // Update the entity's location.
+        self.entity_locations.insert(entity, (new_archetype_id, new_row_index));
+
+        // Downcast the removed component data to T.
+        match removed_component_data.downcast::<T>() {
+            Ok(component_instance) => Ok(*component_instance),
+            Err(_) => Err(RemoveError::DowncastFailed), // Should not happen if types are consistent
         }
     }
 }
@@ -457,14 +772,396 @@ mod tests {
 
     #[test]
     #[should_panic(
-        expected = "find_or_create_archetype cannot yet create storages for non-empty signatures"
+        expected = "Attempted to create archetype with unregistered component type: ComponentTypeId"
     )]
-    fn find_or_create_archetype_non_empty_signature_panics() {
+    fn find_or_create_archetype_with_unregistered_component_panics() {
         let mut registry = Registry::new();
-        let mut sig1 = BTreeSet::new();
-        sig1.insert(ComponentTypeId::of::<Position>());
+        // Position is NOT registered
+        let mut sig_with_unregistered = BTreeSet::new();
+        sig_with_unregistered.insert(ComponentTypeId::of::<Position>());
 
-        // This call should panic due to the current implementation
-        registry.find_or_create_archetype(sig1);
+        // This call should panic because Position's factory isn't registered.
+        registry.find_or_create_archetype(sig_with_unregistered);
+    }
+
+    #[test]
+    fn find_or_create_archetype_with_registered_component_succeeds() {
+        let mut registry = Registry::new();
+        registry.register_component::<Position>(); // Register Position
+
+        let mut sig_with_registered = BTreeSet::new();
+        sig_with_registered.insert(ComponentTypeId::of::<Position>());
+
+        let arch_id = registry.find_or_create_archetype(sig_with_registered.clone());
+        assert!(registry.archetypes.contains_key(&arch_id));
+        let archetype = registry.archetypes.get(&arch_id).unwrap();
+        assert_eq!(archetype.component_types().len(), 1);
+        assert_eq!(
+            archetype.component_types()[0],
+            ComponentTypeId::of::<Position>()
+        );
+
+        // Calling again should return the same ID
+        let found_arch_id = registry.find_or_create_archetype(sig_with_registered);
+        assert_eq!(found_arch_id, arch_id);
+    }
+
+    #[test]
+    fn registry_insert_for_dead_entity_errors() {
+        let mut registry = Registry::new();
+        registry.register_component::<Position>();
+        let entity = registry.spawn();
+        registry.despawn(entity);
+
+        let result = registry.insert(entity, (Position { x: 0.0, y: 0.0 },));
+        assert_eq!(result, Err(InsertError::EntityNotFound));
+    }
+
+    #[test]
+    fn registry_insert_unregistered_component_errors() {
+        let mut registry = Registry::new();
+        // Position is NOT registered
+        let entity = registry.spawn();
+
+        let result = registry.insert(entity, (Position { x: 0.0, y: 0.0 },));
+        assert_eq!(
+            result,
+            Err(InsertError::ComponentTypeNotRegistered(
+                ComponentTypeId::of::<Position>()
+            ))
+        );
+    }
+
+    #[test]
+    fn registry_insert_multiple_entities_and_archetypes() {
+        let mut registry = Registry::new();
+        registry.register_component::<Position>();
+        registry.register_component::<Velocity>();
+
+        let e1 = registry.spawn(); // Null
+        let e2 = registry.spawn(); // Null
+
+        // e1 gets Position
+        registry.insert(e1, (Position { x: 1.0, y: 1.0 },)).unwrap();
+        let e1_arch_id_pos = registry.get_entity_archetype_id(e1).unwrap();
+        let e1_arch_pos = registry.archetypes.get(&e1_arch_id_pos).unwrap();
+        assert_eq!(e1_arch_pos.signature().len(), 1);
+        assert!(e1_arch_pos.signature().contains(&ComponentTypeId::of::<Position>()));
+
+        // e2 gets Velocity
+        registry.insert(e2, (Velocity { dx: 2.0, dy: 2.0 },)).unwrap();
+        let e2_arch_id_vel = registry.get_entity_archetype_id(e2).unwrap();
+        let e2_arch_vel = registry.archetypes.get(&e2_arch_id_vel).unwrap();
+        assert_eq!(e2_arch_vel.signature().len(), 1);
+        assert!(e2_arch_vel.signature().contains(&ComponentTypeId::of::<Velocity>()));
+        assert_ne!(
+            e1_arch_id_pos, e2_arch_id_vel,
+            "e1 and e2 should be in different archetypes."
+        );
+
+        // e1 gets Velocity (now has Position, Velocity)
+        registry.insert(e1, (Velocity { dx: 1.1, dy: 1.1 },)).unwrap();
+        let e1_arch_id_pos_vel = registry.get_entity_archetype_id(e1).unwrap();
+        let e1_arch_pos_vel = registry.archetypes.get(&e1_arch_id_pos_vel).unwrap();
+        assert_eq!(e1_arch_pos_vel.signature().len(), 2);
+        assert!(e1_arch_pos_vel.signature().contains(&ComponentTypeId::of::<Position>()));
+        assert!(e1_arch_pos_vel.signature().contains(&ComponentTypeId::of::<Velocity>()));
+        assert_ne!(e1_arch_id_pos_vel, e1_arch_id_pos);
+        assert_ne!(e1_arch_id_pos_vel, e2_arch_id_vel);
+
+        // Check original Position-only archetype for e1 is now empty
+        let e1_original_pos_archetype = registry.archetypes.get(&e1_arch_id_pos).unwrap();
+        assert_eq!(e1_original_pos_archetype.entities_count(), 0);
+
+        // e2 gets Position (now has Velocity, Position) - should end up in same archetype as e1
+        registry.insert(e2, (Position { x: 2.2, y: 2.2 },)).unwrap();
+        let e2_arch_id_vel_pos = registry.get_entity_archetype_id(e2).unwrap();
+        assert_eq!(
+            e2_arch_id_vel_pos, e1_arch_id_pos_vel,
+            "e1 and e2 should now be in the same (Pos,Vel) archetype."
+        );
+
+        let final_pos_vel_archetype = registry.archetypes.get(&e1_arch_id_pos_vel).unwrap();
+        assert_eq!(final_pos_vel_archetype.entities_count(), 2);
+
+        // Check original Velocity-only archetype for e2 is now empty
+        let e2_original_vel_archetype = registry.archetypes.get(&e2_arch_id_vel).unwrap();
+        assert_eq!(e2_original_vel_archetype.entities_count(), 0);
+
+        // TODO: Verify component data with get<C>
+        assert_eq!(
+            *registry.get_component::<Position>(e1).unwrap(),
+            Position { x: 1.0, y: 1.0 }
+        );
+        assert_eq!(
+            *registry.get_component::<Velocity>(e1).unwrap(),
+            Velocity { dx: 1.1, dy: 1.1 }
+        );
+        assert_eq!(
+            *registry.get_component::<Position>(e2).unwrap(),
+            Position { x: 2.2, y: 2.2 }
+        );
+        assert_eq!(
+            *registry.get_component::<Velocity>(e2).unwrap(),
+            Velocity { dx: 2.0, dy: 2.0 }
+        );
+    }
+
+    #[test]
+    fn registry_get_component_and_get_component_mut() {
+        let mut registry = Registry::new();
+        registry.register_component::<Position>();
+        registry.register_component::<Velocity>();
+
+        let entity = registry.spawn();
+
+        // 1. Get non-existent component
+        assert!(registry.get_component::<Position>(entity).is_none());
+        assert!(registry.get_component_mut::<Position>(entity).is_none());
+
+        // Insert Position
+        let pos1 = Position { x: 1.0, y: 2.0 };
+        registry.insert(entity, (pos1.clone(),)).unwrap();
+
+        // 2. Get existing component
+        let retrieved_pos = registry.get_component::<Position>(entity).unwrap();
+        assert_eq!(*retrieved_pos, pos1);
+
+        // 3. Get_mut and modify component
+        let retrieved_pos_mut = registry.get_component_mut::<Position>(entity).unwrap();
+        assert_eq!(*retrieved_pos_mut, pos1);
+        retrieved_pos_mut.x = 10.0;
+        retrieved_pos_mut.y = 20.0;
+        let modified_pos = Position { x: 10.0, y: 20.0 };
+
+        // Verify modification
+        let retrieved_pos_after_mut = registry.get_component::<Position>(entity).unwrap();
+        assert_eq!(*retrieved_pos_after_mut, modified_pos);
+
+        // 4. Get component that exists, but not on this entity (after adding another)
+        let entity2 = registry.spawn();
+        registry.insert(entity2, (Velocity { dx: 1.0, dy: 1.0 },)).unwrap();
+        assert!(
+            registry.get_component::<Velocity>(entity).is_none(),
+            "Entity 1 should not have Velocity"
+        );
+        assert!(
+            registry.get_component::<Position>(entity2).is_none(),
+            "Entity 2 should not have Position"
+        );
+        assert!(
+            registry.get_component::<Velocity>(entity2).is_some(),
+            "Entity 2 should have Velocity"
+        );
+
+        // 5. Get component from a dead entity
+        registry.despawn(entity);
+        assert!(registry.get_component::<Position>(entity).is_none());
+        assert!(registry.get_component_mut::<Position>(entity).is_none());
+    }
+
+    // Update existing tests to use get_component for verification
+
+    #[test]
+    fn registry_insert_components_to_null_archetype_entity_with_get_verification() {
+        let mut registry = Registry::new();
+        registry.register_component::<Position>();
+        registry.register_component::<Velocity>();
+
+        let entity = registry.spawn();
+        let initial_null_archetype_id = registry.get_entity_archetype_id(entity).unwrap();
+
+        let position_comp = Position { x: 1.0, y: 2.0 };
+        registry.insert(entity, (position_comp.clone(),)).unwrap();
+
+        assert_eq!(
+            *registry.get_component::<Position>(entity).unwrap(),
+            position_comp
+        );
+        let pos_archetype_id = registry.get_entity_archetype_id(entity).unwrap();
+        assert_ne!(pos_archetype_id, initial_null_archetype_id);
+        // ... (rest of the assertions about archetype structure)
+    }
+
+    #[test]
+    fn registry_insert_components_in_place_update_with_get_verification() {
+        let mut registry = Registry::new();
+        registry.register_component::<Position>();
+        let entity = registry.spawn();
+
+        let initial_pos = Position { x: 1.0, y: 2.0 };
+        registry.insert(entity, (initial_pos.clone(),)).unwrap();
+        assert_eq!(
+            *registry.get_component::<Position>(entity).unwrap(),
+            initial_pos
+        );
+
+        let updated_pos = Position { x: 10.0, y: 20.0 };
+        registry.insert(entity, (updated_pos.clone(),)).unwrap();
+        assert_eq!(
+            *registry.get_component::<Position>(entity).unwrap(),
+            updated_pos
+        );
+    }
+
+    #[test]
+    fn registry_insert_mixed_new_and_existing_components_with_get_verification() {
+        let mut registry = Registry::new();
+        registry.register_component::<Position>();
+        registry.register_component::<Velocity>();
+        let entity = registry.spawn();
+
+        let pos_comp = Position { x: 1.0, y: 2.0 };
+        registry.insert(entity, (pos_comp.clone(),)).unwrap();
+        assert_eq!(
+            *registry.get_component::<Position>(entity).unwrap(),
+            pos_comp
+        );
+        assert!(registry.get_component::<Velocity>(entity).is_none());
+
+        let updated_pos = Position { x: 5.0, y: 5.0 };
+        let vel_comp = Velocity { dx: 10.0, dy: 10.0 };
+        registry.insert(entity, (updated_pos.clone(), vel_comp.clone())).unwrap();
+
+        assert_eq!(
+            *registry.get_component::<Position>(entity).unwrap(),
+            updated_pos
+        );
+        assert_eq!(
+            *registry.get_component::<Velocity>(entity).unwrap(),
+            vel_comp
+        );
+    }
+
+    #[test]
+    fn registry_remove_component_success_and_archetype_change() {
+        let mut registry = Registry::new();
+        registry.register_component::<Position>();
+        registry.register_component::<Velocity>();
+        let entity = registry.spawn();
+
+        let pos_comp = Position { x: 1.0, y: 2.0 };
+        let vel_comp = Velocity { dx: 3.0, dy: 4.0 };
+        registry.insert(entity, (pos_comp.clone(), vel_comp.clone())).unwrap();
+
+        let initial_archetype_id = registry.get_entity_archetype_id(entity).unwrap();
+        let initial_archetype = registry.archetypes.get(&initial_archetype_id).unwrap();
+        assert_eq!(initial_archetype.signature().len(), 2);
+
+        // Remove Position
+        let removed_pos = registry.remove_component::<Position>(entity).unwrap();
+        assert_eq!(removed_pos, pos_comp);
+
+        // Check entity state after removing Position
+        assert!(registry.get_component::<Position>(entity).is_none());
+        let current_vel = registry.get_component::<Velocity>(entity).unwrap();
+        assert_eq!(*current_vel, vel_comp); // Velocity should still be there and correct
+
+        let archetype_id_after_pos_remove = registry.get_entity_archetype_id(entity).unwrap();
+        assert_ne!(archetype_id_after_pos_remove, initial_archetype_id);
+        let archetype_after_pos_remove =
+            registry.archetypes.get(&archetype_id_after_pos_remove).unwrap();
+        assert_eq!(archetype_after_pos_remove.signature().len(), 1);
+        assert!(
+            archetype_after_pos_remove
+                .signature()
+                .contains(&ComponentTypeId::of::<Velocity>())
+        );
+        assert_eq!(archetype_after_pos_remove.entities_count(), 1);
+
+        // Check old archetype is empty
+        assert_eq!(
+            registry.archetypes.get(&initial_archetype_id).unwrap().entities_count(),
+            0
+        );
+
+        // Remove Velocity (the last component)
+        let removed_vel = registry.remove_component::<Velocity>(entity).unwrap();
+        assert_eq!(removed_vel, vel_comp);
+
+        // Check entity state after removing Velocity
+        assert!(registry.get_component::<Position>(entity).is_none());
+        assert!(registry.get_component::<Velocity>(entity).is_none());
+
+        let final_archetype_id = registry.get_entity_archetype_id(entity).unwrap();
+        assert_ne!(final_archetype_id, archetype_id_after_pos_remove);
+        let final_archetype = registry.archetypes.get(&final_archetype_id).unwrap();
+        assert!(
+            final_archetype.signature().is_empty(),
+            "Entity should be in null archetype"
+        );
+        assert_eq!(final_archetype.entities_count(), 1);
+
+        // Check previous archetype (Velocity only) is empty
+        assert_eq!(
+            registry.archetypes.get(&archetype_id_after_pos_remove).unwrap().entities_count(),
+            0
+        );
+    }
+
+    #[test]
+    fn registry_remove_component_not_present_on_entity() {
+        let mut registry = Registry::new();
+        registry.register_component::<Position>();
+        registry.register_component::<Velocity>(); // Velocity is registered but not added to entity
+        let entity = registry.spawn();
+
+        let pos_comp = Position { x: 1.0, y: 2.0 };
+        registry.insert(entity, (pos_comp.clone(),)).unwrap(); // Entity only has Position
+
+        let result = registry.remove_component::<Velocity>(entity);
+        assert_eq!(result, Err(RemoveError::ComponentNotPresent));
+
+        // Ensure Position is still there
+        assert_eq!(
+            *registry.get_component::<Position>(entity).unwrap(),
+            pos_comp
+        );
+        let current_archetype_id = registry.get_entity_archetype_id(entity).unwrap();
+        let current_archetype = registry.archetypes.get(&current_archetype_id).unwrap();
+        assert_eq!(current_archetype.signature().len(), 1);
+        assert!(current_archetype.signature().contains(&ComponentTypeId::of::<Position>()));
+    }
+
+    #[test]
+    fn registry_remove_component_from_dead_entity_errors() {
+        let mut registry = Registry::new();
+        registry.register_component::<Position>();
+        let entity = registry.spawn();
+        registry.insert(entity, (Position { x: 1.0, y: 2.0 },)).unwrap();
+
+        let valid_entity_handle = entity; // Keep a handle before despawn
+        registry.despawn(entity);
+
+        let result = registry.remove_component::<Position>(valid_entity_handle);
+        assert_eq!(result, Err(RemoveError::EntityNotFound));
+    }
+
+    #[test]
+    fn registry_remove_component_unregistered_type_is_not_possible_at_compile_time() {
+        // This test is more of a conceptual check.
+        // `remove_component<T: Component>` requires T to be a component.
+        // If T is not registered via `register_component`, `find_or_create_archetype`
+        // would panic if it were ever asked to create an archetype with it.
+        // However, `remove_component` itself doesn't directly check registration
+        // of T, as it relies on the component already existing on the entity (which implies
+        // it was registered at insertion time).
+        // The primary error path is `ComponentNotPresent` if the component isn't on the entity,
+        // regardless of T's registration status for the remove operation itself.
+        // If one tried to remove a component type that was *never* registered system-wide,
+        // it couldn't have been inserted in the first place.
+        // This test primarily ensures the code compiles and doesn't have an obvious logic flaw
+        // related to unregistered types during removal (which it shouldn't).
+        #[derive(PartialEq, Debug)]
+        struct UnregisteredComponent {}
+        impl Component for UnregisteredComponent {}
+
+        let mut registry = Registry::new();
+        let entity = registry.spawn();
+        // Cannot insert UnregisteredComponent if not registered, so cannot test removing it
+        // if it was somehow there.
+        // The relevant error is ComponentNotPresent.
+        let result = registry.remove_component::<UnregisteredComponent>(entity);
+        assert_eq!(result, Err(RemoveError::ComponentNotPresent));
     }
 }

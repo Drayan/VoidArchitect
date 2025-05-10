@@ -26,6 +26,11 @@ pub trait AnyStorage: Any + Send + Sync {
     /// Clears all components from the storage.
     fn clear(&mut self);
 
+    /// Replaces the component at a given row index with new data.
+    /// The caller must ensure `component_data` is of the correct type for this storage.
+    /// Panics if `row_index` is out of bounds or if `component_data` is of the wrong type.
+    fn replace_at_row(&mut self, row_index: usize, component_data: Box<dyn Any>);
+
     /// Provides a way to downcast to `&dyn Any` for runtime type inspection if needed.
     fn as_any(&self) -> &dyn Any;
 
@@ -109,6 +114,25 @@ impl<T: Component> AnyStorage for Storage<T> {
 
     fn clear(&mut self) {
         self.components.clear();
+    }
+
+    fn replace_at_row(&mut self, row_index: usize, component_data: Box<dyn Any>) {
+        if row_index >= self.components.len() {
+            panic!(
+                "replace_at_row: row_index {} is out of bounds for len {}",
+                row_index,
+                self.components.len()
+            );
+        }
+        match component_data.downcast::<T>() {
+            Ok(component) => {
+                self.components[row_index] = *component;
+            }
+            Err(_) => panic!(
+                "Mismatched component type in replace_at_row. Expected type: {:?}, found different.",
+                self.component_type_id
+            ),
+        }
     }
 
     fn as_any(&self) -> &dyn Any {
@@ -223,6 +247,11 @@ impl Archetype {
         self.id
     }
 
+    /// Returns a clone of the set of `ComponentTypeId`s that define this archetype's signature.
+    pub fn signature(&self) -> std::collections::BTreeSet<ComponentTypeId> {
+        self.component_types.iter().cloned().collect()
+    }
+
     /// Returns a slice of the `ComponentTypeId`s that define this archetype's signature.
     /// The slice is sorted.
     pub fn component_types(&self) -> &[ComponentTypeId] {
@@ -252,6 +281,46 @@ impl Archetype {
 
     pub(crate) fn get_entity_by_row(&self, row: usize) -> Option<Entity> {
         self.entities.get(row).copied()
+    }
+
+    /// Updates a component for an entity at a specific row in this archetype.
+    /// This is used when an entity already in this archetype has one of its components updated.
+    ///
+    /// # Arguments
+    /// * `row_index` - The row index of the entity whose component is to be updated.
+    /// * `component_type_id` - The `ComponentTypeId` of the component to update.
+    /// * `component_data` - A `Box<dyn Any>` containing the new data for the component.
+    ///
+    /// # Panics
+    /// * If `row_index` is out of bounds.
+    /// * If `component_type_id` is not part of this archetype's signature.
+    /// * If `component_data` cannot be downcast to the expected type for the storage.
+    pub(crate) fn update_component_at_row(
+        &mut self,
+        row_index: usize,
+        component_type_id: ComponentTypeId,
+        component_data: Box<dyn Any>,
+    ) {
+        if row_index >= self.entities.len() {
+            panic!(
+                "update_component_at_row: row_index {} is out of bounds for Archetype {:?} with {} entities.",
+                row_index,
+                self.id,
+                self.entities.len()
+            );
+        }
+
+        match self.component_types.binary_search(&component_type_id) {
+            Ok(storage_idx) => {
+                self.component_storage[storage_idx].replace_at_row(row_index, component_data);
+            }
+            Err(_) => {
+                panic!(
+                    "Attempted to update component {:?} at row {} which is not part of Archetype {:?}'s signature.",
+                    component_type_id, row_index, self.id
+                );
+            }
+        }
     }
 
     /// Adds an entity and its components to this archetype.
@@ -330,6 +399,54 @@ impl Archetype {
         new_row_index
     }
 
+    /// Adds an entity along with all its components, provided as a map.
+    /// This is used when migrating an entity to this archetype.
+    ///
+    /// # Arguments
+    /// * `entity` - The `Entity` to add.
+    /// * `all_components_data` - A mutable reference to a `HashMap` where keys are `ComponentTypeId`
+    ///   and values are `Box<dyn Any>`. This map should contain data for all component types
+    ///   defined by this archetype's signature. Components are removed from the map as they are used.
+    ///
+    /// # Returns
+    /// The row index where the entity was added.
+    ///
+    /// # Panics
+    /// * If `entity` already exists in this archetype.
+    /// * If `all_components_data` is missing an entry for any `ComponentTypeId` in this archetype's signature.
+    pub(crate) fn add_entity_with_all_components(
+        &mut self,
+        entity: Entity,
+        all_components_data: &mut HashMap<ComponentTypeId, Box<dyn Any>>,
+    ) -> usize {
+        if self.entity_to_row_map.contains_key(&entity) {
+            panic!(
+                "Entity {:?} already exists in Archetype {:?}",
+                entity, self.id
+            );
+        }
+
+        let new_row_index = self.entities.len();
+
+        for (storage_idx, component_type_id) in self.component_types.iter().enumerate() {
+            if let Some(component_data) = all_components_data.remove(component_type_id) {
+                self.component_storage[storage_idx].push_new(component_data);
+            } else {
+                panic!(
+                    "Missing component data for type {:?} (required by Archetype {:?}) when adding entity {:?}.",
+                    component_type_id, self.id, entity
+                );
+            }
+        }
+        // Note: `all_components_data` might still contain components not part of this archetype's
+        // signature. This is acceptable if the map was a superset (e.g., from a previous archetype).
+        // The `Registry` is responsible for ensuring only relevant data is passed or handled.
+
+        self.entities.push(entity);
+        self.entity_to_row_map.insert(entity, new_row_index);
+        new_row_index
+    }
+
     /// Removes an entity and its components from this archetype using swap_remove.
     /// This is an internal method, typically called by the `Registry`.
     ///
@@ -339,7 +456,7 @@ impl Archetype {
     /// # Returns
     /// A tuple containing:
     ///   - The `Entity` that was removed.
-    ///   - A `Vec<Box<dyn Any>>` of the removed components.
+    ///   - A `HashMap<ComponentTypeId, Box<dyn Any>>` of the removed entity's components.
     ///   - An `Option<Entity>` which is the entity that was swapped into the removed entity's row, if any.
     ///
     /// # Panics
@@ -347,7 +464,11 @@ impl Archetype {
     pub(crate) fn remove_entity_by_row(
         &mut self,
         entity_row: usize,
-    ) -> (Entity, Vec<Box<dyn Any>>, Option<Entity>) {
+    ) -> (
+        Entity,
+        HashMap<ComponentTypeId, Box<dyn Any>>,
+        Option<Entity>,
+    ) {
         if entity_row >= self.entities.len() {
             panic!(
                 "Entity row {} is out of bounds for Archetype {:?}",
@@ -358,14 +479,17 @@ impl Archetype {
         let removed_entity = self.entities.swap_remove(entity_row);
         self.entity_to_row_map.remove(&removed_entity);
 
-        let mut removed_components = Vec::with_capacity(self.component_storage.len());
-        for storage_column in self.component_storage.iter_mut() {
+        let mut removed_components_map = HashMap::with_capacity(self.component_storage.len());
+        for (i, component_type_id) in self.component_types.iter().enumerate() {
+            // The component_storage is parallel to component_types
+            let storage_column = &mut self.component_storage[i];
             if let Some(component_data) = storage_column.swap_remove(entity_row) {
-                removed_components.push(component_data);
+                removed_components_map.insert(*component_type_id, component_data);
             } else {
                 // This should not happen if entity_row is valid and storages are consistent
                 panic!(
-                    "Failed to remove component from column in Archetype {:?} at row {}. Storage len: {}",
+                    "Failed to remove component {:?} from column in Archetype {:?} at row {}. Storage len: {}",
+                    component_type_id,
                     self.id,
                     entity_row,
                     storage_column.len()
@@ -382,7 +506,7 @@ impl Archetype {
             None
         };
 
-        (removed_entity, removed_components, swapped_in_entity)
+        (removed_entity, removed_components_map, swapped_in_entity)
     }
 
     // Helper to get a mutable reference to a specific storage column.
@@ -678,7 +802,14 @@ mod tests {
         let (removed_e, removed_c, swapped_e) = archetype.remove_entity_by_row(0);
         assert_eq!(removed_e, entity1);
         assert_eq!(removed_c.len(), 1);
-        assert_eq!(*removed_c[0].downcast_ref::<Position>().unwrap(), pos1);
+        assert_eq!(
+            *removed_c
+                .get(&ComponentTypeId::of::<Position>())
+                .unwrap()
+                .downcast_ref::<Position>()
+                .unwrap(),
+            pos1
+        );
         assert_eq!(swapped_e, Some(entity2)); // entity2 was swapped into row 0
 
         assert_eq!(archetype.entities_count(), 1);

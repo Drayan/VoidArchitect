@@ -538,7 +538,7 @@ graph TD
         *   Implement `spawn()`: allocate ID, potentially add to a "null" archetype or prepare for component insertion.
         *   Implement `despawn()`: find entity's archetype, remove its data from all component columns in that archetype, update entity location map, free ID.
 
-- [ ] **Story 4.1.4: Implement `registry.insert(entity, components)`**
+- [x] **Story 4.1.4: Implement `registry.insert(entity, components)`** (Completed - 10/05/2025)
     *   **Description:** Implement the `registry.insert()` method to add one or more components to an existing entity. This is a critical operation that will involve determining the entity's new archetype (based on its existing components plus the new ones), potentially creating that new archetype if it doesn't exist, and moving all of the entity's component data from its old archetype to the new one.
     *   **Goal:**
         *   `registry.insert(Entity, (ComponentA, ComponentB, ...))` method (likely using a tuple or a bundle trait) is implemented.
