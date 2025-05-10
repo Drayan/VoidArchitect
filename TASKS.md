@@ -568,6 +568,7 @@ graph TD
 
 - [x] **Story 4.1.6: Implement `registry.remove::<C>(entity)`** (Completed - 10/05/2025)
     *   **Description:** Implement the `registry.remove::<C>()` method to remove a specific component type from an entity. Similar to `insert`, this will involve determining the entity's new archetype (based on its existing components minus the removed one), potentially creating that new archetype, and moving the entity's remaining component data.
+    *   **Note:** Return type adjusted from `Result<T, RemoveError>` to `Result<(), RemoveError>` on 10-05-2025 to match original specification.
     *   **Goal:**
         *   `registry.remove::<C: Component>(Entity)` method is implemented.
         *   The method correctly identifies or creates the target archetype (without component `C`).
@@ -578,7 +579,7 @@ graph TD
         *   Implement logic to transition an entity between archetypes (similar to insert, but removing a component type during the copy).
         *   Handle cases where the target archetype doesn't exist (create it).
 
-- [ ] **Story 4.1.7: Unit Tests for Core Registry API with Generic Components**
+- [ ] **Story 4.1.7: Unit Tests for Core Registry API with Generic Components** (In Progress - 10/05/2025)
     *   **Description:** Create a comprehensive suite of unit tests that verify the functionality of all public API methods of the `Registry` (`spawn`, `despawn`, `insert`, `get`, `get_mut`, `remove`). Tests should use various combinations of generic components to ensure correctness and cover edge cases.
     *   **Goal:** High test coverage for the core `Registry` API, ensuring its reliability and correctness under various scenarios (e.g., adding/removing multiple components, entities with no components, entities with many components, despawning and re-spawning entities).
     *   **Tasks:**

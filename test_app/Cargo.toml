@@ -1,0 +1,10 @@
+[package]
+name = "void-architect_test_app"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+env_logger = "0.11.8"
+log = "0.4.27"
+sdl3 = "0.14.27"
+void-architect_ecs = { path = "../shared/ecs" }
