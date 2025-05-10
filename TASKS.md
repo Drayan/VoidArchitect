@@ -579,7 +579,7 @@ graph TD
         *   Implement logic to transition an entity between archetypes (similar to insert, but removing a component type during the copy).
         *   Handle cases where the target archetype doesn't exist (create it).
 
-- [ ] **Story 4.1.7: Unit Tests for Core Registry API with Generic Components** (In Progress - 10/05/2025)
+- [x] **Story 4.1.7: Unit Tests for Core Registry API with Generic Components** (Completed - 10/05/2025)
     *   **Description:** Create a comprehensive suite of unit tests that verify the functionality of all public API methods of the `Registry` (`spawn`, `despawn`, `insert`, `get`, `get_mut`, `remove`). Tests should use various combinations of generic components to ensure correctness and cover edge cases.
     *   **Goal:** High test coverage for the core `Registry` API, ensuring its reliability and correctness under various scenarios (e.g., adding/removing multiple components, entities with no components, entities with many components, despawning and re-spawning entities).
     *   **Tasks:**
@@ -604,9 +604,68 @@ graph TD
 #### Stories:
 
 - [ ] **Story 4.2.1: Implement Query Iterator Logic for Archetypes**
+  - **Description:** Design and implement the core iterator logic that walks through archetypes containing entities that match a specific component query. The query should support both immutable (`&Component`) and mutable (`&mut Component`) references to components and properly handle borrowing rules (e.g., cannot have `&mut A` and `&A` simultaneously). The iterator should efficiently skip archetypes that don't contain all requested components.
+  - **Goal:** An internal iterator mechanism exists that can efficiently walk through matching archetypes and produce references to the requested component types for each entity.
+  - **Tasks:**
+    - Design a `QueryDescriptor` or similar concept that describes which components are being queried and how (read-only vs. mutable).
+    - Implement a mechanism to filter archetypes based on their component signature against the query's requirements.
+    - Implement an iterator struct that knows how to access the appropriate component columns from each matching archetype.
+    - Ensure the iterator correctly handles Rust's borrowing rules, particularly for queries with multiple mutable component accesses.
+    - Implement a method to iterate matched entities in a way that returns tuples of references to the requested components (e.g., `(&Position, &mut Velocity)`).
+    - Add support for entity references in queries (to return the entity ID alongside components).
+    - Consider implementing a component access pattern to prevent conflicting borrows at compile time.
+
 - [ ] **Story 4.2.2: Implement `registry.query()` API**
+  - **Description:** Create a public API on the `Registry` that allows users to create and use queries. The API should be ergonomic, type-safe, and support both read-only and mutable component access. The query type parameters should determine which components are accessed and how.
+  - **Goal:** Users can write `for (entity, (position, velocity)) in registry.query::<(&Position, &mut Velocity)>()` (or a similar ergonomic pattern) and iterate through all entities with those components.
+  - **Tasks:**
+    - Define a `Query` type (potentially generic over component references) that acts as the public interface for queries.
+    - Implement the `registry.query::<(...)>()` method that returns this `Query` type.
+    - Design type parameters for the query method to capture which component types are being accessed and how.
+    - Implement `IntoIterator` for the `Query` type to support the `for` loop syntax.
+    - Add methods on `Query` for filtering entities based on component values or other conditions.
+    - (Optional) Add methods on `Query` for getting a single entity matching a specific condition.
+    - Add support for tuple-flattening in query results for improved ergonomics (Bevy-style).
+    - Add mechanisms to handle query component lifetimes to ensure safety.
+
 - [ ] **Story 4.2.3: Implement Global Resource Storage and API in `Registry`**
+  - **Description:** Add a global resource system to the `Registry` that allows storing, retrieving, and mutating singleton resources (data not associated with specific entities). Resources should be uniquely identified by their type and properly respect Rust's borrowing rules.
+  - **Goal:** Users can store global resources in the registry and retrieve them via type (e.g., `registry.insert_resource(GameConfig{...})`, `let config = registry.get_resource::<GameConfig>()`).
+  - **Tasks:**
+    - Add a type-map structure to `Registry` for storing resources (e.g., `HashMap<TypeId, Box<dyn Any>>`).
+    - Implement `insert_resource<R>(&mut self, resource: R)` to store a resource of type `R`.
+    - Implement `get_resource<R>(&self) -> Option<&R>` to retrieve a read-only reference to a resource.
+    - Implement `get_resource_mut<R>(&mut self) -> Option<&mut R>` to retrieve a mutable reference to a resource.
+    - Implement `remove_resource<R>(&mut self) -> Option<R>` to remove and return a resource by type.
+    - Consider implementing a `Resource` trait similar to `Component` for type safety and clarity.
+    - Ensure all methods properly handle borrowing rules and provide clear error cases for missing resources.
+    - Add helper wrapper types like `Res<T>` and `ResMut<T>` to mirror Bevy's ergonomic resource access.
+
 - [ ] **Story 4.2.4: Unit Tests for Queries and Resources with Generic Data**
+  - **Description:** Create comprehensive tests for both the query system and the resource system. Tests should verify correctness, performance characteristics, and edge cases. Use a variety of generic component and resource types to ensure the systems work with any compliant types.
+  - **Goal:** High test coverage for the query and resource systems, ensuring reliability and correctness under various scenarios.
+  - **Tasks:**
+    - Write tests for querying entities with various component combinations (single component, multiple components, mutable and immutable references).
+    - Test query iteration order and completeness (all matching entities are yielded).
+    - Test query performance with archetypes that don't match the query (ensuring they're skipped efficiently).
+    - Write tests for resource insertion, retrieval, and removal with various resource types.
+    - Test resource borrowing constraints (e.g., cannot get a mutable reference while an immutable one exists).
+    - Test error handling for missing resources and other edge cases.
+    - Test complex scenarios combining queries and resources.
+    - Test query filtering functionality.
+    - Test the ergonomics of the query system with different component combinations and access patterns.
+    - (Optional) Include benchmarks to measure query performance with varying numbers of entities and archetypes.
+
+- [ ] **Story 4.2.5: Implement Query Filtering and Sorting**
+  - **Description:** Enhance the query system with filtering capabilities that allow users to narrow down query results based on component values or other criteria. Add optional sorting functionality to control the order of returned entities.
+  - **Goal:** Users can write expressive queries that filter and sort entities based on their component values, improving expressiveness and flexibility.
+  - **Tasks:**
+    - Add a filter method to the `Query` type that accepts a predicate function.
+    - Implement predicate evaluation during query iteration that skips entities not matching the predicate.
+    - Add methods for common filtering operations like `.with::<Component>()` and `.without::<Component>()`.
+    - Implement sorting functionality that allows ordering entities by component values.
+    - Ensure filtering and sorting maintain good performance characteristics.
+    - Add documentation and examples showing how to use the filtering and sorting capabilities.
 
 ### Epic 4.3: Basic Operation Definition and Runner
 
