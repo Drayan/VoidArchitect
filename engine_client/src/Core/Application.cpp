@@ -4,8 +4,6 @@
 
 #include "Application.hpp"
 
-#include <iostream>
-
 namespace VoidArchitect
 {
     Application::Application() = default;
@@ -13,7 +11,6 @@ namespace VoidArchitect
 
     void Application::Run()
     {
-        std::cout << "Running application..." << std::endl;
         while (true)
             ;
     }

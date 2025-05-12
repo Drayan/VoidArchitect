@@ -6,6 +6,7 @@
 /// This file should be included in the main file of the application using the engine.
 
 #include "Core/Application.hpp"
+#include "Core/Logger.hpp"
 
 // --- Entry point ---
 #include "Core/Entry.hpp"

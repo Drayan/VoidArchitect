@@ -4,11 +4,15 @@ project(VoidArchitect_EngineClient VERSION 0.1.0 LANGUAGES CXX)
 file(GLOB_RECURSE ENGINE_CLIENT_SOURCES "src/*.cpp")
 file(GLOB_RECURSE ENGINE_CLIENT_HEADERS "src/*.hpp")
 
+if (NOT TARGET spdlog)
+    find_package(spdlog REQUIRED)
+endif ()
 # Create the library
 add_library(VoidArchitect_EngineClient
         ${ENGINE_CLIENT_SOURCES}
         ${ENGINE_CLIENT_HEADERS}
 )
+target_link_libraries(VoidArchitect_EngineClient PUBLIC spdlog::spdlog)
 
 set_target_properties(VoidArchitect_EngineClient PROPERTIES LINKER_LANGUAGE CXX)
 
