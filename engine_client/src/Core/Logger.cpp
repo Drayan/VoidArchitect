@@ -2,6 +2,7 @@
 // Created by Michael Desmedt on 13/05/2025.
 //
 #include "Logger.hpp"
+#include "vapch.hpp"
 
 #include "spdlog/sinks/stdout_color_sinks.h"
 

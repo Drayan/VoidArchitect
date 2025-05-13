@@ -14,6 +14,15 @@ add_library(VoidArchitect_EngineClient
 )
 target_link_libraries(VoidArchitect_EngineClient PUBLIC spdlog::spdlog)
 
+# Set PCH
+set(PCH_HEADER "src/vapch.hpp")
+
+# If the compiler support PCH, use it.
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_precompile_headers(VoidArchitect_EngineClient PRIVATE ${PCH_HEADER})
+    target_compile_options(VoidArchitect_EngineClient PRIVATE "-Winvalid-pch")
+endif ()
+
 set_target_properties(VoidArchitect_EngineClient PROPERTIES LINKER_LANGUAGE CXX)
 
 # Platform-specific configuration
