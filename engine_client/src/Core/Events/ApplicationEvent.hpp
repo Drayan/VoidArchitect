@@ -6,12 +6,17 @@
 #include "Core/Core.hpp"
 #include "Event.hpp"
 
+#include <sstream>
+
 namespace VoidArchitect
 {
     class VA_API WindowResizedEvent : public Event
     {
     public:
-        WindowResizedEvent(unsigned int width, unsigned int height) : m_Width(width), m_Height(height) {}
+        WindowResizedEvent(unsigned int width, unsigned int height) :
+            m_Width(width), m_Height(height)
+        {
+        }
 
         inline unsigned int GetWidth() const { return m_Width; }
         inline unsigned int GetHeight() const { return m_Height; }

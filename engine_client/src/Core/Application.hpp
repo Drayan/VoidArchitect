@@ -4,6 +4,8 @@
 #pragma once
 
 #include "Core.hpp"
+#include "Events/ApplicationEvent.hpp"
+#include "Events/Event.hpp"
 
 #include <memory>
 
@@ -19,7 +21,11 @@ namespace VoidArchitect
 
         void Run();
 
-    protected:
+        void OnEvent(Event& e);
+
+    private:
+        bool OnWindowClose(WindowCloseEvent& e);
+
         std::unique_ptr<Window> m_MainWindow;
         bool m_Running = true;
     };

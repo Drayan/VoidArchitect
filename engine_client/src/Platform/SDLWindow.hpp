@@ -35,7 +35,10 @@ namespace VoidArchitect::Platform
             return static_cast<unsigned int>(height);
         }
 
-        void SetEventCallback(const EventCallbackFn& callback) override {}
+        void SetEventCallback(const EventCallbackFn& callback) override
+        {
+            m_EventCallback = callback;
+        }
         void SetVSync(bool enabled) override { SDL_SetWindowSurfaceVSync(m_Window, enabled); }
         bool IsVSync() const override
         {
@@ -50,5 +53,6 @@ namespace VoidArchitect::Platform
 
     private:
         SDL_Window* m_Window;
+        EventCallbackFn m_EventCallback;
     };
 } // namespace VoidArchitect::Platform

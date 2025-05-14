@@ -5,11 +5,15 @@
 
 #include "Core/Core.hpp"
 
+#include <functional>
+#include <string>
+
 namespace VoidArchitect
 {
-    // Event in the client part of VoidArchitect is currently blocking, meaning when an event occurs, it immediately
-    // gets dispatched and must be dealt with. For the future, a better strategy might be to buffer events
-    // on an event bus and process them during the "event" phase of the update stage.
+    // Event in the client part of VoidArchitect is currently blocking, meaning when an event
+    // occurs, it immediately gets dispatched and must be dealt with. For the future, a better
+    // strategy might be to buffer events on an event bus and process them during the "event" phase
+    // of the update stage.
     enum class EventType
     {
         None = 0,
@@ -36,12 +40,12 @@ namespace VoidArchitect
         EventCategoryMouseButton = BIT(4)
     };
 
-#define EVENT_CLASS_TYPE(type)                                                                                         \
-    static EventType GetStaticType() { return EventType::type; }                                                       \
-    virtual EventType GetEventType() const override { return GetStaticType(); }                                        \
+#define EVENT_CLASS_TYPE(type)                                                                     \
+    static EventType GetStaticType() { return EventType::type; }                                   \
+    virtual EventType GetEventType() const override { return GetStaticType(); }                    \
     virtual const char* GetName() const override { return #type; }
 
-#define EVENT_CLASS_CATEGORY(category)                                                                                 \
+#define EVENT_CLASS_CATEGORY(category)                                                             \
     virtual int GetCategoryFlags() const override { return category; }
 
     class VA_API Event
