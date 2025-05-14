@@ -5,8 +5,11 @@
 
 #include "Core.hpp"
 
+#include <memory>
+
 namespace VoidArchitect
 {
+    class Window;
 
     class VA_API Application
     {
@@ -15,6 +18,10 @@ namespace VoidArchitect
         virtual ~Application();
 
         void Run();
+
+    protected:
+        std::unique_ptr<Window> m_MainWindow;
+        bool m_Running = true;
     };
 
     Application* CreateApplication();

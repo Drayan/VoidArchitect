@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 
 project(VoidArchitect VERSION 0.1.0 LANGUAGES CXX)
 
@@ -36,6 +36,8 @@ elseif (MSVC)
 else ()
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif ()
+
+add_compile_definitions(VA_ENABLE_ASSERTS)
 
 # Debug-specific settings
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")

@@ -7,21 +7,24 @@ file(GLOB_RECURSE ENGINE_CLIENT_HEADERS "src/*.hpp")
 if (NOT TARGET spdlog)
     find_package(spdlog REQUIRED)
 endif ()
+
+if (NOT TARGET SDL3)
+    find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
+endif ()
+
 # Create the library
 add_library(VoidArchitect_EngineClient
         ${ENGINE_CLIENT_SOURCES}
         ${ENGINE_CLIENT_HEADERS}
 )
-target_link_libraries(VoidArchitect_EngineClient PUBLIC spdlog::spdlog)
+target_link_libraries(VoidArchitect_EngineClient PUBLIC spdlog::spdlog SDL3::SDL3)
 
 # Set PCH
-set(PCH_HEADER "src/vapch.hpp")
+set(PCH_HEADER "src/va.pch.hpp")
 
 # If the compiler support PCH, use it.
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_precompile_headers(VoidArchitect_EngineClient PRIVATE ${PCH_HEADER})
-    target_compile_options(VoidArchitect_EngineClient PRIVATE "-Winvalid-pch")
-endif ()
+target_precompile_headers(VoidArchitect_EngineClient PRIVATE ${PCH_HEADER})
+target_compile_options(VoidArchitect_EngineClient PRIVATE "-Winvalid-pch")
 
 set_target_properties(VoidArchitect_EngineClient PROPERTIES LINKER_LANGUAGE CXX)
 

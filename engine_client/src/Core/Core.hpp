@@ -29,4 +29,46 @@
 #endif
 #endif
 
+// --- Assertions ---
+#ifdef VA_ENABLE_ASSERTS
+#ifdef VOID_ARCH_PLATFORM_WINDOWS
+#define VA_ASSERT(x, ...)                                                                          \
+    {                                                                                              \
+        if (!(x))                                                                                  \
+        {                                                                                          \
+            VA_APP_CRITICAL("Assertion Failed: {0}", __VA_ARGS__);                                 \
+            __debugbreak();                                                                        \
+        }                                                                                          \
+    }
+#define VA_ENGINE_ASSERT(x, ...)                                                                   \
+    {                                                                                              \
+        if (!(x))                                                                                  \
+        {                                                                                          \
+            VA_ENGINE_CRITICAL("Assertion Failed: {0}", __VA_ARGS__);                              \
+            __debugbreak();                                                                        \
+        }                                                                                          \
+    }
+#else
+#define VA_ASSERT(x, ...)                                                                          \
+    {                                                                                              \
+        if (!(x))                                                                                  \
+        {                                                                                          \
+            VA_APP_CRITICAL("Assertion Failed: {0}", __VA_ARGS__);                                 \
+            __builtin_debugtrap();                                                                 \
+        }                                                                                          \
+    }
+#define VA_ENGINE_ASSERT(x, ...)                                                                   \
+    {                                                                                              \
+        if (!(x))                                                                                  \
+        {                                                                                          \
+            VA_ENGINE_CRITICAL("Assertion Failed: {0}", __VA_ARGS__);                              \
+            __builtin_debugtrap();                                                                 \
+        }                                                                                          \
+    }
+#endif
+#else
+#define VA_ASSERT(x, ...)
+#define VA_ENGINE_ASSERT(x, ...)
+#endif
+
 #define BIT(x) (1 << x)
