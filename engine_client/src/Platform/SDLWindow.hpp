@@ -25,6 +25,7 @@ namespace VoidArchitect::Platform
             SDL_GetWindowSizeInPixels(m_Window, &width, nullptr);
             return static_cast<unsigned int>(width);
         };
+
         unsigned int GetHeight() const override
         {
             if (!m_Window)
@@ -39,13 +40,17 @@ namespace VoidArchitect::Platform
         {
             m_EventCallback = callback;
         }
+
         void SetVSync(bool enabled) override { SDL_SetWindowSurfaceVSync(m_Window, enabled); }
+
         bool IsVSync() const override
         {
             int enabled;
             SDL_GetWindowSurfaceVSync(m_Window, &enabled);
             return enabled > 0;
         }
+
+        SDL_Window* GetNativeWindow() const { return m_Window; }
 
     private:
         virtual void Initialize(const WindowProps& props);

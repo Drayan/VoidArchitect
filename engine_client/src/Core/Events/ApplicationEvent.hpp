@@ -6,8 +6,6 @@
 #include "Core/Core.hpp"
 #include "Event.hpp"
 
-#include <sstream>
-
 namespace VoidArchitect
 {
     class VA_API WindowResizedEvent : public Event

@@ -13,6 +13,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <set>
 #include <vector>
 
 #ifdef VOID_ARCH_PLATFORM_WINDOWS

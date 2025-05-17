@@ -12,28 +12,32 @@ if (NOT TARGET SDL3)
     find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 endif ()
 
+if (NOT TARGET Vulkan)
+    find_package(Vulkan REQUIRED COMPONENTS MoltenVK)
+endif ()
+
 # Create the library
 add_library(VoidArchitect_EngineClient
         ${ENGINE_CLIENT_SOURCES}
         ${ENGINE_CLIENT_HEADERS}
 )
-target_link_libraries(VoidArchitect_EngineClient PUBLIC spdlog::spdlog SDL3::SDL3)
-
-# Set PCH
-set(PCH_HEADER "src/va.pch.hpp")
+target_link_libraries(VoidArchitect_EngineClient PUBLIC spdlog::spdlog SDL3::SDL3 Vulkan::Vulkan Vulkan::MoltenVK)
 
 # If the compiler support PCH, use it.
-target_precompile_headers(VoidArchitect_EngineClient PRIVATE ${PCH_HEADER})
+target_precompile_headers(VoidArchitect_EngineClient PRIVATE "src/va.pch.hpp")
 target_compile_options(VoidArchitect_EngineClient PRIVATE "-Winvalid-pch")
 
+set_target_properties(VoidArchitect_EngineClient PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(VoidArchitect_EngineClient PROPERTIES LINKER_LANGUAGE CXX)
 
 # Platform-specific configuration
 if (APPLE)
     # macOS settings
     target_compile_definitions(VoidArchitect_EngineClient PRIVATE "VOID_ARCH_MACOS")
+
+    get_filename_component(VULKAN_LIBRARY_PATH "${Vulkan_LIBRARY}" DIRECTORY)
     set_target_properties(VoidArchitect_EngineClient PROPERTIES
-            INSTALL_RPATH "@executable_path/../../lib/${CMAKE_SYSTEM_NAME}"
+            INSTALL_RPATH "@executable_path/../../lib/${CMAKE_SYSTEM_NAME};${VULKAN_LIBRARY_PATH}"
             BUILD_WITH_INSTALL_RPATH TRUE
     )
 elseif (WIN32)

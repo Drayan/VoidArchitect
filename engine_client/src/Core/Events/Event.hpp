@@ -60,8 +60,8 @@ namespace VoidArchitect
 
         inline bool IsInCategory(EventCategory category) { return GetCategoryFlags() & category; }
 
+        bool Handled = false;
     protected:
-        bool m_Handled = false;
     };
 
     class EventDispatcher
@@ -77,7 +77,7 @@ namespace VoidArchitect
         {
             if (m_Event.GetEventType() == T::GetStaticType())
             {
-                m_Event.m_Handled = func(*static_cast<T*>(&m_Event));
+                m_Event.Handled = func(*static_cast<T*>(&m_Event));
                 return true;
             }
 

@@ -5,8 +5,6 @@
 
 #include "Core/Core.hpp"
 
-#include <string>
-
 namespace VoidArchitect
 {
     class Event;
@@ -18,8 +16,7 @@ namespace VoidArchitect
         unsigned int Height;
 
         explicit WindowProps(const std::string& title = "VoidArchitect Engine",
-                             unsigned int width = 1280,
-                             unsigned int height = 720) :
+                             unsigned int width = 1280, unsigned int height = 720) :
             Title(title), Width(width), Height(height)
         {
         }
@@ -45,4 +42,4 @@ namespace VoidArchitect
 
         static Window* Create(const WindowProps& props = WindowProps());
     };
-}
+} // namespace VoidArchitect
