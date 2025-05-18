@@ -15,6 +15,7 @@
 #include <unordered_set>
 #include <set>
 #include <vector>
+#include <fstream>
 
 #ifdef VOID_ARCH_PLATFORM_WINDOWS
 #include <Windows.h>
