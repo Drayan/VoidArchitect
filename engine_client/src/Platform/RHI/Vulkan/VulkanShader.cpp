@@ -72,7 +72,7 @@ namespace VoidArchitect::Platform
     std::vector<char> VulkanShader::readFromDisk(const std::string& filename)
     {
         constexpr auto shaderDir = "assets/shaders/";
-        constexpr auto shaderExtension = ".hlsl";
+        constexpr auto shaderExtension = ".spv";
         const std::string shaderPath = shaderDir + filename + shaderExtension;
         std::ifstream file(shaderPath, std::ios::ate | std::ios::binary);
 

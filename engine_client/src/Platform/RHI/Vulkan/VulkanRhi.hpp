@@ -8,11 +8,6 @@
 
 #include <vulkan/vulkan.h>
 
-namespace VoidArchitect::Platform
-{
-    class VulkanSwapchain;
-}
-
 namespace VoidArchitect
 {
     class Window;
@@ -20,6 +15,9 @@ namespace VoidArchitect
 
 namespace VoidArchitect::Platform
 {
+    class VulkanSwapchain;
+    class VulkanPipeline;
+
     class VulkanRHI : public IRenderingHardware
     {
     public:
@@ -31,6 +29,11 @@ namespace VoidArchitect::Platform
             return m_Capabilities;
         }
 
+        void SetImageIndex(const uint32_t index) { m_ImageIndex = index; }
+        void SetCurrentIndex(const uint32_t index) { m_CurrentIndex = index; }
+
+        int32_t FindMemoryIndex(uint32_t typeFilter, uint32_t propertyFlags) const;
+
     private:
         void CreateInstance();
         void CreateDevice(std::unique_ptr<Window>& window);
@@ -41,6 +44,9 @@ namespace VoidArchitect::Platform
         [[nodiscard]] VkSurfaceFormatKHR ChooseSwapchainFormat() const;
         [[nodiscard]] VkPresentModeKHR ChooseSwapchainPresentMode() const;
         [[nodiscard]] VkExtent2D ChooseSwapchainExtent() const;
+        VkFormat ChooseDepthFormat() const;
+
+        void CreatePipeline();
 
 #ifdef DEBUG
         void CreateDebugMessenger();
@@ -66,6 +72,9 @@ namespace VoidArchitect::Platform
         std::vector<VkSurfaceFormatKHR> m_Formats;
         std::vector<VkPresentModeKHR> m_PresentModes;
 
+        uint32_t m_ImageIndex;
+        uint32_t m_CurrentIndex;
         std::unique_ptr<VulkanSwapchain> m_Swapchain;
+        std::unique_ptr<VulkanPipeline> m_Pipeline;
     };
 } // VoidArchitect

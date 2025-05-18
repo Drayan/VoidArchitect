@@ -10,18 +10,21 @@
 namespace VoidArchitect::Platform
 {
     VulkanSwapchain::VulkanSwapchain(
-        const VulkanRHI& rhi,
+        VulkanRHI& rhi,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
         const VkSurfaceFormatKHR format,
         const VkPresentModeKHR presentMode,
-        const VkExtent2D extent)
+        const VkExtent2D extent,
+        const VkFormat depthFormat)
         : m_Device(device->GetLogicalDeviceHandle()),
           m_Allocator(allocator),
           m_Swapchain(VK_NULL_HANDLE),
           m_Format(format),
           m_PresentMode(presentMode),
-          m_Extent(extent)
+          m_Extent(extent),
+          m_DepthFormat(depthFormat),
+          m_DepthImage{}
     {
         const auto capabilities = rhi.GetSwapchainCapabilities();
         uint32_t imageCount = capabilities.minImageCount + 1;
@@ -89,8 +92,24 @@ namespace VoidArchitect::Platform
                 device,
                 m_Allocator,
                 image,
-                format.format);
+                format.format,
+                VK_IMAGE_ASPECT_COLOR_BIT);
         }
+
+        rhi.SetCurrentIndex(0);
+
+        m_DepthImage = VulkanImage(
+            rhi,
+            device,
+            m_Allocator,
+            extent.width,
+            extent.height,
+            depthFormat,
+            VK_IMAGE_ASPECT_DEPTH_BIT,
+            VK_IMAGE_TILING_OPTIMAL,
+            VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+        );
     }
 
     VulkanSwapchain::~VulkanSwapchain()
@@ -100,6 +119,60 @@ namespace VoidArchitect::Platform
         if (m_Swapchain != VK_NULL_HANDLE)
         {
             vkDestroySwapchainKHR(m_Device, m_Swapchain, m_Allocator);
+        }
+    }
+
+    bool VulkanSwapchain::AcquireNextImage(
+        const uint64_t timeout,
+        const VkSemaphore semaphore,
+        const VkFence fence,
+        uint32_t& out_imageIndex) const
+    {
+        auto result = vkAcquireNextImageKHR(
+            m_Device,
+            m_Swapchain,
+            timeout,
+            semaphore,
+            fence,
+            &out_imageIndex);
+        if (result == VK_ERROR_OUT_OF_DATE_KHR)
+        {
+            //TODO Recreate the swapchain.
+            return false;
+        }
+
+        if (result != VK_SUCCESS && result != VK_TIMEOUT && result != VK_NOT_READY && result !=
+            VK_SUBOPTIMAL_KHR)
+        {
+            VA_ENGINE_CRITICAL("[VulkanSwapchain] Failed to acquire next image.");
+            throw std::runtime_error("Failed to acquire next image.");
+        }
+
+        return true;
+    }
+
+    void VulkanSwapchain::Present(
+        VkQueue graphicsQueue,
+        VkSemaphore renderComplete,
+        uint32_t imageIndex) const
+    {
+        auto presentInfo = VkPresentInfoKHR{};
+        presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+        presentInfo.waitSemaphoreCount = 1;
+        presentInfo.pWaitSemaphores = &renderComplete;
+        presentInfo.swapchainCount = 1;
+        presentInfo.pSwapchains = &m_Swapchain;
+        presentInfo.pImageIndices = &imageIndex;
+
+        auto result = vkQueuePresentKHR(graphicsQueue, &presentInfo);
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+        {
+            //TODO Recreate the swapchain
+        }
+        else if (result != VK_SUCCESS)
+        {
+            VA_ENGINE_CRITICAL("[VulkanSwapchain] Failed to present.");
+            throw std::runtime_error("Failed to present.");
         }
     }
 } // VoidArchitect

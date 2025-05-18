@@ -123,7 +123,7 @@ function(compile_hlsl_shaders)
 
             add_custom_command(
                     OUTPUT ${COMPILED_SHADER}
-                    COMMAND ${DXC_EXECUTABLE} -E main -T ${PROFILE} -Fo ${COMPILED_SHADER} ${SHADER_SOURCE}
+                    COMMAND ${DXC_EXECUTABLE} -spirv -E main -T ${PROFILE} -Fo ${COMPILED_SHADER} ${SHADER_SOURCE}
                     DEPENDS ${SHADER_SOURCE}
                     COMMENT "Compiling ${SHADER_TYPE} shader: ${SHADER_FILENAME}"
             )

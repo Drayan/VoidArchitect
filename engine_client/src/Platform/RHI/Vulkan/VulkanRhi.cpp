@@ -8,6 +8,7 @@
 
 #include <SDL3/SDL_vulkan.h>
 
+#include "VulkanPipeline.hpp"
 #include "VulkanSwapchain.hpp"
 
 namespace VoidArchitect::Platform
@@ -35,10 +36,14 @@ namespace VoidArchitect::Platform
         CreateInstance();
         CreateDevice(window);
         CreateSwapchain();
+        CreatePipeline();
     }
 
     VulkanRHI::~VulkanRHI()
     {
+        m_Pipeline.reset();
+        VA_ENGINE_INFO("[VulkanRHI] Pipeline destroyed.");
+
         m_Swapchain.reset();
         VA_ENGINE_INFO("[VulkanRHI] Swapchain destroyed.");
 
@@ -51,6 +56,29 @@ namespace VoidArchitect::Platform
         if (m_Instance != VK_NULL_HANDLE)
             vkDestroyInstance(m_Instance, m_Allocator);
         VA_ENGINE_INFO("[VulkanRHI] Instance destroyed.");
+    }
+
+    int32_t VulkanRHI::FindMemoryIndex(
+        const uint32_t typeFilter,
+        const uint32_t propertyFlags) const
+    {
+        VkPhysicalDeviceMemoryProperties memProperties;
+        vkGetPhysicalDeviceMemoryProperties(
+            m_Device->GetPhysicalDeviceHandle(),
+            &memProperties
+        );
+
+        for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
+        {
+            if ((typeFilter & (1 << i)) &&
+                (memProperties.memoryTypes[i].propertyFlags & propertyFlags) == propertyFlags)
+            {
+                return i;
+            }
+        }
+
+        VA_ENGINE_WARN("[VulkanRHI] Cannot find memory index.");
+        return -1;
     }
 
     void VulkanRHI::CreateInstance()
@@ -190,7 +218,9 @@ namespace VoidArchitect::Platform
         auto extents = ChooseSwapchainExtent();
         auto format = ChooseSwapchainFormat();
         auto mode = ChooseSwapchainPresentMode();
-        VA_ENGINE_DEBUG("[VulkanRHI] Swapchain format, present mode and extent chosen.");
+        auto depthFormat = ChooseDepthFormat();
+        VA_ENGINE_DEBUG(
+            "[VulkanRHI] Swapchain format, depth format, present mode and extent chosen.");
 
         m_Swapchain = std::make_unique<VulkanSwapchain>(
             *this,
@@ -198,7 +228,8 @@ namespace VoidArchitect::Platform
             m_Allocator,
             format,
             mode,
-            extents);
+            extents,
+            depthFormat);
         VA_ENGINE_INFO("[VulkanRHI] Swapchain created.");
     }
 
@@ -315,6 +346,45 @@ namespace VoidArchitect::Platform
 
             return actualExtent;
         }
+    }
+
+    VkFormat VulkanRHI::ChooseDepthFormat() const
+    {
+        const std::vector candidates = {
+            VK_FORMAT_D32_SFLOAT,
+            VK_FORMAT_D32_SFLOAT_S8_UINT,
+            VK_FORMAT_D24_UNORM_S8_UINT
+        };
+
+        constexpr uint32_t flags = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
+
+        for (auto& candidate : candidates)
+        {
+            VkFormatProperties props;
+            vkGetPhysicalDeviceFormatProperties(
+                m_Device->GetPhysicalDeviceHandle(),
+                candidate,
+                &props
+            );
+
+            if ((props.linearTilingFeatures & flags) == flags)
+            {
+                return candidate;
+            }
+            else if ((props.optimalTilingFeatures & flags) == flags)
+            {
+                return candidate;
+            }
+        }
+
+        VA_ENGINE_WARN("[VulkanRHI] Unable to find a suitable depth format.");
+        return VK_FORMAT_UNDEFINED;
+    }
+
+    void VulkanRHI::CreatePipeline()
+    {
+        m_Pipeline = std::make_unique<VulkanPipeline>(m_Device, m_Allocator);
+        VA_ENGINE_INFO("[VulkanRHI] Pipeline created.");
     }
 
 #ifdef DEBUG
