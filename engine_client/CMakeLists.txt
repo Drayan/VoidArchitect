@@ -13,7 +13,7 @@ if (NOT TARGET SDL3)
 endif ()
 
 if (NOT TARGET Vulkan)
-    find_package(Vulkan REQUIRED COMPONENTS MoltenVK)
+    find_package(Vulkan REQUIRED COMPONENTS MoltenVK dxc)
 endif ()
 
 # Create the library
