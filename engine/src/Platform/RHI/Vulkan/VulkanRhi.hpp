@@ -16,6 +16,7 @@ namespace VoidArchitect
 namespace VoidArchitect::Platform
 {
     class VulkanSwapchain;
+    class VulkanRenderpass;
     class VulkanPipeline;
 
     class VulkanRHI : public IRenderingHardware
@@ -46,6 +47,7 @@ namespace VoidArchitect::Platform
         [[nodiscard]] VkExtent2D ChooseSwapchainExtent() const;
         VkFormat ChooseDepthFormat() const;
 
+        void CreateRenderpass();
         void CreatePipeline();
 
 #ifdef DEBUG
@@ -75,6 +77,10 @@ namespace VoidArchitect::Platform
         uint32_t m_ImageIndex;
         uint32_t m_CurrentIndex;
         std::unique_ptr<VulkanSwapchain> m_Swapchain;
+        std::unique_ptr<VulkanRenderpass> m_MainRenderpass;
         std::unique_ptr<VulkanPipeline> m_Pipeline;
+
+        uint32_t m_FramebufferWidth;
+        uint32_t m_FramebufferHeight;
     };
 } // VoidArchitect

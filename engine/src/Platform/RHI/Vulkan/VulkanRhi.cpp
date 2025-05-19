@@ -9,6 +9,7 @@
 #include <SDL3/SDL_vulkan.h>
 
 #include "VulkanPipeline.hpp"
+#include "VulkanRenderpass.hpp"
 #include "VulkanSwapchain.hpp"
 
 namespace VoidArchitect::Platform
@@ -36,6 +37,8 @@ namespace VoidArchitect::Platform
         CreateInstance();
         CreateDevice(window);
         CreateSwapchain();
+        CreateRenderpass();
+
         CreatePipeline();
     }
 
@@ -43,6 +46,9 @@ namespace VoidArchitect::Platform
     {
         m_Pipeline.reset();
         VA_ENGINE_INFO("[VulkanRHI] Pipeline destroyed.");
+
+        m_MainRenderpass.reset();
+        VA_ENGINE_INFO("[VulkanRHI] Main renderpass destroyed.");
 
         m_Swapchain.reset();
         VA_ENGINE_INFO("[VulkanRHI] Swapchain destroyed.");
@@ -379,6 +385,25 @@ namespace VoidArchitect::Platform
 
         VA_ENGINE_WARN("[VulkanRHI] Unable to find a suitable depth format.");
         return VK_FORMAT_UNDEFINED;
+    }
+
+    void VulkanRHI::CreateRenderpass()
+    {
+        m_MainRenderpass = std::make_unique<VulkanRenderpass>(
+            m_Device,
+            m_Swapchain,
+            m_Allocator,
+            0,
+            0,
+            m_FramebufferWidth,
+            m_FramebufferHeight,
+            0.2f,
+            0.0f,
+            0.0f,
+            1.0f,
+            1.0f,
+            0
+        );
     }
 
     void VulkanRHI::CreatePipeline()

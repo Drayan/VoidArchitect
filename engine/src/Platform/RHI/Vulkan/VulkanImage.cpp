@@ -122,10 +122,6 @@ namespace VoidArchitect::Platform
 
         // Query memory requirements
         VkMemoryRequirements memRequirements;
-        auto vkGetImageMemoryRequirements =
-            reinterpret_cast<PFN_vkGetImageMemoryRequirements>(vkGetDeviceProcAddr(
-                m_Device,
-                "vkGetImageMemoryRequirements"));
         if (vkGetImageMemoryRequirements == nullptr)
         {
             VA_ENGINE_CRITICAL("[VulkanImage] Failed to get vkGetImageMemoryRequirements.");

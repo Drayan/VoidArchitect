@@ -32,6 +32,9 @@ namespace VoidArchitect::Platform
             uint32_t& out_imageIndex) const;
         void Present(VkQueue graphicsQueue, VkSemaphore renderComplete, uint32_t imageIndex) const;
 
+        VkFormat GetFormat() const { return m_Format.format; }
+        VkFormat GetDepthFormat() const { return m_DepthFormat; }
+
     private:
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;
