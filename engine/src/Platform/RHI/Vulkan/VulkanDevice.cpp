@@ -59,6 +59,12 @@ namespace VoidArchitect::Platform
         VA_ENGINE_INFO("[VulkanDevice] Surface destroyed.");
     }
 
+    void VulkanDevice::WaitIdle() const
+    {
+        vkDeviceWaitIdle(m_LogicalDevice);
+        VA_ENGINE_DEBUG("[VulkanDevice] Device wait idle.");
+    }
+
     void VulkanDevice::SelectPhysicalDevice(const DeviceRequirements& requirements)
     {
         // First, querying for deviceCount

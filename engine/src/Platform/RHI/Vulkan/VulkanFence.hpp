@@ -20,6 +20,7 @@ namespace VoidArchitect::Platform
 
         bool Wait(uint64_t timeout);
         void Reset();
+        VkFence GetHandle() const { return m_Fence; };
 
     private:
         VkDevice m_Device;

@@ -28,8 +28,12 @@ namespace VoidArchitect::Platform
             bool isPrimary = true);
         ~VulkanCommandBuffer();
 
-        void Begin(bool isSingleUse, bool isRenderPassContinue, bool isSimultaneousUse);
+        void Begin(
+            bool isSingleUse = false,
+            bool isRenderPassContinue = false,
+            bool isSimultaneousUse = false);
         void End();
+        void Reset() { m_State = CommandBufferState::Ready; };
 
         static void SingleUseBegin(
             const std::unique_ptr<VulkanDevice>& device,

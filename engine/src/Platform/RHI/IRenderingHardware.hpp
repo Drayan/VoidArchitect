@@ -17,5 +17,8 @@ namespace VoidArchitect::Platform
     public:
         IRenderingHardware() = default;
         virtual ~IRenderingHardware() = default;
+
+        virtual bool BeginFrame(float deltaTime) = 0;
+        virtual bool EndFrame(float deltaTime) = 0;
     };
 }

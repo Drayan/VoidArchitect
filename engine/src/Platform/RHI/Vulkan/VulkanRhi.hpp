@@ -21,11 +21,14 @@ namespace VoidArchitect::Platform
     class VulkanPipeline;
     class VulkanFence;
 
-    class VulkanRHI : public IRenderingHardware
+    class VulkanRHI final : public IRenderingHardware
     {
     public:
         explicit VulkanRHI(std::unique_ptr<Window>& window);
         ~VulkanRHI() override;
+
+        bool BeginFrame(float deltaTime) override;
+        bool EndFrame(float deltaTime) override;
 
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
         {
@@ -83,9 +86,10 @@ namespace VoidArchitect::Platform
 
         uint32_t m_ImageIndex;
         uint32_t m_CurrentIndex;
+        bool m_RecreatingSwapchain = false;
         std::unique_ptr<VulkanSwapchain> m_Swapchain;
         std::unique_ptr<VulkanRenderpass> m_MainRenderpass;
-        std::vector<std::unique_ptr<VulkanCommandBuffer>> m_GraphicsCommandBuffers;
+        std::vector<VulkanCommandBuffer> m_GraphicsCommandBuffers;
 
         std::vector<VkSemaphore> m_ImageAvailableSemaphores;
         std::vector<VkSemaphore> m_QueueCompleteSemaphores;
@@ -97,5 +101,7 @@ namespace VoidArchitect::Platform
 
         uint32_t m_FramebufferWidth;
         uint32_t m_FramebufferHeight;
+        uint64_t m_FramebufferSizeGeneration;
+        uint64_t m_FramebufferSizeLastGeneration;
     };
 } // VoidArchitect

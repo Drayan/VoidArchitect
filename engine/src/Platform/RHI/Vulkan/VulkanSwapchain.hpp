@@ -43,6 +43,11 @@ namespace VoidArchitect::Platform
         uint32_t GetImageCount() const { return static_cast<uint32_t>(m_SwapchainImages.size()); }
         uint32_t GetMaxFrameInFlight() const { return m_MaxFrameInFlight; }
 
+        VkFramebuffer GetFramebufferHandle(uint32_t index) const
+        {
+            return m_Framebuffers[index].GetHandle();
+        }
+
     private:
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;

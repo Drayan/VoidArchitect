@@ -25,6 +25,7 @@ namespace VoidArchitect::Platform
             uint32_t height,
             const std::vector<VkImageView>& attachments);
         ~VulkanFramebuffer();
+        VkFramebuffer GetHandle() const { return m_Framebuffer; };
 
     private:
         VkDevice m_Device;

@@ -14,16 +14,26 @@ namespace VoidArchitect
     {
         switch (apiType)
         {
-        case Platform::RHI_API_TYPE::Vulkan:
-            m_RenderingHardware = new Platform::VulkanRHI(window);
-            break;
-        default:
-            break;
+            case Platform::RHI_API_TYPE::Vulkan:
+                m_RenderingHardware = new Platform::VulkanRHI(window);
+                break;
+            default:
+                break;
         }
     }
 
     void RenderCommand::Shutdown()
     {
         delete m_RenderingHardware;
+    }
+
+    bool RenderCommand::BeginFrame(float deltaTime)
+    {
+        return m_RenderingHardware->BeginFrame(deltaTime);
+    }
+
+    bool RenderCommand::EndFrame(float deltaTime)
+    {
+        return m_RenderingHardware->EndFrame(deltaTime);
     }
 } // VoidArchitect

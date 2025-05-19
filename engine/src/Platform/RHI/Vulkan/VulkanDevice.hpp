@@ -2,7 +2,7 @@
 // Created by Michael Desmedt on 16/05/2025.
 //
 #pragma once
-#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan.h>
 
 namespace VoidArchitect
 {
@@ -26,6 +26,8 @@ namespace VoidArchitect::Platform
             const std::unique_ptr<Window>& window,
             const DeviceRequirements& requirements);
         ~VulkanDevice();
+
+        void WaitIdle() const;
 
         [[nodiscard]] VkDevice GetLogicalDeviceHandle() const { return m_LogicalDevice; }
         [[nodiscard]] VkPhysicalDevice GetPhysicalDeviceHandle() const { return m_PhysicalDevice; }
@@ -54,6 +56,11 @@ namespace VoidArchitect::Platform
         VkCommandPool GetGraphicsCommandPool() const { return m_GraphicsCommandPool; }
         VkCommandPool GetTransferCommandPool() const { return m_TransferCommandPool; }
         VkCommandPool GetComputeCommandPool() const { return m_ComputeCommandPool; }
+
+        VkQueue GetGraphicsQueueHandle() const { return m_GraphicsQueue; }
+        VkQueue GetPresentQueueHandle() const { return m_PresentQueue; }
+        VkQueue GetTransferQueueHandle() const { return m_TransferQueue; }
+        VkQueue GetComputeQueueHandle() const { return m_ComputeQueue; }
 
     private:
         void SelectPhysicalDevice(const DeviceRequirements& requirements);

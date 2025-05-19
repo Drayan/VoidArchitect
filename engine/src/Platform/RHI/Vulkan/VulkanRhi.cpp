@@ -55,6 +55,8 @@ namespace VoidArchitect::Platform
 
     VulkanRHI::~VulkanRHI()
     {
+        m_Device->WaitIdle();
+
         m_Pipeline.reset();
         VA_ENGINE_INFO("[VulkanRHI] Pipeline destroyed.");
 
@@ -79,6 +81,138 @@ namespace VoidArchitect::Platform
         if (m_Instance != VK_NULL_HANDLE)
             vkDestroyInstance(m_Instance, m_Allocator);
         VA_ENGINE_INFO("[VulkanRHI] Instance destroyed.");
+    }
+
+    bool VulkanRHI::BeginFrame(float deltaTime)
+    {
+        const auto device = m_Device->GetLogicalDeviceHandle();
+        if (m_RecreatingSwapchain)
+        {
+            const auto result = vkDeviceWaitIdle(device);
+            if (result != VK_SUCCESS && result != VK_TIMEOUT)
+            {
+                VA_ENGINE_ERROR("[VulkanRHI] Failed to wait for device idle.");
+                return false;
+            }
+            VA_ENGINE_INFO("[VulkanRHI] Recreating swapchain.");
+        }
+
+        // Check if the frmaebuffer has been resized. If so, a new swapchain must be created.
+        if (m_FramebufferSizeGeneration != m_FramebufferSizeLastGeneration)
+        {
+            const auto result = vkDeviceWaitIdle(device);
+            if (result != VK_SUCCESS && result != VK_TIMEOUT)
+            {
+                VA_ENGINE_ERROR("[VulkanRHI] Failed to wait for device idle.");
+                return false;
+            }
+
+            // TODO Implement swapchain recreation on resize
+            // if (!m_Swapchain.Recreate(m_FramebufferWidth, m_FramebufferHeight))
+            // {
+            //     return false;
+            // }
+            VA_ENGINE_INFO("[VulkanRHI] Recreating swapchain.");
+            return false;
+        }
+
+        if (!m_InFlightFences[m_CurrentIndex].Wait(std::numeric_limits<uint64_t>::max()))
+        {
+            VA_ENGINE_WARN("[VulkanRHI] Failed to wait for fence.");
+            return false;
+        }
+
+        if (!m_Swapchain->AcquireNextImage(
+            std::numeric_limits<uint64_t>::max(),
+            m_ImageAvailableSemaphores[m_CurrentIndex],
+            nullptr,
+            m_ImageIndex))
+        {
+            return false;
+        }
+
+        // Begin recording commands.
+        auto& cmdBuf = m_GraphicsCommandBuffers[m_ImageIndex];
+        cmdBuf.Reset();
+        cmdBuf.Begin();
+
+        const VkViewport viewport = {
+            .x = 0.0f,
+            .y = static_cast<float>(m_FramebufferHeight),
+            .width = static_cast<float>(m_FramebufferWidth),
+            .height = -static_cast<float>(m_FramebufferHeight),
+            .minDepth = 0.0f,
+            .maxDepth = 1.0f
+        };
+
+        const VkRect2D scissor = {
+            .offset = {0, 0},
+            .extent = {m_FramebufferWidth, m_FramebufferHeight}
+        };
+
+        vkCmdSetViewport(cmdBuf.GetHandle(), 0, 1, &viewport);
+        vkCmdSetScissor(cmdBuf.GetHandle(), 0, 1, &scissor);
+
+        m_MainRenderpass->Begin(cmdBuf, m_Swapchain->GetFramebufferHandle(m_ImageIndex));
+        return true;
+    }
+
+    bool VulkanRHI::EndFrame(float deltaTime)
+    {
+        auto& cmdBuf = m_GraphicsCommandBuffers[m_ImageIndex];
+
+        m_MainRenderpass->End(cmdBuf);
+
+        cmdBuf.End();
+
+        if (m_ImagesInFlight[m_ImageIndex] != nullptr)
+        {
+            m_ImagesInFlight[m_ImageIndex]->Wait(std::numeric_limits<uint64_t>::max());
+        }
+
+        // Mark the image fence as in use by this frame.
+        m_ImagesInFlight[m_ImageIndex] = &m_InFlightFences[m_CurrentIndex];
+
+        // Reset the fence for use on the next frame.
+        m_InFlightFences[m_CurrentIndex].Reset();
+
+        const auto cmdBufHandle = cmdBuf.GetHandle();
+        auto submitInfo = VkSubmitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &cmdBufHandle;
+        submitInfo.signalSemaphoreCount = 1;
+        submitInfo.pSignalSemaphores = &m_QueueCompleteSemaphores[m_CurrentIndex];
+        submitInfo.waitSemaphoreCount = 1;
+        submitInfo.pWaitSemaphores = &m_ImageAvailableSemaphores[m_CurrentIndex];
+
+        const std::vector flags = {
+            VkPipelineStageFlags{
+                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+            }
+        };
+        submitInfo.pWaitDstStageMask = flags.data();
+
+        const auto result = vkQueueSubmit(
+            m_Device->GetGraphicsQueueHandle(),
+            1,
+            &submitInfo,
+            m_InFlightFences[m_CurrentIndex].GetHandle());
+        if (result != VK_SUCCESS)
+        {
+            VA_ENGINE_ERROR("[VulkanRHI] Failed to submit graphics command buffer.");
+            return false;
+        }
+        cmdBuf.SetState(CommandBufferState::Submitted);
+
+        m_Swapchain->Present(
+            m_Device->GetGraphicsQueueHandle(),
+            m_QueueCompleteSemaphores[m_CurrentIndex],
+            m_ImageIndex);
+
+        m_CurrentIndex = (m_CurrentIndex + 1) % m_Swapchain->GetMaxFrameInFlight();
+
+        return true;
     }
 
     int32_t VulkanRHI::FindMemoryIndex(
@@ -428,13 +562,12 @@ namespace VoidArchitect::Platform
         m_GraphicsCommandBuffers.clear();
 
         const auto imageCount = m_Swapchain->GetImageCount();
-        m_GraphicsCommandBuffers.resize(imageCount);
-        for (auto i = 0; i < imageCount; i++)
+        m_GraphicsCommandBuffers.reserve(imageCount);
+        for (uint32_t i = 0; i < imageCount; i++)
         {
             m_GraphicsCommandBuffers.emplace_back(
-                std::make_unique<VulkanCommandBuffer>(
-                    m_Device,
-                    m_Device->GetGraphicsCommandPool()));
+                m_Device,
+                m_Device->GetGraphicsCommandPool());
         }
 
         VA_ENGINE_INFO("[VulkanRHI] Command buffers created.");
@@ -443,29 +576,34 @@ namespace VoidArchitect::Platform
     void VulkanRHI::CreateSyncObjects()
     {
         const auto maxFrameInFlight = m_Swapchain->GetMaxFrameInFlight();
-        m_ImageAvailableSemaphores.resize(maxFrameInFlight);
-        m_QueueCompleteSemaphores.resize(maxFrameInFlight);
-        m_InFlightFences.resize(maxFrameInFlight);
+        m_ImageAvailableSemaphores.reserve(maxFrameInFlight);
+        m_QueueCompleteSemaphores.reserve(maxFrameInFlight);
+        m_InFlightFences.reserve(maxFrameInFlight);
 
-        for (auto i = 0; i < maxFrameInFlight; i++)
+        for (uint32_t i = 0; i < maxFrameInFlight; i++)
         {
             auto semaphoreCreateInfo = VkSemaphoreCreateInfo{};
             semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+            VkSemaphore semaphore;
             vkCreateSemaphore(
                 m_Device->GetLogicalDeviceHandle(),
                 &semaphoreCreateInfo,
                 m_Allocator,
-                &m_ImageAvailableSemaphores[i]);
+                &semaphore);
+            m_ImageAvailableSemaphores.push_back(semaphore);
+
             vkCreateSemaphore(
                 m_Device->GetLogicalDeviceHandle(),
                 &semaphoreCreateInfo,
                 m_Allocator,
-                &m_QueueCompleteSemaphores[i]);
-            m_InFlightFences.emplace_back(m_Device, m_Allocator);
+                &semaphore);
+            m_QueueCompleteSemaphores.push_back(semaphore);
+
+            m_InFlightFences.emplace_back(m_Device, m_Allocator, true);
         }
 
         m_ImagesInFlight.resize(m_Swapchain->GetImageCount());
-        for (auto i = 0; i < m_Swapchain->GetImageCount(); i++)
+        for (uint32_t i = 0; i < m_Swapchain->GetImageCount(); i++)
         {
             m_ImagesInFlight.emplace_back(nullptr);
         }
@@ -603,9 +741,9 @@ namespace VoidArchitect::Platform
 
     VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebuggerCallback(
         const VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-        VkDebugUtilsMessageTypeFlagsEXT messageType,
+        [[maybe_unused]] VkDebugUtilsMessageTypeFlagsEXT messageType,
         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-        void* pUserData)
+        [[maybe_unused]] void* pUserData)
     {
         if (messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
         {

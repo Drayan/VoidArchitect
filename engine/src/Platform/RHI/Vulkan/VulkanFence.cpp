@@ -25,6 +25,8 @@ namespace VoidArchitect::Platform
             VA_ENGINE_WARN("[VulkanFence] Failed to create fence.");
             return;
         }
+
+        VA_ENGINE_TRACE("[VulkanFence] Fence created.");
     }
 
     VulkanFence::~VulkanFence()

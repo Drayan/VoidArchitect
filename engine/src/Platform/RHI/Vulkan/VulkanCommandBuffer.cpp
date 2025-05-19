@@ -28,6 +28,8 @@ namespace VoidArchitect::Platform
 
         vkAllocateCommandBuffers(m_Device, &allocateInfo, &m_CommandBuffer);
         m_State = CommandBufferState::Ready;
+
+        VA_ENGINE_TRACE("[VulkanCommandBuffer] CommandBuffer created.");
     }
 
     VulkanCommandBuffer::~VulkanCommandBuffer()
@@ -35,12 +37,14 @@ namespace VoidArchitect::Platform
         vkFreeCommandBuffers(m_Device, m_Pool, 1, &m_CommandBuffer);
         m_CommandBuffer = VK_NULL_HANDLE;
         m_State = CommandBufferState::NotAllocated;
+
+        VA_ENGINE_TRACE("[VulkanCommandBuffer] CommandBuffer destroyed.");
     }
 
     void VulkanCommandBuffer::Begin(
-        const bool isSingleUse = false,
-        const bool isRenderPassContinue = false,
-        const bool isSimultaneousUse = false)
+        const bool isSingleUse,
+        const bool isRenderPassContinue,
+        const bool isSimultaneousUse)
     {
         auto beginInfo = VkCommandBufferBeginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;

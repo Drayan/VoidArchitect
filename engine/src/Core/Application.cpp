@@ -47,6 +47,11 @@ namespace VoidArchitect
                 layer->OnUpdate();
 
             m_MainWindow->OnUpdate();
+
+            if (RenderCommand::BeginFrame(1.0f / 60.0f))
+            {
+                RenderCommand::EndFrame(1.0f / 60.0f);
+            }
         }
     }
 
