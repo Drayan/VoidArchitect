@@ -144,6 +144,10 @@ namespace VoidArchitect::Platform
                 attachments
             );
         }
+
+        VA_ENGINE_DEBUG(
+            "[VulkanSwapchain] All {} framebuffers regenerated.",
+            m_Framebuffers.size());
     }
 
     bool VulkanSwapchain::AcquireNextImage(

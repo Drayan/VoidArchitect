@@ -19,6 +19,7 @@ namespace VoidArchitect::Platform
     class VulkanSwapchain;
     class VulkanRenderpass;
     class VulkanPipeline;
+    class VulkanFence;
 
     class VulkanRHI : public IRenderingHardware
     {
@@ -50,7 +51,11 @@ namespace VoidArchitect::Platform
 
         void CreateRenderpass();
         void CreateCommandBuffers();
+        void CreateSyncObjects();
+
         void CreatePipeline();
+
+        void DestroySyncObjects();
 
 #ifdef DEBUG
         void CreateDebugMessenger();
@@ -81,6 +86,12 @@ namespace VoidArchitect::Platform
         std::unique_ptr<VulkanSwapchain> m_Swapchain;
         std::unique_ptr<VulkanRenderpass> m_MainRenderpass;
         std::vector<std::unique_ptr<VulkanCommandBuffer>> m_GraphicsCommandBuffers;
+
+        std::vector<VkSemaphore> m_ImageAvailableSemaphores;
+        std::vector<VkSemaphore> m_QueueCompleteSemaphores;
+
+        std::vector<VulkanFence> m_InFlightFences;
+        std::vector<VulkanFence*> m_ImagesInFlight;
 
         std::unique_ptr<VulkanPipeline> m_Pipeline;
 

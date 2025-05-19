@@ -8,6 +8,7 @@
 
 #include <SDL3/SDL_vulkan.h>
 
+#include "VulkanFence.hpp"
 #include "VulkanPipeline.hpp"
 #include "VulkanRenderpass.hpp"
 #include "VulkanSwapchain.hpp"
@@ -47,6 +48,7 @@ namespace VoidArchitect::Platform
             m_FramebufferHeight);
 
         CreateCommandBuffers();
+        CreateSyncObjects();
 
         CreatePipeline();
     }
@@ -55,6 +57,9 @@ namespace VoidArchitect::Platform
     {
         m_Pipeline.reset();
         VA_ENGINE_INFO("[VulkanRHI] Pipeline destroyed.");
+
+        DestroySyncObjects();
+        VA_ENGINE_INFO("[VulkanRHI] Sync objects destroyed.");
 
         m_GraphicsCommandBuffers.clear();
         VA_ENGINE_INFO("[VulkanRHI] Command buffers destroyed.");
@@ -435,10 +440,59 @@ namespace VoidArchitect::Platform
         VA_ENGINE_INFO("[VulkanRHI] Command buffers created.");
     }
 
+    void VulkanRHI::CreateSyncObjects()
+    {
+        const auto maxFrameInFlight = m_Swapchain->GetMaxFrameInFlight();
+        m_ImageAvailableSemaphores.resize(maxFrameInFlight);
+        m_QueueCompleteSemaphores.resize(maxFrameInFlight);
+        m_InFlightFences.resize(maxFrameInFlight);
+
+        for (auto i = 0; i < maxFrameInFlight; i++)
+        {
+            auto semaphoreCreateInfo = VkSemaphoreCreateInfo{};
+            semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+            vkCreateSemaphore(
+                m_Device->GetLogicalDeviceHandle(),
+                &semaphoreCreateInfo,
+                m_Allocator,
+                &m_ImageAvailableSemaphores[i]);
+            vkCreateSemaphore(
+                m_Device->GetLogicalDeviceHandle(),
+                &semaphoreCreateInfo,
+                m_Allocator,
+                &m_QueueCompleteSemaphores[i]);
+            m_InFlightFences.emplace_back(m_Device, m_Allocator);
+        }
+
+        m_ImagesInFlight.resize(m_Swapchain->GetImageCount());
+        for (auto i = 0; i < m_Swapchain->GetImageCount(); i++)
+        {
+            m_ImagesInFlight.emplace_back(nullptr);
+        }
+
+        VA_ENGINE_INFO("[VulkanRHI] Sync objects created.");
+    }
+
     void VulkanRHI::CreatePipeline()
     {
         m_Pipeline = std::make_unique<VulkanPipeline>(m_Device, m_Allocator);
         VA_ENGINE_INFO("[VulkanRHI] Pipeline created.");
+    }
+
+    void VulkanRHI::DestroySyncObjects()
+    {
+        for (const auto& semaphore : m_ImageAvailableSemaphores)
+        {
+            vkDestroySemaphore(m_Device->GetLogicalDeviceHandle(), semaphore, m_Allocator);
+        }
+        for (const auto& semaphore : m_QueueCompleteSemaphores)
+        {
+            vkDestroySemaphore(m_Device->GetLogicalDeviceHandle(), semaphore, m_Allocator);
+        }
+        m_ImageAvailableSemaphores.clear();
+        m_QueueCompleteSemaphores.clear();
+        m_InFlightFences.clear();
+        m_ImagesInFlight.clear();
     }
 
 #ifdef DEBUG

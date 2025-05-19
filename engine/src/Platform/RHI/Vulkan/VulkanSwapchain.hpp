@@ -40,7 +40,8 @@ namespace VoidArchitect::Platform
 
         VkFormat GetFormat() const { return m_Format.format; }
         VkFormat GetDepthFormat() const { return m_DepthFormat; }
-        uint32_t GetImageCount() const { return static_cast<uint32_t>(m_SwapchainImages.size()); };
+        uint32_t GetImageCount() const { return static_cast<uint32_t>(m_SwapchainImages.size()); }
+        uint32_t GetMaxFrameInFlight() const { return m_MaxFrameInFlight; }
 
     private:
         VkDevice m_Device;
