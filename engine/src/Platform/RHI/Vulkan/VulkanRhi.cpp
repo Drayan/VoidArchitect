@@ -28,7 +28,9 @@ namespace VoidArchitect::Platform
           m_Window(window),
           m_Allocator(nullptr),
           m_Instance{},
-          m_Capabilities{}
+          m_Capabilities{},
+          m_FramebufferWidth(window->GetWidth()),
+          m_FramebufferHeight(window->GetHeight())
     {
         //NOTE Currently we don't provide an allocator, but we might want to do it in the future
         // that's why there's m_Allocator already.
@@ -38,6 +40,12 @@ namespace VoidArchitect::Platform
         CreateDevice(window);
         CreateSwapchain();
         CreateRenderpass();
+
+        m_Swapchain->RegenerateFramebuffers(
+            m_MainRenderpass,
+            m_FramebufferWidth,
+            m_FramebufferHeight);
+
         CreateCommandBuffers();
 
         CreatePipeline();

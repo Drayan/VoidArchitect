@@ -43,6 +43,8 @@ namespace VoidArchitect::Platform
         void Begin(VulkanCommandBuffer& cmdBuf, VkFramebuffer framebuffer) const;
         void End(VulkanCommandBuffer& cmdBuf) const;
 
+        VkRenderPass GetHandle() const { return m_Renderpass; }
+
     private:
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;

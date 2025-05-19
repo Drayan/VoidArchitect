@@ -41,6 +41,8 @@ namespace VoidArchitect::Platform
         VulkanImage& operator=(VulkanImage&& other) noexcept;
         VulkanImage& operator=(const VulkanImage& other) = delete;
 
+        VkImageView GetView() const { return m_ImageView; }
+
     private:
         void CreateImage(
             const VulkanRHI& rhi,

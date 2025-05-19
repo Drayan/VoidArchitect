@@ -122,6 +122,30 @@ namespace VoidArchitect::Platform
         }
     }
 
+    void VulkanSwapchain::RegenerateFramebuffers(
+        const std::unique_ptr<VulkanRenderpass>& renderpass,
+        uint32_t width,
+        uint32_t height)
+    {
+        m_Framebuffers.clear();
+        m_Framebuffers.reserve(m_SwapchainImages.size());
+        for (auto i = 0; i < m_SwapchainImages.size(); i++)
+        {
+            std::vector attachments = {
+                m_SwapchainImages[i].GetView(),
+                m_DepthImage.GetView()
+            };
+            m_Framebuffers.emplace_back(
+                m_Device,
+                m_Allocator,
+                renderpass,
+                width,
+                height,
+                attachments
+            );
+        }
+    }
+
     bool VulkanSwapchain::AcquireNextImage(
         const uint64_t timeout,
         const VkSemaphore semaphore,
