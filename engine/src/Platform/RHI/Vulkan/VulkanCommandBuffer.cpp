@@ -7,6 +7,7 @@
 
 #include <vulkan/vulkan.h>
 
+#include "VulkanUtils.hpp"
 #include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
@@ -26,7 +27,8 @@ namespace VoidArchitect::Platform
                                  : VK_COMMAND_BUFFER_LEVEL_SECONDARY;
         allocateInfo.commandBufferCount = 1;
 
-        vkAllocateCommandBuffers(m_Device, &allocateInfo, &m_CommandBuffer);
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkAllocateCommandBuffers(m_Device, &allocateInfo, &m_CommandBuffer));
         m_State = CommandBufferState::Ready;
 
         VA_ENGINE_TRACE("[VulkanCommandBuffer] CommandBuffer created.");
@@ -62,21 +64,13 @@ namespace VoidArchitect::Platform
             beginInfo.flags |= VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
         }
 
-        if (vkBeginCommandBuffer(m_CommandBuffer, &beginInfo) != VK_SUCCESS)
-        {
-            VA_ENGINE_WARN("[VulkanCommandBuffer] Failed to begin command buffer.");
-            return;
-        }
+        VA_VULKAN_CHECK_RESULT_WARN(vkBeginCommandBuffer(m_CommandBuffer, &beginInfo));
         m_State = CommandBufferState::Recording;
     }
 
     void VulkanCommandBuffer::End()
     {
-        if (vkEndCommandBuffer(m_CommandBuffer) != VK_SUCCESS)
-        {
-            VA_ENGINE_WARN("[VulkanCommandBuffer] Failed to end command buffer.");
-            return;
-        }
+        VA_VULKAN_CHECK_RESULT_WARN(vkEndCommandBuffer(m_CommandBuffer));
         m_State = CommandBufferState::RecordingEnded;
     }
 
@@ -100,17 +94,9 @@ namespace VoidArchitect::Platform
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &handle;
-        if (vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS)
-        {
-            VA_ENGINE_WARN("[VulkanCommandBuffer] Failed to submit command buffer.");
-            return;
-        }
+        VA_VULKAN_CHECK_RESULT_WARN(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
 
         // Wait for it to finish
-        if (vkQueueWaitIdle(queue) != VK_SUCCESS)
-        {
-            VA_ENGINE_WARN("[VulkanCommandBuffer] Failed to wait for command buffer.");
-            return;
-        }
+        VA_VULKAN_CHECK_RESULT_WARN(vkQueueWaitIdle(queue));
     }
 } // VoidArchitect

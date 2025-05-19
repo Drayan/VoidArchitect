@@ -5,6 +5,7 @@
 
 #include "VulkanDevice.hpp"
 #include "VulkanSwapchain.hpp"
+#include "VulkanUtils.hpp"
 #include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
@@ -98,13 +99,13 @@ namespace VoidArchitect::Platform
         createInfo.dependencyCount = 1;
         createInfo.pDependencies = &dependencies;
 
-        if (vkCreateRenderPass(m_Device, &createInfo, m_Allocator, &m_Renderpass) != VK_SUCCESS)
-        {
-            VA_ENGINE_CRITICAL("[VulkanRenderpass] Failed to create a renderpass.");
-            return;
-        }
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreateRenderPass(m_Device, &createInfo, m_Allocator, &m_Renderpass));
 
-        m_ClearValues.emplace_back(VkClearValue{.color = {r, g, b, a}});
+        m_ClearValues.emplace_back(
+            VkClearValue{
+                .color = {{r, g, b, a}}
+            });
         m_ClearValues.emplace_back(VkClearValue{.depthStencil = {depth, stencil}});
 
         VA_ENGINE_TRACE("[VulkanRenderpass] Renderpass created.");
@@ -119,7 +120,9 @@ namespace VoidArchitect::Platform
         }
     }
 
-    void VulkanRenderpass::Begin(VulkanCommandBuffer& cmdBuf, const VkFramebuffer framebuffer) const
+    void VulkanRenderpass::Begin(
+        VulkanCommandBuffer& cmdBuf,
+        const VkFramebuffer framebuffer) const
     {
         auto beginInfo = VkRenderPassBeginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;

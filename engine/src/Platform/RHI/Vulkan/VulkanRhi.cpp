@@ -12,6 +12,7 @@
 #include "VulkanPipeline.hpp"
 #include "VulkanRenderpass.hpp"
 #include "VulkanSwapchain.hpp"
+#include "VulkanUtils.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -100,12 +101,7 @@ namespace VoidArchitect::Platform
         // Check if the frmaebuffer has been resized. If so, a new swapchain must be created.
         if (m_FramebufferSizeGeneration != m_FramebufferSizeLastGeneration)
         {
-            const auto result = vkDeviceWaitIdle(device);
-            if (result != VK_SUCCESS && result != VK_TIMEOUT)
-            {
-                VA_ENGINE_ERROR("[VulkanRHI] Failed to wait for device idle.");
-                return false;
-            }
+            m_Device->WaitIdle();
 
             // TODO Implement swapchain recreation on resize
             // if (!m_Swapchain.Recreate(m_FramebufferWidth, m_FramebufferHeight))
@@ -193,12 +189,12 @@ namespace VoidArchitect::Platform
         };
         submitInfo.pWaitDstStageMask = flags.data();
 
-        const auto result = vkQueueSubmit(
-            m_Device->GetGraphicsQueueHandle(),
-            1,
-            &submitInfo,
-            m_InFlightFences[m_CurrentIndex].GetHandle());
-        if (result != VK_SUCCESS)
+        if (VA_VULKAN_CHECK_RESULT(
+            vkQueueSubmit(
+                m_Device->GetGraphicsQueueHandle(),
+                1,
+                &submitInfo,
+                m_InFlightFences[m_CurrentIndex].GetHandle())))
         {
             VA_ENGINE_ERROR("[VulkanRHI] Failed to submit graphics command buffer.");
             return false;
@@ -268,17 +264,10 @@ namespace VoidArchitect::Platform
 
         // Get a list of supported validation layers
         uint32_t layerCount;
-        if (vkEnumerateInstanceLayerProperties(&layerCount, nullptr) != VK_SUCCESS)
-        {
-            VA_ENGINE_CRITICAL("[VulkanRHI] Failed to enumerate instance layers.");
-            return;
-        }
+        VA_VULKAN_CHECK_RESULT_CRITICAL(vkEnumerateInstanceLayerProperties(&layerCount, nullptr));
         std::vector<VkLayerProperties> availableLayers(layerCount);
-        if (vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data()) != VK_SUCCESS)
-        {
-            VA_ENGINE_CRITICAL("[VulkanRHI] Failed to enumerate instance layers.");
-            return;
-        }
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data()));
 
         // Verify that the required validation layers are supported
         for (const char* layerName : requiredValidationLayers)
@@ -323,7 +312,7 @@ namespace VoidArchitect::Platform
             .enabledExtensionCount = extensionCount,
             .ppEnabledExtensionNames = extensions,
         };
-        if (vkCreateInstance(&instanceCreateInfo, m_Allocator, &m_Instance) != VK_SUCCESS)
+        if (VA_VULKAN_CHECK_RESULT(vkCreateInstance(&instanceCreateInfo, m_Allocator, &m_Instance)))
         {
             std::stringstream ss;
             for (unsigned int i = 0; i < extensionCount; ++i)
@@ -394,20 +383,22 @@ namespace VoidArchitect::Platform
     {
         const auto physicalDevice = m_Device->GetPhysicalDeviceHandle();
         const auto surface = m_Device->GetRefSurface();
-        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-            physicalDevice,
-            surface,
-            &m_Capabilities
-        );
+        VA_VULKAN_CHECK_RESULT_WARN(
+            vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+                physicalDevice,
+                surface,
+                &m_Capabilities
+            ));
 
         // --- Formats ---
         uint32_t formatCount;
-        vkGetPhysicalDeviceSurfaceFormatsKHR(
-            physicalDevice,
-            surface,
-            &formatCount,
-            nullptr
-        );
+        VA_VULKAN_CHECK_RESULT_WARN(
+            vkGetPhysicalDeviceSurfaceFormatsKHR(
+                physicalDevice,
+                surface,
+                &formatCount,
+                nullptr
+            ));
 
         if (formatCount != 0)
         {
@@ -426,22 +417,24 @@ namespace VoidArchitect::Platform
 
         // --- Present modes ---
         uint32_t presentModeCount;
-        vkGetPhysicalDeviceSurfacePresentModesKHR(
-            physicalDevice,
-            surface,
-            &presentModeCount,
-            nullptr
-        );
-
-        if (presentModeCount != 0)
-        {
-            m_PresentModes.resize(presentModeCount);
+        VA_VULKAN_CHECK_RESULT_WARN(
             vkGetPhysicalDeviceSurfacePresentModesKHR(
                 physicalDevice,
                 surface,
                 &presentModeCount,
-                m_PresentModes.data()
-            );
+                nullptr
+            ));
+
+        if (presentModeCount != 0)
+        {
+            m_PresentModes.resize(presentModeCount);
+            VA_VULKAN_CHECK_RESULT_WARN(
+                vkGetPhysicalDeviceSurfacePresentModesKHR(
+                    physicalDevice,
+                    surface,
+                    &presentModeCount,
+                    m_PresentModes.data()
+                ));
         }
         else
         {
@@ -585,18 +578,20 @@ namespace VoidArchitect::Platform
             auto semaphoreCreateInfo = VkSemaphoreCreateInfo{};
             semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
             VkSemaphore semaphore;
-            vkCreateSemaphore(
-                m_Device->GetLogicalDeviceHandle(),
-                &semaphoreCreateInfo,
-                m_Allocator,
-                &semaphore);
+            VA_VULKAN_CHECK_RESULT_WARN(
+                vkCreateSemaphore(
+                    m_Device->GetLogicalDeviceHandle(),
+                    &semaphoreCreateInfo,
+                    m_Allocator,
+                    &semaphore));
             m_ImageAvailableSemaphores.push_back(semaphore);
 
-            vkCreateSemaphore(
-                m_Device->GetLogicalDeviceHandle(),
-                &semaphoreCreateInfo,
-                m_Allocator,
-                &semaphore);
+            VA_VULKAN_CHECK_RESULT_WARN(
+                vkCreateSemaphore(
+                    m_Device->GetLogicalDeviceHandle(),
+                    &semaphoreCreateInfo,
+                    m_Allocator,
+                    &semaphore));
             m_QueueCompleteSemaphores.push_back(semaphore);
 
             m_InFlightFences.emplace_back(m_Device, m_Allocator, true);
@@ -707,16 +702,13 @@ namespace VoidArchitect::Platform
             vkCreateDebugUtilsMessengerEXT != nullptr,
             "[VulkanRHI] Failed to load debug messenger create function."
         )
-        if (vkCreateDebugUtilsMessengerEXT(
-            m_Instance,
-            &debugCreateInfo,
-            m_Allocator,
-            &m_DebugMessenger
-        ) != VK_SUCCESS)
-        {
-            VA_ENGINE_CRITICAL("[VulkanRHI] Failed to create debug messenger.");
-            return;
-        }
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreateDebugUtilsMessengerEXT(
+                m_Instance,
+                &debugCreateInfo,
+                m_Allocator,
+                &m_DebugMessenger
+            ));
 
         VA_ENGINE_INFO("[VulkanRHI] Debug messenger created.");
     }

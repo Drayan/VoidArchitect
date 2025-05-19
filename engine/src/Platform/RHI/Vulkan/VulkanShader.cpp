@@ -4,6 +4,7 @@
 #include "VulkanShader.hpp"
 
 #include "VulkanDevice.hpp"
+#include "VulkanUtils.hpp"
 #include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
@@ -22,11 +23,8 @@ namespace VoidArchitect::Platform
         createInfo.codeSize = shaderCode.size();
         createInfo.pCode = reinterpret_cast<const uint32_t*>(shaderCode.data());
 
-        if (vkCreateShaderModule(m_Device, &createInfo, m_Allocator, &m_ShaderModule) != VK_SUCCESS)
-        {
-            VA_ENGINE_ERROR("[VulkanShader] Failed to create shader module.");
-            throw std::runtime_error("Failed to create shader module!");
-        }
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreateShaderModule(m_Device, &createInfo, m_Allocator, &m_ShaderModule));
     }
 
     VulkanShader::~VulkanShader()

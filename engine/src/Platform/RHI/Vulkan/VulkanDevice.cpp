@@ -10,6 +10,8 @@
 
 #include <SDL3/SDL_vulkan.h>
 
+#include "VulkanUtils.hpp"
+
 namespace VoidArchitect::Platform
 {
     VulkanDevice::VulkanDevice(
@@ -61,7 +63,7 @@ namespace VoidArchitect::Platform
 
     void VulkanDevice::WaitIdle() const
     {
-        vkDeviceWaitIdle(m_LogicalDevice);
+        VA_VULKAN_CHECK_RESULT_WARN(vkDeviceWaitIdle(m_LogicalDevice));
         VA_ENGINE_DEBUG("[VulkanDevice] Device wait idle.");
     }
 
@@ -69,11 +71,12 @@ namespace VoidArchitect::Platform
     {
         // First, querying for deviceCount
         unsigned int deviceCount = 0;
-        vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
+        VA_VULKAN_CHECK_RESULT_CRITICAL(vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr));
 
         // Now, querying for device information.
         std::vector<VkPhysicalDevice> devices(deviceCount);
-        vkEnumeratePhysicalDevices(m_Instance, &deviceCount, devices.data());
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkEnumeratePhysicalDevices(m_Instance, &deviceCount, devices.data()));
 
         if (deviceCount == 0)
         {
@@ -123,14 +126,16 @@ namespace VoidArchitect::Platform
 
         // --- Device's extensions ---
         uint32_t extensionCount = 0;
-        vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr));
         std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-        if (vkEnumerateDeviceExtensionProperties(
-            device,
-            nullptr,
-            &extensionCount,
-            availableExtensions.data()
-        ))
+        if (VA_VULKAN_CHECK_RESULT(
+            vkEnumerateDeviceExtensionProperties(
+                device,
+                nullptr,
+                &extensionCount,
+                availableExtensions.data()
+            )))
         {
             VA_ENGINE_CRITICAL("[VulkanDevice] Failed to enumerate device extensions.");
             throw std::runtime_error("Failed to enumerate device extensions.");
@@ -188,8 +193,8 @@ namespace VoidArchitect::Platform
             .ppEnabledExtensionNames = requirements.Extensions.data(),
             .pEnabledFeatures = &m_PhysicalDeviceFeatures,
         };
-        if (vkCreateDevice(m_PhysicalDevice, &deviceCreateInfo, m_Allocator, &m_LogicalDevice) !=
-            VK_SUCCESS)
+        if (VA_VULKAN_CHECK_RESULT(
+            vkCreateDevice(m_PhysicalDevice, &deviceCreateInfo, m_Allocator, &m_LogicalDevice)))
         {
             VA_ENGINE_CRITICAL("[VulkanDevice] Failed to create logical device.");
             throw std::runtime_error("Failed to create logical device.");
@@ -207,12 +212,13 @@ namespace VoidArchitect::Platform
         poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         poolCreateInfo.queueFamilyIndex = m_GraphicsQueueFamilyIndex.value();
         poolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-        if (vkCreateCommandPool(
+        if (VA_VULKAN_CHECK_RESULT(
+            vkCreateCommandPool(
                 m_LogicalDevice,
                 &poolCreateInfo,
                 m_Allocator,
-                &m_GraphicsCommandPool) !=
-            VK_SUCCESS)
+                &m_GraphicsCommandPool)
+        ))
         {
             VA_ENGINE_CRITICAL("[VulkanDevice] Failed to create graphics command pool.");
             throw std::runtime_error("Failed to create graphics command pool.");
@@ -258,12 +264,13 @@ namespace VoidArchitect::Platform
                 m_ComputeQueueFamilyIndex = queueFamilyIndex;
 
             VkBool32 presentSupport = false;
-            vkGetPhysicalDeviceSurfaceSupportKHR(
-                m_PhysicalDevice,
-                queueFamilyIndex,
-                m_Surface,
-                &presentSupport
-            );
+            VA_VULKAN_CHECK_RESULT_WARN(
+                vkGetPhysicalDeviceSurfaceSupportKHR(
+                    m_PhysicalDevice,
+                    queueFamilyIndex,
+                    m_Surface,
+                    &presentSupport
+                ));
 
             if (presentSupport)
                 m_PresentQueueFamilyIndex = queueFamilyIndex;

@@ -5,6 +5,7 @@
 
 #include "VulkanImage.hpp"
 #include "VulkanRhi.hpp"
+#include "VulkanUtils.hpp"
 #include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
@@ -60,28 +61,23 @@ namespace VoidArchitect::Platform
         swapchainCreateInfo.clipped = VK_TRUE;
         swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
-        if (vkCreateSwapchainKHR(
-            m_Device,
-            &swapchainCreateInfo,
-            m_Allocator,
-            &m_Swapchain) != VK_SUCCESS)
-        {
-            VA_ENGINE_CRITICAL("[VulkanSwapchain] Failed to create the swapchain.");
-            throw std::runtime_error("Failed to create the swapchain.");
-        }
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreateSwapchainKHR(
+                m_Device,
+                &swapchainCreateInfo,
+                m_Allocator,
+                &m_Swapchain));
 
         // Retrieve the images from the swapchain...
-        vkGetSwapchainImagesKHR(m_Device, m_Swapchain, &imageCount, nullptr);
+        VA_VULKAN_CHECK_RESULT_WARN(
+            vkGetSwapchainImagesKHR(m_Device, m_Swapchain, &imageCount, nullptr));
         auto images = std::vector<VkImage>(imageCount);
-        if (vkGetSwapchainImagesKHR(
-            m_Device,
-            m_Swapchain,
-            &imageCount,
-            images.data()) != VK_SUCCESS)
-        {
-            VA_ENGINE_CRITICAL("[VulkanSwapchain] Failed to retrieve the swapchain images.");
-            throw std::runtime_error("Failed to retrieve the swapchain images.");
-        }
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkGetSwapchainImagesKHR(
+                m_Device,
+                m_Swapchain,
+                &imageCount,
+                images.data()));
 
         // And give them wrapped into our VulkanImage object that manages Image and ImageView.
         m_SwapchainImages.reserve(images.size());
@@ -129,7 +125,7 @@ namespace VoidArchitect::Platform
     {
         m_Framebuffers.clear();
         m_Framebuffers.reserve(m_SwapchainImages.size());
-        for (auto i = 0; i < m_SwapchainImages.size(); i++)
+        for (size_t i = 0; i < m_SwapchainImages.size(); i++)
         {
             std::vector attachments = {
                 m_SwapchainImages[i].GetView(),
@@ -169,8 +165,7 @@ namespace VoidArchitect::Platform
             return false;
         }
 
-        if (result != VK_SUCCESS && result != VK_TIMEOUT && result != VK_NOT_READY && result !=
-            VK_SUBOPTIMAL_KHR)
+        if (VA_VULKAN_CHECK_RESULT(result))
         {
             VA_ENGINE_CRITICAL("[VulkanSwapchain] Failed to acquire next image.");
             throw std::runtime_error("Failed to acquire next image.");
@@ -197,7 +192,7 @@ namespace VoidArchitect::Platform
         {
             //TODO Recreate the swapchain
         }
-        else if (result != VK_SUCCESS)
+        else if (VA_VULKAN_CHECK_RESULT(result))
         {
             VA_ENGINE_CRITICAL("[VulkanSwapchain] Failed to present.");
             throw std::runtime_error("Failed to present.");

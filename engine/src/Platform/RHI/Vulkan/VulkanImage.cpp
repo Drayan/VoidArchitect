@@ -4,6 +4,7 @@
 #include "VulkanImage.hpp"
 
 #include "VulkanRhi.hpp"
+#include "VulkanUtils.hpp"
 #include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
@@ -114,19 +115,10 @@ namespace VoidArchitect::Platform
         createInfo.samples = VK_SAMPLE_COUNT_1_BIT;
         createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        if (vkCreateImage(m_Device, &createInfo, m_Allocator, &m_Image) != VK_SUCCESS)
-        {
-            VA_ENGINE_WARN("[VulkanImage] Failed to create image.");
-            return;
-        }
+        VA_VULKAN_CHECK_RESULT_WARN(vkCreateImage(m_Device, &createInfo, m_Allocator, &m_Image));
 
         // Query memory requirements
         VkMemoryRequirements memRequirements;
-        if (vkGetImageMemoryRequirements == nullptr)
-        {
-            VA_ENGINE_CRITICAL("[VulkanImage] Failed to get vkGetImageMemoryRequirements.");
-            return;
-        }
         vkGetImageMemoryRequirements(m_Device, m_Image, &memRequirements);
         const int32_t memoryTypeIndex = rhi.FindMemoryIndex(
             memRequirements.memoryTypeBits,
@@ -143,18 +135,11 @@ namespace VoidArchitect::Platform
         allocateInfo.allocationSize = memRequirements.size;
         allocateInfo.memoryTypeIndex = memoryTypeIndex;
 
-        if (vkAllocateMemory(m_Device, &allocateInfo, m_Allocator, &m_Memory) != VK_SUCCESS)
-        {
-            VA_ENGINE_WARN("[VulkanImage] Failed to allocate memory.");
-            return;
-        }
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkAllocateMemory(m_Device, &allocateInfo, m_Allocator, &m_Memory));
 
         // Bind the memory, TODO Configurable memory offset
-        if (vkBindImageMemory(m_Device, m_Image, m_Memory, 0) != VK_SUCCESS)
-        {
-            VA_ENGINE_WARN("[VulkanImage] Failed to bind memory.");
-            return;
-        }
+        VA_VULKAN_CHECK_RESULT_WARN(vkBindImageMemory(m_Device, m_Image, m_Memory, 0));
     }
 
     void VulkanImage::CreateImageView(
@@ -177,14 +162,12 @@ namespace VoidArchitect::Platform
         createInfo.components.b = VK_COMPONENT_SWIZZLE_B;
         createInfo.components.a = VK_COMPONENT_SWIZZLE_A;
 
-        if (vkCreateImageView(
-            m_Device,
-            &createInfo,
-            m_Allocator,
-            &m_ImageView) != VK_SUCCESS)
-        {
-            VA_ENGINE_WARN("[VulkanImage] Failed to create ImageView.");
-        }
+        VA_VULKAN_CHECK_RESULT_WARN(
+            vkCreateImageView(
+                m_Device,
+                &createInfo,
+                m_Allocator,
+                &m_ImageView));
     }
 
     void VulkanImage::InvalidateResources()

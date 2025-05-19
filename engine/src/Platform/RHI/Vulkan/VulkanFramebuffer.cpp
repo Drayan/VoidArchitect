@@ -6,6 +6,7 @@
 #include <ranges>
 
 #include "VulkanRenderpass.hpp"
+#include "VulkanUtils.hpp"
 #include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
@@ -56,15 +57,12 @@ namespace VoidArchitect::Platform
         framebufferInfo.height = height;
         framebufferInfo.layers = 1;
 
-        if (vkCreateFramebuffer(
-            m_Device,
-            &framebufferInfo,
-            m_Allocator,
-            &m_Framebuffer) != VK_SUCCESS)
-        {
-            VA_ENGINE_CRITICAL("[VulkanFramebuffer] Failed to create framebuffer.");
-            throw std::runtime_error("Failed to create framebuffer!");
-        }
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreateFramebuffer(
+                m_Device,
+                &framebufferInfo,
+                m_Allocator,
+                &m_Framebuffer));
     }
 
     VulkanFramebuffer::~VulkanFramebuffer()

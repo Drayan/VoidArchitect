@@ -4,6 +4,7 @@
 #include "VulkanFence.hpp"
 
 #include "VulkanDevice.hpp"
+#include "VulkanUtils.hpp"
 #include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
@@ -20,12 +21,8 @@ namespace VoidArchitect::Platform
         fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         fenceCreateInfo.flags = createSignaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
 
-        if (vkCreateFence(m_Device, &fenceCreateInfo, m_Allocator, &m_Fence) != VK_SUCCESS)
-        {
-            VA_ENGINE_WARN("[VulkanFence] Failed to create fence.");
-            return;
-        }
-
+        VA_VULKAN_CHECK_RESULT_WARN(
+            vkCreateFence(m_Device, &fenceCreateInfo, m_Allocator, &m_Fence));
         VA_ENGINE_TRACE("[VulkanFence] Fence created.");
     }
 
@@ -45,7 +42,7 @@ namespace VoidArchitect::Platform
             return true;
         }
 
-        switch (vkWaitForFences(m_Device, 1, &m_Fence, VK_TRUE, timeout))
+        switch (const auto result = vkWaitForFences(m_Device, 1, &m_Fence, VK_TRUE, timeout))
         {
             case VK_SUCCESS:
             {
@@ -69,7 +66,9 @@ namespace VoidArchitect::Platform
                 break;
 
             default:
-                VA_ENGINE_ERROR("[VulkanFence] Fence wait failed with unknown error.");
+                VA_ENGINE_ERROR(
+                    "[VulkanFence] Fence wait failed with {}.",
+                    VulkanGetResultString(result));
                 break;
         }
 
@@ -80,11 +79,7 @@ namespace VoidArchitect::Platform
     {
         if (!m_Signaled) return;
 
-        if (vkResetFences(m_Device, 1, &m_Fence) != VK_SUCCESS)
-        {
-            VA_ENGINE_WARN("[VulkanFence] Failed to reset fence.");
-            return;
-        }
+        VA_VULKAN_CHECK_RESULT_WARN(vkResetFences(m_Device, 1, &m_Fence));
         m_Signaled = false;
     }
 } // VoidArchitect
