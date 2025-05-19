@@ -26,6 +26,20 @@ namespace VoidArchitect::Platform
         VA_ENGINE_TRACE("[VulkanFence] Fence created.");
     }
 
+    VulkanFence::VulkanFence(VkDevice device, VkAllocationCallbacks* allocator, bool createSignaled)
+        : m_Device{device},
+          m_Allocator{allocator},
+          m_Signaled{createSignaled}
+    {
+        auto fenceCreateInfo = VkFenceCreateInfo{};
+        fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+        fenceCreateInfo.flags = createSignaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
+
+        VA_VULKAN_CHECK_RESULT_WARN(
+            vkCreateFence(m_Device, &fenceCreateInfo, m_Allocator, &m_Fence));
+        VA_ENGINE_TRACE("[VulkanFence] Fence created.");
+    }
+
     VulkanFence::~VulkanFence()
     {
         if (m_Fence != VK_NULL_HANDLE)

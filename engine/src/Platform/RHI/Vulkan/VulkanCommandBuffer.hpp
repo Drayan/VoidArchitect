@@ -22,10 +22,12 @@ namespace VoidArchitect::Platform
     class VulkanCommandBuffer
     {
     public:
+        VulkanCommandBuffer() = default;
         VulkanCommandBuffer(
             const std::unique_ptr<VulkanDevice>& device,
             VkCommandPool pool,
             bool isPrimary = true);
+        VulkanCommandBuffer(VkDevice device, VkCommandPool pool, bool isPrimary = true);
         ~VulkanCommandBuffer();
 
         void Begin(
@@ -37,6 +39,10 @@ namespace VoidArchitect::Platform
 
         static void SingleUseBegin(
             const std::unique_ptr<VulkanDevice>& device,
+            VkCommandPool pool,
+            VulkanCommandBuffer& cmdBuf);
+        static void SingleUseBegin(
+            VkDevice device,
             VkCommandPool pool,
             VulkanCommandBuffer& cmdBuf);
         static void SingleUseEnd(

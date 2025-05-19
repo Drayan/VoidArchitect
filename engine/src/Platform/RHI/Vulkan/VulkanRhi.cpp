@@ -8,6 +8,7 @@
 
 #include <SDL3/SDL_vulkan.h>
 
+#include "VulkanBuffer.hpp"
 #include "VulkanFence.hpp"
 #include "VulkanPipeline.hpp"
 #include "VulkanRenderpass.hpp"
@@ -55,11 +56,54 @@ namespace VoidArchitect::Platform
         CreateSyncObjects();
 
         CreatePipeline();
+
+        //TEMP Create testing buffers here.
+        const std::vector vertices = {
+            -0.5f,
+            -0.5f,
+            0.0f,
+            0.0f,
+            0.5f,
+            0.0f,
+            0.5f,
+            -0.5f,
+            0.0f,
+        };
+        const std::vector<uint32_t> indices = {
+            0,
+            1,
+            2
+        };
+        m_VertexBuffer = std::make_unique<VulkanBuffer>(
+            *this,
+            m_Device,
+            m_Allocator,
+            vertices.size() * sizeof(float),
+            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        m_VertexBuffer->LoadData(vertices);
+
+        m_IndexBuffer = std::make_unique<VulkanBuffer>(
+            *this,
+            m_Device,
+            m_Allocator,
+            indices.size() * sizeof(uint32_t),
+            VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        m_IndexBuffer->LoadData(indices);
+        //TEMP End of temporary code
     }
 
     VulkanRHI::~VulkanRHI()
     {
         m_Device->WaitIdle();
+
+        // TEMP Test code for buffers
+        m_VertexBuffer.reset();
+        m_IndexBuffer.reset();
+        // TEMP End of temp code
 
         m_Pipeline.reset();
         VA_ENGINE_INFO("[VulkanRHI] Pipeline destroyed.");
@@ -167,6 +211,18 @@ namespace VoidArchitect::Platform
         vkCmdSetScissor(cmdBuf.GetHandle(), 0, 1, &scissor);
 
         m_MainRenderpass->Begin(cmdBuf, m_Swapchain->GetFramebufferHandle(m_ImageIndex));
+
+        m_Pipeline->Bind(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS);
+
+        const auto offsets = VkDeviceSize{0};
+        const auto vertexBuffer = m_VertexBuffer->GetHandle();
+        vkCmdBindVertexBuffers(cmdBuf.GetHandle(), 0, 1, &vertexBuffer, &offsets);
+        vkCmdBindIndexBuffer(
+            cmdBuf.GetHandle(),
+            m_IndexBuffer->GetHandle(),
+            0,
+            VK_INDEX_TYPE_UINT32);
+        vkCmdDrawIndexed(cmdBuf.GetHandle(), 3, 1, 0, 0, 0);
         return true;
     }
 
@@ -558,8 +614,8 @@ namespace VoidArchitect::Platform
             0,
             m_FramebufferWidth,
             m_FramebufferHeight,
-            0.2f,
             0.0f,
+            0.1f,
             0.0f,
             1.0f,
             1.0f,

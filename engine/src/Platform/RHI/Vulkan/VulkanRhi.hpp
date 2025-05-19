@@ -21,6 +21,7 @@ namespace VoidArchitect::Platform
     class VulkanPipeline;
     class VulkanFence;
     class VulkanShader;
+    class VulkanBuffer;
 
     class VulkanRHI final : public IRenderingHardware
     {
@@ -104,6 +105,9 @@ namespace VoidArchitect::Platform
 
         std::vector<VulkanShader> m_Shaders;
         std::unique_ptr<VulkanPipeline> m_Pipeline;
+
+        std::unique_ptr<VulkanBuffer> m_VertexBuffer;
+        std::unique_ptr<VulkanBuffer> m_IndexBuffer;
 
         uint32_t m_FramebufferWidth;
         uint32_t m_FramebufferHeight;

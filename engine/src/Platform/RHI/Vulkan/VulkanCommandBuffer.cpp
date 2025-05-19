@@ -34,6 +34,25 @@ namespace VoidArchitect::Platform
         VA_ENGINE_TRACE("[VulkanCommandBuffer] CommandBuffer created.");
     }
 
+    VulkanCommandBuffer::VulkanCommandBuffer(VkDevice device, VkCommandPool pool, bool isPrimary)
+        : m_Device(device),
+          m_Pool(pool)
+    {
+        auto allocateInfo = VkCommandBufferAllocateInfo{};
+        allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocateInfo.commandPool = pool;
+        allocateInfo.level = isPrimary
+                                 ? VK_COMMAND_BUFFER_LEVEL_PRIMARY
+                                 : VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+        allocateInfo.commandBufferCount = 1;
+
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkAllocateCommandBuffers(m_Device, &allocateInfo, &m_CommandBuffer));
+        m_State = CommandBufferState::Ready;
+
+        VA_ENGINE_TRACE("[VulkanCommandBuffer] CommandBuffer created.");
+    }
+
     VulkanCommandBuffer::~VulkanCommandBuffer()
     {
         vkFreeCommandBuffers(m_Device, m_Pool, 1, &m_CommandBuffer);
@@ -76,6 +95,15 @@ namespace VoidArchitect::Platform
 
     void VulkanCommandBuffer::SingleUseBegin(
         const std::unique_ptr<VulkanDevice>& device,
+        const VkCommandPool pool,
+        VulkanCommandBuffer& cmdBuf)
+    {
+        cmdBuf = VulkanCommandBuffer(device, pool);
+        cmdBuf.Begin(true);
+    }
+
+    void VulkanCommandBuffer::SingleUseBegin(
+        const VkDevice device,
         const VkCommandPool pool,
         VulkanCommandBuffer& cmdBuf)
     {

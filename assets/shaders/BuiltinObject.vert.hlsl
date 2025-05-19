@@ -1,17 +1,20 @@
-struct VSInput
+struct VS_INPUT
 {
-[[vk::location(0)]] float3 Position : POSITION0;
+    [[vk::location(0)]]
+    float3 Position : POSITION;
 };
 
-struct VSOutput
+struct VS_OUTPUT
 {
-    float4 Position : SV_POSITION;
+    [[vk::location(0)]]
+    float3 Position : POSITION;
+    float4 OutPosition : SV_POSITION;
 };
 
-VSOutput main(VSInput input, uint VertexIndex : SV_VertexID)
+VS_OUTPUT main(VS_INPUT input)
 {
-    VSOutput output = (VSOutput)0;
-    output.Position = float4(input.Position, 1.0);
-
+    VS_OUTPUT output;
+    output.Position = input.Position;
+    output.OutPosition = float4(input.Position, 1.0);
     return output;
 }
