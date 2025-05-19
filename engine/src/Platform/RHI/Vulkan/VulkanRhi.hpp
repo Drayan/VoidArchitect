@@ -15,6 +15,7 @@ namespace VoidArchitect
 
 namespace VoidArchitect::Platform
 {
+    class VulkanCommandBuffer;
     class VulkanSwapchain;
     class VulkanRenderpass;
     class VulkanPipeline;
@@ -48,6 +49,7 @@ namespace VoidArchitect::Platform
         VkFormat ChooseDepthFormat() const;
 
         void CreateRenderpass();
+        void CreateCommandBuffers();
         void CreatePipeline();
 
 #ifdef DEBUG
@@ -78,6 +80,8 @@ namespace VoidArchitect::Platform
         uint32_t m_CurrentIndex;
         std::unique_ptr<VulkanSwapchain> m_Swapchain;
         std::unique_ptr<VulkanRenderpass> m_MainRenderpass;
+        std::vector<std::unique_ptr<VulkanCommandBuffer>> m_GraphicsCommandBuffers;
+
         std::unique_ptr<VulkanPipeline> m_Pipeline;
 
         uint32_t m_FramebufferWidth;

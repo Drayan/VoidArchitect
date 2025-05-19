@@ -38,6 +38,7 @@ namespace VoidArchitect::Platform
         CreateDevice(window);
         CreateSwapchain();
         CreateRenderpass();
+        CreateCommandBuffers();
 
         CreatePipeline();
     }
@@ -46,6 +47,9 @@ namespace VoidArchitect::Platform
     {
         m_Pipeline.reset();
         VA_ENGINE_INFO("[VulkanRHI] Pipeline destroyed.");
+
+        m_GraphicsCommandBuffers.clear();
+        VA_ENGINE_INFO("[VulkanRHI] Command buffers destroyed.");
 
         m_MainRenderpass.reset();
         VA_ENGINE_INFO("[VulkanRHI] Main renderpass destroyed.");
@@ -404,6 +408,23 @@ namespace VoidArchitect::Platform
             1.0f,
             0
         );
+    }
+
+    void VulkanRHI::CreateCommandBuffers()
+    {
+        m_GraphicsCommandBuffers.clear();
+
+        const auto imageCount = m_Swapchain->GetImageCount();
+        m_GraphicsCommandBuffers.resize(imageCount);
+        for (auto i = 0; i < imageCount; i++)
+        {
+            m_GraphicsCommandBuffers.emplace_back(
+                std::make_unique<VulkanCommandBuffer>(
+                    m_Device,
+                    m_Device->GetGraphicsCommandPool()));
+        }
+
+        VA_ENGINE_INFO("[VulkanRHI] Command buffers created.");
     }
 
     void VulkanRHI::CreatePipeline()

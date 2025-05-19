@@ -14,7 +14,7 @@ namespace VoidArchitect::Platform
     VulkanCommandBuffer::VulkanCommandBuffer(
         const std::unique_ptr<VulkanDevice>& device,
         const VkCommandPool pool,
-        const bool isPrimary = true)
+        const bool isPrimary)
         : m_Device(device->GetLogicalDeviceHandle()),
           m_Pool(pool)
     {

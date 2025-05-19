@@ -25,7 +25,7 @@ namespace VoidArchitect::Platform
         VulkanCommandBuffer(
             const std::unique_ptr<VulkanDevice>& device,
             VkCommandPool pool,
-            bool isPrimary);
+            bool isPrimary = true);
         ~VulkanCommandBuffer();
 
         void Begin(bool isSingleUse, bool isRenderPassContinue, bool isSimultaneousUse);

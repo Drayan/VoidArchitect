@@ -192,10 +192,35 @@ namespace VoidArchitect::Platform
 
         // Now we can retrieve the device's queues
         vkGetDeviceQueue(m_LogicalDevice, m_GraphicsQueueFamilyIndex.value(), 0, &m_GraphicsQueue);
+        vkGetDeviceQueue(m_LogicalDevice, m_PresentQueueFamilyIndex.value(), 0, &m_PresentQueue);
+        vkGetDeviceQueue(m_LogicalDevice, m_TransferQueueFamilyIndex.value(), 0, &m_TransferQueue);
+        vkGetDeviceQueue(m_LogicalDevice, m_ComputeQueueFamilyIndex.value(), 0, &m_ComputeQueue);
+
+        // Create command pool for graphics queue
+        auto poolCreateInfo = VkCommandPoolCreateInfo{};
+        poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolCreateInfo.queueFamilyIndex = m_GraphicsQueueFamilyIndex.value();
+        poolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+        if (vkCreateCommandPool(
+                m_LogicalDevice,
+                &poolCreateInfo,
+                m_Allocator,
+                &m_GraphicsCommandPool) !=
+            VK_SUCCESS)
+        {
+            VA_ENGINE_CRITICAL("[VulkanDevice] Failed to create graphics command pool.");
+            throw std::runtime_error("Failed to create graphics command pool.");
+        }
     }
 
     void VulkanDevice::DestroyLogicalDevice()
     {
+        if (m_GraphicsCommandPool != VK_NULL_HANDLE)
+        {
+            vkDestroyCommandPool(m_LogicalDevice, m_GraphicsCommandPool, m_Allocator);
+            m_GraphicsCommandPool = VK_NULL_HANDLE;
+            VA_ENGINE_DEBUG("[VulkanDevice] Graphics command pool destroyed.");
+        }
         if (m_LogicalDevice != VK_NULL_HANDLE)
         {
             vkDestroyDevice(m_LogicalDevice, m_Allocator);

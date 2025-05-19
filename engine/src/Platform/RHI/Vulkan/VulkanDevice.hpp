@@ -51,6 +51,10 @@ namespace VoidArchitect::Platform
             return m_ComputeQueueFamilyIndex;
         }
 
+        VkCommandPool GetGraphicsCommandPool() const { return m_GraphicsCommandPool; }
+        VkCommandPool GetTransferCommandPool() const { return m_TransferCommandPool; }
+        VkCommandPool GetComputeCommandPool() const { return m_ComputeCommandPool; }
+
     private:
         void SelectPhysicalDevice(const DeviceRequirements& requirements);
         bool IsDeviceMeetRequirements(
@@ -82,5 +86,9 @@ namespace VoidArchitect::Platform
         VkQueue m_PresentQueue;
         VkQueue m_TransferQueue;
         VkQueue m_ComputeQueue;
+
+        VkCommandPool m_GraphicsCommandPool;
+        VkCommandPool m_TransferCommandPool;
+        VkCommandPool m_ComputeCommandPool;
     };
 } // VoidArchitect::Platform
