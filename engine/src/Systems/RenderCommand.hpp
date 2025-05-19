@@ -26,6 +26,8 @@ namespace VoidArchitect
         static void Initialize(Platform::RHI_API_TYPE apiType, std::unique_ptr<Window>& window);
         static void Shutdown();
 
+        static void Resize(uint32_t width, uint32_t height);
+
         static bool BeginFrame(float deltaTime);
         static bool EndFrame(float deltaTime);
 

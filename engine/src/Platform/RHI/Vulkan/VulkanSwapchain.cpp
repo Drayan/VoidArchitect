@@ -18,7 +18,7 @@ namespace VoidArchitect::Platform
         const VkPresentModeKHR presentMode,
         const VkExtent2D extent,
         const VkFormat depthFormat)
-        : m_Device(device->GetLogicalDeviceHandle()),
+        : m_Device(device),
           m_Allocator(allocator),
           m_Swapchain(VK_NULL_HANDLE),
           m_Format(format),
@@ -63,18 +63,19 @@ namespace VoidArchitect::Platform
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(
             vkCreateSwapchainKHR(
-                m_Device,
+                m_Device->GetLogicalDeviceHandle(),
                 &swapchainCreateInfo,
                 m_Allocator,
                 &m_Swapchain));
 
         // Retrieve the images from the swapchain...
         VA_VULKAN_CHECK_RESULT_WARN(
-            vkGetSwapchainImagesKHR(m_Device, m_Swapchain, &imageCount, nullptr));
+            vkGetSwapchainImagesKHR(m_Device->GetLogicalDeviceHandle(), m_Swapchain, &imageCount,
+                nullptr));
         auto images = std::vector<VkImage>(imageCount);
         VA_VULKAN_CHECK_RESULT_CRITICAL(
             vkGetSwapchainImagesKHR(
-                m_Device,
+                m_Device->GetLogicalDeviceHandle(),
                 m_Swapchain,
                 &imageCount,
                 images.data()));
@@ -114,7 +115,7 @@ namespace VoidArchitect::Platform
 
         if (m_Swapchain != VK_NULL_HANDLE)
         {
-            vkDestroySwapchainKHR(m_Device, m_Swapchain, m_Allocator);
+            vkDestroySwapchainKHR(m_Device->GetLogicalDeviceHandle(), m_Swapchain, m_Allocator);
         }
     }
 
@@ -132,7 +133,7 @@ namespace VoidArchitect::Platform
                 m_DepthImage.GetView()
             };
             m_Framebuffers.emplace_back(
-                m_Device,
+                m_Device->GetLogicalDeviceHandle(),
                 m_Allocator,
                 renderpass,
                 width,
@@ -153,7 +154,7 @@ namespace VoidArchitect::Platform
         uint32_t& out_imageIndex) const
     {
         auto result = vkAcquireNextImageKHR(
-            m_Device,
+            m_Device->GetLogicalDeviceHandle(),
             m_Swapchain,
             timeout,
             semaphore,
@@ -197,5 +198,23 @@ namespace VoidArchitect::Platform
             VA_ENGINE_CRITICAL("[VulkanSwapchain] Failed to present.");
             throw std::runtime_error("Failed to present.");
         }
+    }
+
+    void VulkanSwapchain::Recreate(
+        VulkanRHI& rhi,
+        const VkExtent2D extents,
+        const VkFormat depthFormat)
+    {
+        VA_ENGINE_TRACE("[VulkanSwapchain] Recreating swapchain.");
+        this->~VulkanSwapchain();
+        new(this) VulkanSwapchain(
+            rhi,
+            m_Device,
+            m_Allocator,
+            m_Format,
+            m_PresentMode,
+            extents,
+            depthFormat);
+        VA_ENGINE_TRACE("[VulkanSwapchain] Swapchain recreated.");
     }
 } // VoidArchitect

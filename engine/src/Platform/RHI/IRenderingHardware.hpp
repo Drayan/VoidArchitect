@@ -18,6 +18,8 @@ namespace VoidArchitect::Platform
         IRenderingHardware() = default;
         virtual ~IRenderingHardware() = default;
 
+        virtual void Resize(uint32_t width, uint32_t height) = 0;
+
         virtual bool BeginFrame(float deltaTime) = 0;
         virtual bool EndFrame(float deltaTime) = 0;
     };

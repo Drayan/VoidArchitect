@@ -59,6 +59,7 @@ namespace VoidArchitect
     {
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+        dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(OnWindowResized));
         //TEMP This should not stay here; it's just a convenience to hit ESC to quit the app for now.
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyPressed));
 
@@ -77,6 +78,12 @@ namespace VoidArchitect
     bool Application::OnWindowClose(WindowCloseEvent& e)
     {
         m_Running = false;
+        return true;
+    }
+
+    bool Application::OnWindowResized(WindowResizedEvent& e)
+    {
+        RenderCommand::Resize(e.GetWidth(), e.GetHeight());
         return true;
     }
 

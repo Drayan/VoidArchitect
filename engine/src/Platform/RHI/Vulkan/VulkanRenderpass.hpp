@@ -45,6 +45,11 @@ namespace VoidArchitect::Platform
 
         VkRenderPass GetHandle() const { return m_Renderpass; }
 
+        void SetWidth(const uint32_t width) { m_w = width; };
+        void SetHeight(const uint32_t height) { m_h = height; };
+        void SetX(const uint32_t x) { m_x = x; };
+        void SetY(const uint32_t y) { m_y = y; };
+
     private:
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;

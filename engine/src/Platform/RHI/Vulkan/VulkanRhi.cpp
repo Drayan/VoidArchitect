@@ -84,6 +84,18 @@ namespace VoidArchitect::Platform
         VA_ENGINE_INFO("[VulkanRHI] Instance destroyed.");
     }
 
+    void VulkanRHI::Resize(uint32_t width, uint32_t height)
+    {
+        m_CachedFramebufferWidth = width;
+        m_CachedFramebufferHeight = height;
+        m_FramebufferSizeGeneration++;
+        VA_ENGINE_DEBUG(
+            "[VulkanRHI] Resizing to {}x{}, generation : {}",
+            width,
+            height,
+            m_FramebufferSizeGeneration);
+    }
+
     bool VulkanRHI::BeginFrame(float deltaTime)
     {
         const auto device = m_Device->GetLogicalDeviceHandle();
@@ -98,16 +110,15 @@ namespace VoidArchitect::Platform
             VA_ENGINE_INFO("[VulkanRHI] Recreating swapchain.");
         }
 
-        // Check if the frmaebuffer has been resized. If so, a new swapchain must be created.
+        // Check if the framebuffer has been resized. If so, a new swapchain must be created.
         if (m_FramebufferSizeGeneration != m_FramebufferSizeLastGeneration)
         {
             m_Device->WaitIdle();
 
-            // TODO Implement swapchain recreation on resize
-            // if (!m_Swapchain.Recreate(m_FramebufferWidth, m_FramebufferHeight))
-            // {
-            //     return false;
-            // }
+            if (!RecreateSwapchain())
+            {
+                return false;
+            }
             VA_ENGINE_INFO("[VulkanRHI] Recreating swapchain.");
             return false;
         }
@@ -626,6 +637,65 @@ namespace VoidArchitect::Platform
         m_QueueCompleteSemaphores.clear();
         m_InFlightFences.clear();
         m_ImagesInFlight.clear();
+    }
+
+    bool VulkanRHI::RecreateSwapchain()
+    {
+        if (m_RecreatingSwapchain)
+        {
+            VA_ENGINE_DEBUG("[VulkanRHI] RecreateSwapchain called when already recreating.");
+            return false;
+        }
+
+        if (m_FramebufferWidth == 0 || m_FramebufferHeight == 0)
+        {
+            VA_ENGINE_DEBUG(
+                "[VulkanRHI] RecreateSwapchain called when window is < 1 in a dimension.");
+            return false;
+        }
+
+        m_RecreatingSwapchain = true;
+        m_Device->WaitIdle();
+
+        // Clear the ImageInFlight
+        m_ImagesInFlight.clear();
+        m_ImagesInFlight.resize(m_Swapchain->GetImageCount());
+
+        // Requery support
+        QuerySwapchainCapabilities();
+        const auto depthFormat = ChooseDepthFormat();
+
+        m_Swapchain->Recreate(
+            *this,
+            {m_CachedFramebufferWidth, m_CachedFramebufferHeight},
+            depthFormat);
+
+        // Sync
+        m_FramebufferWidth = m_CachedFramebufferWidth;
+        m_FramebufferHeight = m_CachedFramebufferHeight;
+        m_MainRenderpass->SetWidth(m_FramebufferWidth);
+        m_MainRenderpass->SetHeight(m_FramebufferHeight);
+        m_CachedFramebufferWidth = 0;
+        m_CachedFramebufferHeight = 0;
+
+        // Update framebuffer size generation.
+        m_FramebufferSizeLastGeneration = m_FramebufferSizeGeneration;
+
+        m_GraphicsCommandBuffers.clear();
+        m_MainRenderpass->SetX(0);
+        m_MainRenderpass->SetY(0);
+        m_MainRenderpass->SetWidth(m_FramebufferWidth);
+        m_MainRenderpass->SetHeight(m_FramebufferHeight);
+
+        m_Swapchain->RegenerateFramebuffers(
+            m_MainRenderpass,
+            m_FramebufferWidth,
+            m_FramebufferHeight);
+        CreateCommandBuffers();
+
+        m_RecreatingSwapchain = false;
+
+        return true;
     }
 
 #ifdef DEBUG

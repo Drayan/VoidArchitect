@@ -27,6 +27,8 @@ namespace VoidArchitect::Platform
         explicit VulkanRHI(std::unique_ptr<Window>& window);
         ~VulkanRHI() override;
 
+        void Resize(uint32_t width, uint32_t height) override;
+
         bool BeginFrame(float deltaTime) override;
         bool EndFrame(float deltaTime) override;
 
@@ -59,6 +61,8 @@ namespace VoidArchitect::Platform
         void CreatePipeline();
 
         void DestroySyncObjects();
+
+        bool RecreateSwapchain();
 
 #ifdef DEBUG
         void CreateDebugMessenger();
@@ -101,6 +105,8 @@ namespace VoidArchitect::Platform
 
         uint32_t m_FramebufferWidth;
         uint32_t m_FramebufferHeight;
+        uint32_t m_CachedFramebufferWidth;
+        uint32_t m_CachedFramebufferHeight;
         uint64_t m_FramebufferSizeGeneration;
         uint64_t m_FramebufferSizeLastGeneration;
     };

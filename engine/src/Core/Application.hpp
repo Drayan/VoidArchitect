@@ -15,6 +15,7 @@ namespace VoidArchitect
 {
     class Event;
     class WindowCloseEvent;
+    class WindowResizedEvent;
     class Window;
 
     class VA_API Application
@@ -32,6 +33,7 @@ namespace VoidArchitect
 
     private:
         bool OnWindowClose(WindowCloseEvent& e);
+        bool OnWindowResized(WindowResizedEvent& e);
         bool OnKeyPressed(KeyPressedEvent& e);
 
         std::unique_ptr<Window> m_MainWindow;

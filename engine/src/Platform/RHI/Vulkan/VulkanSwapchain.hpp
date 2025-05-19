@@ -48,8 +48,10 @@ namespace VoidArchitect::Platform
             return m_Framebuffers[index].GetHandle();
         }
 
+        void Recreate(VulkanRHI& rhi, VkExtent2D extents, VkFormat depthFormat);
+
     private:
-        VkDevice m_Device;
+        const std::unique_ptr<VulkanDevice>& m_Device;
         VkAllocationCallbacks* m_Allocator;
         VkSwapchainKHR m_Swapchain;
 

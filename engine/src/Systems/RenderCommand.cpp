@@ -27,6 +27,11 @@ namespace VoidArchitect
         delete m_RenderingHardware;
     }
 
+    void RenderCommand::Resize(uint32_t width, uint32_t height)
+    {
+        m_RenderingHardware->Resize(width, height);
+    }
+
     bool RenderCommand::BeginFrame(float deltaTime)
     {
         return m_RenderingHardware->BeginFrame(deltaTime);
