@@ -152,9 +152,9 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanSwapchain::Present(
-        VkQueue graphicsQueue,
-        VkSemaphore renderComplete,
-        uint32_t imageIndex) const
+        const VkQueue graphicsQueue,
+        const VkSemaphore renderComplete,
+        const uint32_t imageIndex) const
     {
         auto presentInfo = VkPresentInfoKHR{};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

@@ -11,9 +11,9 @@ add_executable(VoidArchitect_Client
 )
 
 # Link with the engine library
-target_link_libraries(VoidArchitect_Client PRIVATE VoidArchitect_EngineClient)
+target_link_libraries(VoidArchitect_Client PRIVATE VoidArchitect_Engine)
 
-target_precompile_headers(VoidArchitect_Client REUSE_FROM VoidArchitect_EngineClient)
+target_precompile_headers(VoidArchitect_Client REUSE_FROM VoidArchitect_Engine)
 # Platform-specific configuration
 if (APPLE)
     # macOS settings

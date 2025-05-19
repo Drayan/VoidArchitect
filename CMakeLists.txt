@@ -182,7 +182,7 @@ setup_asset_directories()
 compile_hlsl_shaders()
 
 # Add subprojects
-add_subdirectory(engine_client)
+add_subdirectory(engine)
 add_subdirectory(client)
 
 # Make the client depend on our asset compilation
