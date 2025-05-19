@@ -4,23 +4,35 @@
 #pragma once
 #include <vulkan/vulkan.h>
 
-#include "VulkanShader.hpp"
+#include "VulkanCommandBuffer.hpp"
 
 namespace VoidArchitect::Platform
 {
     class VulkanDevice;
+    class VulkanRenderpass;
+    class VulkanCommandBuffer;
+    class VulkanShader;
 
     class VulkanPipeline
     {
     public:
         VulkanPipeline(
             const std::unique_ptr<VulkanDevice>& device,
-            VkAllocationCallbacks* allocator);
+            VkAllocationCallbacks* allocator,
+            const std::unique_ptr<VulkanRenderpass>& renderPass,
+            const std::vector<VulkanShader>& shaders,
+            const std::vector<VkVertexInputAttributeDescription>& attributes,
+            const std::vector<VkDescriptorSetLayout>& descriptorSets
+        );
+        ~VulkanPipeline();
+
+        void Bind(const VulkanCommandBuffer& cmdBuf, VkPipelineBindPoint bindPoint) const;
 
     private:
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;
 
-        std::vector<VulkanShader> m_Shaders;
+        VkPipelineLayout m_PipelineLayout;
+        VkPipeline m_Pipeline;
     };
 } // VoidArchitect

@@ -11,6 +11,7 @@
 #include "VulkanFence.hpp"
 #include "VulkanPipeline.hpp"
 #include "VulkanRenderpass.hpp"
+#include "VulkanShader.hpp"
 #include "VulkanSwapchain.hpp"
 #include "VulkanUtils.hpp"
 
@@ -24,6 +25,8 @@ namespace VoidArchitect::Platform
         pCallbackData,
         void* pUserData);
 #endif
+
+    constexpr std::string BUILTIN_OBJECT_SHADER_NAME = "BuiltinObject";
 
     VulkanRHI::VulkanRHI(std::unique_ptr<Window>& window)
         : m_DebugMessenger{},
@@ -60,6 +63,9 @@ namespace VoidArchitect::Platform
 
         m_Pipeline.reset();
         VA_ENGINE_INFO("[VulkanRHI] Pipeline destroyed.");
+
+        m_Shaders.clear();
+        VA_ENGINE_INFO("[VulkanRHI] Shaders destroyed.");
 
         DestroySyncObjects();
         VA_ENGINE_INFO("[VulkanRHI] Sync objects destroyed.");
@@ -619,7 +625,42 @@ namespace VoidArchitect::Platform
 
     void VulkanRHI::CreatePipeline()
     {
-        m_Pipeline = std::make_unique<VulkanPipeline>(m_Device, m_Allocator);
+        // --- Load Builtin shaders ---
+        m_Shaders.reserve(2);
+        m_Shaders.emplace_back(
+            m_Device,
+            m_Allocator,
+            ShaderStage::Vertex,
+            BUILTIN_OBJECT_SHADER_NAME + ".vert");
+        m_Shaders.emplace_back(
+            m_Device,
+            m_Allocator,
+            ShaderStage::Pixel,
+            BUILTIN_OBJECT_SHADER_NAME + ".pixl");
+
+        // --- TODO Descriptors ---
+
+        // --- Attributes ---
+        std::vector attributes = {
+            // Position
+            VkVertexInputAttributeDescription{
+                .location = 0,
+                .binding = 0,
+                .format = VK_FORMAT_R32G32B32_SFLOAT,
+                .offset = 0
+            }
+        };
+
+        // --- TODO Descriptors set layouts ---
+
+        // --- Create the graphics pipeline ---
+        m_Pipeline = std::make_unique<VulkanPipeline>(
+            m_Device,
+            m_Allocator,
+            m_MainRenderpass,
+            m_Shaders,
+            attributes,
+            std::vector<VkDescriptorSetLayout>{});
         VA_ENGINE_INFO("[VulkanRHI] Pipeline created.");
     }
 

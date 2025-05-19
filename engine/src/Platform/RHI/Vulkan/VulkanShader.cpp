@@ -12,10 +12,13 @@ namespace VoidArchitect::Platform
     VulkanShader::VulkanShader(
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
+        const ShaderStage stage,
         const std::string& path)
         : m_Device(device->GetLogicalDeviceHandle()),
           m_Allocator(allocator),
-          m_ShaderModule{}
+          m_ShaderModule{},
+          m_ShaderStageInfo{},
+          m_Stage(stage)
     {
         const std::vector<char> shaderCode = readFromDisk(path);
         auto createInfo = VkShaderModuleCreateInfo{};
@@ -25,6 +28,24 @@ namespace VoidArchitect::Platform
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(
             vkCreateShaderModule(m_Device, &createInfo, m_Allocator, &m_ShaderModule));
+
+        m_ShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        switch (m_Stage)
+        {
+            case ShaderStage::Vertex:
+                m_ShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+                break;
+            case ShaderStage::Pixel:
+                m_ShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+                break;
+            default:
+                VA_ENGINE_ERROR("[VulkanShader] Unsupported shader stage.");
+                break;
+        }
+        m_ShaderStageInfo.module = m_ShaderModule;
+        m_ShaderStageInfo.pName = "main";
+
+        VA_ENGINE_TRACE("[VulkanShader] Shader module created.");
     }
 
     VulkanShader::~VulkanShader()
@@ -39,9 +60,12 @@ namespace VoidArchitect::Platform
     VulkanShader::VulkanShader(VulkanShader&& other) noexcept
         : m_Device(other.m_Device),
           m_Allocator(other.m_Allocator),
-          m_ShaderModule(other.m_ShaderModule)
+          m_ShaderModule(other.m_ShaderModule),
+          m_ShaderStageInfo(other.m_ShaderStageInfo)
+
     {
         other.InvalidateResources();
+        VA_ENGINE_TRACE("[VulkanShader] Shader module moved.");
     }
 
     VulkanShader& VulkanShader::operator=(VulkanShader&& other) noexcept
@@ -53,8 +77,10 @@ namespace VoidArchitect::Platform
             m_Device = other.m_Device;
             m_Allocator = other.m_Allocator;
             m_ShaderModule = other.m_ShaderModule;
+            m_ShaderStageInfo = other.m_ShaderStageInfo;
 
             other.InvalidateResources();
+            VA_ENGINE_TRACE("[VulkanShader] Shader module moved.");
         }
 
         return *this;
