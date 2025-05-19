@@ -58,7 +58,7 @@ namespace VoidArchitect::Platform
 
         if (bindOnCreate)
         {
-            Bind(0);
+            BindMemory();
         }
     }
 
@@ -175,7 +175,7 @@ namespace VoidArchitect::Platform
         return true;
     }
 
-    void VulkanBuffer::Bind(const uint64_t offset)
+    void VulkanBuffer::BindMemory(uint64_t offset)
     {
         m_Offset = offset;
         VA_VULKAN_CHECK_RESULT_WARN(vkBindBufferMemory(m_Device, m_Buffer, m_Memory, m_Offset));
@@ -198,7 +198,7 @@ namespace VoidArchitect::Platform
 
     void VulkanBuffer::CopyTo(
         const VkCommandPool pool,
-        VkFence fence,
+        const VkFence fence,
         const VkQueue queue,
         const VkBuffer dest,
         const uint64_t destOffset,
@@ -217,6 +217,82 @@ namespace VoidArchitect::Platform
         copyRegion.size = size;
         vkCmdCopyBuffer(cmdBuf.GetHandle(), m_Buffer, dest, 1, &copyRegion);
 
-        VulkanCommandBuffer::SingleUseEnd(cmdBuf, queue);
+        VulkanCommandBuffer::SingleUseEnd(cmdBuf, queue, fence);
+    }
+
+    VulkanVertexBuffer::VulkanVertexBuffer(
+        const VulkanRHI& rhi,
+        const std::unique_ptr<VulkanDevice>& device,
+        VkAllocationCallbacks* allocator,
+        const std::vector<float>& data,
+        const bool bindOnCreate)
+        : VulkanBuffer(
+            rhi,
+            device,
+            allocator,
+            data.size() * sizeof(float),
+            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+            bindOnCreate)
+    {
+        const auto staging = VulkanStagingBuffer(rhi, device, allocator, data);
+        auto fence = VulkanFence(m_Device, m_Allocator);
+        staging.CopyTo(
+            device->GetGraphicsCommandPool(),
+            fence.GetHandle(),
+            device->GetGraphicsQueueHandle(),
+            m_Buffer,
+            0,
+            m_Size);
+
+        //TODO Find an async way to load data ?
+        fence.Wait();
+    }
+
+    void VulkanVertexBuffer::Bind()
+    {
+    }
+
+    void VulkanVertexBuffer::Unbind()
+    {
+    }
+
+    VulkanIndexBuffer::VulkanIndexBuffer(
+        const VulkanRHI& rhi,
+        const std::unique_ptr<VulkanDevice>& device,
+        VkAllocationCallbacks* allocator,
+        const std::vector<uint32_t>& data,
+        bool bindOnCreate)
+        : VulkanBuffer(
+            rhi,
+            device,
+            allocator,
+            data.size() * sizeof(uint32_t),
+            VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+            bindOnCreate)
+    {
+        const auto staging = VulkanStagingBuffer(rhi, device, allocator, data);
+        auto fence = VulkanFence(m_Device, m_Allocator);
+        staging.CopyTo(
+            device->GetGraphicsCommandPool(),
+            fence.GetHandle(),
+            device->GetGraphicsQueueHandle(),
+            m_Buffer,
+            0,
+            m_Size);
+
+        //TODO Find an async way to load data ?
+        fence.Wait();
+    }
+
+    void VulkanIndexBuffer::Bind()
+    {
+    }
+
+    void VulkanIndexBuffer::Unbind()
+    {
     }
 } // VoidArchitect

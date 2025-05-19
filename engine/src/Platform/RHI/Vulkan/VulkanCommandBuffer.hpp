@@ -28,7 +28,12 @@ namespace VoidArchitect::Platform
             VkCommandPool pool,
             bool isPrimary = true);
         VulkanCommandBuffer(VkDevice device, VkCommandPool pool, bool isPrimary = true);
+        VulkanCommandBuffer(VulkanCommandBuffer&& other) noexcept;
+        VulkanCommandBuffer(const VulkanCommandBuffer& other) = delete;
         ~VulkanCommandBuffer();
+
+        VulkanCommandBuffer& operator=(VulkanCommandBuffer&& other) noexcept;
+        VulkanCommandBuffer& operator=(const VulkanCommandBuffer& other) = delete;
 
         void Begin(
             bool isSingleUse = false,
@@ -47,7 +52,8 @@ namespace VoidArchitect::Platform
             VulkanCommandBuffer& cmdBuf);
         static void SingleUseEnd(
             VulkanCommandBuffer& cmdBuf,
-            VkQueue queue);
+            VkQueue queue,
+            VkFence fence);
 
         void SetState(const CommandBufferState& state) { m_State = state; }
 
@@ -55,10 +61,12 @@ namespace VoidArchitect::Platform
         VkCommandBuffer GetHandle() const { return m_CommandBuffer; }
 
     private:
+        void InvalidateResources();
+
         VkDevice m_Device;
         VkCommandPool m_Pool;
 
-        VkCommandBuffer m_CommandBuffer;
+        VkCommandBuffer m_CommandBuffer{};
         CommandBufferState m_State = CommandBufferState::NotAllocated;
     };
 } // VoidArchitect

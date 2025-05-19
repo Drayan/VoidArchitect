@@ -53,13 +53,51 @@ namespace VoidArchitect::Platform
         VA_ENGINE_TRACE("[VulkanCommandBuffer] CommandBuffer created.");
     }
 
+    VulkanCommandBuffer::VulkanCommandBuffer(VulkanCommandBuffer&& other) noexcept
+        : m_Device{other.m_Device},
+          m_Pool{other.m_Pool},
+          m_CommandBuffer{other.m_CommandBuffer},
+          m_State{other.m_State}
+    {
+        other.InvalidateResources();
+        VA_ENGINE_TRACE("[VulkanCommandBuffer] CommandBuffer moved.");
+    }
+
+    VulkanCommandBuffer& VulkanCommandBuffer::operator=(VulkanCommandBuffer&& other) noexcept
+    {
+        if (this != &other)
+        {
+            this->~VulkanCommandBuffer();
+
+            m_Device = other.m_Device;
+            m_Pool = other.m_Pool;
+            m_CommandBuffer = other.m_CommandBuffer;
+            m_State = other.m_State;
+
+            other.InvalidateResources();
+            VA_ENGINE_TRACE("[VulkanCommandBuffer] CommandBuffer moved.");
+        }
+
+        return *this;
+    }
+
     VulkanCommandBuffer::~VulkanCommandBuffer()
     {
-        vkFreeCommandBuffers(m_Device, m_Pool, 1, &m_CommandBuffer);
-        m_CommandBuffer = VK_NULL_HANDLE;
-        m_State = CommandBufferState::NotAllocated;
+        if (m_CommandBuffer != VK_NULL_HANDLE)
+        {
+            vkFreeCommandBuffers(m_Device, m_Pool, 1, &m_CommandBuffer);
+            m_CommandBuffer = VK_NULL_HANDLE;
+            m_State = CommandBufferState::NotAllocated;
 
-        VA_ENGINE_TRACE("[VulkanCommandBuffer] CommandBuffer destroyed.");
+            VA_ENGINE_TRACE("[VulkanCommandBuffer] CommandBuffer destroyed.");
+        }
+    }
+
+    void VulkanCommandBuffer::InvalidateResources()
+    {
+        m_Device = VK_NULL_HANDLE;
+        m_Pool = VK_NULL_HANDLE;
+        m_CommandBuffer = VK_NULL_HANDLE;
     }
 
     void VulkanCommandBuffer::Begin(
@@ -113,7 +151,8 @@ namespace VoidArchitect::Platform
 
     void VulkanCommandBuffer::SingleUseEnd(
         VulkanCommandBuffer& cmdBuf,
-        const VkQueue queue)
+        const VkQueue queue,
+        const VkFence fence)
     {
         cmdBuf.End();
 
@@ -122,7 +161,7 @@ namespace VoidArchitect::Platform
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &handle;
-        VA_VULKAN_CHECK_RESULT_WARN(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
+        VA_VULKAN_CHECK_RESULT_WARN(vkQueueSubmit(queue, 1, &submitInfo, fence));
 
         // Wait for it to finish
         VA_VULKAN_CHECK_RESULT_WARN(vkQueueWaitIdle(queue));

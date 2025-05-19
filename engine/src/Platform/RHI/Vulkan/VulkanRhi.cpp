@@ -74,25 +74,17 @@ namespace VoidArchitect::Platform
             1,
             2
         };
-        m_VertexBuffer = std::make_unique<VulkanBuffer>(
+        m_VertexBuffer = std::make_unique<VulkanVertexBuffer>(
             *this,
             m_Device,
             m_Allocator,
-            vertices.size() * sizeof(float),
-            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-        m_VertexBuffer->LoadData(vertices);
+            vertices);
 
-        m_IndexBuffer = std::make_unique<VulkanBuffer>(
+        m_IndexBuffer = std::make_unique<VulkanIndexBuffer>(
             *this,
             m_Device,
             m_Allocator,
-            indices.size() * sizeof(uint32_t),
-            VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-        m_IndexBuffer->LoadData(indices);
+            indices);
         //TEMP End of temporary code
     }
 
@@ -214,7 +206,8 @@ namespace VoidArchitect::Platform
 
         m_Pipeline->Bind(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
-        const auto offsets = VkDeviceSize{0};
+        // TEMP Testing vertex and index buffers
+        constexpr auto offsets = VkDeviceSize{0};
         const auto vertexBuffer = m_VertexBuffer->GetHandle();
         vkCmdBindVertexBuffers(cmdBuf.GetHandle(), 0, 1, &vertexBuffer, &offsets);
         vkCmdBindIndexBuffer(
@@ -223,6 +216,7 @@ namespace VoidArchitect::Platform
             0,
             VK_INDEX_TYPE_UINT32);
         vkCmdDrawIndexed(cmdBuf.GetHandle(), 3, 1, 0, 0, 0);
+        // TEMP End of temp bloc
         return true;
     }
 
