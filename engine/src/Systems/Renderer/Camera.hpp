@@ -24,6 +24,8 @@ namespace VoidArchitect::Renderer
         Math::Mat4& GetProjection() { return m_Projection; }
         Math::Mat4& GetView() { return m_View; }
 
+        Math::Vec3 GetPosition() const { return m_Position; }
+
         void SetAspectRatio(const float aspectRatio) { m_AspectRatio = aspectRatio; }
         void SetPosition(const Math::Vec3& position) { m_Position = position; }
 

@@ -27,6 +27,21 @@ namespace VoidArchitect::Math
         Vec3();
         Vec3(float x, float y, float z);
 
+        Vec3 operator+(const Vec3& other) const;
+        Vec3 operator-(const Vec3& other) const;
+        Vec3 operator*(const Vec3& other) const;
+        Vec3 operator/(const Vec3& other) const;
+        Vec3 operator*(const float scalar) const;
+        Vec3 operator/(const float scalar) const;
+
+        void X(const float x) { m_Vector.x = x; }
+        void Y(const float y) { m_Vector.y = y; }
+        void Z(const float z) { m_Vector.z = z; }
+
+        float X() const { return m_Vector.x; }
+        float Y() const { return m_Vector.y; }
+        float Z() const { return m_Vector.z; }
+
     private:
         explicit Vec3(const impl::glm::vec3& vector);
 

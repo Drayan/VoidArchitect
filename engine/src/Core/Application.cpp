@@ -43,16 +43,14 @@ namespace VoidArchitect
 
     void Application::Run()
     {
-        auto& camera = Renderer::RenderCommand::CreatePerspectiveCamera(45.0f, 0.1f, 1000.0f);
-        camera.SetPosition({0.0f, 0.0f, 3.0f});
         while (m_Running)
         {
             for (Layer* layer : m_LayerStack)
-                layer->OnUpdate();
+                layer->OnUpdate(1.0f / 60.0f);
 
             m_MainWindow->OnUpdate();
 
-            if (Renderer::RenderCommand::BeginFrame(camera, 1.0f / 60.0f))
+            if (Renderer::RenderCommand::BeginFrame(1.0f / 60.0f))
             {
                 Renderer::RenderCommand::EndFrame(1.0f / 60.0f);
             }
@@ -76,8 +74,17 @@ namespace VoidArchitect
         }
     }
 
-    void Application::PushLayer(Layer* layer) { m_LayerStack.PushLayer(layer); }
-    void Application::PushOverlay(Layer* layer) { m_LayerStack.PushOverlay(layer); }
+    void Application::PushLayer(Layer* layer)
+    {
+        m_LayerStack.PushLayer(layer);
+        layer->OnAttach();
+    }
+
+    void Application::PushOverlay(Layer* layer)
+    {
+        m_LayerStack.PushOverlay(layer);
+        layer->OnAttach();
+    }
 
     bool Application::OnWindowClose(WindowCloseEvent& e)
     {

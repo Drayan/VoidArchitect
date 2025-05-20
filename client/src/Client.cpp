@@ -3,10 +3,15 @@
 //
 #include <VoidArchitect.hpp>
 
+#include "TestLayer.hpp"
+
 class Client : public VoidArchitect::Application
 {
 public:
-    Client() = default;
+    Client()
+    {
+        PushLayer(new TestLayer());
+    }
 };
 
 VoidArchitect::Application* VoidArchitect::CreateApplication() { return new Client(); }

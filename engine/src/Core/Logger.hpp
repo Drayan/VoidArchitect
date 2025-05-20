@@ -15,7 +15,11 @@ namespace VoidArchitect
         static void Initialize();
 
         inline static std::shared_ptr<spdlog::logger>& GetEngineLogger() { return s_EngineLogger; };
-        inline static std::shared_ptr<spdlog::logger>& GetApplicationLogger() { return s_ApplicationLogger; };
+
+        inline static std::shared_ptr<spdlog::logger>& GetApplicationLogger()
+        {
+            return s_ApplicationLogger;
+        };
 
     private:
         static std::shared_ptr<spdlog::logger> s_EngineLogger;

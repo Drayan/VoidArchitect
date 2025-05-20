@@ -20,6 +20,36 @@ namespace VoidArchitect::Math
     {
     }
 
+    Vec3 Vec3::operator+(const Vec3& other) const
+    {
+        return Vec3(m_Vector + other.m_Vector);
+    }
+
+    Vec3 Vec3::operator-(const Vec3& other) const
+    {
+        return Vec3(m_Vector - other.m_Vector);
+    }
+
+    Vec3 Vec3::operator*(const Vec3& other) const
+    {
+        return Vec3(m_Vector * other.m_Vector);
+    }
+
+    Vec3 Vec3::operator/(const Vec3& other) const
+    {
+        return Vec3(m_Vector / other.m_Vector);
+    }
+
+    Vec3 Vec3::operator*(const float scalar) const
+    {
+        return Vec3(m_Vector * scalar);
+    }
+
+    Vec3 Vec3::operator/(const float scalar) const
+    {
+        return Vec3(m_Vector / scalar);
+    }
+
     Vec3 Vec3::Zero()
     {
         return Vec3(impl::glm::vec3(0.f));

@@ -30,6 +30,9 @@ namespace VoidArchitect::Renderer
             default:
                 break;
         }
+
+        // TEMP Create a default camera until we have a real scene manager
+        CreatePerspectiveCamera(45.0f, 0.1f, 100.0f);
     }
 
     void RenderCommand::Shutdown()
@@ -47,6 +50,12 @@ namespace VoidArchitect::Renderer
             camera.SetAspectRatio(width / static_cast<float>(height));
 
         m_RenderingHardware->Resize(width, height);
+    }
+
+    bool RenderCommand::BeginFrame(const float deltaTime)
+    {
+        // Render with the default camera.
+        return BeginFrame(m_Cameras[0], deltaTime);
     }
 
     bool RenderCommand::BeginFrame(Camera& camera, const float deltaTime)
@@ -69,5 +78,16 @@ namespace VoidArchitect::Renderer
         auto aspect = m_Width / static_cast<float>(m_Height);
         if (m_Width == 0 || m_Height == 0) aspect = 1.0f;
         return m_Cameras.emplace_back(fov, aspect, near, far);
+    }
+
+    Camera& RenderCommand::CreateOrthographicCamera(
+        float left,
+        float right,
+        float bottom,
+        float top,
+        float near,
+        float far)
+    {
+        return m_Cameras.emplace_back(top, bottom, left, right, near, far);
     }
 } // VoidArchitect

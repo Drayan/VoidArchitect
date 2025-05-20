@@ -3,6 +3,8 @@
 //
 #pragma once
 
+#include "Camera.hpp"
+
 namespace VoidArchitect
 {
     class Window;
@@ -15,8 +17,6 @@ namespace VoidArchitect
 
     namespace Renderer
     {
-        class Camera;
-
         class RenderCommand
         {
         public:
@@ -25,6 +25,7 @@ namespace VoidArchitect
 
             static void Resize(uint32_t width, uint32_t height);
 
+            static bool BeginFrame(float deltaTime);
             static bool BeginFrame(Camera& camera, float deltaTime);
             static bool EndFrame(float deltaTime);
 
@@ -36,6 +37,8 @@ namespace VoidArchitect
                 float top,
                 float near,
                 float far);
+
+            static Camera& GetMainCamera() { return m_Cameras[0]; }
 
         private:
             static Platform::IRenderingHardware* m_RenderingHardware;

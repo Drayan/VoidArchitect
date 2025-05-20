@@ -5,13 +5,15 @@
 
 namespace VoidArchitect
 {
-
     LayerStack::LayerStack() { m_LayerInsert = m_Layers.begin(); }
 
     LayerStack::~LayerStack()
     {
         for (Layer* layer : m_Layers)
+        {
+            layer->OnDetach();
             delete layer;
+        }
     }
 
     void LayerStack::PushLayer(Layer* layer)
@@ -26,6 +28,7 @@ namespace VoidArchitect
         auto it = std::ranges::find(m_Layers, layer);
         if (it != m_Layers.end())
         {
+            layer->OnDetach();
             m_Layers.erase(it);
             --m_LayerInsert;
         }
@@ -35,7 +38,9 @@ namespace VoidArchitect
     {
         auto it = std::ranges::find(m_Layers, layer);
         if (it != m_Layers.end())
+        {
+            layer->OnDetach();
             m_Layers.erase(it);
+        }
     }
-
 } // namespace VoidArchitect
