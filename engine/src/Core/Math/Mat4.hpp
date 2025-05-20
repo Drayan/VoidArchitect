@@ -5,6 +5,8 @@
 
 namespace VoidArchitect::Math
 {
+    class Vec3;
+
     namespace impl
     {
 #include <glm/glm.hpp>
@@ -14,6 +16,8 @@ namespace VoidArchitect::Math
 
     class Mat4
     {
+        friend class Vec3;
+
     public:
         Mat4();
 
@@ -28,6 +32,7 @@ namespace VoidArchitect::Math
             float near,
             float far);
         static Mat4 Translate(float x, float y, float z);
+        static Mat4 Translate(const Vec3& translation);
         static Mat4 Rotate(float angle, float x, float y, float z);
         static Mat4 Scale(float x, float y, float z);
         static Mat4 Inverse(const Mat4& matrix);

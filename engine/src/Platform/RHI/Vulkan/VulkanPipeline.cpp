@@ -7,6 +7,7 @@
 #include "VulkanRenderpass.hpp"
 #include "VulkanShader.hpp"
 #include "VulkanUtils.hpp"
+#include "Core/Math/Mat4.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -110,6 +111,15 @@ namespace VoidArchitect::Platform
         pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         pipelineLayoutCreateInfo.setLayoutCount = static_cast<uint32_t>(descriptorSets.size());
         pipelineLayoutCreateInfo.pSetLayouts = descriptorSets.data();
+
+        // --- Push contacts ---
+        auto pushConstantRange = VkPushConstantRange{};
+        pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+        pushConstantRange.offset = 0;
+        pushConstantRange.size = sizeof(Math::Mat4) * 2;
+
+        pipelineLayoutCreateInfo.pushConstantRangeCount = 1;
+        pipelineLayoutCreateInfo.pPushConstantRanges = &pushConstantRange;
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(
             vkCreatePipelineLayout(m_Device, &pipelineLayoutCreateInfo, m_Allocator, &

@@ -8,10 +8,12 @@
 #include "Window.hpp"
 #include "Events/KeyEvent.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
-#include "Systems/RenderCommand.hpp"
+#include "../Systems/Renderer/RenderCommand.hpp"
 
 //TEMP Remove this include when we have proper keycode.
 #include <SDL3/SDL_keycode.h>
+
+#include "Systems/Renderer/Camera.hpp"
 
 namespace VoidArchitect
 {
@@ -25,7 +27,7 @@ namespace VoidArchitect
         // Setting up Subsystems
         try
         {
-            RenderCommand::Initialize(Platform::RHI_API_TYPE::Vulkan, m_MainWindow);
+            Renderer::RenderCommand::Initialize(Platform::RHI_API_TYPE::Vulkan, m_MainWindow);
         }
         catch (std::exception& e)
         {
@@ -36,11 +38,13 @@ namespace VoidArchitect
 
     Application::~Application()
     {
-        RenderCommand::Shutdown();
+        Renderer::RenderCommand::Shutdown();
     }
 
     void Application::Run()
     {
+        auto& camera = Renderer::RenderCommand::CreatePerspectiveCamera(45.0f, 0.1f, 1000.0f);
+        camera.SetPosition({0.0f, 0.0f, 3.0f});
         while (m_Running)
         {
             for (Layer* layer : m_LayerStack)
@@ -48,9 +52,9 @@ namespace VoidArchitect
 
             m_MainWindow->OnUpdate();
 
-            if (RenderCommand::BeginFrame(1.0f / 60.0f))
+            if (Renderer::RenderCommand::BeginFrame(camera, 1.0f / 60.0f))
             {
-                RenderCommand::EndFrame(1.0f / 60.0f);
+                Renderer::RenderCommand::EndFrame(1.0f / 60.0f);
             }
         }
     }
@@ -83,7 +87,8 @@ namespace VoidArchitect
 
     bool Application::OnWindowResized(WindowResizedEvent& e)
     {
-        RenderCommand::Resize(e.GetWidth(), e.GetHeight());
+        VA_ENGINE_TRACE("[Application] Window resized to {0}, {1}.", e.GetWidth(), e.GetHeight());
+        Renderer::RenderCommand::Resize(e.GetWidth(), e.GetHeight());
         return true;
     }
 

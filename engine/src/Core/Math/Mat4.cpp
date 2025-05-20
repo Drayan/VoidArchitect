@@ -3,6 +3,8 @@
 //
 #include "Mat4.hpp"
 
+#include "Vec3.hpp"
+
 namespace VoidArchitect::Math
 {
     Mat4::Mat4()
@@ -44,6 +46,11 @@ namespace VoidArchitect::Math
     Mat4 Mat4::Translate(const float x, const float y, const float z)
     {
         return Mat4(impl::glm::translate(impl::glm::mat4(1.0f), impl::glm::vec3(x, y, z)));
+    }
+
+    Mat4 Mat4::Translate(const Vec3& translation)
+    {
+        return Mat4(impl::glm::translate(impl::glm::mat4(1.0f), translation.m_Vector));
     }
 
     Mat4 Mat4::Rotate(const float angle, const float x, const float y, const float z)

@@ -5,11 +5,9 @@
 #include "Platform/RHI/IRenderingHardware.hpp"
 
 #include "VulkanDevice.hpp"
+#include "VulkanCommandBuffer.hpp"
 
 #include <vulkan/vulkan.h>
-
-#include "VulkanBuffer.hpp"
-#include "Core/Math/Mat4.hpp"
 
 namespace VoidArchitect
 {
@@ -18,7 +16,6 @@ namespace VoidArchitect
 
 namespace VoidArchitect::Platform
 {
-    class VulkanCommandBuffer;
     class VulkanSwapchain;
     class VulkanRenderpass;
     class VulkanPipeline;
@@ -27,16 +24,9 @@ namespace VoidArchitect::Platform
     class VulkanVertexBuffer;
     class VulkanIndexBuffer;
     class VulkanBuffer;
+    class VulkanMaterial;
 
     //TEMP This should not stay here.
-    //NOTE Vulkan give us a max of 256 bytes on G_UBO
-    struct GlobalUniformObject
-    {
-        Math::Mat4 Projection;
-        Math::Mat4 View;
-        Math::Mat4 Reserved0;
-        Math::Mat4 Reserved1;
-    };
 
     class VulkanRHI final : public IRenderingHardware
     {
@@ -49,6 +39,9 @@ namespace VoidArchitect::Platform
         bool BeginFrame(float deltaTime) override;
         bool EndFrame(float deltaTime) override;
 
+        void UpdateGlobalState(const Math::Mat4& projection, const Math::Mat4& view) override;
+        void UpdateObjectState(const Math::Mat4& model) override;
+
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
         {
             return m_Capabilities;
@@ -56,6 +49,12 @@ namespace VoidArchitect::Platform
 
         void SetImageIndex(const uint32_t index) { m_ImageIndex = index; }
         void SetCurrentIndex(const uint32_t index) { m_CurrentIndex = index; }
+
+        VulkanCommandBuffer& GetCurrentCommandBuffer()
+        {
+            return m_GraphicsCommandBuffers[m_ImageIndex];
+        };
+        uint32_t GetImageIndex() const { return m_ImageIndex; }
 
         int32_t FindMemoryIndex(uint32_t typeFilter, uint32_t propertyFlags) const;
 
@@ -75,14 +74,9 @@ namespace VoidArchitect::Platform
         void CreateCommandBuffers();
         void CreateSyncObjects();
 
-        void CreatePipeline();
-
         void DestroySyncObjects();
 
         bool RecreateSwapchain();
-
-        //TEMP This method should be moved elsewhere
-        void UpdateGlobalState(const GlobalUniformObject& globalUniformObject);
 
 #ifdef DEBUG
         void CreateDebugMessenger();
@@ -121,17 +115,9 @@ namespace VoidArchitect::Platform
         std::vector<VulkanFence> m_InFlightFences;
         std::vector<VulkanFence*> m_ImagesInFlight;
 
-        std::vector<VulkanShader> m_Shaders;
-        std::unique_ptr<VulkanPipeline> m_Pipeline;
+        std::unique_ptr<VulkanMaterial> m_Material;
 
-        //TEMP These should not stay here
-        std::vector<bool> m_GlobalStateIsUpdated;
-        VkDescriptorPool m_DescriptorPool;
-        VkDescriptorSet* m_DescriptorSets;
-        VkDescriptorSetLayout m_DescriptorSetLayout;
-        GlobalUniformObject m_GlobalUniformObject;
-        std::unique_ptr<VulkanBuffer> m_GlobalUniformBuffer;
-
+        //TEMP Temporary test code
         std::unique_ptr<VulkanVertexBuffer> m_VertexBuffer;
         std::unique_ptr<VulkanIndexBuffer> m_IndexBuffer;
 

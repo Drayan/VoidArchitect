@@ -10,9 +10,8 @@
 
 #include "VulkanBuffer.hpp"
 #include "VulkanFence.hpp"
-#include "VulkanPipeline.hpp"
+#include "VulkanMaterial.hpp"
 #include "VulkanRenderpass.hpp"
-#include "VulkanShader.hpp"
 #include "VulkanSwapchain.hpp"
 #include "VulkanUtils.hpp"
 
@@ -27,11 +26,8 @@ namespace VoidArchitect::Platform
         void* pUserData);
 #endif
 
-    constexpr std::string BUILTIN_OBJECT_SHADER_NAME = "BuiltinObject";
-
     VulkanRHI::VulkanRHI(std::unique_ptr<Window>& window)
-        : m_DebugMessenger{},
-          m_Window(window),
+        : m_Window(window),
           m_Allocator(nullptr),
           m_Instance{},
           m_Capabilities{},
@@ -55,7 +51,12 @@ namespace VoidArchitect::Platform
         CreateCommandBuffers();
         CreateSyncObjects();
 
-        CreatePipeline();
+        m_Material = std::make_unique<VulkanMaterial>(
+            *this,
+            m_Device,
+            m_Allocator,
+            m_Swapchain,
+            m_MainRenderpass);
 
         //TEMP Create testing buffers here.
         const std::vector vertices = {
@@ -85,34 +86,6 @@ namespace VoidArchitect::Platform
             m_Device,
             m_Allocator,
             indices);
-
-        m_GlobalUniformBuffer = std::make_unique<VulkanBuffer>(
-            *this,
-            m_Device,
-            m_Allocator,
-            sizeof(GlobalUniformObject) * 3,
-            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-
-        m_GlobalStateIsUpdated.resize(m_Swapchain->GetImageCount(), false);
-
-        const std::vector globalLayouts = {
-            m_DescriptorSetLayout,
-            m_DescriptorSetLayout,
-            m_DescriptorSetLayout
-        };
-
-        m_DescriptorSets = new VkDescriptorSet[globalLayouts.size()];
-
-        auto allocInfo = VkDescriptorSetAllocateInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-        allocInfo.descriptorPool = m_DescriptorPool;
-        allocInfo.descriptorSetCount = static_cast<uint32_t>(globalLayouts.size());
-        allocInfo.pSetLayouts = globalLayouts.data();
-        VA_VULKAN_CHECK_RESULT_WARN(
-            vkAllocateDescriptorSets(m_Device->GetLogicalDeviceHandle(), &allocInfo,
-                m_DescriptorSets));
         //TEMP End of temporary code
     }
 
@@ -121,32 +94,12 @@ namespace VoidArchitect::Platform
         m_Device->WaitIdle();
 
         //TEMP Test code
-
-        // vkFreeDescriptorSets(
-        //     m_Device->GetLogicalDeviceHandle(),
-        //     m_DescriptorPool,
-        //     1,
-        //     m_DescriptorSets);
-
-        delete[] m_DescriptorSets;
-
-        m_GlobalUniformBuffer.reset();
-
-        vkDestroyDescriptorPool(m_Device->GetLogicalDeviceHandle(), m_DescriptorPool, m_Allocator);
-        vkDestroyDescriptorSetLayout(
-            m_Device->GetLogicalDeviceHandle(),
-            m_DescriptorSetLayout,
-            m_Allocator);
-
         m_VertexBuffer.reset();
         m_IndexBuffer.reset();
         // TEMP End of temp code
 
-        m_Pipeline.reset();
-        VA_ENGINE_INFO("[VulkanRHI] Pipeline destroyed.");
-
-        m_Shaders.clear();
-        VA_ENGINE_INFO("[VulkanRHI] Shaders destroyed.");
+        m_Material.reset();
+        VA_ENGINE_INFO("[VulkanRHI] Material destroyed.");
 
         DestroySyncObjects();
         VA_ENGINE_INFO("[VulkanRHI] Sync objects destroyed.");
@@ -249,15 +202,16 @@ namespace VoidArchitect::Platform
 
         m_MainRenderpass->Begin(cmdBuf, m_Swapchain->GetFramebufferHandle(m_ImageIndex));
 
-        m_Pipeline->Bind(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS);
+        m_Material->Use(*this);
+
+        return true;
+    }
+
+    bool VulkanRHI::EndFrame(float deltaTime)
+    {
+        auto& cmdBuf = m_GraphicsCommandBuffers[m_ImageIndex];
 
         // TEMP Testing vertex and index buffers
-        const auto ubo = GlobalUniformObject{
-            .Projection = Math::Mat4::Perspective(45.0f, 1.0f, 0.1f, 100.0f),
-            .View = Math::Mat4::Translate(0.f, 0.f, -1.0f),
-        };
-        UpdateGlobalState(ubo);
-
         constexpr auto offsets = VkDeviceSize{0};
         const auto vertexBuffer = m_VertexBuffer->GetHandle();
         vkCmdBindVertexBuffers(cmdBuf.GetHandle(), 0, 1, &vertexBuffer, &offsets);
@@ -268,12 +222,6 @@ namespace VoidArchitect::Platform
             VK_INDEX_TYPE_UINT32);
         vkCmdDrawIndexed(cmdBuf.GetHandle(), 3, 1, 0, 0, 0);
         // TEMP End of temp bloc
-        return true;
-    }
-
-    bool VulkanRHI::EndFrame(float deltaTime)
-    {
-        auto& cmdBuf = m_GraphicsCommandBuffers[m_ImageIndex];
 
         m_MainRenderpass->End(cmdBuf);
 
@@ -327,6 +275,16 @@ namespace VoidArchitect::Platform
         m_CurrentIndex = (m_CurrentIndex + 1) % m_Swapchain->GetMaxFrameInFlight();
 
         return true;
+    }
+
+    void VulkanRHI::UpdateGlobalState(const Math::Mat4& projection, const Math::Mat4& view)
+    {
+        m_Material->SetGlobalUniforms(*this, projection, view);
+    }
+
+    void VulkanRHI::UpdateObjectState(const Math::Mat4& model)
+    {
+        m_Material->SetObjectModelConstant(*this, model);
     }
 
     int32_t VulkanRHI::FindMemoryIndex(
@@ -724,78 +682,6 @@ namespace VoidArchitect::Platform
         VA_ENGINE_INFO("[VulkanRHI] Sync objects created.");
     }
 
-    void VulkanRHI::CreatePipeline()
-    {
-        // --- Load Builtin shaders ---
-        m_Shaders.reserve(2);
-        m_Shaders.emplace_back(
-            m_Device,
-            m_Allocator,
-            ShaderStage::Vertex,
-            BUILTIN_OBJECT_SHADER_NAME + ".vert");
-        m_Shaders.emplace_back(
-            m_Device,
-            m_Allocator,
-            ShaderStage::Pixel,
-            BUILTIN_OBJECT_SHADER_NAME + ".pixl");
-
-        // --- Global Descriptors ---
-        auto globalUBOLayoutBinding = VkDescriptorSetLayoutBinding{};
-        globalUBOLayoutBinding.binding = 0;
-        globalUBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        globalUBOLayoutBinding.descriptorCount = 1;
-        globalUBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-
-        auto globalLayoutInfo = VkDescriptorSetLayoutCreateInfo{};
-        globalLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-        globalLayoutInfo.bindingCount = 1;
-        globalLayoutInfo.pBindings = &globalUBOLayoutBinding;
-
-        VA_VULKAN_CHECK_RESULT_WARN(
-            vkCreateDescriptorSetLayout(m_Device->GetLogicalDeviceHandle(), &globalLayoutInfo,
-                m_Allocator, &m_DescriptorSetLayout));
-
-        auto globalPoolSize = VkDescriptorPoolSize{};
-        globalPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        globalPoolSize.descriptorCount = m_Swapchain->GetImageCount();
-
-        auto globalPoolInfo = VkDescriptorPoolCreateInfo{};
-        globalPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        globalPoolInfo.maxSets = m_Swapchain->GetImageCount();
-        globalPoolInfo.poolSizeCount = 1;
-        globalPoolInfo.pPoolSizes = &globalPoolSize;
-
-        VA_VULKAN_CHECK_RESULT_WARN(
-            vkCreateDescriptorPool(m_Device->GetLogicalDeviceHandle(), &globalPoolInfo, m_Allocator,
-                &m_DescriptorPool));
-
-        // --- Attributes ---
-        std::vector attributes = {
-            // Position
-            VkVertexInputAttributeDescription{
-                .location = 0,
-                .binding = 0,
-                .format = VK_FORMAT_R32G32B32_SFLOAT,
-                .offset = 0
-            }
-        };
-
-        // --- Descriptors set layouts ---
-        std::vector descriptorSetLayouts = {
-            m_DescriptorSetLayout
-        };
-
-        // --- Create the graphics pipeline ---
-        m_Pipeline = std::make_unique<VulkanPipeline>(
-            m_Device,
-            m_Allocator,
-            m_MainRenderpass,
-            m_Shaders,
-            attributes,
-            descriptorSetLayouts);
-        VA_ENGINE_INFO("[VulkanRHI] Pipeline created.");
-    }
-
     void VulkanRHI::DestroySyncObjects()
     {
         for (const auto& semaphore : m_ImageAvailableSemaphores)
@@ -866,55 +752,14 @@ namespace VoidArchitect::Platform
             m_FramebufferHeight);
         CreateCommandBuffers();
 
+        // TODO We should update the global state.
+        // for (uint32_t i = 0; i < m_Swapchain->GetImageCount(); i++)
+        //     m_GlobalStateIsUpdated[i] = false;
+
         m_RecreatingSwapchain = false;
+        VA_ENGINE_TRACE("[VulkanRHI] RecreateSwapchain finished.");
 
         return true;
-    }
-
-    //TEMP This should be moved elsewhere
-    void VulkanRHI::UpdateGlobalState(const GlobalUniformObject& globalUniformObject)
-    {
-        const auto& cmdBuf = m_GraphicsCommandBuffers[m_ImageIndex];
-        const auto& globalDescriptor = m_DescriptorSets[m_ImageIndex];
-        if (!m_GlobalStateIsUpdated[m_ImageIndex])
-        {
-            auto data = std::vector{globalUniformObject, globalUniformObject, globalUniformObject};
-            m_GlobalUniformBuffer->LoadData(data);
-
-            // Update the descriptor set
-            VkDescriptorBufferInfo bufferInfo{};
-            bufferInfo.buffer = m_GlobalUniformBuffer->GetHandle();
-            bufferInfo.offset = sizeof(GlobalUniformObject) * m_ImageIndex;
-            bufferInfo.range = sizeof(GlobalUniformObject);
-
-            VkWriteDescriptorSet writeDescriptorSet{};
-            writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-            writeDescriptorSet.dstSet = globalDescriptor;
-            writeDescriptorSet.dstBinding = 0;
-            writeDescriptorSet.dstArrayElement = 0;
-            writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            writeDescriptorSet.descriptorCount = 1;
-            writeDescriptorSet.pBufferInfo = &bufferInfo;
-
-            vkUpdateDescriptorSets(
-                m_Device->GetLogicalDeviceHandle(),
-                1,
-                &writeDescriptorSet,
-                0,
-                nullptr);
-
-            m_GlobalStateIsUpdated[m_ImageIndex] = true;
-        }
-
-        vkCmdBindDescriptorSets(
-            cmdBuf.GetHandle(),
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            m_Pipeline->GetPipelineLayout(),
-            0,
-            1,
-            &globalDescriptor,
-            0,
-            nullptr);
     }
 
 #ifdef DEBUG

@@ -4,6 +4,11 @@
 #pragma once
 #include "IRenderingHardware.hpp"
 
+namespace VoidArchitect::Math
+{
+    class Mat4;
+}
+
 namespace VoidArchitect::Platform
 {
     enum class RHI_API_TYPE
@@ -22,5 +27,8 @@ namespace VoidArchitect::Platform
 
         virtual bool BeginFrame(float deltaTime) = 0;
         virtual bool EndFrame(float deltaTime) = 0;
+
+        virtual void UpdateGlobalState(const Math::Mat4& projection, const Math::Mat4& view) = 0;
+        virtual void UpdateObjectState(const Math::Mat4& model) = 0;
     };
 }
