@@ -1,9 +1,4 @@
-struct PS_INPUT
+float4 main() : SV_Target
 {
-    [[vk::location(0)]] float3 Position : POSITION;
-};
-
-float4 main(PS_INPUT input) : SV_Target
-{
-    return float4(input.Position + 0.5, 1.0);
+    return float4(1.0, 1.0, 1.0, 1.0);
 }

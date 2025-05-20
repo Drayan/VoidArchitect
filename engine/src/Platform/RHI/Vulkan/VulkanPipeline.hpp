@@ -27,6 +27,7 @@ namespace VoidArchitect::Platform
         ~VulkanPipeline();
 
         void Bind(const VulkanCommandBuffer& cmdBuf, VkPipelineBindPoint bindPoint) const;
+        [[nodiscard]] VkPipelineLayout GetPipelineLayout() const { return m_PipelineLayout; }
 
     private:
         VkDevice m_Device;

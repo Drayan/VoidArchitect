@@ -34,6 +34,22 @@ namespace VoidArchitect::Platform
         //void Bind(uint64_t offset);
         void BindMemory(uint64_t offset = 0);
 
+        void Bind() override
+        {
+        }
+
+        void Unbind() override
+        {
+        }
+
+        template <typename T>
+        void LoadData(std::vector<T>& data)
+        {
+            const auto bufData = LockMemory(0, m_Size, 0);
+            memcpy(bufData, data.data(), m_Size);
+            UnlockMemory();
+        }
+
         bool Resize(const VulkanRHI& rhi, uint64_t newSize, VkQueue queue, VkCommandPool pool);
         void* LockMemory(
             const uint64_t offset,

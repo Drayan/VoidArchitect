@@ -16,12 +16,16 @@ if (NOT TARGET Vulkan)
     find_package(Vulkan REQUIRED COMPONENTS MoltenVK)
 endif ()
 
+if (NOT TARGET glm)
+    find_package(glm REQUIRED CONFIG)
+endif ()
+
 # Create the library
 add_library(VoidArchitect_Engine
         ${ENGINE_SOURCES}
         ${ENGINE_HEADERS}
 )
-target_link_libraries(VoidArchitect_Engine PUBLIC spdlog::spdlog SDL3::SDL3 Vulkan::Vulkan Vulkan::MoltenVK)
+target_link_libraries(VoidArchitect_Engine PUBLIC spdlog::spdlog SDL3::SDL3 Vulkan::Vulkan Vulkan::MoltenVK glm::glm)
 
 # If the compiler support PCH, use it.
 target_precompile_headers(VoidArchitect_Engine PRIVATE "src/va.pch.hpp")

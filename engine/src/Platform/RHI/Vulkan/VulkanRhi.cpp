@@ -85,6 +85,32 @@ namespace VoidArchitect::Platform
             m_Device,
             m_Allocator,
             indices);
+
+        m_GlobalUniformBuffer = std::make_unique<VulkanBuffer>(
+            *this,
+            m_Device,
+            m_Allocator,
+            sizeof(GlobalUniformObject),
+            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+
+        const std::vector globalLayouts = {
+            m_DescriptorSetLayout,
+            m_DescriptorSetLayout,
+            m_DescriptorSetLayout
+        };
+
+        m_DescriptorSets = new VkDescriptorSet[globalLayouts.size()];
+
+        auto allocInfo = VkDescriptorSetAllocateInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = m_DescriptorPool;
+        allocInfo.descriptorSetCount = static_cast<uint32_t>(globalLayouts.size());
+        allocInfo.pSetLayouts = globalLayouts.data();
+        VA_VULKAN_CHECK_RESULT_WARN(
+            vkAllocateDescriptorSets(m_Device->GetLogicalDeviceHandle(), &allocInfo,
+                m_DescriptorSets));
         //TEMP End of temporary code
     }
 
@@ -92,7 +118,23 @@ namespace VoidArchitect::Platform
     {
         m_Device->WaitIdle();
 
-        // TEMP Test code for buffers
+        //TEMP Test code
+        vkFreeDescriptorSets(
+            m_Device->GetLogicalDeviceHandle(),
+            m_DescriptorPool,
+            1,
+            m_DescriptorSets);
+
+        delete[] m_DescriptorSets;
+
+        m_GlobalUniformBuffer.reset();
+
+        vkDestroyDescriptorPool(m_Device->GetLogicalDeviceHandle(), m_DescriptorPool, m_Allocator);
+        vkDestroyDescriptorSetLayout(
+            m_Device->GetLogicalDeviceHandle(),
+            m_DescriptorSetLayout,
+            m_Allocator);
+
         m_VertexBuffer.reset();
         m_IndexBuffer.reset();
         // TEMP End of temp code
@@ -207,6 +249,12 @@ namespace VoidArchitect::Platform
         m_Pipeline->Bind(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS);
 
         // TEMP Testing vertex and index buffers
+        const auto ubo = GlobalUniformObject{
+            .Projection = Math::Mat4::Perspective(45.0f, 1.0f, 0.1f, 100.0f),
+            .View = Math::Mat4::Translate(0.f, 0.f, -1.0f),
+        };
+        UpdateGlobalState(ubo);
+
         constexpr auto offsets = VkDeviceSize{0};
         const auto vertexBuffer = m_VertexBuffer->GetHandle();
         vkCmdBindVertexBuffers(cmdBuf.GetHandle(), 0, 1, &vertexBuffer, &offsets);
@@ -688,7 +736,35 @@ namespace VoidArchitect::Platform
             ShaderStage::Pixel,
             BUILTIN_OBJECT_SHADER_NAME + ".pixl");
 
-        // --- TODO Descriptors ---
+        // --- Global Descriptors ---
+        auto globalUBOLayoutBinding = VkDescriptorSetLayoutBinding{};
+        globalUBOLayoutBinding.binding = 0;
+        globalUBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        globalUBOLayoutBinding.descriptorCount = 1;
+        globalUBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+        auto globalLayoutInfo = VkDescriptorSetLayoutCreateInfo{};
+        globalLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        globalLayoutInfo.bindingCount = 1;
+        globalLayoutInfo.pBindings = &globalUBOLayoutBinding;
+
+        VA_VULKAN_CHECK_RESULT_WARN(
+            vkCreateDescriptorSetLayout(m_Device->GetLogicalDeviceHandle(), &globalLayoutInfo,
+                m_Allocator, &m_DescriptorSetLayout));
+
+        auto globalPoolSize = VkDescriptorPoolSize{};
+        globalPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        globalPoolSize.descriptorCount = m_Swapchain->GetImageCount();
+
+        auto globalPoolInfo = VkDescriptorPoolCreateInfo{};
+        globalPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        globalPoolInfo.maxSets = m_Swapchain->GetImageCount();
+        globalPoolInfo.poolSizeCount = 1;
+        globalPoolInfo.pPoolSizes = &globalPoolSize;
+
+        VA_VULKAN_CHECK_RESULT_WARN(
+            vkCreateDescriptorPool(m_Device->GetLogicalDeviceHandle(), &globalPoolInfo, m_Allocator,
+                &m_DescriptorPool));
 
         // --- Attributes ---
         std::vector attributes = {
@@ -701,7 +777,10 @@ namespace VoidArchitect::Platform
             }
         };
 
-        // --- TODO Descriptors set layouts ---
+        // --- Descriptors set layouts ---
+        std::vector descriptorSetLayouts = {
+            m_DescriptorSetLayout
+        };
 
         // --- Create the graphics pipeline ---
         m_Pipeline = std::make_unique<VulkanPipeline>(
@@ -710,7 +789,7 @@ namespace VoidArchitect::Platform
             m_MainRenderpass,
             m_Shaders,
             attributes,
-            std::vector<VkDescriptorSetLayout>{});
+            descriptorSetLayouts);
         VA_ENGINE_INFO("[VulkanRHI] Pipeline created.");
     }
 
@@ -787,6 +866,46 @@ namespace VoidArchitect::Platform
         m_RecreatingSwapchain = false;
 
         return true;
+    }
+
+    //TEMP This should be moved elsewhere
+    void VulkanRHI::UpdateGlobalState(const GlobalUniformObject& globalUniformObject) const
+    {
+        const auto& cmdBuf = m_GraphicsCommandBuffers[m_ImageIndex];
+        vkCmdBindDescriptorSets(
+            cmdBuf.GetHandle(),
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_Pipeline->GetPipelineLayout(),
+            0,
+            1,
+            m_DescriptorSets,
+            0,
+            nullptr);
+
+        auto data = std::vector{globalUniformObject};
+        m_GlobalUniformBuffer->LoadData(data);
+
+        // Update the descriptor set
+        VkDescriptorBufferInfo bufferInfo{};
+        bufferInfo.buffer = m_GlobalUniformBuffer->GetHandle();
+        bufferInfo.offset = 0;
+        bufferInfo.range = sizeof(GlobalUniformObject);
+
+        VkWriteDescriptorSet writeDescriptorSet{};
+        writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        writeDescriptorSet.dstSet = m_DescriptorSets[m_ImageIndex];
+        writeDescriptorSet.dstBinding = 0;
+        writeDescriptorSet.dstArrayElement = 0;
+        writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        writeDescriptorSet.descriptorCount = 1;
+        writeDescriptorSet.pBufferInfo = &bufferInfo;
+
+        vkUpdateDescriptorSets(
+            m_Device->GetLogicalDeviceHandle(),
+            1,
+            &writeDescriptorSet,
+            0,
+            nullptr);
     }
 
 #ifdef DEBUG

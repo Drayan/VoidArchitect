@@ -8,6 +8,9 @@
 
 #include <vulkan/vulkan.h>
 
+#include "VulkanBuffer.hpp"
+#include "Core/Math/Mat4.hpp"
+
 namespace VoidArchitect
 {
     class Window;
@@ -23,6 +26,17 @@ namespace VoidArchitect::Platform
     class VulkanShader;
     class VulkanVertexBuffer;
     class VulkanIndexBuffer;
+    class VulkanBuffer;
+
+    //TEMP This should not stay here.
+    //NOTE Vulkan give us a max of 256 bytes on G_UBO
+    struct GlobalUniformObject
+    {
+        Math::Mat4 Projection;
+        Math::Mat4 View;
+        Math::Mat4 Reserved0;
+        Math::Mat4 Reserved1;
+    };
 
     class VulkanRHI final : public IRenderingHardware
     {
@@ -67,6 +81,9 @@ namespace VoidArchitect::Platform
 
         bool RecreateSwapchain();
 
+        //TEMP This method should be moved elsewhere
+        void UpdateGlobalState(const GlobalUniformObject& globalUniformObject) const;
+
 #ifdef DEBUG
         void CreateDebugMessenger();
         void DestroyDebugMessenger() const;
@@ -106,6 +123,13 @@ namespace VoidArchitect::Platform
 
         std::vector<VulkanShader> m_Shaders;
         std::unique_ptr<VulkanPipeline> m_Pipeline;
+
+        //TEMP These should not stay here
+        VkDescriptorPool m_DescriptorPool;
+        VkDescriptorSet* m_DescriptorSets;
+        VkDescriptorSetLayout m_DescriptorSetLayout;
+        GlobalUniformObject m_GlobalUniformObject;
+        std::unique_ptr<VulkanBuffer> m_GlobalUniformBuffer;
 
         std::unique_ptr<VulkanVertexBuffer> m_VertexBuffer;
         std::unique_ptr<VulkanIndexBuffer> m_IndexBuffer;
