@@ -90,10 +90,12 @@ namespace VoidArchitect::Platform
             *this,
             m_Device,
             m_Allocator,
-            sizeof(GlobalUniformObject),
-            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+            sizeof(GlobalUniformObject) * 3,
+            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT |
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+
+        m_GlobalStateIsUpdated.resize(m_Swapchain->GetImageCount(), false);
 
         const std::vector globalLayouts = {
             m_DescriptorSetLayout,
@@ -119,11 +121,12 @@ namespace VoidArchitect::Platform
         m_Device->WaitIdle();
 
         //TEMP Test code
-        vkFreeDescriptorSets(
-            m_Device->GetLogicalDeviceHandle(),
-            m_DescriptorPool,
-            1,
-            m_DescriptorSets);
+
+        // vkFreeDescriptorSets(
+        //     m_Device->GetLogicalDeviceHandle(),
+        //     m_DescriptorPool,
+        //     1,
+        //     m_DescriptorSets);
 
         delete[] m_DescriptorSets;
 
@@ -869,41 +872,47 @@ namespace VoidArchitect::Platform
     }
 
     //TEMP This should be moved elsewhere
-    void VulkanRHI::UpdateGlobalState(const GlobalUniformObject& globalUniformObject) const
+    void VulkanRHI::UpdateGlobalState(const GlobalUniformObject& globalUniformObject)
     {
         const auto& cmdBuf = m_GraphicsCommandBuffers[m_ImageIndex];
+        const auto& globalDescriptor = m_DescriptorSets[m_ImageIndex];
+        if (!m_GlobalStateIsUpdated[m_ImageIndex])
+        {
+            auto data = std::vector{globalUniformObject, globalUniformObject, globalUniformObject};
+            m_GlobalUniformBuffer->LoadData(data);
+
+            // Update the descriptor set
+            VkDescriptorBufferInfo bufferInfo{};
+            bufferInfo.buffer = m_GlobalUniformBuffer->GetHandle();
+            bufferInfo.offset = sizeof(GlobalUniformObject) * m_ImageIndex;
+            bufferInfo.range = sizeof(GlobalUniformObject);
+
+            VkWriteDescriptorSet writeDescriptorSet{};
+            writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            writeDescriptorSet.dstSet = globalDescriptor;
+            writeDescriptorSet.dstBinding = 0;
+            writeDescriptorSet.dstArrayElement = 0;
+            writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            writeDescriptorSet.descriptorCount = 1;
+            writeDescriptorSet.pBufferInfo = &bufferInfo;
+
+            vkUpdateDescriptorSets(
+                m_Device->GetLogicalDeviceHandle(),
+                1,
+                &writeDescriptorSet,
+                0,
+                nullptr);
+
+            m_GlobalStateIsUpdated[m_ImageIndex] = true;
+        }
+
         vkCmdBindDescriptorSets(
             cmdBuf.GetHandle(),
             VK_PIPELINE_BIND_POINT_GRAPHICS,
             m_Pipeline->GetPipelineLayout(),
             0,
             1,
-            m_DescriptorSets,
-            0,
-            nullptr);
-
-        auto data = std::vector{globalUniformObject};
-        m_GlobalUniformBuffer->LoadData(data);
-
-        // Update the descriptor set
-        VkDescriptorBufferInfo bufferInfo{};
-        bufferInfo.buffer = m_GlobalUniformBuffer->GetHandle();
-        bufferInfo.offset = 0;
-        bufferInfo.range = sizeof(GlobalUniformObject);
-
-        VkWriteDescriptorSet writeDescriptorSet{};
-        writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        writeDescriptorSet.dstSet = m_DescriptorSets[m_ImageIndex];
-        writeDescriptorSet.dstBinding = 0;
-        writeDescriptorSet.dstArrayElement = 0;
-        writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        writeDescriptorSet.descriptorCount = 1;
-        writeDescriptorSet.pBufferInfo = &bufferInfo;
-
-        vkUpdateDescriptorSets(
-            m_Device->GetLogicalDeviceHandle(),
-            1,
-            &writeDescriptorSet,
+            &globalDescriptor,
             0,
             nullptr);
     }

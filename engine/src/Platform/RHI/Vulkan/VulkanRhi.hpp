@@ -82,7 +82,7 @@ namespace VoidArchitect::Platform
         bool RecreateSwapchain();
 
         //TEMP This method should be moved elsewhere
-        void UpdateGlobalState(const GlobalUniformObject& globalUniformObject) const;
+        void UpdateGlobalState(const GlobalUniformObject& globalUniformObject);
 
 #ifdef DEBUG
         void CreateDebugMessenger();
@@ -125,6 +125,7 @@ namespace VoidArchitect::Platform
         std::unique_ptr<VulkanPipeline> m_Pipeline;
 
         //TEMP These should not stay here
+        std::vector<bool> m_GlobalStateIsUpdated;
         VkDescriptorPool m_DescriptorPool;
         VkDescriptorSet* m_DescriptorSets;
         VkDescriptorSetLayout m_DescriptorSetLayout;
