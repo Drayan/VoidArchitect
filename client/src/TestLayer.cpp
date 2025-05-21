@@ -14,7 +14,7 @@ void TestLayer::OnAttach()
     m_DebugCameraController =
         std::make_unique<VoidArchitect::Renderer::DebugCameraController>(camera);
 
-    camera.SetPosition({0.0f, 0.0f, 3.0f});
+    camera.SetPosition({0.f, 0.f, 3.f});
 }
 
 void TestLayer::OnDetach()

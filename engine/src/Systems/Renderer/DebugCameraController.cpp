@@ -5,6 +5,7 @@
 
 #include "Core/Events/KeyEvent.hpp"
 #include <SDL3/SDL_keycode.h>
+#include <SDL3/SDL_mouse.h>
 
 #include "Camera.hpp"
 #include "Core/Logger.hpp"
@@ -14,14 +15,94 @@ namespace VoidArchitect::Renderer
 #define BIND_EVENT_FN(x) [this](auto && PH1) { return this->x(std::forward<decltype(PH1)>(PH1)); }
 
     DebugCameraController::DebugCameraController(Camera& camera)
-        : m_Camera(camera)
+        : m_Camera(camera),
+          m_CameraPosition(camera.GetPosition()),
+          m_CameraOrientation(camera.GetRotation())
     {
+        m_Forward = Math::Vec3::Forward();
+        m_Right = Math::Vec3::Right();
+        m_Up = Math::Vec3::Up();
+
+        const auto euler = m_CameraOrientation.ToEuler();
+        m_Pitch = euler.X();
+        m_Yaw = euler.Y();
+    }
+
+    void DebugCameraController::UpdateCameraVectors()
+    {
+        m_Forward = m_CameraOrientation.RotateVector(Math::Vec3::Forward());
+        m_Right = m_CameraOrientation.RotateVector(Math::Vec3::Right());
+        m_Up = m_CameraOrientation.RotateVector(Math::Vec3::Up());
     }
 
     void DebugCameraController::OnUpdate(const float deltaTime)
     {
-        const auto position = m_Camera.GetPosition();
-        m_Camera.SetPosition(position + m_CameraPosition * deltaTime * 2.f);
+        m_CameraPosition = m_Camera.GetPosition();
+
+        Math::Vec3 velocity;
+
+        if (m_MoveForward)
+            velocity += m_Forward;
+        if (m_MoveBackward)
+            velocity -= m_Forward;
+        if (m_MoveLeft)
+            velocity -= m_Right;
+        if (m_MoveRight)
+            velocity += m_Right;
+        if (m_MoveUp)
+            velocity += m_Up;
+        if (m_MoveDown)
+            velocity -= m_Up;
+
+        if (!velocity.IsZero())
+            velocity.Normalize();
+
+        m_CameraPosition += velocity * m_MovementSpeed * deltaTime;
+        m_Camera.SetPosition(m_CameraPosition);
+        m_Camera.SetRotation(m_CameraOrientation);
+    }
+
+    bool DebugCameraController::OnMouseMoved(MouseMovedEvent& e)
+    {
+        static bool firstMouse = true;
+        static float lastX;
+        static float lastY;
+
+        VA_ENGINE_TRACE("[DebugCameraController] Mouse moved to {0}, {1}.", e.GetX(), e.GetY());
+
+        if (firstMouse)
+        {
+            lastX = e.GetX();
+            lastY = e.GetY();
+            firstMouse = false;
+            return false;
+        }
+
+        float xOffset = lastX - e.GetX();
+        float yOffset = lastY - e.GetY();
+
+        lastX = e.GetX();
+        lastY = e.GetY();
+
+        m_CameraOrientation = m_Camera.GetRotation();
+        const auto euler = m_CameraOrientation.ToEuler();
+        m_Pitch = euler.X();
+        m_Yaw = euler.Y();
+
+        if (m_MouseDrag)
+        {
+            m_Yaw += xOffset * m_RotationSpeed;
+            m_Pitch += yOffset * m_RotationSpeed;
+
+            constexpr auto pitchLimit = 87.f;
+            m_Pitch = std::clamp(m_Pitch, -pitchLimit, pitchLimit);
+
+            m_CameraOrientation = Math::Quat::FromEuler(m_Pitch, m_Yaw, 0.0f);
+
+            UpdateCameraVectors();
+        }
+
+        return false;
     }
 
     bool DebugCameraController::OnKeyPressed(KeyPressedEvent& e)
@@ -29,22 +110,22 @@ namespace VoidArchitect::Renderer
         switch (e.GetKeyCode())
         {
             case SDLK_Z:
-                m_CameraPosition.Z(-1.f);
+                m_MoveForward = true;
                 break;
             case SDLK_S:
-                m_CameraPosition.Z(1.f);
+                m_MoveBackward = true;
                 break;
             case SDLK_Q:
-                m_CameraPosition.X(-1.f);
+                m_MoveLeft = true;
                 break;
             case SDLK_D:
-                m_CameraPosition.X(1.f);
+                m_MoveRight = true;
                 break;
             case SDLK_LSHIFT:
-                m_CameraPosition.Y(-1.f);
+                m_MoveDown = true;
                 break;
             case SDLK_SPACE:
-                m_CameraPosition.Y(1.f);
+                m_MoveUp = true;
                 break;
             default: ;
         }
@@ -57,16 +138,48 @@ namespace VoidArchitect::Renderer
         switch (e.GetKeyCode())
         {
             case SDLK_Z:
+                m_MoveForward = false;
+                break;
             case SDLK_S:
-                m_CameraPosition.Z(0.f);
+                m_MoveBackward = false;
                 break;
             case SDLK_Q:
+                m_MoveLeft = false;
+                break;
             case SDLK_D:
-                m_CameraPosition.X(0.f);
+                m_MoveRight = false;
                 break;
             case SDLK_LSHIFT:
+                m_MoveDown = false;
+                break;
             case SDLK_SPACE:
-                m_CameraPosition.Y(0.f);
+                m_MoveUp = false;
+                break;
+            default: ;
+        }
+
+        return false;
+    }
+
+    bool DebugCameraController::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+    {
+        switch (e.GetMouseButton())
+        {
+            case SDL_BUTTON_RIGHT:
+                m_MouseDrag = true;
+                break;
+            default: ;
+        }
+
+        return false;
+    }
+
+    bool DebugCameraController::OnMouseButtonReleased(MouseButtonReleasedEvent& e)
+    {
+        switch (e.GetMouseButton())
+        {
+            case SDL_BUTTON_RIGHT:
+                m_MouseDrag = false;
                 break;
             default: ;
         }
@@ -79,5 +192,8 @@ namespace VoidArchitect::Renderer
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyPressed));
         dispatcher.Dispatch<KeyReleasedEvent>(BIND_EVENT_FN(OnKeyReleased));
+        dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(OnMouseMoved));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(OnMouseButtonPressed));
+        dispatcher.Dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FN(OnMouseButtonReleased));
     }
 }

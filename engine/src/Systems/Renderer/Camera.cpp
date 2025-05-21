@@ -59,6 +59,7 @@ namespace VoidArchitect::Renderer
                     m_Far);
                 break;
         }
-        m_View = Math::Mat4::Inverse(Math::Mat4::Translate(m_Position));
+        m_View = Math::Mat4::Inverse(
+            Math::Mat4::Translate(m_Position) * Math::Mat4::FromQuaternion(m_Rotation));
     }
 } // VoidArchitect

@@ -3,6 +3,7 @@
 //
 #include "Mat4.hpp"
 
+#include "Quat.hpp"
 #include "Vec3.hpp"
 
 namespace VoidArchitect::Math
@@ -29,7 +30,8 @@ namespace VoidArchitect::Math
 
     Mat4 Mat4::Perspective(const float fov, const float aspect, const float near, const float far)
     {
-        return Mat4(impl::glm::perspective(fov, aspect, near, far));
+        auto mat = Mat4(impl::glm::perspectiveRH_ZO(fov, aspect, near, far));
+        return mat;
     }
 
     Mat4 Mat4::Orthographic(
@@ -56,6 +58,11 @@ namespace VoidArchitect::Math
     Mat4 Mat4::Rotate(const float angle, const float x, const float y, const float z)
     {
         return Mat4(impl::glm::rotate(impl::glm::mat4(1.0f), angle, impl::glm::vec3(x, y, z)));
+    }
+
+    Mat4 Mat4::FromQuaternion(const Quat& quat)
+    {
+        return quat.ToMat4();
     }
 
     Mat4 Mat4::Scale(const float x, const float y, const float z)

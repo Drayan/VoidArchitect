@@ -4,6 +4,7 @@
 #pragma once
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec3.hpp"
+#include "Core/Math/Quat.hpp"
 
 namespace VoidArchitect::Renderer
 {
@@ -34,6 +35,13 @@ namespace VoidArchitect::Renderer
             m_Position = Math::Vec3(x, y, z);
         }
 
+        void SetRotation(const Math::Quat& quat)
+        {
+            m_Rotation = quat;
+        }
+
+        Math::Quat GetRotation() const { return m_Rotation; }
+
     private:
         CameraType m_Type;
 
@@ -51,5 +59,6 @@ namespace VoidArchitect::Renderer
         Math::Mat4 m_Projection;
 
         Math::Vec3 m_Position;
+        Math::Quat m_Rotation;
     };
 } // VoidArchitect

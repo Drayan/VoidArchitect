@@ -8,11 +8,13 @@ namespace VoidArchitect::Math
     namespace impl
     {
 #include <glm/vec3.hpp>
+#include <glm/geometric.hpp>
     }
 
     class Vec3
     {
         friend class Mat4;
+        friend class Quat;
 
     public:
         static Vec3 Zero();
@@ -24,8 +26,13 @@ namespace VoidArchitect::Math
         static Vec3 Forward();
         static Vec3 Back();
 
+        static Vec3 Cross(const Vec3& v1, const Vec3& v2);
+
         Vec3();
         Vec3(float x, float y, float z);
+
+        void Normalize();
+        bool IsZero() const;
 
         Vec3 operator+(const Vec3& other) const;
         Vec3 operator-(const Vec3& other) const;
@@ -33,6 +40,8 @@ namespace VoidArchitect::Math
         Vec3 operator/(const Vec3& other) const;
         Vec3 operator*(const float scalar) const;
         Vec3 operator/(const float scalar) const;
+        Vec3& operator+=(const Vec3& other);
+        Vec3& operator-=(const Vec3& other);
 
         void X(const float x) { m_Vector.x = x; }
         void Y(const float y) { m_Vector.y = y; }

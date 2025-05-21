@@ -6,6 +6,7 @@
 namespace VoidArchitect::Math
 {
     class Vec3;
+    class Quat;
 
     namespace impl
     {
@@ -17,6 +18,7 @@ namespace VoidArchitect::Math
     class Mat4
     {
         friend class Vec3;
+        friend class Quat;
 
     public:
         Mat4();
@@ -34,6 +36,7 @@ namespace VoidArchitect::Math
         static Mat4 Translate(float x, float y, float z);
         static Mat4 Translate(const Vec3& translation);
         static Mat4 Rotate(float angle, float x, float y, float z);
+        static Mat4 FromQuaternion(const Quat& quat);
         static Mat4 Scale(float x, float y, float z);
         static Mat4 Inverse(const Mat4& matrix);
         static Mat4 Transpose(const Mat4& matrix);
