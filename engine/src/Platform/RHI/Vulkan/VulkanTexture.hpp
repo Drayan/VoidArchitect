@@ -20,8 +20,15 @@ namespace VoidArchitect::Platform
             const VulkanRHI& rhi,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
+            uint32_t width,
+            uint32_t height,
+            uint8_t channels,
+            bool hasTransparency,
             const std::vector<uint8_t>& data);
-        ~VulkanTexture2D();
+        ~VulkanTexture2D() override;
+
+        VkImageView GetImageView() const { return m_Image.GetView(); }
+        VkSampler GetSampler() const { return m_Sampler; }
 
     private:
         VulkanImage m_Image;

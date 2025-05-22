@@ -5,4 +5,13 @@
 
 namespace VoidArchitect
 {
+    GeometryRenderData::GeometryRenderData()
+        : Model(Math::Mat4::Identity())
+    {
+    }
+
+    GeometryRenderData::GeometryRenderData(const UUID objectId, const Math::Mat4& model)
+        : ObjectId(objectId), Model(model)
+    {
+    }
 } // VoidArchitect

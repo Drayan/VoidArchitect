@@ -4,6 +4,11 @@
 #pragma once
 #include "IRenderingHardware.hpp"
 
+namespace VoidArchitect
+{
+    struct GeometryRenderData;
+}
+
 namespace VoidArchitect::Math
 {
     class Mat4;
@@ -34,12 +39,16 @@ namespace VoidArchitect::Platform
         virtual bool EndFrame(float deltaTime) = 0;
 
         virtual void UpdateGlobalState(const Math::Mat4& projection, const Math::Mat4& view) = 0;
-        virtual void UpdateObjectState(const Math::Mat4& model) = 0;
+        virtual void UpdateObjectState(const GeometryRenderData& data) = 0;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////
         virtual std::shared_ptr<Resources::Texture2D> CreateTexture2D(
+            uint32_t width,
+            uint32_t height,
+            uint8_t channels,
+            bool hasTransparency,
             const std::vector<uint8_t>& data) = 0;
     };
 }

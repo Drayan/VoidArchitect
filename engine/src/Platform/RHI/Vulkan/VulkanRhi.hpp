@@ -12,6 +12,7 @@
 namespace VoidArchitect
 {
     class Window;
+    struct GeometryRenderData;
 
     namespace Resources
     {
@@ -45,13 +46,14 @@ namespace VoidArchitect::Platform
         bool EndFrame(float deltaTime) override;
 
         void UpdateGlobalState(const Math::Mat4& projection, const Math::Mat4& view) override;
-        void UpdateObjectState(const Math::Mat4& model) override;
+        void UpdateObjectState(const GeometryRenderData& data) override;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////
         std::shared_ptr<Resources::Texture2D>
-        CreateTexture2D(const std::vector<uint8_t>& data) override;
+        CreateTexture2D(uint32_t width, uint32_t height, uint8_t channels, bool hasTransparency, const std::vector<uint8_t>
+                        & data) override;
 
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
         {

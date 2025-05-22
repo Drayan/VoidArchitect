@@ -43,7 +43,8 @@ namespace VoidArchitect::Platform
         // --- Vertex input binding ---
         auto bindingDescription = VkVertexInputBindingDescription{};
         bindingDescription.binding = 0;
-        bindingDescription.stride = 12;
+        //TODO Should be set by the engine
+        bindingDescription.stride = 20;
         bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
         // --- Vertex input ---
@@ -68,7 +69,7 @@ namespace VoidArchitect::Platform
         rasterizerInfo.polygonMode = VK_POLYGON_MODE_FILL;
         rasterizerInfo.lineWidth = 1.0f;
         rasterizerInfo.cullMode = VK_CULL_MODE_BACK_BIT;
-        rasterizerInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
+        rasterizerInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizerInfo.depthBiasEnable = VK_FALSE;
 
         // --- Multisampling ---

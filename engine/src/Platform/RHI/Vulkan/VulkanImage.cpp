@@ -114,6 +114,7 @@ namespace VoidArchitect::Platform
         barrier.subresourceRange.baseMipLevel = 0;
         barrier.subresourceRange.levelCount = 1;
         barrier.subresourceRange.baseArrayLayer = 0;
+        barrier.subresourceRange.layerCount = 1;
 
         VkPipelineStageFlags sourceStage;
         VkPipelineStageFlags destinationStage;

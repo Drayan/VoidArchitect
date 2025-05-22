@@ -64,17 +64,38 @@ namespace VoidArchitect::Platform
             -0.5f,
             -0.5f,
             0.0f,
+
             0.0f,
+            0.0f,
+
+            0.5f,
             0.5f,
             0.0f,
+
+            1.0f,
+            1.0f,
+
+            -0.5f,
+            0.5f,
+            0.0f,
+
+            0.0f,
+            1.0f,
+
             0.5f,
             -0.5f,
+            0.0f,
+
+            1.0f,
             0.0f,
         };
         const std::vector<uint32_t> indices = {
             0,
             1,
-            2
+            2,
+            0,
+            3,
+            1
         };
         m_VertexBuffer = std::make_unique<VulkanVertexBuffer>(
             *this,
@@ -87,6 +108,10 @@ namespace VoidArchitect::Platform
             m_Device,
             m_Allocator,
             indices);
+
+        // As this is just a test, and we don't really have an object implemented, we just pass a
+        // default 0 UUID.
+        m_Material->AcquireResources(UUID(0));
         //TEMP End of temporary code
     }
 
@@ -95,6 +120,7 @@ namespace VoidArchitect::Platform
         m_Device->WaitIdle();
 
         //TEMP Test code
+        m_Material->ReleaseResources(UUID(0));
         m_VertexBuffer.reset();
         m_IndexBuffer.reset();
         // TEMP End of temp code
@@ -221,7 +247,7 @@ namespace VoidArchitect::Platform
             m_IndexBuffer->GetHandle(),
             0,
             VK_INDEX_TYPE_UINT32);
-        vkCmdDrawIndexed(cmdBuf.GetHandle(), 3, 1, 0, 0, 0);
+        vkCmdDrawIndexed(cmdBuf.GetHandle(), 6, 1, 0, 0, 0);
         // TEMP End of temp bloc
 
         m_MainRenderpass->End(cmdBuf);
@@ -283,15 +309,27 @@ namespace VoidArchitect::Platform
         m_Material->SetGlobalUniforms(*this, projection, view);
     }
 
-    void VulkanRHI::UpdateObjectState(const Math::Mat4& model)
+    void VulkanRHI::UpdateObjectState(const GeometryRenderData& data)
     {
-        m_Material->SetObjectModelConstant(*this, model);
+        m_Material->SetObject(*this, data);
     }
 
     std::shared_ptr<Resources::Texture2D> VulkanRHI::CreateTexture2D(
+        const uint32_t width,
+        const uint32_t height,
+        const uint8_t channels,
+        const bool hasTransparency,
         const std::vector<uint8_t>& data)
     {
-        return std::make_shared<VulkanTexture2D>(*this, m_Device, m_Allocator, data);
+        return std::make_shared<VulkanTexture2D>(
+            *this,
+            m_Device,
+            m_Allocator,
+            width,
+            height,
+            channels,
+            hasTransparency,
+            data);
     }
 
     int32_t VulkanRHI::FindMemoryIndex(

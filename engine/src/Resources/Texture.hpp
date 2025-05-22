@@ -8,7 +8,10 @@ namespace VoidArchitect::Resources
     class ITexture
     {
     public:
-        ITexture() = default;
+        ITexture(uint32_t width, uint32_t height, uint8_t channelCount, bool hasTransparency);
+        virtual ~ITexture() = default;
+
+        uint32_t GetGeneration() const { return m_Generation; }
 
     protected:
         uint32_t m_Handle;
@@ -24,5 +27,8 @@ namespace VoidArchitect::Resources
     {
     public:
         static std::shared_ptr<Texture2D> Create(const std::string& name);
+
+    protected:
+        Texture2D(uint32_t width, uint32_t height, uint8_t channelCount, bool hasTransparency);
     };
 }

@@ -11,8 +11,13 @@ namespace VoidArchitect::Platform
         const VulkanRHI& rhi,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
+        const uint32_t width,
+        const uint32_t height,
+        const uint8_t channels,
+        const bool hasTransparency,
         const std::vector<uint8_t>& data)
-        : m_Image{},
+        : Texture2D(width, height, channels, hasTransparency),
+          m_Image{},
           m_Sampler{},
           m_Device(device->GetLogicalDeviceHandle()),
           m_Allocator(allocator)
@@ -81,10 +86,12 @@ namespace VoidArchitect::Platform
             vkCreateSampler(m_Device, &samplerInfo, m_Allocator, &m_Sampler));
 
         m_Generation++;
+        VA_ENGINE_TRACE("[VulkanTexture2D] Texture created.");
     }
 
     VulkanTexture2D::~VulkanTexture2D()
     {
+        VA_ENGINE_TRACE("[VulkanTexture2D] Texture destroyed.");
         vkDestroySampler(m_Device, m_Sampler, m_Allocator);
     }
 } // VoidArchitect

@@ -47,11 +47,19 @@ namespace VoidArchitect
             //// Resources ////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
             static std::shared_ptr<Resources::Texture2D> CreateTexture2D(const std::string& name);
+            static std::shared_ptr<Resources::Texture2D> CreateTexture2D(
+                uint32_t width,
+                uint32_t height,
+                uint8_t channels,
+                bool hasTransparency,
+                const std::vector<uint8_t>& data);
 
             static Platform::RHI_API_TYPE GetApiType() { return m_ApiType; }
             static Camera& GetMainCamera() { return m_Cameras[0]; }
 
         private:
+            static std::shared_ptr<Resources::Texture2D> m_DefaultTexture;
+
             static Platform::RHI_API_TYPE m_ApiType;
             static Platform::IRenderingHardware* m_RenderingHardware;
 
