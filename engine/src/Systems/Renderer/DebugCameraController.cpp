@@ -68,8 +68,6 @@ namespace VoidArchitect::Renderer
         static float lastX;
         static float lastY;
 
-        VA_ENGINE_TRACE("[DebugCameraController] Mouse moved to {0}, {1}.", e.GetX(), e.GetY());
-
         if (firstMouse)
         {
             lastX = e.GetX();

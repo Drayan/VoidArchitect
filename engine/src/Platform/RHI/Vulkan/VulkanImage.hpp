@@ -41,7 +41,15 @@ namespace VoidArchitect::Platform
         VulkanImage& operator=(VulkanImage&& other) noexcept;
         VulkanImage& operator=(const VulkanImage& other) = delete;
 
-        VkImageView GetView() const { return m_ImageView; }
+        void TransitionLayout(
+            const std::unique_ptr<VulkanDevice>& device,
+            const VulkanCommandBuffer& cmdBuf,
+            VkImageLayout
+            oldLayout,
+            VkImageLayout newLayout) const;
+        void CopyFromBuffer(const VulkanCommandBuffer& cmdBuf, const VulkanBuffer& buffer) const;
+
+        [[nodiscard]] VkImageView GetView() const { return m_ImageView; }
 
     private:
         void CreateImage(
