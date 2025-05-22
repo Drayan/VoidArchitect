@@ -7,6 +7,11 @@
 
 namespace VoidArchitect
 {
+    namespace Resources
+    {
+        class Texture2D;
+    }
+
     class Window;
 
     namespace Platform
@@ -38,9 +43,16 @@ namespace VoidArchitect
                 float near,
                 float far);
 
+            ///////////////////////////////////////////////////////////////////
+            //// Resources ////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            static std::shared_ptr<Resources::Texture2D> CreateTexture2D(const std::string& name);
+
+            static Platform::RHI_API_TYPE GetApiType() { return m_ApiType; }
             static Camera& GetMainCamera() { return m_Cameras[0]; }
 
         private:
+            static Platform::RHI_API_TYPE m_ApiType;
             static Platform::IRenderingHardware* m_RenderingHardware;
 
             static uint32_t m_Width, m_Height;

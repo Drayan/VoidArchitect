@@ -13,6 +13,7 @@
 #include "VulkanMaterial.hpp"
 #include "VulkanRenderpass.hpp"
 #include "VulkanSwapchain.hpp"
+#include "VulkanTexture.hpp"
 #include "VulkanUtils.hpp"
 
 namespace VoidArchitect::Platform
@@ -285,6 +286,12 @@ namespace VoidArchitect::Platform
     void VulkanRHI::UpdateObjectState(const Math::Mat4& model)
     {
         m_Material->SetObjectModelConstant(*this, model);
+    }
+
+    std::shared_ptr<Resources::Texture2D> VulkanRHI::CreateTexture2D(
+        const std::vector<uint8_t>& data)
+    {
+        return std::make_shared<VulkanTexture2D>(*this, m_Device, m_Allocator, data);
     }
 
     int32_t VulkanRHI::FindMemoryIndex(

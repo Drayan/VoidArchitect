@@ -4,12 +4,14 @@
 #include "RenderCommand.hpp"
 
 #include "Camera.hpp"
+#include "Core/Logger.hpp"
 #include "Core/Window.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Platform/RHI/Vulkan/VulkanRhi.hpp"
 
 namespace VoidArchitect::Renderer
 {
+    Platform::RHI_API_TYPE RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
     Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
     uint32_t RenderCommand::m_Width = 0;
     uint32_t RenderCommand::m_Height = 0;
@@ -19,6 +21,8 @@ namespace VoidArchitect::Renderer
         const Platform::RHI_API_TYPE apiType,
         std::unique_ptr<Window>& window)
     {
+        m_ApiType = apiType;
+
         m_Width = window->GetWidth();
         m_Height = window->GetHeight();
 
@@ -89,5 +93,20 @@ namespace VoidArchitect::Renderer
         float far)
     {
         return m_Cameras.emplace_back(top, bottom, left, right, near, far);
+    }
+
+    std::shared_ptr<Resources::Texture2D> RenderCommand::CreateTexture2D(const std::string& name)
+    {
+        std::vector<uint8_t> data;
+        switch (m_ApiType)
+        {
+            case Platform::RHI_API_TYPE::Vulkan:
+                return m_RenderingHardware->CreateTexture2D(data);
+            default:
+                break;
+        }
+
+        VA_ENGINE_WARN("[RenderCommand] Failed to create a texture {}.", name);
+        return nullptr;
     }
 } // VoidArchitect

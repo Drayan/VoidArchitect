@@ -12,6 +12,11 @@
 namespace VoidArchitect
 {
     class Window;
+
+    namespace Resources
+    {
+        class Texture2D;
+    }
 }
 
 namespace VoidArchitect::Platform
@@ -41,6 +46,12 @@ namespace VoidArchitect::Platform
 
         void UpdateGlobalState(const Math::Mat4& projection, const Math::Mat4& view) override;
         void UpdateObjectState(const Math::Mat4& model) override;
+
+        ///////////////////////////////////////////////////////////////////////
+        //// Resources ////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+        std::shared_ptr<Resources::Texture2D>
+        CreateTexture2D(const std::vector<uint8_t>& data) override;
 
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
         {

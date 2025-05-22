@@ -9,6 +9,11 @@ namespace VoidArchitect::Math
     class Mat4;
 }
 
+namespace VoidArchitect::Resources
+{
+    class Texture2D;
+}
+
 namespace VoidArchitect::Platform
 {
     enum class RHI_API_TYPE
@@ -30,5 +35,11 @@ namespace VoidArchitect::Platform
 
         virtual void UpdateGlobalState(const Math::Mat4& projection, const Math::Mat4& view) = 0;
         virtual void UpdateObjectState(const Math::Mat4& model) = 0;
+
+        ///////////////////////////////////////////////////////////////////////
+        //// Resources ////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+        virtual std::shared_ptr<Resources::Texture2D> CreateTexture2D(
+            const std::vector<uint8_t>& data) = 0;
     };
 }
