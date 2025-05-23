@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch VoidArchitect Client (Debug)",
             "type": "lldb-dap",
             "request": "launch",
-            "name": "Launch",
-            "program": "${workspaceRoot}/build/cmake-build-debug/output/bin/Darwin/VoidArchitect_Client",
+            "program": "${workspaceRoot}/build/debug/output/bin/Darwin/VoidArchitect_Client",
             "args": [],
-            "env": [],
-            "cwd": "${workspaceRoot}/build/cmake-build-debug/output/bin/Darwin",
-        }
+            "cwd": "${workspaceRoot}/build/debug/output/bin/Darwin",
+            "debugAdapterExecutable": "/opt/local/libexec/llvm-20/bin/lldb-dap",
+        },
     ]
 }

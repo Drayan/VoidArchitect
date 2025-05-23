@@ -3,6 +3,7 @@
 //
 #include "Logger.hpp"
 
+#include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace VoidArchitect
@@ -12,12 +13,23 @@ namespace VoidArchitect
 
     void Logger::Initialize()
     {
-        spdlog::set_pattern("%^[%d-%m-%Y %H:%M:%S --- %=8l --- %n]%$ %v");
 
-        s_EngineLogger = spdlog::stdout_color_mt("ENG");
+        auto consoleSink = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>();
+        consoleSink->set_pattern("%^[%d-%m-%Y %H:%M:%S.%f --- %=8l --- %n]%$ %v");
+        consoleSink->set_level(spdlog::level::info);
+
+        auto fileSink =
+            std::make_shared<spdlog::sinks::basic_file_sink_mt>("VoidArchitect.log", true);
+        fileSink->set_pattern("%^[%d-%m-%Y %H:%M:%S.%f --- %=8l --- %n]%$ %v");
+        fileSink->set_level(spdlog::level::trace);
+
+
+        s_EngineLogger = std::make_shared<spdlog::logger>(
+            "ENGINE", spdlog::sinks_init_list{consoleSink, fileSink});
         s_EngineLogger->set_level(spdlog::level::trace);
 
-        s_ApplicationLogger = spdlog::stdout_color_mt("APP");
+        s_ApplicationLogger = std::make_shared<spdlog::logger>(
+            "APPLICATION", spdlog::sinks_init_list{consoleSink, fileSink});
         s_ApplicationLogger->set_level(spdlog::level::trace);
     }
 } // namespace VoidArchitect

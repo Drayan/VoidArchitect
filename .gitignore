@@ -241,5 +241,6 @@ Temporary Items
 # End of https://www.toptal.com/developers/gitignore/api/macos,clion,visualstudiocode,git,cmake,ninja,c++
 
 ### VoidArchitect ###
+build/*
 assets/*
 !assets/shaders/*

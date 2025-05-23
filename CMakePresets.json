@@ -1,0 +1,19 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "debug",
+            "displayName": "Debug",
+            "description": "Debug configuration with Clang20",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/debug"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug",
+            "configurePreset": "debug",
+            "displayName": "Debug Build"
+        }
+    ]
+}
