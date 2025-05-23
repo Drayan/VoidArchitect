@@ -41,6 +41,7 @@ namespace VoidArchitect::Platform
         ~VulkanRHI() override;
 
         void Resize(uint32_t width, uint32_t height) override;
+        void WaitIdle(uint64_t timeout) override;
 
         bool BeginFrame(float deltaTime) override;
         bool EndFrame(float deltaTime) override;
@@ -51,9 +52,13 @@ namespace VoidArchitect::Platform
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////
-        std::shared_ptr<Resources::Texture2D>
-        CreateTexture2D(uint32_t width, uint32_t height, uint8_t channels, bool hasTransparency, const std::vector<uint8_t>
-                        & data) override;
+        std::shared_ptr<Resources::Texture2D> CreateTexture2D(
+            uint32_t width,
+            uint32_t height,
+            uint8_t channels,
+            bool hasTransparency,
+            const std::vector<uint8_t>
+            & data) override;
 
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
         {

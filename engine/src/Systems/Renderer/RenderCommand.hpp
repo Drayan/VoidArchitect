@@ -58,7 +58,8 @@ namespace VoidArchitect
             static Camera& GetMainCamera() { return m_Cameras[0]; }
 
         private:
-            static std::shared_ptr<Resources::Texture2D> m_DefaultTexture;
+            static std::shared_ptr<Resources::Texture2D> s_DefaultTexture;
+            static std::shared_ptr<Resources::Texture2D> s_TestTexture;
 
             static Platform::RHI_API_TYPE m_ApiType;
             static Platform::IRenderingHardware* m_RenderingHardware;

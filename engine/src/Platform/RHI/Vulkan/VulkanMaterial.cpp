@@ -204,16 +204,16 @@ namespace VoidArchitect::Platform
         for (const auto& id : m_InstanceLocalStates | std::views::keys)
             ReleaseResources(id);
 
-        m_LocalUniformBuffer.reset();
+        m_LocalUniformBuffer = nullptr;
         VA_ENGINE_DEBUG("[VulkanMaterial] Local uniform buffer destroyed.");
 
         delete[] m_GlobalDescriptorSets;
         VA_ENGINE_DEBUG("[VulkanMaterial] Descriptor sets destroyed.");
 
-        m_GlobalUniformBuffer.reset();
+        m_GlobalUniformBuffer = nullptr;
         VA_ENGINE_DEBUG("[VulkanMaterial] Global uniform buffer destroyed.");
 
-        m_Pipeline.reset();
+        m_Pipeline = nullptr;
         VA_ENGINE_DEBUG("[VulkanMaterial] Pipeline destroyed.");
 
         vkDestroyDescriptorPool(m_Device, m_LocalDescriptorPool, m_Allocator);
@@ -358,6 +358,15 @@ namespace VoidArchitect::Platform
                 auto texture = std::dynamic_pointer_cast<VulkanTexture2D>(data.Textures[i]);
                 auto& descriptorGeneration = instanceState.m_DescriptorStates[1]
                     .Generation[vulkanRhi.GetImageIndex()];
+
+                // If the texture hasn't been loaded yet, use the default.
+                // TODO: Determine which use the texture has and pull appropriate default.
+                if (texture == nullptr || texture->GetGeneration() == std::numeric_limits<
+                    uint32_t>::max())
+                {
+                    texture = std::dynamic_pointer_cast<VulkanTexture2D>(s_DefaultDiffuseTexture);
+                    descriptorGeneration = std::numeric_limits<uint32_t>::max();
+                }
 
                 // Check if the descriptor needs updating first.
                 if (texture != nullptr && (descriptorGeneration != texture->GetGeneration() ||

@@ -17,6 +17,7 @@ namespace VoidArchitect
     namespace Resources
     {
         class ITexture;
+        class Texture2D;
     }
 
     //NOTE Vulkan give us a max of 256 bytes on G_UBO
@@ -62,7 +63,14 @@ namespace VoidArchitect
             Platform::IRenderingHardware& rhi,
             const GeometryRenderData& data) = 0;
 
+        static void SetDefaultDiffuseTexture(
+            const std::shared_ptr<Resources::Texture2D>& defaultTexture)
+        {
+            s_DefaultDiffuseTexture = defaultTexture;
+        }
+
     protected:
+        static std::shared_ptr<Resources::Texture2D> s_DefaultDiffuseTexture;
         GlobalUniformObject m_GlobalUniformObject;
     };
 } // VoidArchitect

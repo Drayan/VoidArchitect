@@ -175,18 +175,36 @@ function(copy_assets SOURCE_SUBDIR OUTPUT_SUBDIR FILE_PATTERN)
     endif ()
 endfunction()
 
+function(symlink_assets SOURCE_SUBDIR OUTPUT_SUBDIR)
+    set(SOURCE_DIR "${ASSETS_SOURCE_DIR}/${SOURCE_SUBDIR}")
+    set(OUTPUT_DIR "${ASSETS_OUTPUT_DIR}/${OUTPUT_SUBDIR}")
+
+    file(MAKE_DIRECTORY ${OUTPUT_DIR})
+
+    add_custom_target(symlink_${SOURCE_SUBDIR}_assets ALL)
+
+    add_custom_command(
+            TARGET symlink_${SOURCE_SUBDIR}_assets
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E create_symlink ${SOURCE_DIR} ${OUTPUT_DIR}
+            COMMENT "Creating symbolic link for ${SOURCE_SUBDIR} assets"
+    )
+endfunction()
+
 # Call the setup functions to prepare asset directories
 setup_asset_directories()
 
 # Compile shaders
 compile_hlsl_shaders()
 
+symlink_assets("textures" "textures")
+
 # Add subprojects
 add_subdirectory(engine)
 add_subdirectory(client)
 
 # Make the client depend on our asset compilation
-add_dependencies(VoidArchitect_Client compile_shaders)
+add_dependencies(VoidArchitect_Client compile_shaders symlink_textures_assets)
 
 # Uncomment and adapt these lines when you need to copy other asset types
 # copy_assets("textures" "textures" "*.png;*.jpg;*.jpeg")

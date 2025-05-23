@@ -1,5 +1,5 @@
 project(VoidArchitect_Engine VERSION 0.1.0 LANGUAGES CXX)
-
+include(FetchContent)
 # List source files
 file(GLOB_RECURSE ENGINE_SOURCES "src/*.cpp")
 file(GLOB_RECURSE ENGINE_HEADERS "src/*.hpp")
@@ -12,6 +12,14 @@ if (NOT TARGET SDL3)
     find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 endif ()
 
+if (NOT TARGET stb)
+    FetchContent_Declare(
+            stb
+            URL https://github.com/nothings/stb/archive/master.zip
+            DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+    FetchContent_MakeAvailable(stb)
+endif ()
+
 if (NOT TARGET Vulkan)
     find_package(Vulkan REQUIRED COMPONENTS MoltenVK)
 endif ()
@@ -20,12 +28,15 @@ if (NOT TARGET glm)
     find_package(glm REQUIRED CONFIG)
 endif ()
 
+add_library(stb_image INTERFACE)
+target_include_directories(stb_image INTERFACE ${stb_SOURCE_DIR})
+
 # Create the library
 add_library(VoidArchitect_Engine
         ${ENGINE_SOURCES}
         ${ENGINE_HEADERS}
 )
-target_link_libraries(VoidArchitect_Engine PUBLIC spdlog::spdlog SDL3::SDL3 Vulkan::Vulkan Vulkan::MoltenVK glm::glm)
+target_link_libraries(VoidArchitect_Engine PUBLIC spdlog::spdlog SDL3::SDL3 stb_image Vulkan::Vulkan Vulkan::MoltenVK glm::glm)
 
 # If the compiler support PCH, use it.
 target_precompile_headers(VoidArchitect_Engine PRIVATE "src/va.pch.hpp")

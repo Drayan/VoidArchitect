@@ -163,6 +163,11 @@ namespace VoidArchitect::Platform
             m_FramebufferSizeGeneration);
     }
 
+    void VulkanRHI::WaitIdle(uint64_t timeout)
+    {
+        m_Device->WaitIdle();
+    }
+
     bool VulkanRHI::BeginFrame(float deltaTime)
     {
         const auto device = m_Device->GetLogicalDeviceHandle();
@@ -662,9 +667,9 @@ namespace VoidArchitect::Platform
             0,
             m_FramebufferWidth,
             m_FramebufferHeight,
-            0.0f,
-            0.1f,
-            0.0f,
+            0.02f,
+            0.02f,
+            0.02f,
             1.0f,
             1.0f,
             0

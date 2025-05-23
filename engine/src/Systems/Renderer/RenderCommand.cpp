@@ -3,6 +3,10 @@
 //
 #include "RenderCommand.hpp"
 
+//TEMP Temporary block
+#include <stb_image.h>
+//TEMP End of temporary
+
 #include "Camera.hpp"
 #include "Core/Logger.hpp"
 #include "Core/Window.hpp"
@@ -13,7 +17,8 @@
 
 namespace VoidArchitect::Renderer
 {
-    std::shared_ptr<Resources::Texture2D> RenderCommand::m_DefaultTexture;
+    std::shared_ptr<Resources::Texture2D> RenderCommand::s_DefaultTexture;
+    std::shared_ptr<Resources::Texture2D> RenderCommand::s_TestTexture;
 
     Platform::RHI_API_TYPE RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
     Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
@@ -71,13 +76,22 @@ namespace VoidArchitect::Renderer
             }
         }
 
-        m_DefaultTexture = CreateTexture2D(texSize, texSize, texChannels, true, texData);
+        s_DefaultTexture = CreateTexture2D(texSize, texSize, texChannels, true, texData);
+        IMaterial::SetDefaultDiffuseTexture(s_DefaultTexture);
         VA_ENGINE_TRACE("[RenderCommand] Default texture created.");
+
+        s_TestTexture = CreateTexture2D("wall3_color.png");
     }
 
     void RenderCommand::Shutdown()
     {
-        m_DefaultTexture.reset();
+        // Wait that any pending operation is completed before beginning the shutdown procedure.
+        m_RenderingHardware->WaitIdle(0);
+
+        s_TestTexture = nullptr;
+
+        IMaterial::SetDefaultDiffuseTexture(nullptr);
+        s_DefaultTexture = nullptr;
         VA_ENGINE_TRACE("[RenderCommand] Default texture destroyed.");
 
         delete m_RenderingHardware;
@@ -106,7 +120,7 @@ namespace VoidArchitect::Renderer
         if (!m_RenderingHardware->BeginFrame(deltaTime)) return false;
 
         auto geometry = GeometryRenderData(UUID(0), Math::Mat4::Identity());
-        geometry.Textures[0] = std::dynamic_pointer_cast<Resources::ITexture>(m_DefaultTexture);
+        geometry.Textures[0] = std::dynamic_pointer_cast<Resources::ITexture>(s_TestTexture);
 
         camera.RecalculateView();
         m_RenderingHardware->UpdateGlobalState(camera.GetProjection(), camera.GetView());
@@ -139,12 +153,29 @@ namespace VoidArchitect::Renderer
 
     std::shared_ptr<Resources::Texture2D> RenderCommand::CreateTexture2D(const std::string& name)
     {
-        std::vector<uint8_t> data;
+        std::stringstream ss;
+        ss << "assets/textures/" << name;
+
+        int32_t width, height, channels;
+        const auto rawData = stbi_load(ss.str().c_str(), &width, &height, &channels, 4);
+        if (rawData == nullptr)
+        {
+            VA_ENGINE_WARN("[RenderCommand] Failed to load texture {}.", name);
+            return nullptr;
+        }
+        auto data = std::vector<uint8_t>(width * height * 4);
+        memcpy(data.data(), rawData, data.size());
+        stbi_image_free(rawData);
+
         switch (m_ApiType)
         {
             case Platform::RHI_API_TYPE::Vulkan:
-                //return m_RenderingHardware->CreateTexture2D(TODO, TODO, TODO, TODO, data);
-                return nullptr;
+                return m_RenderingHardware->CreateTexture2D(
+                    width,
+                    height,
+                    4,
+                    true,
+                    data);
             default:
                 break;
         }
