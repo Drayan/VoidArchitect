@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/clion,c++,macos,git
-# Edit at https://www.toptal.com/developers/gitignore?templates=clion,c++,macos,git
+# Created by https://www.toptal.com/developers/gitignore/api/macos,clion,visualstudiocode,git,cmake,ninja,c++
+# Edit at https://www.toptal.com/developers/gitignore?templates=macos,clion,visualstudiocode,git,cmake,ninja,c++
 
 ### C++ ###
 # Prerequisites
@@ -79,7 +79,6 @@
 # *.ipr
 
 # CMake
-build/
 cmake-build-*/
 
 # Mongo Explorer plugin
@@ -149,6 +148,25 @@ fabric.properties
 # https://plugins.jetbrains.com/plugin/8053-azure-toolkit-for-intellij
 .idea/**/azureSettings.xml
 
+### CMake ###
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+### CMake Patch ###
+CMakeUserPresets.json
+
+# External projects
+*-prefix/
+
 ### Git ###
 # Created by git for backups. To disable backups in Git:
 # $ git config --global mergetool.keepBackup false
@@ -197,4 +215,31 @@ Temporary Items
 # iCloud generated files
 *.icloud
 
-# End of https://www.toptal.com/developers/gitignore/api/clion,c++,macos,git
+### Ninja ###
+.ninja_deps
+.ninja_log
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide
+
+# End of https://www.toptal.com/developers/gitignore/api/macos,clion,visualstudiocode,git,cmake,ninja,c++
+
+### VoidArchitect ###
+assets/*
+!assets/shaders/*
