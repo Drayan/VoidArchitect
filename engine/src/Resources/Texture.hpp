@@ -40,6 +40,13 @@ namespace VoidArchitect::Resources
     protected:
         Texture2D(uint32_t width, uint32_t height, uint8_t channelCount, bool hasTransparency);
 
+        static std::vector<uint8_t> LoadRawData(
+            const std::string& name,
+            int32_t& width,
+            int32_t& height,
+            int32_t& channels,
+            bool& hasTransparency);
+
         virtual void UpdateInternalData(
             Platform::IRenderingHardware& rhi,
             std::vector<uint8_t>& data) = 0;
