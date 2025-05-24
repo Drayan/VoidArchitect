@@ -27,6 +27,8 @@ namespace VoidArchitect::Platform
             const std::vector<uint8_t>& data);
         ~VulkanTexture2D() override;
 
+        void UpdateInternalData(IRenderingHardware& rhi, std::vector<uint8_t>& data) override;
+
         VkImageView GetImageView() const { return m_Image.GetView(); }
         VkSampler GetSampler() const { return m_Sampler; }
 

@@ -46,9 +46,8 @@ namespace VoidArchitect
             ///////////////////////////////////////////////////////////////////
             //// Resources ////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
-            static void CreateTexture2D(
-                const std::string& name,
-                std::shared_ptr<Resources::Texture2D>& texture);
+            static std::shared_ptr<Resources::Texture2D> CreateTexture2D(
+                const std::string& name);
             static std::shared_ptr<Resources::Texture2D> CreateTexture2D(
                 uint32_t width,
                 uint32_t height,
@@ -61,6 +60,7 @@ namespace VoidArchitect
 
             //TEMP: We'll expose a static method to swap the test texture
             static void SwapTestTexture();
+            static Platform::IRenderingHardware& GetRHIRef() { return *m_RenderingHardware; };
 
         private:
             static std::shared_ptr<Resources::Texture2D> s_DefaultTexture;

@@ -151,9 +151,7 @@ namespace VoidArchitect::Renderer
         return m_Cameras.emplace_back(top, bottom, left, right, near, far);
     }
 
-    void RenderCommand::CreateTexture2D(
-        const std::string& name,
-        std::shared_ptr<Resources::Texture2D>& texture)
+    std::shared_ptr<Resources::Texture2D> RenderCommand::CreateTexture2D(const std::string& name)
     {
         std::stringstream ss;
         ss << "assets/textures/" << name << ".png";
@@ -167,8 +165,7 @@ namespace VoidArchitect::Renderer
                 "[RenderCommand] Failed to load texture '{}', with error {}.",
                 name,
                 stbi_failure_reason());
-            texture = nullptr;
-            return;
+            return nullptr;
         }
         auto data = std::vector<uint8_t>(width * height * 4);
         memcpy(data.data(), rawData, data.size());
@@ -189,34 +186,19 @@ namespace VoidArchitect::Renderer
         {
             case Platform::RHI_API_TYPE::Vulkan:
             {
-                const auto newTexture = m_RenderingHardware->CreateTexture2D(
+                return m_RenderingHardware->CreateTexture2D(
                     width,
                     height,
                     4,
                     hasTransparency,
                     data);
-                if (texture)
-                {
-                    const auto currentGen = texture->GetGeneration();
-                    texture->SetGeneration(std::numeric_limits<uint32_t>::max());
-                    newTexture->SetGeneration(currentGen + 1);
-
-                    VA_ENGINE_DEBUG(
-                        "[RenderCommand] Texture '{}' updated, gen {}.",
-                        name,
-                        currentGen + 1);
-                }
-
-                texture = newTexture;
-
-                return;
             }
             default:
                 break;
         }
 
         VA_ENGINE_WARN("[RenderCommand] Failed to create a texture {}.", name);
-        texture = nullptr;
+        return nullptr;
     }
 
     std::shared_ptr<Resources::Texture2D> RenderCommand::CreateTexture2D(
@@ -262,6 +244,10 @@ namespace VoidArchitect::Renderer
         static size_t index = std::size(textures) - 1;
         index = (index + 1) % std::size(textures);
 
-        CreateTexture2D(textures[index], s_TestTexture);
+        if (s_TestTexture == nullptr)
+        {
+            s_TestTexture = CreateTexture2D(textures[index]);
+        }
+        s_TestTexture->LoadFromFile(textures[index]);
     }
 } // VoidArchitect

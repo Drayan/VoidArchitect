@@ -3,6 +3,11 @@
 //
 #pragma once
 
+namespace VoidArchitect::Platform
+{
+    class IRenderingHardware;
+}
+
 namespace VoidArchitect::Resources
 {
     class ITexture
@@ -29,7 +34,13 @@ namespace VoidArchitect::Resources
     public:
         static std::shared_ptr<Texture2D> Create(const std::string& name);
 
+        void LoadFromFile(const std::string& path);
+
     protected:
         Texture2D(uint32_t width, uint32_t height, uint8_t channelCount, bool hasTransparency);
+
+        virtual void UpdateInternalData(
+            Platform::IRenderingHardware& rhi,
+            std::vector<uint8_t>& data) = 0;
     };
 }

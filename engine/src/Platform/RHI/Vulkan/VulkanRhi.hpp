@@ -71,7 +71,9 @@ namespace VoidArchitect::Platform
         VulkanCommandBuffer& GetCurrentCommandBuffer()
         {
             return m_GraphicsCommandBuffers[m_ImageIndex];
-        };
+        }
+
+        std::unique_ptr<VulkanDevice>& GetDeviceRef() { return m_Device; }
         uint32_t GetImageIndex() const { return m_ImageIndex; }
 
         int32_t FindMemoryIndex(uint32_t typeFilter, uint32_t propertyFlags) const;
