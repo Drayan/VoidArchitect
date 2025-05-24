@@ -3,6 +3,7 @@
 //
 #include "TestLayer.hpp"
 
+#include "../../../../../../opt/homebrew/Cellar/sdl3/3.2.12/include/SDL3/SDL_keycode.h"
 #include "Core/Logger.hpp"
 #include "Systems/Renderer/Camera.hpp"
 #include "Systems/Renderer/RenderCommand.hpp"
@@ -30,6 +31,17 @@ void TestLayer::OnUpdate(float deltaTime)
 void TestLayer::OnEvent(VoidArchitect::Event& e)
 {
     m_DebugCameraController->OnEvent(e);
+
+    auto dispatcher = VoidArchitect::EventDispatcher(e);
+    dispatcher.Dispatch<VoidArchitect::KeyPressedEvent>(
+        [this](VoidArchitect::KeyPressedEvent& e)
+        {
+            if (e.GetKeyCode() == SDLK_T)
+            {
+                VoidArchitect::Renderer::RenderCommand::SwapTestTexture();
+            }
+            return false;
+        });
 }
 
 

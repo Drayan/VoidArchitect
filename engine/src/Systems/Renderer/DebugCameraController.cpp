@@ -12,12 +12,11 @@
 
 namespace VoidArchitect::Renderer
 {
-#define BIND_EVENT_FN(x) [this](auto && PH1) { return this->x(std::forward<decltype(PH1)>(PH1)); }
+#define BIND_EVENT_FN(x) [this](auto&& PH1) { return this->x(std::forward<decltype(PH1)>(PH1)); }
 
-    DebugCameraController::DebugCameraController(Camera& camera)
-        : m_Camera(camera),
-          m_CameraPosition(camera.GetPosition()),
-          m_CameraOrientation(camera.GetRotation())
+    DebugCameraController::DebugCameraController(Camera& camera) :
+        m_Camera(camera), m_CameraPosition(camera.GetPosition()),
+        m_CameraOrientation(camera.GetRotation())
     {
         m_Forward = Math::Vec3::Forward();
         m_Right = Math::Vec3::Right();
@@ -82,11 +81,6 @@ namespace VoidArchitect::Renderer
         lastX = e.GetX();
         lastY = e.GetY();
 
-        m_CameraOrientation = m_Camera.GetRotation();
-        const auto euler = m_CameraOrientation.ToEuler();
-        m_Pitch = euler.X();
-        m_Yaw = euler.Y();
-
         if (m_MouseDrag)
         {
             m_Yaw += xOffset * m_RotationSpeed;
@@ -94,6 +88,11 @@ namespace VoidArchitect::Renderer
 
             constexpr auto pitchLimit = 87.f;
             m_Pitch = std::clamp(m_Pitch, -pitchLimit, pitchLimit);
+
+            while (m_Yaw < -180.0f)
+                m_Yaw += 360.0f;
+            while (m_Yaw > 180.0f)
+                m_Yaw -= 360.0f;
 
             m_CameraOrientation = Math::Quat::FromEuler(m_Pitch, m_Yaw, 0.0f);
 
@@ -107,25 +106,25 @@ namespace VoidArchitect::Renderer
     {
         switch (e.GetKeyCode())
         {
-            case SDLK_Z:
-                m_MoveForward = true;
-                break;
-            case SDLK_S:
-                m_MoveBackward = true;
-                break;
-            case SDLK_Q:
-                m_MoveLeft = true;
-                break;
-            case SDLK_D:
-                m_MoveRight = true;
-                break;
-            case SDLK_LSHIFT:
-                m_MoveDown = true;
-                break;
-            case SDLK_SPACE:
-                m_MoveUp = true;
-                break;
-            default: ;
+        case SDLK_Z:
+            m_MoveForward = true;
+            break;
+        case SDLK_S:
+            m_MoveBackward = true;
+            break;
+        case SDLK_Q:
+            m_MoveLeft = true;
+            break;
+        case SDLK_D:
+            m_MoveRight = true;
+            break;
+        case SDLK_LSHIFT:
+            m_MoveDown = true;
+            break;
+        case SDLK_SPACE:
+            m_MoveUp = true;
+            break;
+        default:;
         }
 
         return false;
@@ -135,25 +134,25 @@ namespace VoidArchitect::Renderer
     {
         switch (e.GetKeyCode())
         {
-            case SDLK_Z:
-                m_MoveForward = false;
-                break;
-            case SDLK_S:
-                m_MoveBackward = false;
-                break;
-            case SDLK_Q:
-                m_MoveLeft = false;
-                break;
-            case SDLK_D:
-                m_MoveRight = false;
-                break;
-            case SDLK_LSHIFT:
-                m_MoveDown = false;
-                break;
-            case SDLK_SPACE:
-                m_MoveUp = false;
-                break;
-            default: ;
+        case SDLK_Z:
+            m_MoveForward = false;
+            break;
+        case SDLK_S:
+            m_MoveBackward = false;
+            break;
+        case SDLK_Q:
+            m_MoveLeft = false;
+            break;
+        case SDLK_D:
+            m_MoveRight = false;
+            break;
+        case SDLK_LSHIFT:
+            m_MoveDown = false;
+            break;
+        case SDLK_SPACE:
+            m_MoveUp = false;
+            break;
+        default:;
         }
 
         return false;
@@ -163,10 +162,10 @@ namespace VoidArchitect::Renderer
     {
         switch (e.GetMouseButton())
         {
-            case SDL_BUTTON_RIGHT:
-                m_MouseDrag = true;
-                break;
-            default: ;
+        case SDL_BUTTON_RIGHT:
+            m_MouseDrag = true;
+            break;
+        default:;
         }
 
         return false;
@@ -176,10 +175,10 @@ namespace VoidArchitect::Renderer
     {
         switch (e.GetMouseButton())
         {
-            case SDL_BUTTON_RIGHT:
-                m_MouseDrag = false;
-                break;
-            default: ;
+        case SDL_BUTTON_RIGHT:
+            m_MouseDrag = false;
+            break;
+        default:;
         }
 
         return false;
@@ -194,4 +193,4 @@ namespace VoidArchitect::Renderer
         dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(OnMouseButtonPressed));
         dispatcher.Dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FN(OnMouseButtonReleased));
     }
-}
+} // namespace VoidArchitect::Renderer

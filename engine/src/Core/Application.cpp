@@ -3,21 +3,21 @@
 //
 #include "Application.hpp"
 
-#include "Events/ApplicationEvent.hpp"
-#include "Logger.hpp"
-#include "Window.hpp"
-#include "Events/KeyEvent.hpp"
-#include "Platform/RHI/IRenderingHardware.hpp"
 #include "../Systems/Renderer/RenderCommand.hpp"
+#include "Events/ApplicationEvent.hpp"
+#include "Events/KeyEvent.hpp"
+#include "Logger.hpp"
+#include "Platform/RHI/IRenderingHardware.hpp"
+#include "Window.hpp"
 
-//TEMP Remove this include when we have proper keycode.
+// TEMP Remove this include when we have proper keycode.
 #include <SDL3/SDL_keycode.h>
 
 #include "Systems/Renderer/Camera.hpp"
 
 namespace VoidArchitect
 {
-#define BIND_EVENT_FN(x) [this](auto && PH1) { return this->x(std::forward<decltype(PH1)>(PH1)); }
+#define BIND_EVENT_FN(x) [this](auto&& PH1) { return this->x(std::forward<decltype(PH1)>(PH1)); }
 
     Application::Application()
     {
@@ -36,10 +36,7 @@ namespace VoidArchitect
         }
     }
 
-    Application::~Application()
-    {
-        Renderer::RenderCommand::Shutdown();
-    }
+    Application::~Application() { Renderer::RenderCommand::Shutdown(); }
 
     void Application::Run()
     {
@@ -62,7 +59,8 @@ namespace VoidArchitect
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
         dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(OnWindowResized));
-        //TEMP This should not stay here; it's just a convenience to hit ESC to quit the app for now.
+        // TEMP This should not stay here; it's just a convenience to hit ESC to quit the app for
+        // now.
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyPressed));
 
         // Going through the layers backwards to propagate the event.
@@ -103,12 +101,12 @@ namespace VoidArchitect
     {
         switch (e.GetKeyCode())
         {
-            case SDLK_ESCAPE:
-                m_Running = false;
-                return true;
+        case SDLK_ESCAPE:
+            m_Running = false;
+            return true;
 
-            default:
-                break;
+        default:
+            break;
         }
 
         return false;

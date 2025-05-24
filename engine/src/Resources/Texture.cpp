@@ -24,7 +24,9 @@ namespace VoidArchitect::Resources
 
     std::shared_ptr<Texture2D> Texture2D::Create(const std::string& name)
     {
-        return Renderer::RenderCommand::CreateTexture2D(name);
+        auto texture = std::shared_ptr<Texture2D>(nullptr);
+        Renderer::RenderCommand::CreateTexture2D(name, texture);
+        return texture;
     }
 
     Texture2D::Texture2D(

@@ -13,23 +13,23 @@ namespace VoidArchitect
 
     void Logger::Initialize()
     {
-
         auto consoleSink = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>();
         consoleSink->set_pattern("%^[%d-%m-%Y %H:%M:%S.%f --- %=8l --- %n]%$ %v");
-        consoleSink->set_level(spdlog::level::info);
+        consoleSink->set_level(spdlog::level::trace);
 
         auto fileSink =
             std::make_shared<spdlog::sinks::basic_file_sink_mt>("VoidArchitect.log", true);
         fileSink->set_pattern("%^[%d-%m-%Y %H:%M:%S.%f --- %=8l --- %n]%$ %v");
         fileSink->set_level(spdlog::level::trace);
 
-
         s_EngineLogger = std::make_shared<spdlog::logger>(
-            "ENGINE", spdlog::sinks_init_list{consoleSink, fileSink});
+            "ENGINE",
+            spdlog::sinks_init_list{consoleSink, fileSink});
         s_EngineLogger->set_level(spdlog::level::trace);
 
         s_ApplicationLogger = std::make_shared<spdlog::logger>(
-            "APPLICATION", spdlog::sinks_init_list{consoleSink, fileSink});
+            "APPLICATION",
+            spdlog::sinks_init_list{consoleSink, fileSink});
         s_ApplicationLogger->set_level(spdlog::level::trace);
     }
 } // namespace VoidArchitect

@@ -80,7 +80,7 @@ namespace VoidArchitect::Renderer
         IMaterial::SetDefaultDiffuseTexture(s_DefaultTexture);
         VA_ENGINE_TRACE("[RenderCommand] Default texture created.");
 
-        s_TestTexture = CreateTexture2D("wall3_color.png");
+        SwapTestTexture();
     }
 
     void RenderCommand::Shutdown()
@@ -151,37 +151,72 @@ namespace VoidArchitect::Renderer
         return m_Cameras.emplace_back(top, bottom, left, right, near, far);
     }
 
-    std::shared_ptr<Resources::Texture2D> RenderCommand::CreateTexture2D(const std::string& name)
+    void RenderCommand::CreateTexture2D(
+        const std::string& name,
+        std::shared_ptr<Resources::Texture2D>& texture)
     {
         std::stringstream ss;
-        ss << "assets/textures/" << name;
+        ss << "assets/textures/" << name << ".png";
+        //TODO Try other formats like JPG, TGA, BMP, etc.
 
         int32_t width, height, channels;
         const auto rawData = stbi_load(ss.str().c_str(), &width, &height, &channels, 4);
         if (rawData == nullptr)
         {
-            VA_ENGINE_WARN("[RenderCommand] Failed to load texture {}.", name);
-            return nullptr;
+            VA_ENGINE_WARN(
+                "[RenderCommand] Failed to load texture '{}', with error {}.",
+                name,
+                stbi_failure_reason());
+            texture = nullptr;
+            return;
         }
         auto data = std::vector<uint8_t>(width * height * 4);
         memcpy(data.data(), rawData, data.size());
         stbi_image_free(rawData);
 
+        // Search for transparency
+        bool hasTransparency = false;
+        for (size_t i = 0; i < data.size(); i += 4)
+        {
+            if (data[i + 3] < 255)
+            {
+                hasTransparency = true;
+                break;
+            }
+        }
+
         switch (m_ApiType)
         {
             case Platform::RHI_API_TYPE::Vulkan:
-                return m_RenderingHardware->CreateTexture2D(
+            {
+                const auto newTexture = m_RenderingHardware->CreateTexture2D(
                     width,
                     height,
                     4,
-                    true,
+                    hasTransparency,
                     data);
+                if (texture)
+                {
+                    const auto currentGen = texture->GetGeneration();
+                    texture->SetGeneration(std::numeric_limits<uint32_t>::max());
+                    newTexture->SetGeneration(currentGen + 1);
+
+                    VA_ENGINE_DEBUG(
+                        "[RenderCommand] Texture '{}' updated, gen {}.",
+                        name,
+                        currentGen + 1);
+                }
+
+                texture = newTexture;
+
+                return;
+            }
             default:
                 break;
         }
 
         VA_ENGINE_WARN("[RenderCommand] Failed to create a texture {}.", name);
-        return nullptr;
+        texture = nullptr;
     }
 
     std::shared_ptr<Resources::Texture2D> RenderCommand::CreateTexture2D(
@@ -206,5 +241,27 @@ namespace VoidArchitect::Renderer
 
         VA_ENGINE_WARN("[RenderCommand] Failed to create a texture.");
         return nullptr;
+    }
+
+    void RenderCommand::SwapTestTexture()
+    {
+        constexpr std::string textures[] = {
+            "wall1_color",
+            "wall1_n",
+            "wall1_shga",
+            "wall2_color",
+            "wall2_n",
+            "wall2_shga",
+            "wall3_color",
+            "wall3_n",
+            "wall3_shga",
+            "wall4_color",
+            "wall4_n",
+            "wall4_shga"
+        };
+        static size_t index = std::size(textures) - 1;
+        index = (index + 1) % std::size(textures);
+
+        CreateTexture2D(textures[index], s_TestTexture);
     }
 } // VoidArchitect

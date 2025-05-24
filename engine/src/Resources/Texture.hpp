@@ -12,6 +12,7 @@ namespace VoidArchitect::Resources
         virtual ~ITexture() = default;
 
         uint32_t GetGeneration() const { return m_Generation; }
+        void SetGeneration(const uint32_t generation) { m_Generation = generation; }
 
     protected:
         uint32_t m_Handle;

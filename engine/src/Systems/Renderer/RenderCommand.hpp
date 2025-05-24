@@ -46,7 +46,9 @@ namespace VoidArchitect
             ///////////////////////////////////////////////////////////////////
             //// Resources ////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
-            static std::shared_ptr<Resources::Texture2D> CreateTexture2D(const std::string& name);
+            static void CreateTexture2D(
+                const std::string& name,
+                std::shared_ptr<Resources::Texture2D>& texture);
             static std::shared_ptr<Resources::Texture2D> CreateTexture2D(
                 uint32_t width,
                 uint32_t height,
@@ -56,6 +58,9 @@ namespace VoidArchitect
 
             static Platform::RHI_API_TYPE GetApiType() { return m_ApiType; }
             static Camera& GetMainCamera() { return m_Cameras[0]; }
+
+            //TEMP: We'll expose a static method to swap the test texture
+            static void SwapTestTexture();
 
         private:
             static std::shared_ptr<Resources::Texture2D> s_DefaultTexture;
