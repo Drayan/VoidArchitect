@@ -76,7 +76,12 @@ namespace VoidArchitect::Renderer
             }
         }
 
-        s_DefaultTexture = CreateTexture2D(texSize, texSize, texChannels, true, texData);
+        s_DefaultTexture = Resources::Texture2D::Create(
+            texSize,
+            texSize,
+            texChannels,
+            false,
+            texData);
         IMaterial::SetDefaultDiffuseTexture(s_DefaultTexture);
         VA_ENGINE_TRACE("[RenderCommand] Default texture created.");
 
@@ -151,80 +156,6 @@ namespace VoidArchitect::Renderer
         return m_Cameras.emplace_back(top, bottom, left, right, near, far);
     }
 
-    std::shared_ptr<Resources::Texture2D> RenderCommand::CreateTexture2D(const std::string& name)
-    {
-        std::stringstream ss;
-        ss << "assets/textures/" << name << ".png";
-        //TODO Try other formats like JPG, TGA, BMP, etc.
-
-        int32_t width, height, channels;
-        const auto rawData = stbi_load(ss.str().c_str(), &width, &height, &channels, 4);
-        if (rawData == nullptr)
-        {
-            VA_ENGINE_WARN(
-                "[RenderCommand] Failed to load texture '{}', with error {}.",
-                name,
-                stbi_failure_reason());
-            return nullptr;
-        }
-        auto data = std::vector<uint8_t>(width * height * 4);
-        memcpy(data.data(), rawData, data.size());
-        stbi_image_free(rawData);
-
-        // Search for transparency
-        bool hasTransparency = false;
-        for (size_t i = 0; i < data.size(); i += 4)
-        {
-            if (data[i + 3] < 255)
-            {
-                hasTransparency = true;
-                break;
-            }
-        }
-
-        switch (m_ApiType)
-        {
-            case Platform::RHI_API_TYPE::Vulkan:
-            {
-                return m_RenderingHardware->CreateTexture2D(
-                    width,
-                    height,
-                    4,
-                    hasTransparency,
-                    data);
-            }
-            default:
-                break;
-        }
-
-        VA_ENGINE_WARN("[RenderCommand] Failed to create a texture {}.", name);
-        return nullptr;
-    }
-
-    std::shared_ptr<Resources::Texture2D> RenderCommand::CreateTexture2D(
-        const uint32_t width,
-        const uint32_t height,
-        const uint8_t channels,
-        const bool hasTransparency,
-        const std::vector<uint8_t>& data)
-    {
-        switch (m_ApiType)
-        {
-            case Platform::RHI_API_TYPE::Vulkan:
-                return m_RenderingHardware->CreateTexture2D(
-                    width,
-                    height,
-                    channels,
-                    hasTransparency,
-                    data);
-            default:
-                break;
-        }
-
-        VA_ENGINE_WARN("[RenderCommand] Failed to create a texture.");
-        return nullptr;
-    }
-
     void RenderCommand::SwapTestTexture()
     {
         constexpr std::string textures[] = {
@@ -246,7 +177,7 @@ namespace VoidArchitect::Renderer
 
         if (s_TestTexture == nullptr)
         {
-            s_TestTexture = CreateTexture2D(textures[index]);
+            s_TestTexture = Resources::Texture2D::Create(textures[index]);
         }
         s_TestTexture->LoadFromFile(textures[index]);
     }

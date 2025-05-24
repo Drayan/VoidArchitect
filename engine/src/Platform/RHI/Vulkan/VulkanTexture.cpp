@@ -17,13 +17,12 @@ namespace VoidArchitect::Platform
         const bool hasTransparency,
         const std::vector<uint8_t>& data)
         : Texture2D(width, height, channels, hasTransparency),
+          m_Generation(0),
           m_Image{},
           m_Sampler{},
           m_Device(device->GetLogicalDeviceHandle()),
           m_Allocator(allocator)
     {
-        m_Generation = 0;
-
         // NOTE: Assume 8 bits channel.
         // TODO: Support configurable format.
         VkFormat imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
@@ -164,5 +163,7 @@ namespace VoidArchitect::Platform
 
         VA_VULKAN_CHECK_RESULT_WARN(
             vkCreateSampler(m_Device, &samplerInfo, m_Allocator, &m_Sampler));
+
+        m_Generation++;
     }
 } // VoidArchitect
