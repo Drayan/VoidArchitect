@@ -47,8 +47,9 @@ namespace VoidArchitect
             static Platform::IRenderingHardware& GetRHIRef() { return *m_RenderingHardware; };
 
         private:
-            static Resources::Texture2DPtr s_DefaultTexture;
             static Resources::Texture2DPtr s_TestTexture;
+            static Resources::Texture2DPtr s_TempTexture;
+            static Resources::Texture2DPtr s_TempTexture2;
 
             static Platform::RHI_API_TYPE m_ApiType;
             static Platform::IRenderingHardware* m_RenderingHardware;

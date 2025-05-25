@@ -4,6 +4,7 @@
 #pragma once
 
 extern VoidArchitect::Application* VoidArchitect::CreateApplication();
+
 int main()
 {
     // TODO Temp testing
@@ -14,4 +15,6 @@ int main()
     const auto app = VoidArchitect::CreateApplication();
     app->Run();
     delete app;
+
+    VoidArchitect::Logger::Shutdown();
 }

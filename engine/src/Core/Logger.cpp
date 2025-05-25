@@ -32,4 +32,19 @@ namespace VoidArchitect
             spdlog::sinks_init_list{consoleSink, fileSink});
         s_ApplicationLogger->set_level(spdlog::level::trace);
     }
+
+    void Logger::Shutdown()
+    {
+        if (s_EngineLogger)
+        {
+            s_EngineLogger->flush();
+            s_EngineLogger.reset();
+        }
+
+        if (s_ApplicationLogger)
+        {
+            s_ApplicationLogger->flush();
+            s_ApplicationLogger.reset();
+        }
+    }
 } // namespace VoidArchitect

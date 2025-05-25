@@ -28,13 +28,14 @@ namespace VoidArchitect::Platform
             const std::vector<uint8_t>& data);
         ~VulkanTexture2D() override;
 
-        void UpdateInternalData(IRenderingHardware& rhi, std::vector<uint8_t>& data) override;
-
         VkImageView GetImageView() const { return m_Image.GetView(); }
         VkSampler GetSampler() const { return m_Sampler; }
         uint32_t GetGeneration() const { return m_Generation; }
 
         void SetGeneration(const uint32_t generation) { m_Generation = generation; }
+
+    protected:
+        void Release() override;
 
     private:
         uint32_t m_Generation;

@@ -32,7 +32,13 @@ namespace VoidArchitect
         size_t GetTotalMemoryUsed();
         size_t GetTotalTexturesLoaded();
 
+        Resources::Texture2DPtr GetDefaultTexture() const
+        {
+            return m_DefaultTexture;
+        }
+
     private:
+        void GenerateDefaultTextures();
         uint32_t GetFreeTextureHandle();
         void ReleaseTexture(const Resources::ITexture* texture);
 
@@ -66,6 +72,8 @@ namespace VoidArchitect
 
         size_t m_TotalMemoryUsed = 0;
         size_t m_TotalTexturesLoaded = 0;
+
+        Resources::Texture2DPtr m_DefaultTexture;
     };
 
     inline std::unique_ptr<TextureSystem> g_TextureSystem;

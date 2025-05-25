@@ -32,6 +32,8 @@ namespace VoidArchitect::Resources
         UUID GetUUID() const { return m_UUID; }
 
     protected:
+        virtual void Release() = 0;
+
         std::string m_Name;
         uint32_t m_Handle;
         UUID m_UUID;
@@ -45,9 +47,6 @@ namespace VoidArchitect::Resources
 
     class Texture2D : public ITexture
     {
-    public:
-        void LoadFromFile(const std::string& name);
-
     protected:
         Texture2D(
             const std::string& name,
@@ -55,17 +54,6 @@ namespace VoidArchitect::Resources
             uint32_t height,
             uint8_t channelCount,
             bool hasTransparency);
-
-        static std::vector<uint8_t> LoadRawData(
-            const std::string& name,
-            int32_t& width,
-            int32_t& height,
-            int32_t& channels,
-            bool& hasTransparency);
-
-        virtual void UpdateInternalData(
-            Platform::IRenderingHardware& rhi,
-            std::vector<uint8_t>& data) = 0;
     };
 
     using Texture2DPtr = std::shared_ptr<Texture2D>;

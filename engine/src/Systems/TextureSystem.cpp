@@ -8,6 +8,7 @@
 
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
+#include "Platform/RHI/Material.hpp"
 #include "Renderer/RenderCommand.hpp"
 #include "Resources/Texture.hpp"
 
@@ -16,10 +17,34 @@ namespace VoidArchitect
     TextureSystem::TextureSystem()
     {
         m_Textures.reserve(1024); // Reserve space for 1024 textures to avoid frequent reallocations
+        GenerateDefaultTextures();
     }
 
     TextureSystem::~TextureSystem()
     {
+        IMaterial::SetDefaultDiffuseTexture(nullptr);
+        m_DefaultTexture = nullptr;
+
+        if (!m_TextureCache.empty())
+        {
+            VA_ENGINE_WARN(
+                "[TextureSystem] Texture cache is not empty during destruction. "
+                "This may indicate a resource leak.");
+
+            for (const auto& [uuid, texture] : m_TextureCache)
+            {
+                if (const auto tex = texture.lock())
+                {
+                    VA_ENGINE_WARN(
+                        "[TextureSystem] Texture '{}' with UUID {} was not released properly.",
+                        tex->m_Name,
+                        static_cast<uint64_t>(uuid));
+                    tex->Release();
+                }
+            }
+        }
+
+        m_TextureCache.clear();
     }
 
     Resources::Texture2DPtr TextureSystem::LoadTexture2D(const std::string& name)
@@ -136,6 +161,45 @@ namespace VoidArchitect
 
         VA_ENGINE_WARN("[RenderCommand] Failed to create a texture.");
         return nullptr;
+    }
+
+    void TextureSystem::GenerateDefaultTextures()
+    {
+        constexpr uint32_t texSize = 256;
+        constexpr uint32_t texChannels = 4;
+
+        std::vector<uint8_t> texData(texSize * texSize * texChannels);
+        for (uint32_t y = 0; y < texSize; ++y)
+        {
+            for (uint32_t x = 0; x < texSize; ++x)
+            {
+                constexpr uint8_t magenta[4] = {255, 0, 255, 255};
+                constexpr uint8_t white[4] = {255, 255, 255, 255};
+                constexpr uint32_t squareSize = 32;
+
+                const auto squareX = x / squareSize;
+                const auto squareY = y / squareSize;
+
+                const bool isWhite = (squareX + squareY) % 2 == 0;
+
+                const auto pixelIndex = (y * texSize + x) * texChannels;
+
+                const uint8_t* color = isWhite ? white : magenta;
+                texData[pixelIndex + 0] = color[0];
+                texData[pixelIndex + 1] = color[1];
+                texData[pixelIndex + 2] = color[2];
+                texData[pixelIndex + 3] = color[3];
+            }
+        }
+
+        m_DefaultTexture = CreateTexture2D(
+            "DefaultTexture",
+            texSize,
+            texSize,
+            texChannels,
+            false,
+            texData);
+        IMaterial::SetDefaultDiffuseTexture(m_DefaultTexture);
     }
 
     uint32_t TextureSystem::GetFreeTextureHandle()

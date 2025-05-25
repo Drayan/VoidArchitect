@@ -13,6 +13,7 @@ namespace VoidArchitect
     {
     public:
         static void Initialize();
+        static void Shutdown();
 
         inline static std::shared_ptr<spdlog::logger>& GetEngineLogger() { return s_EngineLogger; };
 
