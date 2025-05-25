@@ -44,6 +44,7 @@ namespace VoidArchitect::Platform
         struct VulkanDescriptorState
         {
             uint32_t Generation[3];
+            UUID Id[3];
         };
 
         struct VulkanMaterialInstanceLocalState

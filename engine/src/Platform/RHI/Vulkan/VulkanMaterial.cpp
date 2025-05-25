@@ -358,6 +358,8 @@ namespace VoidArchitect::Platform
                 auto texture = std::dynamic_pointer_cast<VulkanTexture2D>(data.Textures[i]);
                 auto& descriptorGeneration = instanceState.m_DescriptorStates[1]
                     .Generation[vulkanRhi.GetImageIndex()];
+                auto& descriptorTextureUUID = instanceState.m_DescriptorStates[1]
+                    .Id[vulkanRhi.GetImageIndex()];
 
                 // If the texture hasn't been loaded yet, use the default.
                 // TODO: Determine which use the texture has and pull appropriate default.
@@ -369,7 +371,8 @@ namespace VoidArchitect::Platform
                 }
 
                 // Check if the descriptor needs updating first.
-                if (texture != nullptr && (descriptorGeneration != texture->GetGeneration() ||
+                if (texture != nullptr && (descriptorTextureUUID != texture->GetUUID() ||
+                    descriptorGeneration != texture->GetGeneration() ||
                     descriptorGeneration == std::numeric_limits<uint32_t>::max()))
                 {
                     // Update the descriptor set
@@ -390,6 +393,7 @@ namespace VoidArchitect::Platform
                     if (texture->GetGeneration() != std::numeric_limits<uint32_t>::max())
                     {
                         descriptorGeneration = texture->GetGeneration();
+                        descriptorTextureUUID = texture->GetUUID();
                     }
                 }
             }
@@ -432,6 +436,11 @@ namespace VoidArchitect::Platform
                         std::numeric_limits<uint32_t>::max(),
                         std::numeric_limits<uint32_t>::max()
                     },
+                    .Id = {
+                        InvalidUUID,
+                        InvalidUUID,
+                        InvalidUUID
+                    }
                 };
                 instanceState.m_DescriptorStates = std::vector{
                     state,

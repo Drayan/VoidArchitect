@@ -4,14 +4,10 @@
 #pragma once
 
 #include "Camera.hpp"
+#include "Resources/Texture.hpp"
 
 namespace VoidArchitect
 {
-    namespace Resources
-    {
-        class Texture2D;
-    }
-
     class Window;
 
     namespace Platform
@@ -51,8 +47,8 @@ namespace VoidArchitect
             static Platform::IRenderingHardware& GetRHIRef() { return *m_RenderingHardware; };
 
         private:
-            static std::shared_ptr<Resources::Texture2D> s_DefaultTexture;
-            static std::shared_ptr<Resources::Texture2D> s_TestTexture;
+            static Resources::Texture2DPtr s_DefaultTexture;
+            static Resources::Texture2DPtr s_TestTexture;
 
             static Platform::RHI_API_TYPE m_ApiType;
             static Platform::IRenderingHardware* m_RenderingHardware;

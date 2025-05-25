@@ -6,7 +6,7 @@
 
 namespace VoidArchitect
 {
-    std::shared_ptr<Resources::Texture2D> IMaterial::s_DefaultDiffuseTexture;
+    Resources::Texture2DPtr IMaterial::s_DefaultDiffuseTexture;
 
     GeometryRenderData::GeometryRenderData()
         : Model(Math::Mat4::Identity())

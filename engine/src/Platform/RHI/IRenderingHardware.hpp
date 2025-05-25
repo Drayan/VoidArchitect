@@ -45,7 +45,8 @@ namespace VoidArchitect::Platform
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////
-        virtual std::shared_ptr<Resources::Texture2D> CreateTexture2D(
+        virtual Resources::Texture2D* CreateTexture2D(
+            const std::string& name,
             uint32_t width,
             uint32_t height,
             uint8_t channels,

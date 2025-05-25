@@ -20,6 +20,7 @@ namespace VoidArchitect::Platform
             const VulkanRHI& rhi,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
+            const std::string& name,
             uint32_t width,
             uint32_t height,
             uint8_t channels,

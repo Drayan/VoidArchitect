@@ -12,64 +12,18 @@
 namespace VoidArchitect::Resources
 {
     ITexture::ITexture(
+        const std::string& name,
         const uint32_t width,
         const uint32_t height,
         const uint8_t channelCount,
         const bool hasTransparency)
-        : m_Handle{},
+        : m_Name(name),
+          m_Handle{},
           m_Width(width),
           m_Height(height),
           m_ChannelCount(channelCount),
           m_HasTransparency(hasTransparency)
     {
-    }
-
-    std::shared_ptr<Texture2D> Texture2D::Create(const std::string& name)
-    {
-        int32_t width, height, channels;
-        bool hasTransparency = false;
-        auto data = LoadRawData(name, width, height, channels, hasTransparency);
-        switch (Renderer::RenderCommand::GetApiType())
-        {
-            case Platform::RHI_API_TYPE::Vulkan:
-            {
-                return Renderer::RenderCommand::GetRHIRef().CreateTexture2D(
-                    width,
-                    height,
-                    4,
-                    hasTransparency,
-                    data);
-            }
-            default:
-                break;
-        }
-
-        VA_ENGINE_WARN("[RenderCommand] Failed to create a texture {}.", name);
-        return nullptr;
-    }
-
-    std::shared_ptr<Texture2D> Texture2D::Create(
-        const uint32_t width,
-        const uint32_t height,
-        const uint8_t channels,
-        const bool hasTransparency,
-        const std::vector<uint8_t>& data)
-    {
-        switch (Renderer::RenderCommand::GetApiType())
-        {
-            case Platform::RHI_API_TYPE::Vulkan:
-                return Renderer::RenderCommand::GetRHIRef().CreateTexture2D(
-                    width,
-                    height,
-                    channels,
-                    hasTransparency,
-                    data);
-            default:
-                break;
-        }
-
-        VA_ENGINE_WARN("[RenderCommand] Failed to create a texture.");
-        return nullptr;
     }
 
     void Texture2D::LoadFromFile(const std::string& name)
@@ -134,11 +88,12 @@ namespace VoidArchitect::Resources
     }
 
     Texture2D::Texture2D(
+        const std::string& name,
         const uint32_t width,
         const uint32_t height,
         const uint8_t channelCount,
         const bool hasTransparency)
-        : ITexture(width, height, channelCount, hasTransparency)
+        : ITexture(name, width, height, channelCount, hasTransparency)
     {
     }
 } // VoidArchitect

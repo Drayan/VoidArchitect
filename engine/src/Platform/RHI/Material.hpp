@@ -6,6 +6,7 @@
 #include "Core/Uuid.hpp"
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec4.hpp"
+#include "Resources/Texture.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -44,7 +45,7 @@ namespace VoidArchitect
 
         UUID ObjectId;
         Math::Mat4 Model;
-        std::shared_ptr<Resources::ITexture> Textures[16];
+        Resources::TexturePtr Textures[16];
     };
 
     class IMaterial
@@ -64,13 +65,13 @@ namespace VoidArchitect
             const GeometryRenderData& data) = 0;
 
         static void SetDefaultDiffuseTexture(
-            const std::shared_ptr<Resources::Texture2D>& defaultTexture)
+            const Resources::Texture2DPtr& defaultTexture)
         {
             s_DefaultDiffuseTexture = defaultTexture;
         }
 
     protected:
-        static std::shared_ptr<Resources::Texture2D> s_DefaultDiffuseTexture;
+        static Resources::Texture2DPtr s_DefaultDiffuseTexture;
         GlobalUniformObject m_GlobalUniformObject;
     };
 } // VoidArchitect

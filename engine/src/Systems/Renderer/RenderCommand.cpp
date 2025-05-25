@@ -14,11 +14,12 @@
 #include "Platform/RHI/Material.hpp"
 #include "Platform/RHI/Vulkan/VulkanRhi.hpp"
 #include "Resources/Texture.hpp"
+#include "Systems/TextureSystem.hpp"
 
 namespace VoidArchitect::Renderer
 {
-    std::shared_ptr<Resources::Texture2D> RenderCommand::s_DefaultTexture;
-    std::shared_ptr<Resources::Texture2D> RenderCommand::s_TestTexture;
+    Resources::Texture2DPtr RenderCommand::s_DefaultTexture;
+    Resources::Texture2DPtr RenderCommand::s_TestTexture;
 
     Platform::RHI_API_TYPE RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
     Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
@@ -43,6 +44,9 @@ namespace VoidArchitect::Renderer
             default:
                 break;
         }
+
+        // Initialize subsystems
+        g_TextureSystem = std::make_unique<TextureSystem>();
 
         // TEMP Create a default camera until we have a real scene manager
         CreatePerspectiveCamera(45.0f, 0.1f, 100.0f);
@@ -76,7 +80,8 @@ namespace VoidArchitect::Renderer
             }
         }
 
-        s_DefaultTexture = Resources::Texture2D::Create(
+        s_DefaultTexture = g_TextureSystem->CreateTexture2D(
+            "DefaultTexture",
             texSize,
             texSize,
             texChannels,
@@ -98,6 +103,9 @@ namespace VoidArchitect::Renderer
         IMaterial::SetDefaultDiffuseTexture(nullptr);
         s_DefaultTexture = nullptr;
         VA_ENGINE_TRACE("[RenderCommand] Default texture destroyed.");
+
+        // Shutdown subsystems
+        g_TextureSystem = nullptr;
 
         delete m_RenderingHardware;
     }
@@ -177,8 +185,9 @@ namespace VoidArchitect::Renderer
 
         if (s_TestTexture == nullptr)
         {
-            s_TestTexture = Resources::Texture2D::Create(textures[index]);
+            //s_TestTexture = Resources::Texture2D::Create(textures[index]);
         }
-        s_TestTexture->LoadFromFile(textures[index]);
+        //s_TestTexture->LoadFromFile(textures[index]);
+        s_TestTexture = g_TextureSystem->LoadTexture2D(textures[index]);
     }
 } // VoidArchitect
