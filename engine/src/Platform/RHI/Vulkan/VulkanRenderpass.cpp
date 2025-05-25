@@ -3,10 +3,10 @@
 //
 #include "VulkanRenderpass.hpp"
 
+#include "Core/Logger.hpp"
 #include "VulkanDevice.hpp"
 #include "VulkanSwapchain.hpp"
 #include "VulkanUtils.hpp"
-#include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -59,8 +59,7 @@ namespace VoidArchitect::Platform
                 .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
                 .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
                 .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-            }
-        };
+            }};
 
         const std::vector attachmentRefs = {
             // Color attachment
@@ -72,8 +71,7 @@ namespace VoidArchitect::Platform
             VkAttachmentReference{
                 .attachment = 1,
                 .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-            }
-        };
+            }};
 
         mainSubpass.colorAttachmentCount = 1;
         mainSubpass.pColorAttachments = &attachmentRefs[0];
@@ -86,8 +84,8 @@ namespace VoidArchitect::Platform
         dependencies.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         dependencies.srcAccessMask = 0;
         dependencies.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependencies.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        dependencies.dstAccessMask =
+            VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
         dependencies.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
         auto createInfo = VkRenderPassCreateInfo{};
@@ -102,10 +100,7 @@ namespace VoidArchitect::Platform
         VA_VULKAN_CHECK_RESULT_CRITICAL(
             vkCreateRenderPass(m_Device, &createInfo, m_Allocator, &m_Renderpass));
 
-        m_ClearValues.emplace_back(
-            VkClearValue{
-                .color = {{r, g, b, a}}
-            });
+        m_ClearValues.emplace_back(VkClearValue{.color = {{r, g, b, a}}});
         m_ClearValues.emplace_back(VkClearValue{.depthStencil = {depth, stencil}});
 
         VA_ENGINE_TRACE("[VulkanRenderpass] Renderpass created.");
@@ -120,9 +115,7 @@ namespace VoidArchitect::Platform
         }
     }
 
-    void VulkanRenderpass::Begin(
-        VulkanCommandBuffer& cmdBuf,
-        const VkFramebuffer framebuffer) const
+    void VulkanRenderpass::Begin(VulkanCommandBuffer& cmdBuf, const VkFramebuffer framebuffer) const
     {
         auto beginInfo = VkRenderPassBeginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -142,4 +135,4 @@ namespace VoidArchitect::Platform
         vkCmdEndRenderPass(cmdBuf.GetHandle());
         cmdBuf.SetState(CommandBufferState::Recording);
     }
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

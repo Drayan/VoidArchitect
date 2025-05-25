@@ -34,18 +34,15 @@ namespace VoidArchitect::Platform
     {
         SelectPhysicalDevice(requirements);
 
-        //TEMP We should not use SDL inside the VulkanRHI
+        // TEMP We should not use SDL inside the VulkanRHI
         if (!SDL_Vulkan_CreateSurface(
-            reinterpret_cast<SDLWindow*>(window.get())->GetNativeWindow(),
-            m_Instance,
-            m_Allocator,
-            &m_Surface
-        ))
+                reinterpret_cast<SDLWindow*>(window.get())->GetNativeWindow(),
+                m_Instance,
+                m_Allocator,
+                &m_Surface))
         {
             VA_ENGINE_CRITICAL(
-                "[VulkanDevice] Failed to create surface. SDL Error: {}",
-                SDL_GetError()
-            );
+                "[VulkanDevice] Failed to create surface. SDL Error: {}", SDL_GetError());
             throw std::runtime_error("Failed to create surface.");
         }
         VA_ENGINE_INFO("[VulkanDevice] Surface created.");
@@ -71,7 +68,8 @@ namespace VoidArchitect::Platform
     {
         // First, querying for deviceCount
         unsigned int deviceCount = 0;
-        VA_VULKAN_CHECK_RESULT_CRITICAL(vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr));
 
         // Now, querying for device information.
         std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -102,8 +100,7 @@ namespace VoidArchitect::Platform
     }
 
     bool VulkanDevice::IsDeviceMeetRequirements(
-        const VkPhysicalDevice& device,
-        const DeviceRequirements& requirements)
+        const VkPhysicalDevice& device, const DeviceRequirements& requirements)
     {
         VkPhysicalDeviceFeatures deviceFeatures;
         vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
@@ -115,8 +112,7 @@ namespace VoidArchitect::Platform
             if (deviceProperties.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
             {
                 VA_ENGINE_DEBUG(
-                    "[VulkanDevice] Device is not a discrete GPU, which is a requirement."
-                );
+                    "[VulkanDevice] Device is not a discrete GPU, which is a requirement.");
                 return false;
             }
         }
@@ -129,22 +125,15 @@ namespace VoidArchitect::Platform
         VA_VULKAN_CHECK_RESULT_CRITICAL(
             vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr));
         std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-        if (VA_VULKAN_CHECK_RESULT(
-            vkEnumerateDeviceExtensionProperties(
-                device,
-                nullptr,
-                &extensionCount,
-                availableExtensions.data()
-            )))
+        if (VA_VULKAN_CHECK_RESULT(vkEnumerateDeviceExtensionProperties(
+                device, nullptr, &extensionCount, availableExtensions.data())))
         {
             VA_ENGINE_CRITICAL("[VulkanDevice] Failed to enumerate device extensions.");
             throw std::runtime_error("Failed to enumerate device extensions.");
         }
 
         std::set<std::string> requiredExtensions(
-            requirements.Extensions.begin(),
-            requirements.Extensions.end()
-        );
+            requirements.Extensions.begin(), requirements.Extensions.end());
         for (const auto& extension : availableExtensions)
         {
             requiredExtensions.erase(extension.extensionName);
@@ -194,7 +183,7 @@ namespace VoidArchitect::Platform
             .pEnabledFeatures = &m_PhysicalDeviceFeatures,
         };
         if (VA_VULKAN_CHECK_RESULT(
-            vkCreateDevice(m_PhysicalDevice, &deviceCreateInfo, m_Allocator, &m_LogicalDevice)))
+                vkCreateDevice(m_PhysicalDevice, &deviceCreateInfo, m_Allocator, &m_LogicalDevice)))
         {
             VA_ENGINE_CRITICAL("[VulkanDevice] Failed to create logical device.");
             throw std::runtime_error("Failed to create logical device.");
@@ -212,13 +201,8 @@ namespace VoidArchitect::Platform
         poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         poolCreateInfo.queueFamilyIndex = m_GraphicsQueueFamilyIndex.value();
         poolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-        if (VA_VULKAN_CHECK_RESULT(
-            vkCreateCommandPool(
-                m_LogicalDevice,
-                &poolCreateInfo,
-                m_Allocator,
-                &m_GraphicsCommandPool)
-        ))
+        if (VA_VULKAN_CHECK_RESULT(vkCreateCommandPool(
+                m_LogicalDevice, &poolCreateInfo, m_Allocator, &m_GraphicsCommandPool)))
         {
             VA_ENGINE_CRITICAL("[VulkanDevice] Failed to create graphics command pool.");
             throw std::runtime_error("Failed to create graphics command pool.");
@@ -248,10 +232,7 @@ namespace VoidArchitect::Platform
 
         std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
         vkGetPhysicalDeviceQueueFamilyProperties(
-            m_PhysicalDevice,
-            &queueFamilyCount,
-            queueFamilies.data()
-        );
+            m_PhysicalDevice, &queueFamilyCount, queueFamilies.data());
 
         int32_t queueFamilyIndex = 0;
         for (const auto& queueFamily : queueFamilies)
@@ -264,19 +245,14 @@ namespace VoidArchitect::Platform
                 m_ComputeQueueFamilyIndex = queueFamilyIndex;
 
             VkBool32 presentSupport = false;
-            VA_VULKAN_CHECK_RESULT_WARN(
-                vkGetPhysicalDeviceSurfaceSupportKHR(
-                    m_PhysicalDevice,
-                    queueFamilyIndex,
-                    m_Surface,
-                    &presentSupport
-                ));
+            VA_VULKAN_CHECK_RESULT_WARN(vkGetPhysicalDeviceSurfaceSupportKHR(
+                m_PhysicalDevice, queueFamilyIndex, m_Surface, &presentSupport));
 
             if (presentSupport)
                 m_PresentQueueFamilyIndex = queueFamilyIndex;
 
-            if (m_GraphicsQueueFamilyIndex.has_value() && m_TransferQueueFamilyIndex.has_value() &&
-                m_ComputeQueueFamilyIndex.has_value() && presentSupport)
+            if (m_GraphicsQueueFamilyIndex.has_value() && m_TransferQueueFamilyIndex.has_value()
+                && m_ComputeQueueFamilyIndex.has_value() && presentSupport)
                 break;
 
             queueFamilyIndex++;
@@ -284,20 +260,12 @@ namespace VoidArchitect::Platform
 
         VA_ENGINE_DEBUG("[VulkanDevice] Found {} queue families.", queueFamilyCount);
         VA_ENGINE_DEBUG(
-            "[VulkanDevice] Graphic queue index : {}.",
-            m_GraphicsQueueFamilyIndex.value()
-        );
+            "[VulkanDevice] Graphic queue index : {}.", m_GraphicsQueueFamilyIndex.value());
         VA_ENGINE_DEBUG(
-            "[VulkanDevice] Present queue index : {}.",
-            m_PresentQueueFamilyIndex.value()
-        );
+            "[VulkanDevice] Present queue index : {}.", m_PresentQueueFamilyIndex.value());
         VA_ENGINE_DEBUG(
-            "[VulkanDevice] Transfer queue index: {}.",
-            m_TransferQueueFamilyIndex.value()
-        );
+            "[VulkanDevice] Transfer queue index: {}.", m_TransferQueueFamilyIndex.value());
         VA_ENGINE_DEBUG(
-            "[VulkanDevice] Compute queue index : {}.",
-            m_ComputeQueueFamilyIndex.value()
-        );
+            "[VulkanDevice] Compute queue index : {}.", m_ComputeQueueFamilyIndex.value());
     }
-} // VoidArchitect::Platform
+} // namespace VoidArchitect::Platform

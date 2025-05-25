@@ -3,10 +3,10 @@
 //
 #include "VulkanSwapchain.hpp"
 
+#include "Core/Logger.hpp"
 #include "VulkanImage.hpp"
 #include "VulkanRhi.hpp"
 #include "VulkanUtils.hpp"
-#include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -45,9 +45,7 @@ namespace VoidArchitect::Platform
         if (device->GetGraphicsFamily() != device->GetPresentFamily())
         {
             const uint32_t queueFamilyIndices[] = {
-                device->GetGraphicsFamily().value(),
-                device->GetPresentFamily().value()
-            };
+                device->GetGraphicsFamily().value(), device->GetPresentFamily().value()};
             swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
             swapchainCreateInfo.queueFamilyIndexCount = 2;
             swapchainCreateInfo.pQueueFamilyIndices = queueFamilyIndices;
@@ -61,24 +59,15 @@ namespace VoidArchitect::Platform
         swapchainCreateInfo.clipped = VK_TRUE;
         swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
-        VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkCreateSwapchainKHR(
-                m_Device->GetLogicalDeviceHandle(),
-                &swapchainCreateInfo,
-                m_Allocator,
-                &m_Swapchain));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreateSwapchainKHR(
+            m_Device->GetLogicalDeviceHandle(), &swapchainCreateInfo, m_Allocator, &m_Swapchain));
 
         // Retrieve the images from the swapchain...
-        VA_VULKAN_CHECK_RESULT_WARN(
-            vkGetSwapchainImagesKHR(m_Device->GetLogicalDeviceHandle(), m_Swapchain, &imageCount,
-                nullptr));
+        VA_VULKAN_CHECK_RESULT_WARN(vkGetSwapchainImagesKHR(
+            m_Device->GetLogicalDeviceHandle(), m_Swapchain, &imageCount, nullptr));
         auto images = std::vector<VkImage>(imageCount);
-        VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkGetSwapchainImagesKHR(
-                m_Device->GetLogicalDeviceHandle(),
-                m_Swapchain,
-                &imageCount,
-                images.data()));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(vkGetSwapchainImagesKHR(
+            m_Device->GetLogicalDeviceHandle(), m_Swapchain, &imageCount, images.data()));
 
         // And give them wrapped into our VulkanImage object that manages Image and ImageView.
         m_SwapchainImages.reserve(images.size());
@@ -86,11 +75,7 @@ namespace VoidArchitect::Platform
         {
             // By default, VulkanImage will create an ImageView associated.
             m_SwapchainImages.emplace_back(
-                device,
-                m_Allocator,
-                image,
-                format.format,
-                VK_IMAGE_ASPECT_COLOR_BIT);
+                device, m_Allocator, image, format.format, VK_IMAGE_ASPECT_COLOR_BIT);
         }
 
         rhi.SetCurrentIndex(0);
@@ -105,8 +90,7 @@ namespace VoidArchitect::Platform
             VK_IMAGE_ASPECT_DEPTH_BIT,
             VK_IMAGE_TILING_OPTIMAL,
             VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-        );
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     }
 
     VulkanSwapchain::~VulkanSwapchain()
@@ -120,31 +104,24 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanSwapchain::RegenerateFramebuffers(
-        const std::unique_ptr<VulkanRenderpass>& renderpass,
-        uint32_t width,
-        uint32_t height)
+        const std::unique_ptr<VulkanRenderpass>& renderpass, uint32_t width, uint32_t height)
     {
         m_Framebuffers.clear();
         m_Framebuffers.reserve(m_SwapchainImages.size());
         for (size_t i = 0; i < m_SwapchainImages.size(); i++)
         {
-            std::vector attachments = {
-                m_SwapchainImages[i].GetView(),
-                m_DepthImage.GetView()
-            };
+            std::vector attachments = {m_SwapchainImages[i].GetView(), m_DepthImage.GetView()};
             m_Framebuffers.emplace_back(
                 m_Device->GetLogicalDeviceHandle(),
                 m_Allocator,
                 renderpass,
                 width,
                 height,
-                attachments
-            );
+                attachments);
         }
 
         VA_ENGINE_DEBUG(
-            "[VulkanSwapchain] All {} framebuffers regenerated.",
-            m_Framebuffers.size());
+            "[VulkanSwapchain] All {} framebuffers regenerated.", m_Framebuffers.size());
     }
 
     bool VulkanSwapchain::AcquireNextImage(
@@ -162,7 +139,7 @@ namespace VoidArchitect::Platform
             &out_imageIndex);
         if (result == VK_ERROR_OUT_OF_DATE_KHR)
         {
-            //TODO Recreate the swapchain.
+            // TODO Recreate the swapchain.
             return false;
         }
 
@@ -191,7 +168,7 @@ namespace VoidArchitect::Platform
         auto result = vkQueuePresentKHR(graphicsQueue, &presentInfo);
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
         {
-            //TODO Recreate the swapchain
+            // TODO Recreate the swapchain
         }
         else if (VA_VULKAN_CHECK_RESULT(result))
         {
@@ -200,21 +177,13 @@ namespace VoidArchitect::Platform
         }
     }
 
-    void VulkanSwapchain::Recreate(
-        VulkanRHI& rhi,
-        const VkExtent2D extents,
-        const VkFormat depthFormat)
+    void
+    VulkanSwapchain::Recreate(VulkanRHI& rhi, const VkExtent2D extents, const VkFormat depthFormat)
     {
         VA_ENGINE_TRACE("[VulkanSwapchain] Recreating swapchain.");
         this->~VulkanSwapchain();
-        new(this) VulkanSwapchain(
-            rhi,
-            m_Device,
-            m_Allocator,
-            m_Format,
-            m_PresentMode,
-            extents,
-            depthFormat);
+        new (this) VulkanSwapchain(
+            rhi, m_Device, m_Allocator, m_Format, m_PresentMode, extents, depthFormat);
         VA_ENGINE_TRACE("[VulkanSwapchain] Swapchain recreated.");
     }
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

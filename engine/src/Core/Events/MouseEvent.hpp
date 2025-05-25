@@ -39,8 +39,10 @@ namespace VoidArchitect
     class VA_API MouseScrolledEvent : public MouseEvent
     {
     public:
-        MouseScrolledEvent(unsigned int x, unsigned int y, float xDelta, float yDelta) :
-            MouseEvent(x, y), m_XDelta(xDelta), m_YDelta(yDelta)
+        MouseScrolledEvent(unsigned int x, unsigned int y, float xDelta, float yDelta)
+            : MouseEvent(x, y),
+              m_XDelta(xDelta),
+              m_YDelta(yDelta)
         {
         }
 
@@ -51,7 +53,8 @@ namespace VoidArchitect
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseScrolledEvent: " << m_MouseX << ", " << m_MouseY << " (" << m_XDelta << ", " << m_YDelta << ")";
+            ss << "MouseScrolledEvent: " << m_MouseX << ", " << m_MouseY << " (" << m_XDelta << ", "
+               << m_YDelta << ")";
             return ss.str();
         }
 
@@ -64,8 +67,9 @@ namespace VoidArchitect
     class VA_API MouseButtonPressedEvent : public MouseEvent
     {
     public:
-        MouseButtonPressedEvent(unsigned int x, unsigned int y, unsigned int button) :
-            MouseEvent(x, y), m_Button(button)
+        MouseButtonPressedEvent(unsigned int x, unsigned int y, unsigned int button)
+            : MouseEvent(x, y),
+              m_Button(button)
         {
         }
 
@@ -74,7 +78,8 @@ namespace VoidArchitect
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseButtonPressedEvent: " << m_MouseX << ", " << m_MouseY << " (" << m_Button << ")";
+            ss << "MouseButtonPressedEvent: " << m_MouseX << ", " << m_MouseY << " (" << m_Button
+               << ")";
             return ss.str();
         }
 
@@ -86,8 +91,9 @@ namespace VoidArchitect
     class VA_API MouseButtonReleasedEvent : public MouseEvent
     {
     public:
-        MouseButtonReleasedEvent(unsigned int x, unsigned int y, unsigned int button) :
-            MouseEvent(x, y), m_Button(button)
+        MouseButtonReleasedEvent(unsigned int x, unsigned int y, unsigned int button)
+            : MouseEvent(x, y),
+              m_Button(button)
         {
         }
 
@@ -96,7 +102,8 @@ namespace VoidArchitect
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseButtonReleasedEvent: " << m_MouseX << ", " << m_MouseY << " (" << m_Button << ")";
+            ss << "MouseButtonReleasedEvent: " << m_MouseX << ", " << m_MouseY << " (" << m_Button
+               << ")";
             return ss.str();
         }
 

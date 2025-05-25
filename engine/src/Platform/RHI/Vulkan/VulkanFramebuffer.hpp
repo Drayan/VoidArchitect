@@ -32,4 +32,4 @@ namespace VoidArchitect::Platform
         VkAllocationCallbacks* m_Allocator;
         VkFramebuffer m_Framebuffer;
     };
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

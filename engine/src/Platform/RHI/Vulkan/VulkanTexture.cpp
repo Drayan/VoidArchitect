@@ -39,20 +39,16 @@ namespace VoidArchitect::Platform
             imageFormat,
             VK_IMAGE_ASPECT_COLOR_BIT,
             VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
-            VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-        );
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
+                | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
         // Load the data from the staging buffer to the image.
         VulkanCommandBuffer cmdBuf;
         VulkanCommandBuffer::SingleUseBegin(device, device->GetGraphicsCommandPool(), cmdBuf);
 
         m_Image.TransitionLayout(
-            device,
-            cmdBuf,
-            VK_IMAGE_LAYOUT_UNDEFINED,
-            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+            device, cmdBuf, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
         m_Image.CopyFromBuffer(cmdBuf, staging);
         m_Image.TransitionLayout(
             device,
@@ -88,10 +84,7 @@ namespace VoidArchitect::Platform
         VA_ENGINE_TRACE("[VulkanTexture2D] Texture created.");
     }
 
-    VulkanTexture2D::~VulkanTexture2D()
-    {
-        VulkanTexture2D::Release();
-    }
+    VulkanTexture2D::~VulkanTexture2D() { VulkanTexture2D::Release(); }
 
     void VulkanTexture2D::Release()
     {
@@ -105,4 +98,4 @@ namespace VoidArchitect::Platform
             VA_ENGINE_TRACE("[VulkanTexture2D] Texture destroyed.");
         }
     }
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

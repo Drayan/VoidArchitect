@@ -53,4 +53,4 @@ namespace VoidArchitect ::Renderer
 
         bool m_MouseDrag = false;
     };
-}
+} // namespace VoidArchitect::Renderer

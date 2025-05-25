@@ -3,9 +3,9 @@
 //
 #include "RenderCommand.hpp"
 
-//TEMP Temporary block
+// TEMP Temporary block
 #include <stb_image.h>
-//TEMP End of temporary
+// TEMP End of temporary
 
 #include "Camera.hpp"
 #include "Core/Logger.hpp"
@@ -26,9 +26,8 @@ namespace VoidArchitect::Renderer
     uint32_t RenderCommand::m_Height = 0;
     std::vector<Camera> RenderCommand::m_Cameras;
 
-    void RenderCommand::Initialize(
-        const Platform::RHI_API_TYPE apiType,
-        std::unique_ptr<Window>& window)
+    void
+    RenderCommand::Initialize(const Platform::RHI_API_TYPE apiType, std::unique_ptr<Window>& window)
     {
         m_ApiType = apiType;
 
@@ -88,7 +87,8 @@ namespace VoidArchitect::Renderer
 
     bool RenderCommand::BeginFrame(Camera& camera, const float deltaTime)
     {
-        if (!m_RenderingHardware->BeginFrame(deltaTime)) return false;
+        if (!m_RenderingHardware->BeginFrame(deltaTime))
+            return false;
 
         auto geometry = GeometryRenderData(UUID(0), Math::Mat4::Identity());
         geometry.Textures[0] = std::dynamic_pointer_cast<Resources::ITexture>(s_TestTexture);
@@ -107,17 +107,13 @@ namespace VoidArchitect::Renderer
     Camera& RenderCommand::CreatePerspectiveCamera(float fov, float near, float far)
     {
         auto aspect = m_Width / static_cast<float>(m_Height);
-        if (m_Width == 0 || m_Height == 0) aspect = 1.0f;
+        if (m_Width == 0 || m_Height == 0)
+            aspect = 1.0f;
         return m_Cameras.emplace_back(fov, aspect, near, far);
     }
 
     Camera& RenderCommand::CreateOrthographicCamera(
-        float left,
-        float right,
-        float bottom,
-        float top,
-        float near,
-        float far)
+        float left, float right, float bottom, float top, float near, float far)
     {
         return m_Cameras.emplace_back(top, bottom, left, right, near, far);
     }
@@ -136,11 +132,10 @@ namespace VoidArchitect::Renderer
             "wall3_shga",
             "wall4_color",
             "wall4_n",
-            "wall4_shga"
-        };
+            "wall4_shga"};
         static size_t index = std::size(textures) - 1;
         index = (index + 1) % std::size(textures);
 
         s_TestTexture = g_TextureSystem->LoadTexture2D(textures[index]);
     }
-} // VoidArchitect
+} // namespace VoidArchitect::Renderer

@@ -27,15 +27,10 @@ namespace VoidArchitect::Platform
         ~VulkanSwapchain();
 
         void RegenerateFramebuffers(
-            const std::unique_ptr<VulkanRenderpass>& renderpass,
-            uint32_t width,
-            uint32_t height);
+            const std::unique_ptr<VulkanRenderpass>& renderpass, uint32_t width, uint32_t height);
 
         bool AcquireNextImage(
-            uint64_t timeout,
-            VkSemaphore semaphore,
-            VkFence fence,
-            uint32_t& out_imageIndex) const;
+            uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t& out_imageIndex) const;
         void Present(VkQueue graphicsQueue, VkSemaphore renderComplete, uint32_t imageIndex) const;
 
         VkFormat GetFormat() const { return m_Format.format; }
@@ -66,4 +61,4 @@ namespace VoidArchitect::Platform
 
         std::vector<VulkanFramebuffer> m_Framebuffers;
     };
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

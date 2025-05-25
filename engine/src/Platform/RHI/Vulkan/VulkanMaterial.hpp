@@ -32,9 +32,7 @@ namespace VoidArchitect::Platform
         void Use(IRenderingHardware& rhi) override;
 
         void SetGlobalUniforms(
-            IRenderingHardware& rhi,
-            const Math::Mat4& projection,
-            const Math::Mat4& view) override;
+            IRenderingHardware& rhi, const Math::Mat4& projection, const Math::Mat4& view) override;
         void SetObject(IRenderingHardware& rhi, const GeometryRenderData& data) override;
 
         bool AcquireResources(const UUID& id);
@@ -75,4 +73,4 @@ namespace VoidArchitect::Platform
         std::unique_ptr<VulkanBuffer> m_LocalUniformBuffer;
         uint32_t m_LocalUniformBufferIndex;
     };
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

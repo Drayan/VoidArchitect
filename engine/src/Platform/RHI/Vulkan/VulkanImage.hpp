@@ -44,8 +44,7 @@ namespace VoidArchitect::Platform
         void TransitionLayout(
             const std::unique_ptr<VulkanDevice>& device,
             const VulkanCommandBuffer& cmdBuf,
-            VkImageLayout
-            oldLayout,
+            VkImageLayout oldLayout,
             VkImageLayout newLayout) const;
         void CopyFromBuffer(const VulkanCommandBuffer& cmdBuf, const VulkanBuffer& buffer) const;
 
@@ -75,4 +74,4 @@ namespace VoidArchitect::Platform
         VkImageView m_ImageView;
         VkDeviceMemory m_Memory;
     };
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

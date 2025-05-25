@@ -15,9 +15,13 @@ namespace VoidArchitect
         unsigned int Width;
         unsigned int Height;
 
-        explicit WindowProps(const std::string& title = "VoidArchitect Engine",
-                             unsigned int width = 1280, unsigned int height = 720) :
-            Title(title), Width(width), Height(height)
+        explicit WindowProps(
+            const std::string& title = "VoidArchitect Engine",
+            unsigned int width = 1280,
+            unsigned int height = 720)
+            : Title(title),
+              Width(width),
+              Height(height)
         {
         }
     };

@@ -16,6 +16,19 @@ namespace VoidArchitect::Platform
 
 namespace VoidArchitect::Resources
 {
+    enum class TextureUse
+    {
+        None = 0,
+        Color = 1 << 0,
+        Normal = 1 << 1,
+        Specular = 1 << 2,
+        Emissive = 1 << 3,
+        Metallic = 1 << 4,
+        Roughness = 1 << 5,
+        AmbientOcclusion = 1 << 6,
+        Depth = 1 << 7
+    };
+
     class ITexture
     {
         friend class VoidArchitect::TextureSystem;
@@ -41,6 +54,8 @@ namespace VoidArchitect::Resources
         uint32_t m_Width, m_Height;
         uint8_t m_ChannelCount;
         bool m_HasTransparency;
+
+        TextureUse m_Use = TextureUse::None;
     };
 
     using TexturePtr = std::shared_ptr<ITexture>;
@@ -57,4 +72,4 @@ namespace VoidArchitect::Resources
     };
 
     using Texture2DPtr = std::shared_ptr<Texture2D>;
-}
+} // namespace VoidArchitect::Resources

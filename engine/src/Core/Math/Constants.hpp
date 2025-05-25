@@ -14,4 +14,4 @@ namespace VoidArchitect::Math
     constexpr float INV_PI2 = 1.0f / PI2;
     constexpr float HALF_PI = PI / 2.0f;
     constexpr float QUARTER_PI = PI / 4.0f;
-}
+} // namespace VoidArchitect::Math

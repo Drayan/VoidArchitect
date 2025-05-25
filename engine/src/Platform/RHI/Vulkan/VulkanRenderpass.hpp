@@ -61,4 +61,4 @@ namespace VoidArchitect::Platform
         uint32_t m_w, m_h;
         std::vector<VkClearValue> m_ClearValues;
     };
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

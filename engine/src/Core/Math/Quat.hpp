@@ -39,4 +39,4 @@ namespace VoidArchitect::Math
 
         impl::glm::quat m_Quaternion;
     };
-}
+} // namespace VoidArchitect::Math

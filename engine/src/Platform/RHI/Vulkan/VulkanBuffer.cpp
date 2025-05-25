@@ -3,12 +3,12 @@
 //
 #include "VulkanBuffer.hpp"
 
+#include "Core/Logger.hpp"
 #include "VulkanCommandBuffer.hpp"
 #include "VulkanDevice.hpp"
 #include "VulkanFence.hpp"
 #include "VulkanRhi.hpp"
 #include "VulkanUtils.hpp"
-#include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -119,10 +119,7 @@ namespace VoidArchitect::Platform
     }
 
     bool VulkanBuffer::Resize(
-        const VulkanRHI& rhi,
-        const uint64_t newSize,
-        const VkQueue queue,
-        const VkCommandPool pool)
+        const VulkanRHI& rhi, const uint64_t newSize, const VkQueue queue, const VkCommandPool pool)
     {
         // Create a new buffer.
         auto bufferCreateInfo = VkBufferCreateInfo{};
@@ -138,9 +135,8 @@ namespace VoidArchitect::Platform
         // Gather memory requirements.
         VkMemoryRequirements memRequirements;
         vkGetBufferMemoryRequirements(m_Device, newBuffer, &memRequirements);
-        const auto memoryIndex = rhi.FindMemoryIndex(
-            memRequirements.memoryTypeBits,
-            m_MemoryProperties);
+        const auto memoryIndex =
+            rhi.FindMemoryIndex(memRequirements.memoryTypeBits, m_MemoryProperties);
         if (memoryIndex == -1)
         {
             VA_ENGINE_CRITICAL("[VulkanBuffer] Failed to find memory type index.");
@@ -182,19 +178,14 @@ namespace VoidArchitect::Platform
     }
 
     void* VulkanBuffer::LockMemory(
-        const uint64_t offset,
-        const uint64_t size,
-        const VkMemoryMapFlags flags) const
+        const uint64_t offset, const uint64_t size, const VkMemoryMapFlags flags) const
     {
         void* data;
         vkMapMemory(m_Device, m_Memory, offset, size, flags, &data);
         return data;
     }
 
-    void VulkanBuffer::UnlockMemory() const
-    {
-        vkUnmapMemory(m_Device, m_Memory);
-    }
+    void VulkanBuffer::UnlockMemory() const { vkUnmapMemory(m_Device, m_Memory); }
 
     void VulkanBuffer::CopyTo(
         const VkCommandPool pool,
@@ -227,14 +218,14 @@ namespace VoidArchitect::Platform
         const std::vector<float>& data,
         const bool bindOnCreate)
         : VulkanBuffer(
-            rhi,
-            device,
-            allocator,
-            data.size() * sizeof(float),
-            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-            bindOnCreate)
+              rhi,
+              device,
+              allocator,
+              data.size() * sizeof(float),
+              VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+                  | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+              bindOnCreate)
     {
         const auto staging = VulkanStagingBuffer(rhi, device, allocator, data);
         auto fence = VulkanFence(m_Device, m_Allocator);
@@ -246,17 +237,13 @@ namespace VoidArchitect::Platform
             0,
             m_Size);
 
-        //TODO Find an async way to load data ?
+        // TODO Find an async way to load data ?
         fence.Wait();
     }
 
-    void VulkanVertexBuffer::Bind()
-    {
-    }
+    void VulkanVertexBuffer::Bind() {}
 
-    void VulkanVertexBuffer::Unbind()
-    {
-    }
+    void VulkanVertexBuffer::Unbind() {}
 
     VulkanIndexBuffer::VulkanIndexBuffer(
         const VulkanRHI& rhi,
@@ -265,14 +252,14 @@ namespace VoidArchitect::Platform
         const std::vector<uint32_t>& data,
         bool bindOnCreate)
         : VulkanBuffer(
-            rhi,
-            device,
-            allocator,
-            data.size() * sizeof(uint32_t),
-            VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
-            VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-            bindOnCreate)
+              rhi,
+              device,
+              allocator,
+              data.size() * sizeof(uint32_t),
+              VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+                  | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+              bindOnCreate)
     {
         const auto staging = VulkanStagingBuffer(rhi, device, allocator, data);
         auto fence = VulkanFence(m_Device, m_Allocator);
@@ -284,15 +271,11 @@ namespace VoidArchitect::Platform
             0,
             m_Size);
 
-        //TODO Find an async way to load data ?
+        // TODO Find an async way to load data ?
         fence.Wait();
     }
 
-    void VulkanIndexBuffer::Bind()
-    {
-    }
+    void VulkanIndexBuffer::Bind() {}
 
-    void VulkanIndexBuffer::Unbind()
-    {
-    }
-} // VoidArchitect
+    void VulkanIndexBuffer::Unbind() {}
+} // namespace VoidArchitect::Platform

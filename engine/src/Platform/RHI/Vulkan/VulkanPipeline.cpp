@@ -3,11 +3,11 @@
 //
 #include "VulkanPipeline.hpp"
 
+#include "Core/Math/Mat4.hpp"
 #include "VulkanDevice.hpp"
 #include "VulkanRenderpass.hpp"
 #include "VulkanShader.hpp"
 #include "VulkanUtils.hpp"
-#include "Core/Math/Mat4.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -43,7 +43,7 @@ namespace VoidArchitect::Platform
         // --- Vertex input binding ---
         auto bindingDescription = VkVertexInputBindingDescription{};
         bindingDescription.binding = 0;
-        //TODO Should be set by the engine
+        // TODO Should be set by the engine
         bindingDescription.stride = 20;
         bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
@@ -97,8 +97,8 @@ namespace VoidArchitect::Platform
         colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
         colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
-        colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-            VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT
+                                              | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 
         auto colorBlendInfo = VkPipelineColorBlendStateCreateInfo{};
         colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
@@ -122,9 +122,8 @@ namespace VoidArchitect::Platform
         pipelineLayoutCreateInfo.pushConstantRangeCount = 1;
         pipelineLayoutCreateInfo.pPushConstantRanges = &pushConstantRange;
 
-        VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkCreatePipelineLayout(m_Device, &pipelineLayoutCreateInfo, m_Allocator, &
-                m_PipelineLayout));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreatePipelineLayout(
+            m_Device, &pipelineLayoutCreateInfo, m_Allocator, &m_PipelineLayout));
         VA_ENGINE_TRACE("[VulkanPipeline] Pipeline layout created.");
 
         // --- Pipeline ---
@@ -151,9 +150,8 @@ namespace VoidArchitect::Platform
         pipelineCreateInfo.layout = m_PipelineLayout;
         pipelineCreateInfo.renderPass = renderPass->GetHandle();
 
-        VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkCreateGraphicsPipelines(m_Device, nullptr, 1, &pipelineCreateInfo, m_Allocator, &
-                m_Pipeline));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreateGraphicsPipelines(
+            m_Device, nullptr, 1, &pipelineCreateInfo, m_Allocator, &m_Pipeline));
         VA_ENGINE_TRACE("[VulkanPipeline] Pipeline created.");
     }
 
@@ -172,9 +170,8 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanPipeline::Bind(
-        const VulkanCommandBuffer& cmdBuf,
-        const VkPipelineBindPoint bindPoint) const
+        const VulkanCommandBuffer& cmdBuf, const VkPipelineBindPoint bindPoint) const
     {
         vkCmdBindPipeline(cmdBuf.GetHandle(), bindPoint, m_Pipeline);
     }
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

@@ -47,4 +47,4 @@ namespace VoidArchitect::Platform
         VkPipelineShaderStageCreateInfo m_ShaderStageInfo;
         ShaderStage m_Stage;
     };
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

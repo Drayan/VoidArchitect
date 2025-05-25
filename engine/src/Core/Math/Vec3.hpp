@@ -7,9 +7,9 @@ namespace VoidArchitect::Math
 {
     namespace impl
     {
-#include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
-    }
+#include <glm/vec3.hpp>
+    } // namespace impl
 
     class Vec3
     {
@@ -56,4 +56,4 @@ namespace VoidArchitect::Math
 
         impl::glm::vec3 m_Vector;
     };
-}
+} // namespace VoidArchitect::Math

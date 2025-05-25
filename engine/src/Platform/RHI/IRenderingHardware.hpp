@@ -24,7 +24,7 @@ namespace VoidArchitect::Platform
     enum class RHI_API_TYPE
     {
         None = 0, // Headless application, e.g., for the server.
-        Vulkan, // Vulkan implementation of RHI.
+        Vulkan,   // Vulkan implementation of RHI.
     };
 
     class IRenderingHardware
@@ -53,4 +53,4 @@ namespace VoidArchitect::Platform
             bool hasTransparency,
             const std::vector<uint8_t>& data) = 0;
     };
-}
+} // namespace VoidArchitect::Platform

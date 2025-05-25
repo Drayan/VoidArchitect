@@ -101,12 +101,12 @@ namespace VoidArchitect
     {
         switch (e.GetKeyCode())
         {
-        case SDLK_ESCAPE:
-            m_Running = false;
-            return true;
+            case SDLK_ESCAPE:
+                m_Running = false;
+                return true;
 
-        default:
-            break;
+            default:
+                break;
         }
 
         return false;

@@ -3,7 +3,6 @@
 //
 #include "TextureSystem.hpp"
 
-#include <ranges>
 #include <stb_image.h>
 
 #include "Core/Logger.hpp"
@@ -75,24 +74,17 @@ namespace VoidArchitect
         switch (Renderer::RenderCommand::GetApiType())
         {
             case Platform::RHI_API_TYPE::Vulkan:
-            {
-                texture = Renderer::RenderCommand::GetRHIRef().CreateTexture2D(
-                    name,
-                    width,
-                    height,
-                    4,
-                    hasTransparency,
-                    data);
-            }
+                {
+                    texture = Renderer::RenderCommand::GetRHIRef().CreateTexture2D(
+                        name, width, height, 4, hasTransparency, data);
+                }
             default:
                 break;
         }
 
         if (texture)
         {
-            auto texturePtr = Resources::Texture2DPtr(
-                texture,
-                TextureDeleter{this});
+            auto texturePtr = Resources::Texture2DPtr(texture, TextureDeleter{this});
             // Cache the texture
             const auto handle = GetFreeTextureHandle();
             texture->m_Handle = handle;
@@ -104,9 +96,7 @@ namespace VoidArchitect
             m_TotalTexturesLoaded++;
 
             VA_ENGINE_TRACE(
-                "[TextureSystem] Created texture '{}' with handle {}.",
-                texture->m_Name,
-                handle);
+                "[TextureSystem] Created texture '{}' with handle {}.", texture->m_Name, handle);
             return texturePtr;
         }
 
@@ -127,21 +117,14 @@ namespace VoidArchitect
         {
             case Platform::RHI_API_TYPE::Vulkan:
                 texture = Renderer::RenderCommand::GetRHIRef().CreateTexture2D(
-                    name,
-                    width,
-                    height,
-                    channels,
-                    hasTransparency,
-                    data);
+                    name, width, height, channels, hasTransparency, data);
             default:
                 break;
         }
 
         if (texture)
         {
-            auto texturePtr = Resources::Texture2DPtr(
-                texture,
-                TextureDeleter{this});
+            auto texturePtr = Resources::Texture2DPtr(texture, TextureDeleter{this});
             // Cache the texture
             const auto handle = GetFreeTextureHandle();
             texture->m_Handle = handle;
@@ -153,9 +136,7 @@ namespace VoidArchitect
             m_TotalTexturesLoaded++;
 
             VA_ENGINE_TRACE(
-                "[TextureSystem] Created texture '{}' with handle {}.",
-                texture->m_Name,
-                handle);
+                "[TextureSystem] Created texture '{}' with handle {}.", texture->m_Name, handle);
             return texturePtr;
         }
 
@@ -192,13 +173,8 @@ namespace VoidArchitect
             }
         }
 
-        m_DefaultTexture = CreateTexture2D(
-            "DefaultTexture",
-            texSize,
-            texSize,
-            texChannels,
-            false,
-            texData);
+        m_DefaultTexture =
+            CreateTexture2D("DefaultTexture", texSize, texSize, texChannels, false, texData);
         IMaterial::SetDefaultDiffuseTexture(m_DefaultTexture);
     }
 
@@ -245,7 +221,7 @@ namespace VoidArchitect
     {
         std::stringstream ss;
         ss << "assets/textures/" << name << ".png";
-        //TODO Try other formats like JPG, TGA, BMP, etc.
+        // TODO Try other formats like JPG, TGA, BMP, etc.
 
         const auto rawData = stbi_load(ss.str().c_str(), &width, &height, &channels, 4);
         if (rawData == nullptr)
@@ -279,4 +255,4 @@ namespace VoidArchitect
         system->ReleaseTexture(texture);
         delete texture;
     }
-}
+} // namespace VoidArchitect

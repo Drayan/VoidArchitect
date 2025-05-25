@@ -16,10 +16,7 @@ namespace VoidArchitect::Platform
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
             bool createSignaled = false);
-        VulkanFence(
-            VkDevice device,
-            VkAllocationCallbacks* allocator,
-            bool createSignaled = false);
+        VulkanFence(VkDevice device, VkAllocationCallbacks* allocator, bool createSignaled = false);
         ~VulkanFence();
 
         bool Wait(uint64_t timeout = std::numeric_limits<uint64_t>::max());
@@ -33,4 +30,4 @@ namespace VoidArchitect::Platform
         bool m_Signaled = false;
         VkFence m_Fence;
     };
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

@@ -5,9 +5,9 @@
 
 #include <ranges>
 
+#include "Core/Logger.hpp"
 #include "VulkanRenderpass.hpp"
 #include "VulkanUtils.hpp"
-#include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -58,11 +58,7 @@ namespace VoidArchitect::Platform
         framebufferInfo.layers = 1;
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkCreateFramebuffer(
-                m_Device,
-                &framebufferInfo,
-                m_Allocator,
-                &m_Framebuffer));
+            vkCreateFramebuffer(m_Device, &framebufferInfo, m_Allocator, &m_Framebuffer));
     }
 
     VulkanFramebuffer::~VulkanFramebuffer()
@@ -73,4 +69,4 @@ namespace VoidArchitect::Platform
             VA_ENGINE_TRACE("[VulkanFramebuffer] Framebuffer destroyed.");
         }
     }
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

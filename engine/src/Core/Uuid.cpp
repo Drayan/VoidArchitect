@@ -13,8 +13,7 @@ namespace VoidArchitect
     static std::mt19937_64 s_RandomEngine(s_RandomDevice());
     static std::uniform_int_distribution<uint64_t> s_RandomDistribution;
 
-    UUID::UUID()
-        : m_UUID(s_RandomDistribution(s_RandomEngine))
+    UUID::UUID() : m_UUID(s_RandomDistribution(s_RandomEngine))
     {
         if (m_UUID == InvalidUUID)
         {
@@ -23,18 +22,9 @@ namespace VoidArchitect
         }
     }
 
-    UUID::UUID(const uint64_t uuid)
-        : m_UUID(uuid)
-    {
-    }
+    UUID::UUID(const uint64_t uuid) : m_UUID(uuid) {}
 
-    bool UUID::operator==(const UUID& other) const
-    {
-        return m_UUID == other.m_UUID;
-    }
+    bool UUID::operator==(const UUID& other) const { return m_UUID == other.m_UUID; }
 
-    bool UUID::operator==(const uint64_t uuid) const
-    {
-        return m_UUID == uuid;
-    }
-}
+    bool UUID::operator==(const uint64_t uuid) const { return m_UUID == uuid; }
+} // namespace VoidArchitect

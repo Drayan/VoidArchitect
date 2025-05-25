@@ -61,19 +61,18 @@ namespace VoidArchitect
         inline bool IsInCategory(EventCategory category) { return GetCategoryFlags() & category; }
 
         bool Handled = false;
+
     protected:
     };
 
     class EventDispatcher
     {
-        template <typename T>
-        using EventFn = std::function<bool(T&)>;
+        template <typename T> using EventFn = std::function<bool(T&)>;
 
     public:
         EventDispatcher(Event& event) : m_Event(event) {}
 
-        template <typename T>
-        bool Dispatch(EventFn<T> func)
+        template <typename T> bool Dispatch(EventFn<T> func)
         {
             if (m_Event.GetEventType() == T::GetStaticType())
             {

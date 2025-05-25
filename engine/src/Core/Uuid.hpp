@@ -20,16 +20,15 @@ namespace VoidArchitect
     };
 
     inline UUID InvalidUUID(std::numeric_limits<uint64_t>::max());
-}
+} // namespace VoidArchitect
 
 namespace std
 {
-    template <>
-    struct hash<VoidArchitect::UUID>
+    template <> struct hash<VoidArchitect::UUID>
     {
         std::size_t operator()(const VoidArchitect::UUID& uuid) const noexcept
         {
             return hash<uint64_t>()(static_cast<uint64_t>(uuid));
         }
     };
-}
+} // namespace std

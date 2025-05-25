@@ -13,4 +13,4 @@ namespace VoidArchitect
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
     };
-} // VoidArchitect
+} // namespace VoidArchitect

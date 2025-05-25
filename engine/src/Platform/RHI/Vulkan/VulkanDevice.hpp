@@ -65,8 +65,7 @@ namespace VoidArchitect::Platform
     private:
         void SelectPhysicalDevice(const DeviceRequirements& requirements);
         bool IsDeviceMeetRequirements(
-            const VkPhysicalDevice& device,
-            const DeviceRequirements& requirements);
+            const VkPhysicalDevice& device, const DeviceRequirements& requirements);
 
         void CreateLogicalDevice(const DeviceRequirements& requirements);
         void DestroyLogicalDevice();
@@ -98,4 +97,4 @@ namespace VoidArchitect::Platform
         VkCommandPool m_TransferCommandPool;
         VkCommandPool m_ComputeCommandPool;
     };
-} // VoidArchitect::Platform
+} // namespace VoidArchitect::Platform

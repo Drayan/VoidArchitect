@@ -12,26 +12,26 @@ namespace VoidArchitect::Platform
 
     bool VulkanCheckResult(VkResult result);
 
-#define VA_VULKAN_CHECK_RESULT_CRITICAL(x) \
-    { \
-        auto result = x; \
-        if (!VulkanCheckResult(result)) \
-        {\
-            auto errorString = VulkanGetResultString(result); \
-            VA_ENGINE_CRITICAL("Vulkan error: {}", errorString); \
-            throw std::runtime_error(errorString); \
-        }\
+#define VA_VULKAN_CHECK_RESULT_CRITICAL(x)                                                         \
+    {                                                                                              \
+        auto result = x;                                                                           \
+        if (!VulkanCheckResult(result))                                                            \
+        {                                                                                          \
+            auto errorString = VulkanGetResultString(result);                                      \
+            VA_ENGINE_CRITICAL("Vulkan error: {}", errorString);                                   \
+            throw std::runtime_error(errorString);                                                 \
+        }                                                                                          \
     }
 
-#define VA_VULKAN_CHECK_RESULT_WARN(x) \
-    { \
-        auto result = x; \
-        if (!VulkanCheckResult(result)) \
-        {\
-            auto errorString = VulkanGetResultString(result); \
-            VA_ENGINE_WARN("Vulkan error: {}", errorString); \
-        }\
+#define VA_VULKAN_CHECK_RESULT_WARN(x)                                                             \
+    {                                                                                              \
+        auto result = x;                                                                           \
+        if (!VulkanCheckResult(result))                                                            \
+        {                                                                                          \
+            auto errorString = VulkanGetResultString(result);                                      \
+            VA_ENGINE_WARN("Vulkan error: {}", errorString);                                       \
+        }                                                                                          \
     }
 
 #define VA_VULKAN_CHECK_RESULT(x) !VulkanCheckResult(x)
-}
+} // namespace VoidArchitect::Platform

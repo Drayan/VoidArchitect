@@ -3,9 +3,9 @@
 //
 #include "VulkanFence.hpp"
 
+#include "Core/Logger.hpp"
 #include "VulkanDevice.hpp"
 #include "VulkanUtils.hpp"
-#include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -59,10 +59,10 @@ namespace VoidArchitect::Platform
         switch (const auto result = vkWaitForFences(m_Device, 1, &m_Fence, VK_TRUE, timeout))
         {
             case VK_SUCCESS:
-            {
-                m_Signaled = true;
-                return true;
-            }
+                {
+                    m_Signaled = true;
+                    return true;
+                }
             case VK_TIMEOUT:
                 VA_ENGINE_WARN("[VulkanFence] Fence wait timed out.");
                 break;
@@ -81,8 +81,7 @@ namespace VoidArchitect::Platform
 
             default:
                 VA_ENGINE_ERROR(
-                    "[VulkanFence] Fence wait failed with {}.",
-                    VulkanGetResultString(result));
+                    "[VulkanFence] Fence wait failed with {}.", VulkanGetResultString(result));
                 break;
         }
 
@@ -91,9 +90,10 @@ namespace VoidArchitect::Platform
 
     void VulkanFence::Reset()
     {
-        if (!m_Signaled) return;
+        if (!m_Signaled)
+            return;
 
         VA_VULKAN_CHECK_RESULT_WARN(vkResetFences(m_Device, 1, &m_Fence));
         m_Signaled = false;
     }
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

@@ -3,8 +3,8 @@
 //
 #pragma once
 
-#include "VulkanImage.hpp"
 #include "Resources/Texture.hpp"
+#include "VulkanImage.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -45,4 +45,4 @@ namespace VoidArchitect::Platform
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;
     };
-}
+} // namespace VoidArchitect::Platform

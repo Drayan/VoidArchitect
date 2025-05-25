@@ -32,17 +32,14 @@ namespace VoidArchitect
         size_t GetTotalMemoryUsed();
         size_t GetTotalTexturesLoaded();
 
-        Resources::Texture2DPtr GetDefaultTexture() const
-        {
-            return m_DefaultTexture;
-        }
+        Resources::Texture2DPtr GetDefaultTexture() const { return m_DefaultTexture; }
 
     private:
         void GenerateDefaultTextures();
         uint32_t GetFreeTextureHandle();
         void ReleaseTexture(const Resources::ITexture* texture);
 
-        //TEMP This will be removed once we have a proper resource manager
+        // TEMP This will be removed once we have a proper resource manager
         static std::vector<uint8_t> LoadRawData(
             const std::string& name,
             int32_t& width,
@@ -77,4 +74,4 @@ namespace VoidArchitect
     };
 
     inline std::unique_ptr<TextureSystem> g_TextureSystem;
-}
+} // namespace VoidArchitect

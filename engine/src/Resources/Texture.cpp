@@ -35,4 +35,4 @@ namespace VoidArchitect::Resources
         : ITexture(name, width, height, channelCount, hasTransparency)
     {
     }
-} // VoidArchitect
+} // namespace VoidArchitect::Resources

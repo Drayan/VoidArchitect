@@ -44,49 +44,31 @@ namespace VoidArchitect::Platform
         CreateRenderpass();
 
         m_Swapchain->RegenerateFramebuffers(
-            m_MainRenderpass,
-            m_FramebufferWidth,
-            m_FramebufferHeight);
+            m_MainRenderpass, m_FramebufferWidth, m_FramebufferHeight);
 
         CreateCommandBuffers();
         CreateSyncObjects();
 
         m_Material = std::make_unique<VulkanMaterial>(
-            *this,
-            m_Device,
-            m_Allocator,
-            m_Swapchain,
-            m_MainRenderpass);
+            *this, m_Device, m_Allocator, m_Swapchain, m_MainRenderpass);
 
         // TEMP Create testing buffers here.
         const std::vector vertices = {
-            -0.5f,
-            -0.5f,
-            0.0f,
+            -0.5f, -0.5f, 0.0f,
 
-            0.0f,
-            0.0f,
+            0.0f,  0.0f,
 
-            0.5f,
-            0.5f,
-            0.0f,
+            0.5f,  0.5f,  0.0f,
 
-            1.0f,
-            1.0f,
+            1.0f,  1.0f,
 
-            -0.5f,
-            0.5f,
-            0.0f,
+            -0.5f, 0.5f,  0.0f,
 
-            0.0f,
-            1.0f,
+            0.0f,  1.0f,
 
-            0.5f,
-            -0.5f,
-            0.0f,
+            0.5f,  -0.5f, 0.0f,
 
-            1.0f,
-            0.0f,
+            1.0f,  0.0f,
         };
         const std::vector<uint32_t> indices = {0, 1, 2, 0, 3, 1};
         m_VertexBuffer =
@@ -184,10 +166,10 @@ namespace VoidArchitect::Platform
         }
 
         if (!m_Swapchain->AcquireNextImage(
-            std::numeric_limits<uint64_t>::max(),
-            m_ImageAvailableSemaphores[m_CurrentIndex],
-            nullptr,
-            m_ImageIndex))
+                std::numeric_limits<uint64_t>::max(),
+                m_ImageAvailableSemaphores[m_CurrentIndex],
+                nullptr,
+                m_ImageIndex))
         {
             return false;
         }
@@ -203,13 +185,10 @@ namespace VoidArchitect::Platform
             .width = static_cast<float>(m_FramebufferWidth),
             .height = -static_cast<float>(m_FramebufferHeight),
             .minDepth = 0.0f,
-            .maxDepth = 1.0f
-        };
+            .maxDepth = 1.0f};
 
         const VkRect2D scissor = {
-            .offset = {0, 0},
-            .extent = {m_FramebufferWidth, m_FramebufferHeight}
-        };
+            .offset = {0, 0}, .extent = {m_FramebufferWidth, m_FramebufferHeight}};
 
         vkCmdSetViewport(cmdBuf.GetHandle(), 0, 1, &viewport);
         vkCmdSetScissor(cmdBuf.GetHandle(), 0, 1, &scissor);
@@ -230,10 +209,7 @@ namespace VoidArchitect::Platform
         const auto vertexBuffer = m_VertexBuffer->GetHandle();
         vkCmdBindVertexBuffers(cmdBuf.GetHandle(), 0, 1, &vertexBuffer, &offsets);
         vkCmdBindIndexBuffer(
-            cmdBuf.GetHandle(),
-            m_IndexBuffer->GetHandle(),
-            0,
-            VK_INDEX_TYPE_UINT32);
+            cmdBuf.GetHandle(), m_IndexBuffer->GetHandle(), 0, VK_INDEX_TYPE_UINT32);
         vkCmdDrawIndexed(cmdBuf.GetHandle(), 6, 1, 0, 0, 0);
         // TEMP End of temp bloc
 
@@ -263,12 +239,11 @@ namespace VoidArchitect::Platform
         submitInfo.pWaitSemaphores = &m_ImageAvailableSemaphores[m_CurrentIndex];
 
         const std::vector flags = {
-            VkPipelineStageFlags{VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}
-        };
+            VkPipelineStageFlags{VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}};
         submitInfo.pWaitDstStageMask = flags.data();
 
-        if (VA_VULKAN_CHECK_RESULT(
-            vkQueueSubmit(m_Device->GetGraphicsQueueHandle(),
+        if (VA_VULKAN_CHECK_RESULT(vkQueueSubmit(
+                m_Device->GetGraphicsQueueHandle(),
                 1,
                 &submitInfo,
                 m_InFlightFences[m_CurrentIndex].GetHandle())))
@@ -307,28 +282,19 @@ namespace VoidArchitect::Platform
         const std::vector<uint8_t>& data)
     {
         return new VulkanTexture2D(
-            *this,
-            m_Device,
-            m_Allocator,
-            name,
-            width,
-            height,
-            channels,
-            hasTransparency,
-            data);
+            *this, m_Device, m_Allocator, name, width, height, channels, hasTransparency, data);
     }
 
-    int32_t VulkanRHI::FindMemoryIndex(
-        const uint32_t typeFilter,
-        const uint32_t propertyFlags) const
+    int32_t
+    VulkanRHI::FindMemoryIndex(const uint32_t typeFilter, const uint32_t propertyFlags) const
     {
         VkPhysicalDeviceMemoryProperties memProperties;
         vkGetPhysicalDeviceMemoryProperties(m_Device->GetPhysicalDeviceHandle(), &memProperties);
 
         for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
         {
-            if ((typeFilter & (1 << i)) &&
-                (memProperties.memoryTypes[i].propertyFlags & propertyFlags) == propertyFlags)
+            if ((typeFilter & (1 << i))
+                && (memProperties.memoryTypes[i].propertyFlags & propertyFlags) == propertyFlags)
             {
                 return i;
             }
@@ -391,8 +357,7 @@ namespace VoidArchitect::Platform
             if (!layerFound)
             {
                 VA_ENGINE_CRITICAL(
-                    "[VulkanRHI] Required validation layer {} is not supported.",
-                    layerName);
+                    "[VulkanRHI] Required validation layer {} is not supported.", layerName);
                 return;
             }
         }
@@ -423,8 +388,7 @@ namespace VoidArchitect::Platform
                 ss << extensions[i] << std::endl;
             }
             VA_ENGINE_CRITICAL(
-                "[VulkanRHI] Failed to initialize instance.\nRequired extensions:\n%{}",
-                ss.str());
+                "[VulkanRHI] Failed to initialize instance.\nRequired extensions:\n%{}", ss.str());
 
 #ifdef DEBUG
             CleaningDebugExtensionsArray(extensions, extensionCount);
@@ -471,13 +435,7 @@ namespace VoidArchitect::Platform
             "[VulkanRHI] Swapchain format, depth format, present mode and extent chosen.");
 
         m_Swapchain = std::make_unique<VulkanSwapchain>(
-            *this,
-            m_Device,
-            m_Allocator,
-            format,
-            mode,
-            extents,
-            depthFormat);
+            *this, m_Device, m_Allocator, format, mode, extents, depthFormat);
         VA_ENGINE_INFO("[VulkanRHI] Swapchain created.");
     }
 
@@ -497,10 +455,7 @@ namespace VoidArchitect::Platform
         {
             m_Formats.resize(formatCount);
             vkGetPhysicalDeviceSurfaceFormatsKHR(
-                physicalDevice,
-                surface,
-                &formatCount,
-                m_Formats.data());
+                physicalDevice, surface, &formatCount, m_Formats.data());
         }
         else
         {
@@ -509,16 +464,14 @@ namespace VoidArchitect::Platform
 
         // --- Present modes ---
         uint32_t presentModeCount;
-        VA_VULKAN_CHECK_RESULT_WARN(
-            vkGetPhysicalDeviceSurfacePresentModesKHR(
-                physicalDevice, surface, &presentModeCount, nullptr));
+        VA_VULKAN_CHECK_RESULT_WARN(vkGetPhysicalDeviceSurfacePresentModesKHR(
+            physicalDevice, surface, &presentModeCount, nullptr));
 
         if (presentModeCount != 0)
         {
             m_PresentModes.resize(presentModeCount);
-            VA_VULKAN_CHECK_RESULT_WARN(
-                vkGetPhysicalDeviceSurfacePresentModesKHR(
-                    physicalDevice, surface, &presentModeCount, m_PresentModes.data()));
+            VA_VULKAN_CHECK_RESULT_WARN(vkGetPhysicalDeviceSurfacePresentModesKHR(
+                physicalDevice, surface, &presentModeCount, m_PresentModes.data()));
         }
         else
         {
@@ -530,8 +483,8 @@ namespace VoidArchitect::Platform
     {
         for (const auto& availableFormat : m_Formats)
         {
-            if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB &&
-                availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+            if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB
+                && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
             {
                 return availableFormat;
             }
@@ -582,10 +535,7 @@ namespace VoidArchitect::Platform
     VkFormat VulkanRHI::ChooseDepthFormat() const
     {
         const std::vector candidates = {
-            VK_FORMAT_D32_SFLOAT,
-            VK_FORMAT_D32_SFLOAT_S8_UINT,
-            VK_FORMAT_D24_UNORM_S8_UINT
-        };
+            VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT};
 
         constexpr uint32_t flags = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
@@ -593,9 +543,7 @@ namespace VoidArchitect::Platform
         {
             VkFormatProperties props;
             vkGetPhysicalDeviceFormatProperties(
-                m_Device->GetPhysicalDeviceHandle(),
-                candidate,
-                &props);
+                m_Device->GetPhysicalDeviceHandle(), candidate, &props);
 
             if ((props.linearTilingFeatures & flags) == flags)
             {
@@ -655,16 +603,12 @@ namespace VoidArchitect::Platform
             auto semaphoreCreateInfo = VkSemaphoreCreateInfo{};
             semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
             VkSemaphore semaphore;
-            VA_VULKAN_CHECK_RESULT_WARN(
-                vkCreateSemaphore(
-                    m_Device->GetLogicalDeviceHandle(), &semaphoreCreateInfo, m_Allocator, &
-                    semaphore));
+            VA_VULKAN_CHECK_RESULT_WARN(vkCreateSemaphore(
+                m_Device->GetLogicalDeviceHandle(), &semaphoreCreateInfo, m_Allocator, &semaphore));
             m_ImageAvailableSemaphores.push_back(semaphore);
 
-            VA_VULKAN_CHECK_RESULT_WARN(
-                vkCreateSemaphore(
-                    m_Device->GetLogicalDeviceHandle(), &semaphoreCreateInfo, m_Allocator, &
-                    semaphore));
+            VA_VULKAN_CHECK_RESULT_WARN(vkCreateSemaphore(
+                m_Device->GetLogicalDeviceHandle(), &semaphoreCreateInfo, m_Allocator, &semaphore));
             m_QueueCompleteSemaphores.push_back(semaphore);
 
             m_InFlightFences.emplace_back(m_Device, m_Allocator, true);
@@ -722,9 +666,7 @@ namespace VoidArchitect::Platform
         const auto depthFormat = ChooseDepthFormat();
 
         m_Swapchain->Recreate(
-            *this,
-            {m_CachedFramebufferWidth, m_CachedFramebufferHeight},
-            depthFormat);
+            *this, {m_CachedFramebufferWidth, m_CachedFramebufferHeight}, depthFormat);
 
         // Sync
         m_FramebufferWidth = m_CachedFramebufferWidth;
@@ -744,9 +686,7 @@ namespace VoidArchitect::Platform
         m_MainRenderpass->SetHeight(m_FramebufferHeight);
 
         m_Swapchain->RegenerateFramebuffers(
-            m_MainRenderpass,
-            m_FramebufferWidth,
-            m_FramebufferHeight);
+            m_MainRenderpass, m_FramebufferWidth, m_FramebufferHeight);
         CreateCommandBuffers();
 
         // TODO We should update the global state.
@@ -793,8 +733,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanRHI::CleaningDebugExtensionsArray(
-        char const* const*& extensions,
-        const unsigned int extensionCount)
+        char const* const*& extensions, const unsigned int extensionCount)
     {
         for (unsigned int i = 0; i < extensionCount; i++)
             delete[] extensions[i];
@@ -805,14 +744,14 @@ namespace VoidArchitect::Platform
 
     void VulkanRHI::CreateDebugMessenger()
     {
-        constexpr unsigned int logSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT |
-            VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-            VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-            VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT;
+        constexpr unsigned int logSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
+                                             | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
+                                             | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT
+                                             | VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT;
 
-        constexpr unsigned int messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-            VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT |
-            VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
+        constexpr unsigned int messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
+                                             | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT
+                                             | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
 
         constexpr auto debugCreateInfo = VkDebugUtilsMessengerCreateInfoEXT{
             .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
@@ -821,17 +760,15 @@ namespace VoidArchitect::Platform
             .messageSeverity = logSeverity,
             .messageType = messageType,
             .pfnUserCallback = VulkanDebuggerCallback,
-            .pUserData = nullptr
-        };
+            .pUserData = nullptr};
         const auto vkCreateDebugUtilsMessengerEXT =
             reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
                 vkGetInstanceProcAddr(m_Instance, "vkCreateDebugUtilsMessengerEXT"));
         VA_ENGINE_ASSERT(
             vkCreateDebugUtilsMessengerEXT != nullptr,
             "[VulkanRHI] Failed to load debug messenger create function.")
-        VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkCreateDebugUtilsMessengerEXT(
-                m_Instance, &debugCreateInfo, m_Allocator, &m_DebugMessenger));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreateDebugUtilsMessengerEXT(
+            m_Instance, &debugCreateInfo, m_Allocator, &m_DebugMessenger));
 
         VA_ENGINE_INFO("[VulkanRHI] Debug messenger created.");
     }

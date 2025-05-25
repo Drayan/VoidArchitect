@@ -22,8 +22,7 @@ namespace VoidArchitect::Platform
             const std::unique_ptr<VulkanRenderpass>& renderPass,
             const std::vector<VulkanShader>& shaders,
             const std::vector<VkVertexInputAttributeDescription>& attributes,
-            const std::vector<VkDescriptorSetLayout>& descriptorSets
-        );
+            const std::vector<VkDescriptorSetLayout>& descriptorSets);
         ~VulkanPipeline();
 
         void Bind(const VulkanCommandBuffer& cmdBuf, VkPipelineBindPoint bindPoint) const;
@@ -36,4 +35,4 @@ namespace VoidArchitect::Platform
         VkPipelineLayout m_PipelineLayout;
         VkPipeline m_Pipeline;
     };
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

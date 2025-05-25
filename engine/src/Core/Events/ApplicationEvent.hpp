@@ -11,8 +11,9 @@ namespace VoidArchitect
     class VA_API WindowResizedEvent : public Event
     {
     public:
-        WindowResizedEvent(unsigned int width, unsigned int height) :
-            m_Width(width), m_Height(height)
+        WindowResizedEvent(unsigned int width, unsigned int height)
+            : m_Width(width),
+              m_Height(height)
         {
         }
 

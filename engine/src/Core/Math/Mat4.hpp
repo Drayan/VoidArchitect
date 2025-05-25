@@ -10,10 +10,10 @@ namespace VoidArchitect::Math
 
     namespace impl
     {
-#include <glm/glm.hpp>
-#include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
-    }
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/glm.hpp>
+    } // namespace impl
 
     class Mat4
     {
@@ -26,13 +26,8 @@ namespace VoidArchitect::Math
         static Mat4 Identity();
         static Mat4 Zero();
         static Mat4 Perspective(float fov, float aspect, float near, float far);
-        static Mat4 Orthographic(
-            float left,
-            float right,
-            float bottom,
-            float top,
-            float near,
-            float far);
+        static Mat4
+        Orthographic(float left, float right, float bottom, float top, float near, float far);
         static Mat4 Translate(float x, float y, float z);
         static Mat4 Translate(const Vec3& translation);
         static Mat4 Rotate(float angle, float x, float y, float z);
@@ -49,4 +44,4 @@ namespace VoidArchitect::Math
 
         impl::glm::mat4 m_Matrix;
     };
-} // VoidArchitect
+} // namespace VoidArchitect::Math

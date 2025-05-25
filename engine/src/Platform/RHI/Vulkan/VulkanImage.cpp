@@ -3,10 +3,10 @@
 //
 #include "VulkanImage.hpp"
 
+#include "Core/Logger.hpp"
 #include "VulkanBuffer.hpp"
 #include "VulkanRhi.hpp"
 #include "VulkanUtils.hpp"
-#include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -119,8 +119,8 @@ namespace VoidArchitect::Platform
         VkPipelineStageFlags sourceStage;
         VkPipelineStageFlags destinationStage;
 
-        if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout ==
-            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+        if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED
+            && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
         {
             barrier.srcAccessMask = 0;
             barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -128,8 +128,9 @@ namespace VoidArchitect::Platform
             sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
             destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
         }
-        else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout ==
-            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+        else if (
+            oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+            && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
         {
             barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
             barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
@@ -156,9 +157,8 @@ namespace VoidArchitect::Platform
             &barrier);
     }
 
-    void VulkanImage::CopyFromBuffer(
-        const VulkanCommandBuffer& cmdBuf,
-        const VulkanBuffer& buffer) const
+    void
+    VulkanImage::CopyFromBuffer(const VulkanCommandBuffer& cmdBuf, const VulkanBuffer& buffer) const
     {
         auto region = VkBufferImageCopy{};
         region.bufferOffset = 0;
@@ -195,8 +195,8 @@ namespace VoidArchitect::Platform
         createInfo.extent.width = width;
         createInfo.extent.height = height;
         createInfo.extent.depth = 1; // TODO Support configurable depth
-        createInfo.mipLevels = 4; // TODO Support mip mapping
-        createInfo.arrayLayers = 1; // TODO Support number of layers in the image
+        createInfo.mipLevels = 4;    // TODO Support mip mapping
+        createInfo.arrayLayers = 1;  // TODO Support number of layers in the image
         createInfo.format = format;
         createInfo.tiling = tiling;
         createInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -209,9 +209,8 @@ namespace VoidArchitect::Platform
         // Query memory requirements
         VkMemoryRequirements memRequirements;
         vkGetImageMemoryRequirements(m_Device, m_Image, &memRequirements);
-        const int32_t memoryTypeIndex = rhi.FindMemoryIndex(
-            memRequirements.memoryTypeBits,
-            memoryFlags);
+        const int32_t memoryTypeIndex =
+            rhi.FindMemoryIndex(memRequirements.memoryTypeBits, memoryFlags);
         if (memoryTypeIndex == -1)
         {
             VA_ENGINE_CRITICAL("[VulkanImage] Failed to find memory type index.");
@@ -232,9 +231,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanImage::CreateImageView(
-        const VkImage image,
-        const VkFormat format,
-        const VkImageAspectFlags aspect)
+        const VkImage image, const VkFormat format, const VkImageAspectFlags aspect)
     {
         auto createInfo = VkImageViewCreateInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -252,11 +249,7 @@ namespace VoidArchitect::Platform
         createInfo.components.a = VK_COMPONENT_SWIZZLE_A;
 
         VA_VULKAN_CHECK_RESULT_WARN(
-            vkCreateImageView(
-                m_Device,
-                &createInfo,
-                m_Allocator,
-                &m_ImageView));
+            vkCreateImageView(m_Device, &createInfo, m_Allocator, &m_ImageView));
     }
 
     void VulkanImage::InvalidateResources()
@@ -291,4 +284,4 @@ namespace VoidArchitect::Platform
             VA_ENGINE_TRACE("[VulkanImage] Image destroyed.");
         }
     }
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

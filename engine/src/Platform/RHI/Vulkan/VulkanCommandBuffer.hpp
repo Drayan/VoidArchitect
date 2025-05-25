@@ -24,9 +24,7 @@ namespace VoidArchitect::Platform
     public:
         VulkanCommandBuffer() = default;
         VulkanCommandBuffer(
-            const std::unique_ptr<VulkanDevice>& device,
-            VkCommandPool pool,
-            bool isPrimary = true);
+            const std::unique_ptr<VulkanDevice>& device, VkCommandPool pool, bool isPrimary = true);
         VulkanCommandBuffer(VkDevice device, VkCommandPool pool, bool isPrimary = true);
         VulkanCommandBuffer(VulkanCommandBuffer&& other) noexcept;
         VulkanCommandBuffer(const VulkanCommandBuffer& other) = delete;
@@ -46,14 +44,9 @@ namespace VoidArchitect::Platform
             const std::unique_ptr<VulkanDevice>& device,
             VkCommandPool pool,
             VulkanCommandBuffer& cmdBuf);
-        static void SingleUseBegin(
-            VkDevice device,
-            VkCommandPool pool,
-            VulkanCommandBuffer& cmdBuf);
-        static void SingleUseEnd(
-            VulkanCommandBuffer& cmdBuf,
-            VkQueue queue,
-            VkFence fence);
+        static void
+        SingleUseBegin(VkDevice device, VkCommandPool pool, VulkanCommandBuffer& cmdBuf);
+        static void SingleUseEnd(VulkanCommandBuffer& cmdBuf, VkQueue queue, VkFence fence);
 
         void SetState(const CommandBufferState& state) { m_State = state; }
 
@@ -69,4 +62,4 @@ namespace VoidArchitect::Platform
         VkCommandBuffer m_CommandBuffer{};
         CommandBufferState m_State = CommandBufferState::NotAllocated;
     };
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

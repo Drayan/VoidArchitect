@@ -3,9 +3,9 @@
 //
 #pragma once
 
-#include "Core/Uuid.hpp"
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec4.hpp"
+#include "Core/Uuid.hpp"
 #include "Resources/Texture.hpp"
 
 namespace VoidArchitect::Platform
@@ -19,9 +19,9 @@ namespace VoidArchitect
     {
         class ITexture;
         class Texture2D;
-    }
+    } // namespace Resources
 
-    //NOTE Vulkan give us a max of 256 bytes on G_UBO
+    // NOTE Vulkan give us a max of 256 bytes on G_UBO
     struct GlobalUniformObject
     {
         Math::Mat4 Projection;
@@ -33,9 +33,9 @@ namespace VoidArchitect
     struct LocalUniformObject
     {
         Math::Vec4 DiffuseColor; // 16 bytes
-        Math::Vec4 Reserved0; // 16 bytes
-        Math::Vec4 Reserved1; // 16 bytes
-        Math::Vec4 Reserved2; // 16 bytes
+        Math::Vec4 Reserved0;    // 16 bytes
+        Math::Vec4 Reserved1;    // 16 bytes
+        Math::Vec4 Reserved2;    // 16 bytes
     };
 
     struct GeometryRenderData
@@ -60,12 +60,10 @@ namespace VoidArchitect
             const Math::Mat4& projection,
             const Math::Mat4& view) = 0;
 
-        virtual void SetObject(
-            Platform::IRenderingHardware& rhi,
-            const GeometryRenderData& data) = 0;
+        virtual void
+        SetObject(Platform::IRenderingHardware& rhi, const GeometryRenderData& data) = 0;
 
-        static void SetDefaultDiffuseTexture(
-            const Resources::Texture2DPtr& defaultTexture)
+        static void SetDefaultDiffuseTexture(const Resources::Texture2DPtr& defaultTexture)
         {
             s_DefaultDiffuseTexture = defaultTexture;
         }
@@ -74,4 +72,4 @@ namespace VoidArchitect
         static Resources::Texture2DPtr s_DefaultDiffuseTexture;
         GlobalUniformObject m_GlobalUniformObject;
     };
-} // VoidArchitect
+} // namespace VoidArchitect

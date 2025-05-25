@@ -50,16 +50,11 @@ namespace VoidArchitect::Renderer
                 break;
 
             case CameraType::Orthographic:
-                m_Projection = Math::Mat4::Orthographic(
-                    m_Left,
-                    m_Right,
-                    m_Bottom,
-                    m_Top,
-                    m_Near,
-                    m_Far);
+                m_Projection =
+                    Math::Mat4::Orthographic(m_Left, m_Right, m_Bottom, m_Top, m_Near, m_Far);
                 break;
         }
         m_View = Math::Mat4::Inverse(
             Math::Mat4::Translate(m_Position) * Math::Mat4::FromQuaternion(m_Rotation));
     }
-} // VoidArchitect
+} // namespace VoidArchitect::Renderer

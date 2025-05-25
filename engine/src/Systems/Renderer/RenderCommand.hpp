@@ -14,7 +14,7 @@ namespace VoidArchitect
     {
         enum class RHI_API_TYPE;
         class IRenderingHardware;
-    }
+    } // namespace Platform
 
     namespace Renderer
     {
@@ -32,17 +32,12 @@ namespace VoidArchitect
 
             static Camera& CreatePerspectiveCamera(float fov, float near, float far);
             static Camera& CreateOrthographicCamera(
-                float left,
-                float right,
-                float bottom,
-                float top,
-                float near,
-                float far);
+                float left, float right, float bottom, float top, float near, float far);
 
             static Platform::RHI_API_TYPE GetApiType() { return m_ApiType; }
             static Camera& GetMainCamera() { return m_Cameras[0]; }
 
-            //TEMP: We'll expose a static method to swap the test texture
+            // TEMP: We'll expose a static method to swap the test texture
             static void SwapTestTexture();
             static Platform::IRenderingHardware& GetRHIRef() { return *m_RenderingHardware; };
 
@@ -58,5 +53,5 @@ namespace VoidArchitect
 
             static std::vector<Camera> m_Cameras;
         };
-    }
-} // VoidArchitect
+    } // namespace Renderer
+} // namespace VoidArchitect

@@ -4,8 +4,8 @@
 #pragma once
 #include "Platform/RHI/IRenderingHardware.hpp"
 
-#include "VulkanDevice.hpp"
 #include "VulkanCommandBuffer.hpp"
+#include "VulkanDevice.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -18,7 +18,7 @@ namespace VoidArchitect
     {
         class Texture2D;
     }
-}
+} // namespace VoidArchitect
 
 namespace VoidArchitect::Platform
 {
@@ -32,7 +32,7 @@ namespace VoidArchitect::Platform
     class VulkanBuffer;
     class VulkanMaterial;
 
-    //TEMP This should not stay here.
+    // TEMP This should not stay here.
 
     class VulkanRHI final : public IRenderingHardware
     {
@@ -58,8 +58,7 @@ namespace VoidArchitect::Platform
             uint32_t height,
             uint8_t channels,
             bool hasTransparency,
-            const std::vector<uint8_t>
-            & data) override;
+            const std::vector<uint8_t>& data) override;
 
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
         {
@@ -102,12 +101,10 @@ namespace VoidArchitect::Platform
 #ifdef DEBUG
         void CreateDebugMessenger();
         void DestroyDebugMessenger() const;
-        static void AddDebugExtensions(
-            char const* const*& extensions,
-            unsigned int& extensionCount);
-        static void CleaningDebugExtensionsArray(
-            char const* const*& extensions,
-            unsigned int extensionCount);
+        static void
+        AddDebugExtensions(char const* const*& extensions, unsigned int& extensionCount);
+        static void
+        CleaningDebugExtensionsArray(char const* const*& extensions, unsigned int extensionCount);
 
         VkDebugUtilsMessengerEXT m_DebugMessenger;
 #endif
@@ -138,7 +135,7 @@ namespace VoidArchitect::Platform
 
         std::unique_ptr<VulkanMaterial> m_Material;
 
-        //TEMP Temporary test code
+        // TEMP Temporary test code
         std::unique_ptr<VulkanVertexBuffer> m_VertexBuffer;
         std::unique_ptr<VulkanIndexBuffer> m_IndexBuffer;
 
@@ -149,4 +146,4 @@ namespace VoidArchitect::Platform
         uint64_t m_FramebufferSizeGeneration;
         uint64_t m_FramebufferSizeLastGeneration;
     };
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

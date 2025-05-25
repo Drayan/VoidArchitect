@@ -7,24 +7,21 @@
 
 #include <vulkan/vulkan.h>
 
-#include "VulkanUtils.hpp"
 #include "Core/Logger.hpp"
+#include "VulkanUtils.hpp"
 
 namespace VoidArchitect::Platform
 {
     VulkanCommandBuffer::VulkanCommandBuffer(
-        const std::unique_ptr<VulkanDevice>& device,
-        const VkCommandPool pool,
-        const bool isPrimary)
+        const std::unique_ptr<VulkanDevice>& device, const VkCommandPool pool, const bool isPrimary)
         : m_Device(device->GetLogicalDeviceHandle()),
           m_Pool(pool)
     {
         auto allocateInfo = VkCommandBufferAllocateInfo{};
         allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocateInfo.commandPool = pool;
-        allocateInfo.level = isPrimary
-                                 ? VK_COMMAND_BUFFER_LEVEL_PRIMARY
-                                 : VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+        allocateInfo.level =
+            isPrimary ? VK_COMMAND_BUFFER_LEVEL_PRIMARY : VK_COMMAND_BUFFER_LEVEL_SECONDARY;
         allocateInfo.commandBufferCount = 1;
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(
@@ -41,9 +38,8 @@ namespace VoidArchitect::Platform
         auto allocateInfo = VkCommandBufferAllocateInfo{};
         allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocateInfo.commandPool = pool;
-        allocateInfo.level = isPrimary
-                                 ? VK_COMMAND_BUFFER_LEVEL_PRIMARY
-                                 : VK_COMMAND_BUFFER_LEVEL_SECONDARY;
+        allocateInfo.level =
+            isPrimary ? VK_COMMAND_BUFFER_LEVEL_PRIMARY : VK_COMMAND_BUFFER_LEVEL_SECONDARY;
         allocateInfo.commandBufferCount = 1;
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(
@@ -101,9 +97,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanCommandBuffer::Begin(
-        const bool isSingleUse,
-        const bool isRenderPassContinue,
-        const bool isSimultaneousUse)
+        const bool isSingleUse, const bool isRenderPassContinue, const bool isSimultaneousUse)
     {
         auto beginInfo = VkCommandBufferBeginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -141,18 +135,14 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanCommandBuffer::SingleUseBegin(
-        const VkDevice device,
-        const VkCommandPool pool,
-        VulkanCommandBuffer& cmdBuf)
+        const VkDevice device, const VkCommandPool pool, VulkanCommandBuffer& cmdBuf)
     {
         cmdBuf = VulkanCommandBuffer(device, pool);
         cmdBuf.Begin(true);
     }
 
     void VulkanCommandBuffer::SingleUseEnd(
-        VulkanCommandBuffer& cmdBuf,
-        const VkQueue queue,
-        const VkFence fence)
+        VulkanCommandBuffer& cmdBuf, const VkQueue queue, const VkFence fence)
     {
         cmdBuf.End();
 
@@ -166,4 +156,4 @@ namespace VoidArchitect::Platform
         // Wait for it to finish
         VA_VULKAN_CHECK_RESULT_WARN(vkQueueWaitIdle(queue));
     }
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

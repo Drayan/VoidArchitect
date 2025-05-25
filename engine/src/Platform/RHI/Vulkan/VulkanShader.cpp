@@ -3,9 +3,9 @@
 //
 #include "VulkanShader.hpp"
 
+#include "Core/Logger.hpp"
 #include "VulkanDevice.hpp"
 #include "VulkanUtils.hpp"
-#include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -114,4 +114,4 @@ namespace VoidArchitect::Platform
 
         return buffer;
     }
-} // VoidArchitect
+} // namespace VoidArchitect::Platform

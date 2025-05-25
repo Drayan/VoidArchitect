@@ -3,8 +3,8 @@
 //
 #pragma once
 #include "Core/Math/Mat4.hpp"
-#include "Core/Math/Vec3.hpp"
 #include "Core/Math/Quat.hpp"
+#include "Core/Math/Vec3.hpp"
 
 namespace VoidArchitect::Renderer
 {
@@ -35,10 +35,7 @@ namespace VoidArchitect::Renderer
             m_Position = Math::Vec3(x, y, z);
         }
 
-        void SetRotation(const Math::Quat& quat)
-        {
-            m_Rotation = quat;
-        }
+        void SetRotation(const Math::Quat& quat) { m_Rotation = quat; }
 
         Math::Quat GetRotation() const { return m_Rotation; }
 
@@ -61,4 +58,4 @@ namespace VoidArchitect::Renderer
         Math::Vec3 m_Position;
         Math::Quat m_Rotation;
     };
-} // VoidArchitect
+} // namespace VoidArchitect::Renderer

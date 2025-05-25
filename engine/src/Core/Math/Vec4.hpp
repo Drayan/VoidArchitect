@@ -46,4 +46,4 @@ namespace VoidArchitect::Math
 
         impl::glm::vec4 m_Vector;
     };
-}
+} // namespace VoidArchitect::Math
