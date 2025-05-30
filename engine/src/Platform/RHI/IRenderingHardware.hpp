@@ -6,8 +6,9 @@
 
 namespace VoidArchitect
 {
-    struct GeometryRenderData;
-}
+    struct ShaderConfig;
+    struct PipelineConfig;
+} // namespace VoidArchitect
 
 namespace VoidArchitect::Math
 {
@@ -16,8 +17,13 @@ namespace VoidArchitect::Math
 
 namespace VoidArchitect::Resources
 {
+    struct GeometryRenderData;
     class Texture2D;
-}
+    class IMaterial;
+    class IShader;
+    class IPipeline;
+    using PipelinePtr = std::shared_ptr<IPipeline>;
+} // namespace VoidArchitect::Resources
 
 namespace VoidArchitect::Platform
 {
@@ -39,8 +45,11 @@ namespace VoidArchitect::Platform
         virtual bool BeginFrame(float deltaTime) = 0;
         virtual bool EndFrame(float deltaTime) = 0;
 
-        virtual void UpdateGlobalState(const Math::Mat4& projection, const Math::Mat4& view) = 0;
-        virtual void UpdateObjectState(const GeometryRenderData& data) = 0;
+        virtual void UpdateGlobalState(
+            const Resources::PipelinePtr& pipeline,
+            const Math::Mat4& projection,
+            const Math::Mat4& view) = 0;
+        virtual void UpdateObjectState(const Resources::GeometryRenderData& data) = 0;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
@@ -51,6 +60,13 @@ namespace VoidArchitect::Platform
             uint32_t height,
             uint8_t channels,
             bool hasTransparency,
+            const std::vector<uint8_t>& data) = 0;
+        virtual Resources::IPipeline* CreatePipeline(PipelineConfig& config) = 0;
+        virtual Resources::IMaterial* CreateMaterial(
+            const std::string& name, const Resources::PipelinePtr& pipeline) = 0;
+        virtual Resources::IShader* CreateShader(
+            const std::string& name,
+            const ShaderConfig& config,
             const std::vector<uint8_t>& data) = 0;
     };
 } // namespace VoidArchitect::Platform

@@ -9,9 +9,12 @@
 #include <SDL3/SDL_vulkan.h>
 
 #include "VulkanBuffer.hpp"
+#include "VulkanDescriptorSetLayoutManager.hpp"
 #include "VulkanFence.hpp"
 #include "VulkanMaterial.hpp"
+#include "VulkanPipeline.hpp"
 #include "VulkanRenderpass.hpp"
+#include "VulkanShader.hpp"
 #include "VulkanSwapchain.hpp"
 #include "VulkanTexture.hpp"
 #include "VulkanUtils.hpp"
@@ -26,7 +29,8 @@ namespace VoidArchitect::Platform
         void* pUserData);
 #endif
 
-    VulkanRHI::VulkanRHI(std::unique_ptr<Window>& window)
+    VulkanRHI::VulkanRHI(
+        std::unique_ptr<Window>& window, const PipelineInputLayout& sharedInputLayout)
         : m_Window(window),
           m_Allocator(nullptr),
           m_Instance{},
@@ -49,8 +53,11 @@ namespace VoidArchitect::Platform
         CreateCommandBuffers();
         CreateSyncObjects();
 
-        m_Material = std::make_unique<VulkanMaterial>(
-            *this, m_Device, m_Allocator, m_Swapchain, m_MainRenderpass);
+        // Create the DescriptorSetLayoutManager
+        g_VkDescriptorSetLayoutManager = std::make_unique<VulkanDescriptorSetLayoutManager>(
+            m_Device, m_Allocator, sharedInputLayout);
+
+        CreateGlobalUBO();
 
         // TEMP Create testing buffers here.
         const std::vector vertices = {
@@ -75,10 +82,6 @@ namespace VoidArchitect::Platform
             std::make_unique<VulkanVertexBuffer>(*this, m_Device, m_Allocator, vertices);
 
         m_IndexBuffer = std::make_unique<VulkanIndexBuffer>(*this, m_Device, m_Allocator, indices);
-
-        // As this is just a test, and we don't really have an object implemented, we just pass a
-        // default 0 UUID.
-        m_Material->AcquireResources(UUID(0));
         // TEMP End of temporary code
     }
 
@@ -87,13 +90,30 @@ namespace VoidArchitect::Platform
         m_Device->WaitIdle();
 
         // TEMP Test code
-        m_Material->ReleaseResources(UUID(0));
         m_VertexBuffer.reset();
         m_IndexBuffer.reset();
         // TEMP End of temp code
 
-        m_Material.reset();
-        VA_ENGINE_INFO("[VulkanRHI] Material destroyed.");
+        // TEMP Global UBO
+        if (m_GlobalDescriptorSets != nullptr)
+        {
+            delete[] m_GlobalDescriptorSets;
+            m_GlobalDescriptorSets = nullptr;
+            VA_ENGINE_TRACE("[VulkanRHI] Global descriptor sets destroyed.");
+        }
+        m_GlobalUniformBuffer.reset();
+        VA_ENGINE_TRACE("[VulkanRHI] Global uniform buffer destroyed.");
+
+        if (m_GlobalDescriptorPool != VK_NULL_HANDLE)
+        {
+            vkDestroyDescriptorPool(
+                m_Device->GetLogicalDeviceHandle(), m_GlobalDescriptorPool, m_Allocator);
+            m_GlobalDescriptorPool = VK_NULL_HANDLE;
+            VA_ENGINE_TRACE("[VulkanRHI] Global descriptor pool destroyed.");
+        }
+        // TEMP End of temp code
+
+        g_VkDescriptorSetLayoutManager = nullptr;
 
         DestroySyncObjects();
         VA_ENGINE_INFO("[VulkanRHI] Sync objects destroyed.");
@@ -195,7 +215,7 @@ namespace VoidArchitect::Platform
 
         m_MainRenderpass->Begin(cmdBuf, m_Swapchain->GetFramebufferHandle(m_ImageIndex));
 
-        m_Material->Use(*this);
+        // m_Material->Use(*this);
 
         return true;
     }
@@ -263,14 +283,54 @@ namespace VoidArchitect::Platform
         return true;
     }
 
-    void VulkanRHI::UpdateGlobalState(const Math::Mat4& projection, const Math::Mat4& view)
+    void VulkanRHI::UpdateGlobalState(
+        const Resources::PipelinePtr& pipeline,
+        const Math::Mat4& projection,
+        const Math::Mat4& view)
     {
-        m_Material->SetGlobalUniforms(*this, projection, view);
+        const auto globalUniformObject = Resources::GlobalUniformObject{
+            .Projection = projection,
+            .View = view,
+            .Reserved0 = Math::Mat4::Identity(),
+            .Reserved1 = Math::Mat4::Identity(),
+        };
+        auto data = std::vector{globalUniformObject, globalUniformObject, globalUniformObject};
+        m_GlobalUniformBuffer->LoadData(data);
+
+        // Update the descriptor set
+        VkDescriptorBufferInfo bufferInfo{};
+        bufferInfo.buffer = m_GlobalUniformBuffer->GetHandle();
+        bufferInfo.offset = sizeof(Resources::GlobalUniformObject) * m_ImageIndex;
+        bufferInfo.range = sizeof(Resources::GlobalUniformObject);
+
+        VkWriteDescriptorSet writeDescriptorSet{};
+        writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        writeDescriptorSet.dstSet = m_GlobalDescriptorSets[m_ImageIndex];
+        writeDescriptorSet.dstBinding = 0;
+        writeDescriptorSet.dstArrayElement = 0;
+        writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        writeDescriptorSet.descriptorCount = 1;
+        writeDescriptorSet.pBufferInfo = &bufferInfo;
+
+        vkUpdateDescriptorSets(
+            m_Device->GetLogicalDeviceHandle(), 1, &writeDescriptorSet, 0, nullptr);
+
+        const auto& cmdBuf = GetCurrentCommandBuffer();
+        const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(pipeline);
+        vkCmdBindDescriptorSets(
+            cmdBuf.GetHandle(),
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            vkPipeline->GetPipelineLayout(),
+            0,
+            1,
+            &m_GlobalDescriptorSets[m_ImageIndex],
+            0,
+            nullptr);
     }
 
-    void VulkanRHI::UpdateObjectState(const GeometryRenderData& data)
+    void VulkanRHI::UpdateObjectState(const Resources::GeometryRenderData& data)
     {
-        m_Material->SetObject(*this, data);
+        // m_Material->SetObject(*this, data);
     }
 
     Resources::Texture2D* VulkanRHI::CreateTexture2D(
@@ -284,9 +344,31 @@ namespace VoidArchitect::Platform
         return new VulkanTexture2D(
             *this, m_Device, m_Allocator, name, width, height, channels, hasTransparency, data);
     }
+    Resources::IPipeline* VulkanRHI::CreatePipeline(PipelineConfig& config)
+    {
+        // NOTE By convention, the rendering engine define space0 to be a global uniform buffer
+        //  containing the projection and view matrices. It state that the data into this buffer
+        //  will be updated at most once per frame.
+        //  Thus we will delete the space0 definition from the pipeline config. As it is managed
+        //  by the RHI, we don't need to create it in the pipeline.
 
-    int32_t
-    VulkanRHI::FindMemoryIndex(const uint32_t typeFilter, const uint32_t propertyFlags) const
+        // Create the requested pipeline with a base descriptor set layout.
+        return new VulkanPipeline(config, m_Device, m_Allocator, m_MainRenderpass);
+    }
+
+    Resources::IMaterial* VulkanRHI::CreateMaterial(
+        const std::string& name, const Resources::PipelinePtr& pipeline)
+    {
+        return new VulkanMaterial(name, m_Device, m_Allocator, pipeline);
+    }
+    Resources::IShader* VulkanRHI::CreateShader(
+        const std::string& name, const ShaderConfig& config, const std::vector<uint8_t>& data)
+    {
+        return new VulkanShader(m_Device, m_Allocator, name, config, data);
+    }
+
+    int32_t VulkanRHI::FindMemoryIndex(
+        const uint32_t typeFilter, const uint32_t propertyFlags) const
     {
         VkPhysicalDeviceMemoryProperties memProperties;
         vkGetPhysicalDeviceMemoryProperties(m_Device->GetPhysicalDeviceHandle(), &memProperties);
@@ -621,6 +703,48 @@ namespace VoidArchitect::Platform
         }
 
         VA_ENGINE_INFO("[VulkanRHI] Sync objects created.");
+    }
+
+    void VulkanRHI::CreateGlobalUBO()
+    {
+        // --- Global descriptor pool ---
+        auto globalPoolSize = VkDescriptorPoolSize{};
+        globalPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        globalPoolSize.descriptorCount = m_Swapchain->GetImageCount();
+
+        auto globalPoolInfo = VkDescriptorPoolCreateInfo{};
+        globalPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        globalPoolInfo.maxSets = m_Swapchain->GetImageCount();
+        globalPoolInfo.poolSizeCount = 1;
+        globalPoolInfo.pPoolSizes = &globalPoolSize;
+
+        VA_VULKAN_CHECK_RESULT_WARN(vkCreateDescriptorPool(
+            m_Device->GetLogicalDeviceHandle(),
+            &globalPoolInfo,
+            m_Allocator,
+            &m_GlobalDescriptorPool));
+
+        m_GlobalUniformBuffer = std::make_unique<VulkanBuffer>(
+            *this,
+            m_Device,
+            m_Allocator,
+            sizeof(Resources::GlobalUniformObject) * 3,
+            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+        const auto globalDescriptorSetLayout = g_VkDescriptorSetLayoutManager->GetGlobalLayout();
+        const std::vector globalLayouts = {
+            globalDescriptorSetLayout, globalDescriptorSetLayout, globalDescriptorSetLayout};
+
+        m_GlobalDescriptorSets = new VkDescriptorSet[globalLayouts.size()];
+
+        auto allocInfo = VkDescriptorSetAllocateInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = m_GlobalDescriptorPool;
+        allocInfo.descriptorSetCount = static_cast<uint32_t>(globalLayouts.size());
+        allocInfo.pSetLayouts = globalLayouts.data();
+        VA_VULKAN_CHECK_RESULT_WARN(vkAllocateDescriptorSets(
+            m_Device->GetLogicalDeviceHandle(), &allocInfo, m_GlobalDescriptorSets));
     }
 
     void VulkanRHI::DestroySyncObjects()

@@ -6,8 +6,10 @@
 #include <ranges>
 
 #include "Core/Math/Vec3.hpp"
+
 #include "VulkanBuffer.hpp"
 #include "VulkanCommandBuffer.hpp"
+#include "VulkanDescriptorSetLayoutManager.hpp"
 #include "VulkanPipeline.hpp"
 #include "VulkanShader.hpp"
 #include "VulkanSwapchain.hpp"
@@ -19,78 +21,35 @@ namespace VoidArchitect::Platform
     constexpr std::string BUILTIN_OBJECT_SHADER_NAME = "BuiltinObject";
 
     VulkanMaterial::VulkanMaterial(
-        const VulkanRHI& rhi,
+        const std::string& name,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
-        const std::unique_ptr<VulkanSwapchain>& swapchain,
-        const std::unique_ptr<VulkanRenderpass>& renderpass)
-        : m_Allocator(allocator),
+        const Resources::PipelinePtr& pipeline)
+        : IMaterial(name),
+          m_Allocator(allocator),
           m_Device(device->GetLogicalDeviceHandle()),
-          m_GlobalDescriptorPool{},
-          m_GlobalDescriptorSetLayout{},
+          m_Pipeline(pipeline),
+          m_LocalDescriptorPool{},
           m_LocalUniformBufferIndex{}
     {
-        // --- Load Builtin shaders ---
-        m_Shaders.reserve(2);
-        m_Shaders.emplace_back(
-            device, m_Allocator, ShaderStage::Vertex, BUILTIN_OBJECT_SHADER_NAME + ".vert");
-        m_Shaders.emplace_back(
-            device, m_Allocator, ShaderStage::Pixel, BUILTIN_OBJECT_SHADER_NAME + ".pixl");
+    }
 
-        // --- Global Descriptors ---
-        auto globalUBOLayoutBinding = VkDescriptorSetLayoutBinding{};
-        globalUBOLayoutBinding.binding = 0;
-        globalUBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        globalUBOLayoutBinding.descriptorCount = 1;
-        globalUBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    VulkanMaterial::~VulkanMaterial() { VulkanMaterial::ReleaseResources(); }
 
-        auto globalLayoutInfo = VkDescriptorSetLayoutCreateInfo{};
-        globalLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-        globalLayoutInfo.bindingCount = 1;
-        globalLayoutInfo.pBindings = &globalUBOLayoutBinding;
-
-        VA_VULKAN_CHECK_RESULT_WARN(vkCreateDescriptorSetLayout(
-            m_Device, &globalLayoutInfo, m_Allocator, &m_GlobalDescriptorSetLayout));
-
-        auto globalPoolSize = VkDescriptorPoolSize{};
-        globalPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        globalPoolSize.descriptorCount = swapchain->GetImageCount();
-
-        auto globalPoolInfo = VkDescriptorPoolCreateInfo{};
-        globalPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        globalPoolInfo.maxSets = swapchain->GetImageCount();
-        globalPoolInfo.poolSizeCount = 1;
-        globalPoolInfo.pPoolSizes = &globalPoolSize;
-
-        VA_VULKAN_CHECK_RESULT_WARN(vkCreateDescriptorPool(
-            m_Device, &globalPoolInfo, m_Allocator, &m_GlobalDescriptorPool));
+    void VulkanMaterial::InitializeResources(IRenderingHardware& rhi)
+    {
+        auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
+        auto& device = vulkanRhi.GetDeviceRef();
 
         // --- Local Descriptors ---
+        // TODO Maybe we should retrieve the pipeline configuration and use that to determine the
+        //  resources bindings.
         m_LocalDescriptorTypes = std::vector{
             // Binding 0 - Uniform buffer
             VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
             // Binding 1 - Diffuse sampler layout.
             VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
         };
-        auto localDescriptorsBinding = std::vector<VkDescriptorSetLayoutBinding>();
-        for (auto type : m_LocalDescriptorTypes)
-        {
-            auto binding = VkDescriptorSetLayoutBinding{};
-            binding.binding = localDescriptorsBinding.size();
-            binding.descriptorType = type;
-            binding.descriptorCount = 1;
-            binding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-
-            localDescriptorsBinding.push_back(binding);
-        }
-
-        auto localLayoutInfo = VkDescriptorSetLayoutCreateInfo{};
-        localLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-        localLayoutInfo.bindingCount = static_cast<uint32_t>(localDescriptorsBinding.size());
-        localLayoutInfo.pBindings = localDescriptorsBinding.data();
-
-        VA_VULKAN_CHECK_RESULT_WARN(vkCreateDescriptorSetLayout(
-            m_Device, &localLayoutInfo, m_Allocator, &m_LocalDescriptorSetLayout));
 
         std::vector<VkDescriptorPoolSize> localPoolSizes;
         for (auto type : m_LocalDescriptorTypes)
@@ -111,152 +70,28 @@ namespace VoidArchitect::Platform
         VA_VULKAN_CHECK_RESULT_WARN(
             vkCreateDescriptorPool(m_Device, &localPoolInfo, m_Allocator, &m_LocalDescriptorPool));
 
-        // --- Attributes ---
-        std::vector attributes = {
-            // Position
-            VkVertexInputAttributeDescription{
-                .location = 0, .binding = 0, .format = VK_FORMAT_R32G32B32_SFLOAT, .offset = 0},
-            // UV0
-            VkVertexInputAttributeDescription{
-                .location = 1,
-                .binding = 0,
-                .format = VK_FORMAT_R32G32_SFLOAT,
-                .offset = sizeof(Math::Vec3)}};
-
-        // --- Descriptors set layouts ---
-        std::vector descriptorSetLayouts = {
-            m_GlobalDescriptorSetLayout,
-            m_LocalDescriptorSetLayout,
-        };
-
-        // --- Create the graphics pipeline ---
-        m_Pipeline = std::make_unique<VulkanPipeline>(
-            device, m_Allocator, renderpass, m_Shaders, attributes, descriptorSetLayouts);
-
-        m_GlobalUniformBuffer = std::make_unique<VulkanBuffer>(
-            rhi,
-            device,
-            m_Allocator,
-            sizeof(GlobalUniformObject) * 3,
-            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-        const std::vector globalLayouts = {
-            m_GlobalDescriptorSetLayout, m_GlobalDescriptorSetLayout, m_GlobalDescriptorSetLayout};
-
-        m_GlobalDescriptorSets = new VkDescriptorSet[globalLayouts.size()];
-
-        auto allocInfo = VkDescriptorSetAllocateInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-        allocInfo.descriptorPool = m_GlobalDescriptorPool;
-        allocInfo.descriptorSetCount = static_cast<uint32_t>(globalLayouts.size());
-        allocInfo.pSetLayouts = globalLayouts.data();
-        VA_VULKAN_CHECK_RESULT_WARN(
-            vkAllocateDescriptorSets(m_Device, &allocInfo, m_GlobalDescriptorSets));
-
         m_LocalUniformBuffer = std::make_unique<VulkanBuffer>(
-            rhi,
+            vulkanRhi,
             device,
             m_Allocator,
-            sizeof(LocalUniformObject),
+            sizeof(Resources::LocalUniformObject),
             VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
         VA_ENGINE_INFO("[VulkanMaterial] Material created.");
     }
 
-    VulkanMaterial::~VulkanMaterial()
-    {
-        // We should release any instances remaining.
-        for (const auto& id : m_InstanceLocalStates | std::views::keys)
-            ReleaseResources(id);
-
-        m_LocalUniformBuffer = nullptr;
-        VA_ENGINE_DEBUG("[VulkanMaterial] Local uniform buffer destroyed.");
-
-        delete[] m_GlobalDescriptorSets;
-        VA_ENGINE_DEBUG("[VulkanMaterial] Descriptor sets destroyed.");
-
-        m_GlobalUniformBuffer = nullptr;
-        VA_ENGINE_DEBUG("[VulkanMaterial] Global uniform buffer destroyed.");
-
-        m_Pipeline = nullptr;
-        VA_ENGINE_DEBUG("[VulkanMaterial] Pipeline destroyed.");
-
-        vkDestroyDescriptorPool(m_Device, m_LocalDescriptorPool, m_Allocator);
-        VA_ENGINE_DEBUG("[VulkanMaterial] Descriptor pool destroyed.");
-
-        vkDestroyDescriptorSetLayout(m_Device, m_LocalDescriptorSetLayout, m_Allocator);
-        VA_ENGINE_DEBUG("[VulkanMaterial] Descriptor set layout destroyed.");
-
-        vkDestroyDescriptorPool(m_Device, m_GlobalDescriptorPool, m_Allocator);
-        VA_ENGINE_DEBUG("[VulkanMaterial] Descriptor pool destroyed.");
-
-        vkDestroyDescriptorSetLayout(m_Device, m_GlobalDescriptorSetLayout, m_Allocator);
-        VA_ENGINE_DEBUG("[VulkanMaterial] Descriptor set layout destroyed.");
-        VA_ENGINE_INFO("[VulkanMaterial] Material destroyed.");
-    }
-
-    void VulkanMaterial::Use(IRenderingHardware& rhi)
-    {
-        auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
-        m_Pipeline->Bind(vulkanRhi.GetCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS);
-    }
-
-    void VulkanMaterial::SetGlobalUniforms(
-        IRenderingHardware& rhi, const Math::Mat4& projection, const Math::Mat4& view)
-    {
-        auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
-        const auto imageIndex = vulkanRhi.GetImageIndex();
-        const auto& globalDescriptor = m_GlobalDescriptorSets[imageIndex];
-
-        const auto globalUniformObject = GlobalUniformObject{
-            .Projection = projection,
-            .View = view,
-            .Reserved0 = Math::Mat4::Identity(),
-            .Reserved1 = Math::Mat4::Identity(),
-        };
-        auto data = std::vector{globalUniformObject, globalUniformObject, globalUniformObject};
-        m_GlobalUniformBuffer->LoadData(data);
-
-        // Update the descriptor set
-        VkDescriptorBufferInfo bufferInfo{};
-        bufferInfo.buffer = m_GlobalUniformBuffer->GetHandle();
-        bufferInfo.offset = sizeof(GlobalUniformObject) * imageIndex;
-        bufferInfo.range = sizeof(GlobalUniformObject);
-
-        VkWriteDescriptorSet writeDescriptorSet{};
-        writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        writeDescriptorSet.dstSet = globalDescriptor;
-        writeDescriptorSet.dstBinding = 0;
-        writeDescriptorSet.dstArrayElement = 0;
-        writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        writeDescriptorSet.descriptorCount = 1;
-        writeDescriptorSet.pBufferInfo = &bufferInfo;
-
-        vkUpdateDescriptorSets(m_Device, 1, &writeDescriptorSet, 0, nullptr);
-
-        const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
-        vkCmdBindDescriptorSets(
-            cmdBuf.GetHandle(),
-            VK_PIPELINE_BIND_POINT_GRAPHICS,
-            m_Pipeline->GetPipelineLayout(),
-            0,
-            1,
-            &globalDescriptor,
-            0,
-            nullptr);
-    }
-
-    void VulkanMaterial::SetObject(IRenderingHardware& rhi, const GeometryRenderData& data)
+    void VulkanMaterial::SetObject(
+        IRenderingHardware& rhi, const Resources::GeometryRenderData& data)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
         const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
+        const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(m_Pipeline);
 
         // NOTE VulkanSpec guarantee 128 bytes.
         vkCmdPushConstants(
             cmdBuf.GetHandle(),
-            m_Pipeline->GetPipelineLayout(),
+            vkPipeline->GetPipelineLayout(),
             VK_SHADER_STAGE_VERTEX_BIT,
             0,
             sizeof(Math::Mat4),
@@ -264,18 +99,21 @@ namespace VoidArchitect::Platform
             &data.Model);
 
         // Obtain material data
-        if (m_InstanceLocalStates.contains(data.ObjectId))
+        // TEMP
+        AcquireResources(data.Material->GetUUID());
+
+        if (m_InstanceLocalStates.contains(data.Material->GetUUID()))
         {
-            auto& instanceState = m_InstanceLocalStates[data.ObjectId];
+            auto& instanceState = m_InstanceLocalStates[data.Material->GetUUID()];
             auto& localDescriptorSet = instanceState.m_DescriptorSet[vulkanRhi.GetImageIndex()];
 
             std::vector<VkWriteDescriptorSet> descriptorWrites;
 
             // Descriptor 0 - Uniform buffer
-            auto range = sizeof(LocalUniformObject);
-            auto offset = sizeof(LocalUniformObject) * instanceState.m_InstanceIndex;
+            auto range = sizeof(Resources::LocalUniformObject);
+            auto offset = sizeof(Resources::LocalUniformObject) * instanceState.m_InstanceIndex;
 
-            auto obo = std::vector{LocalUniformObject{
+            auto obo = std::vector{Resources::LocalUniformObject{
                 .DiffuseColor = Math::Vec4::One(),
             }};
 
@@ -311,7 +149,8 @@ namespace VoidArchitect::Platform
             VkDescriptorImageInfo imageInfos[samplerCount];
             for (uint32_t i = 0; i < samplerCount; i++)
             {
-                auto texture = std::dynamic_pointer_cast<VulkanTexture2D>(data.Textures[i]);
+                auto texture =
+                    std::dynamic_pointer_cast<VulkanTexture2D>(data.Material->GetTexture(i));
                 auto& descriptorGeneration =
                     instanceState.m_DescriptorStates[1].Generation[vulkanRhi.GetImageIndex()];
                 auto& descriptorTextureUUID =
@@ -369,7 +208,7 @@ namespace VoidArchitect::Platform
             vkCmdBindDescriptorSets(
                 cmdBuf.GetHandle(),
                 VK_PIPELINE_BIND_POINT_GRAPHICS,
-                m_Pipeline->GetPipelineLayout(),
+                vkPipeline->GetPipelineLayout(),
                 1,
                 1,
                 &localDescriptorSet,
@@ -397,8 +236,12 @@ namespace VoidArchitect::Platform
             }
 
             // Allocate descriptor sets
+            const auto materialDescriptorSetLayout =
+                g_VkDescriptorSetLayoutManager->GetPerMaterialLayout();
             const VkDescriptorSetLayout layouts[] = {
-                m_LocalDescriptorSetLayout, m_LocalDescriptorSetLayout, m_LocalDescriptorSetLayout};
+                materialDescriptorSetLayout,
+                materialDescriptorSetLayout,
+                materialDescriptorSetLayout};
 
             VkDescriptorSetAllocateInfo allocInfo{};
             allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -426,6 +269,29 @@ namespace VoidArchitect::Platform
         if (m_InstanceLocalStates.contains(id))
         {
             m_InstanceLocalStates.erase(id);
+        }
+    }
+    void VulkanMaterial::ReleaseResources()
+    {
+        // We should release any instances remaining.
+        m_InstanceLocalStates.clear();
+
+        if (m_LocalUniformBuffer != nullptr)
+        {
+            m_LocalUniformBuffer = nullptr;
+            VA_ENGINE_DEBUG("[VulkanMaterial] Local uniform buffer destroyed.");
+        }
+
+        if (m_Pipeline != nullptr)
+        {
+            m_Pipeline = nullptr;
+        }
+
+        if (m_LocalDescriptorPool != VK_NULL_HANDLE)
+        {
+            vkDestroyDescriptorPool(m_Device, m_LocalDescriptorPool, m_Allocator);
+            m_LocalDescriptorPool = VK_NULL_HANDLE;
+            VA_ENGINE_DEBUG("[VulkanMaterial] Descriptor pool destroyed.");
         }
     }
 } // namespace VoidArchitect::Platform

@@ -6,8 +6,21 @@
 
 #include "Core/Logger.hpp"
 
+namespace VoidArchitect
+{
+    namespace Resources
+    {
+        enum class ShaderStage;
+    }
+
+    enum class ResourceBindingType;
+} // namespace VoidArchitect
+
 namespace VoidArchitect::Platform
 {
+    VkDescriptorType TranslateEngineResourceTypeToVulkan(ResourceBindingType type);
+    VkShaderStageFlagBits TranslateEngineShaderStageToVulkan(Resources::ShaderStage stage);
+
     std::string VulkanGetResultString(VkResult result, bool extended = true);
 
     bool VulkanCheckResult(VkResult result);

@@ -20,6 +20,15 @@ if (NOT TARGET stb)
     FetchContent_MakeAvailable(stb)
 endif ()
 
+if (NOT TARGET yaml-cpp)
+    FetchContent_Declare(
+            yaml-cpp
+            GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+            GIT_TAG 0.8.0
+    )
+    FetchContent_MakeAvailable(yaml-cpp)
+endif ()
+
 if (NOT TARGET Vulkan)
     find_package(Vulkan REQUIRED COMPONENTS MoltenVK)
 endif ()
@@ -36,7 +45,7 @@ add_library(VoidArchitect_Engine
         ${ENGINE_SOURCES}
         ${ENGINE_HEADERS}
 )
-target_link_libraries(VoidArchitect_Engine PUBLIC spdlog::spdlog SDL3::SDL3 stb_image Vulkan::Vulkan Vulkan::MoltenVK glm::glm)
+target_link_libraries(VoidArchitect_Engine PUBLIC spdlog::spdlog SDL3::SDL3 stb_image yaml-cpp::yaml-cpp Vulkan::Vulkan Vulkan::MoltenVK glm::glm)
 
 # If the compiler support PCH, use it.
 target_precompile_headers(VoidArchitect_Engine PRIVATE "src/va.pch.hpp")

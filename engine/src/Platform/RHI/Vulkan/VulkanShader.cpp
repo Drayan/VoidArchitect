@@ -4,23 +4,25 @@
 #include "VulkanShader.hpp"
 
 #include "Core/Logger.hpp"
+#include "Systems/ShaderSystem.hpp"
 #include "VulkanDevice.hpp"
 #include "VulkanUtils.hpp"
+
 
 namespace VoidArchitect::Platform
 {
     VulkanShader::VulkanShader(
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
-        const ShaderStage stage,
-        const std::string& path)
-        : m_Device(device->GetLogicalDeviceHandle()),
+        const std::string& name,
+        const ShaderConfig& config,
+        const std::vector<uint8_t>& shaderCode)
+        : IShader(name, config.stage, config.entry),
+          m_Device(device->GetLogicalDeviceHandle()),
           m_Allocator(allocator),
           m_ShaderModule{},
-          m_ShaderStageInfo{},
-          m_Stage(stage)
+          m_ShaderStageInfo{}
     {
-        const std::vector<char> shaderCode = readFromDisk(path);
         auto createInfo = VkShaderModuleCreateInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         createInfo.codeSize = shaderCode.size();
@@ -32,10 +34,10 @@ namespace VoidArchitect::Platform
         m_ShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         switch (m_Stage)
         {
-            case ShaderStage::Vertex:
+            case Resources::ShaderStage::Vertex:
                 m_ShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
                 break;
-            case ShaderStage::Pixel:
+            case Resources::ShaderStage::Pixel:
                 m_ShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
                 break;
             default:
@@ -43,7 +45,7 @@ namespace VoidArchitect::Platform
                 break;
         }
         m_ShaderStageInfo.module = m_ShaderModule;
-        m_ShaderStageInfo.pName = "main";
+        m_ShaderStageInfo.pName = m_EntryPoint.c_str();
 
         VA_ENGINE_TRACE("[VulkanShader] Shader module created.");
     }
@@ -91,27 +93,5 @@ namespace VoidArchitect::Platform
         m_Device = VK_NULL_HANDLE;
         m_Allocator = nullptr;
         m_ShaderModule = VK_NULL_HANDLE;
-    }
-
-    std::vector<char> VulkanShader::readFromDisk(const std::string& filename)
-    {
-        constexpr auto shaderDir = "assets/shaders/";
-        constexpr auto shaderExtension = ".spv";
-        const std::string shaderPath = shaderDir + filename + shaderExtension;
-        std::ifstream file(shaderPath, std::ios::ate | std::ios::binary);
-
-        if (!file.is_open())
-        {
-            VA_ENGINE_ERROR("[VulkanShader] Failed to open file: {}", shaderPath);
-            throw std::runtime_error("Failed to open file!");
-        }
-
-        const std::streamsize fileSize = file.tellg();
-        std::vector<char> buffer(fileSize);
-        file.seekg(0);
-        file.read(buffer.data(), fileSize);
-        file.close();
-
-        return buffer;
     }
 } // namespace VoidArchitect::Platform

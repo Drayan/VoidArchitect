@@ -4,6 +4,7 @@
 #pragma once
 #include "Platform/RHI/IRenderingHardware.hpp"
 
+#include "Resources/Pipeline.hpp"
 #include "VulkanCommandBuffer.hpp"
 #include "VulkanDevice.hpp"
 
@@ -11,13 +12,16 @@
 
 namespace VoidArchitect
 {
+    struct PipelineInputLayout;
     class Window;
     struct GeometryRenderData;
 
     namespace Resources
     {
         class Texture2D;
-    }
+        class IMaterial;
+        class IPipeline;
+    } // namespace Resources
 } // namespace VoidArchitect
 
 namespace VoidArchitect::Platform
@@ -37,7 +41,8 @@ namespace VoidArchitect::Platform
     class VulkanRHI final : public IRenderingHardware
     {
     public:
-        explicit VulkanRHI(std::unique_ptr<Window>& window);
+        explicit VulkanRHI(
+            std::unique_ptr<Window>& window, const PipelineInputLayout& sharedInputLayout);
         ~VulkanRHI() override;
 
         void Resize(uint32_t width, uint32_t height) override;
@@ -46,8 +51,11 @@ namespace VoidArchitect::Platform
         bool BeginFrame(float deltaTime) override;
         bool EndFrame(float deltaTime) override;
 
-        void UpdateGlobalState(const Math::Mat4& projection, const Math::Mat4& view) override;
-        void UpdateObjectState(const GeometryRenderData& data) override;
+        void UpdateGlobalState(
+            const Resources::PipelinePtr& pipeline,
+            const Math::Mat4& projection,
+            const Math::Mat4& view) override;
+        void UpdateObjectState(const Resources::GeometryRenderData& data) override;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
@@ -58,6 +66,13 @@ namespace VoidArchitect::Platform
             uint32_t height,
             uint8_t channels,
             bool hasTransparency,
+            const std::vector<uint8_t>& data) override;
+        Resources::IPipeline* CreatePipeline(PipelineConfig& config) override;
+        Resources::IMaterial* CreateMaterial(
+            const std::string& name, const Resources::PipelinePtr& pipeline) override;
+        Resources::IShader* CreateShader(
+            const std::string& name,
+            const ShaderConfig& config,
             const std::vector<uint8_t>& data) override;
 
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
@@ -74,9 +89,11 @@ namespace VoidArchitect::Platform
         }
 
         std::unique_ptr<VulkanDevice>& GetDeviceRef() { return m_Device; }
-        uint32_t GetImageIndex() const { return m_ImageIndex; }
+        std::unique_ptr<VulkanSwapchain>& GetSwapchainRef() { return m_Swapchain; }
+        std::unique_ptr<VulkanRenderpass>& GetMainRenderpassRef() { return m_MainRenderpass; }
+        [[nodiscard]] uint32_t GetImageIndex() const { return m_ImageIndex; }
 
-        int32_t FindMemoryIndex(uint32_t typeFilter, uint32_t propertyFlags) const;
+        [[nodiscard]] int32_t FindMemoryIndex(uint32_t typeFilter, uint32_t propertyFlags) const;
 
     private:
         void CreateInstance();
@@ -88,11 +105,14 @@ namespace VoidArchitect::Platform
         [[nodiscard]] VkSurfaceFormatKHR ChooseSwapchainFormat() const;
         [[nodiscard]] VkPresentModeKHR ChooseSwapchainPresentMode() const;
         [[nodiscard]] VkExtent2D ChooseSwapchainExtent() const;
-        VkFormat ChooseDepthFormat() const;
+        [[nodiscard]] VkFormat ChooseDepthFormat() const;
 
         void CreateRenderpass();
         void CreateCommandBuffers();
         void CreateSyncObjects();
+
+        // TEMP This should not stay here.
+        void CreateGlobalUBO();
 
         void DestroySyncObjects();
 
@@ -101,10 +121,10 @@ namespace VoidArchitect::Platform
 #ifdef DEBUG
         void CreateDebugMessenger();
         void DestroyDebugMessenger() const;
-        static void
-        AddDebugExtensions(char const* const*& extensions, unsigned int& extensionCount);
-        static void
-        CleaningDebugExtensionsArray(char const* const*& extensions, unsigned int extensionCount);
+        static void AddDebugExtensions(
+            char const* const*& extensions, unsigned int& extensionCount);
+        static void CleaningDebugExtensionsArray(
+            char const* const*& extensions, unsigned int extensionCount);
 
         VkDebugUtilsMessengerEXT m_DebugMessenger;
 #endif
@@ -133,9 +153,12 @@ namespace VoidArchitect::Platform
         std::vector<VulkanFence> m_InFlightFences;
         std::vector<VulkanFence*> m_ImagesInFlight;
 
-        std::unique_ptr<VulkanMaterial> m_Material;
-
         // TEMP Temporary test code
+        VkDescriptorPool m_GlobalDescriptorPool;
+        VkDescriptorSet* m_GlobalDescriptorSets;
+
+        std::unique_ptr<VulkanBuffer> m_GlobalUniformBuffer;
+
         std::unique_ptr<VulkanVertexBuffer> m_VertexBuffer;
         std::unique_ptr<VulkanIndexBuffer> m_IndexBuffer;
 

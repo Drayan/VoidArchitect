@@ -1,3 +1,9 @@
+/*
+---
+shader:
+    stage: "vertex"
+---
+*/
 struct VS_INPUT
 {
     [[vk::location(0)]]

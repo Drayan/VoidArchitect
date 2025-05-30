@@ -4,20 +4,23 @@
 #include "VulkanPipeline.hpp"
 
 #include "Core/Math/Mat4.hpp"
+#include "Systems/PipelineSystem.hpp"
+#include "VulkanDescriptorSetLayoutManager.hpp"
 #include "VulkanDevice.hpp"
 #include "VulkanRenderpass.hpp"
+#include "VulkanRhi.hpp"
 #include "VulkanShader.hpp"
 #include "VulkanUtils.hpp"
 
 namespace VoidArchitect::Platform
 {
+    // NOTE The Renderpass is currently completely hard coded, so we will just pass it from the RHI
+    //  but it should comes from the config in the future.
     VulkanPipeline::VulkanPipeline(
+        const PipelineConfig& config,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
-        const std::unique_ptr<VulkanRenderpass>& renderPass,
-        const std::vector<VulkanShader>& shaders,
-        const std::vector<VkVertexInputAttributeDescription>& attributes,
-        const std::vector<VkDescriptorSetLayout>& descriptorSets)
+        const std::unique_ptr<VulkanRenderpass>& renderPass)
         : m_Device(device->GetLogicalDeviceHandle()),
           m_Allocator(allocator)
     {
@@ -40,11 +43,27 @@ namespace VoidArchitect::Platform
         viewportStateInfo.viewportCount = 1;
         viewportStateInfo.scissorCount = 1;
 
+        // --- Attributes ---
+        uint32_t offset = 0;
+        std::vector<VkVertexInputAttributeDescription> attributes;
+        for (uint32_t i = 0; i < config.vertexAttributes.size(); i++)
+        {
+            const auto& [type, format] = config.vertexAttributes[i];
+            VkVertexInputAttributeDescription attribute{};
+            attribute.location = i;
+            attribute.binding = 0;
+            attribute.format = TranslateEngineAttributeFormatToVulkanFormat(type, format);
+            attribute.offset = offset;
+
+            attributes.push_back(attribute);
+            offset += GetEngineAttributeSize(type, format);
+        }
+        uint32_t stride = offset;
+
         // --- Vertex input binding ---
         auto bindingDescription = VkVertexInputBindingDescription{};
         bindingDescription.binding = 0;
-        // TODO Should be set by the engine
-        bindingDescription.stride = 20;
+        bindingDescription.stride = stride;
         bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
         // --- Vertex input ---
@@ -107,13 +126,63 @@ namespace VoidArchitect::Platform
         colorBlendInfo.attachmentCount = 1;
         colorBlendInfo.pAttachments = &colorBlendAttachment;
 
+        // --- Descriptor sets ---
+        m_DescriptorSetLayouts.resize(config.inputLayout.spaces.size());
+
+        std::vector<VkDescriptorSetLayoutCreateInfo> descriptorSetLayoutsInfos;
+        for (uint32_t i = 0; i < config.inputLayout.spaces.size(); i++)
+        {
+            const auto& space = config.inputLayout.spaces[i];
+            std::vector<VkDescriptorSetLayoutBinding> bindings;
+            for (uint32_t j = 0; j < space.bindings.size(); j++)
+            {
+                const auto& [type, binding, stage] = space.bindings[j];
+
+                VkDescriptorSetLayoutBinding descriptorSetLayoutBinding{};
+                descriptorSetLayoutBinding.binding = binding;
+                descriptorSetLayoutBinding.descriptorType =
+                    TranslateEngineResourceTypeToVulkan(type);
+                descriptorSetLayoutBinding.descriptorCount = 1;
+                descriptorSetLayoutBinding.stageFlags = TranslateEngineShaderStageToVulkan(stage);
+
+                bindings.push_back(descriptorSetLayoutBinding);
+            }
+
+            auto descriptorSetLayoutCreateInfo = VkDescriptorSetLayoutCreateInfo{};
+            descriptorSetLayoutCreateInfo.sType =
+                VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+            descriptorSetLayoutCreateInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+            descriptorSetLayoutCreateInfo.pBindings = bindings.data();
+
+            VA_VULKAN_CHECK_RESULT_WARN(vkCreateDescriptorSetLayout(
+                m_Device, &descriptorSetLayoutCreateInfo, m_Allocator, &m_DescriptorSetLayouts[i]));
+
+            VA_ENGINE_TRACE(
+                "[VulkanPipeline] Descriptor set layout {} created, for pipeline '{}'.",
+                i,
+                config.name);
+        }
+
         // --- Pipeline layout ---
+        auto descriptorSetLayouts = std::vector<VkDescriptorSetLayout>{};
+        descriptorSetLayouts.reserve(m_DescriptorSetLayouts.size() + 2);
+        // Insert the global descriptor set layout
+        descriptorSetLayouts.push_back(g_VkDescriptorSetLayoutManager->GetGlobalLayout());
+        // Insert the material descriptor set layout
+        descriptorSetLayouts.push_back(g_VkDescriptorSetLayoutManager->GetPerMaterialLayout());
+        // Insert after that any custom descriptor set layout
+        descriptorSetLayouts.insert(
+            descriptorSetLayouts.end(),
+            m_DescriptorSetLayouts.begin(),
+            m_DescriptorSetLayouts.end());
+
         auto pipelineLayoutCreateInfo = VkPipelineLayoutCreateInfo{};
         pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        pipelineLayoutCreateInfo.setLayoutCount = static_cast<uint32_t>(descriptorSets.size());
-        pipelineLayoutCreateInfo.pSetLayouts = descriptorSets.data();
+        pipelineLayoutCreateInfo.setLayoutCount =
+            static_cast<uint32_t>(descriptorSetLayouts.size());
+        pipelineLayoutCreateInfo.pSetLayouts = descriptorSetLayouts.data();
 
-        // --- Push contacts ---
+        // --- Push constants ---
         auto pushConstantRange = VkPushConstantRange{};
         pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
         pushConstantRange.offset = 0;
@@ -128,12 +197,16 @@ namespace VoidArchitect::Platform
 
         // --- Pipeline ---
         std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
-        shaderStages.reserve(shaders.size());
-        for (const auto& shader : shaders)
+        shaderStages.reserve(config.shaders.size());
+        for (const auto& ishader : config.shaders)
         {
-            auto shaderStageInfo = shader.GetShaderStageInfo();
+            const auto& shader = std::dynamic_pointer_cast<VulkanShader>(ishader);
+            auto shaderStageInfo = shader->GetShaderStageInfo();
             shaderStages.push_back(shaderStageInfo);
         }
+
+        // Store a reference to the shaders in the pipeline
+        m_Shaders = config.shaders;
 
         auto pipelineCreateInfo = VkGraphicsPipelineCreateInfo{};
         pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -152,11 +225,24 @@ namespace VoidArchitect::Platform
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreateGraphicsPipelines(
             m_Device, nullptr, 1, &pipelineCreateInfo, m_Allocator, &m_Pipeline));
-        VA_ENGINE_TRACE("[VulkanPipeline] Pipeline created.");
+        VA_ENGINE_TRACE("[VulkanPipeline] Pipeline {} created.", config.name);
     }
 
     VulkanPipeline::~VulkanPipeline()
     {
+        // Release the shaders references
+        m_Shaders.clear();
+
+        if (m_DescriptorSetLayouts.size() > 0)
+        {
+            for (const auto& layout : m_DescriptorSetLayouts)
+            {
+                vkDestroyDescriptorSetLayout(m_Device, layout, m_Allocator);
+                VA_ENGINE_TRACE("[VulkanPipeline] Descriptor set layout destroyed.");
+            }
+            m_DescriptorSetLayouts.clear();
+        }
+
         if (m_PipelineLayout != VK_NULL_HANDLE)
         {
             vkDestroyPipelineLayout(m_Device, m_PipelineLayout, m_Allocator);
@@ -169,9 +255,105 @@ namespace VoidArchitect::Platform
         }
     }
 
-    void VulkanPipeline::Bind(
-        const VulkanCommandBuffer& cmdBuf, const VkPipelineBindPoint bindPoint) const
+    void VulkanPipeline::Bind(IRenderingHardware& rhi)
     {
-        vkCmdBindPipeline(cmdBuf.GetHandle(), bindPoint, m_Pipeline);
+        auto& vkRhi = dynamic_cast<VulkanRHI&>(rhi);
+        vkCmdBindPipeline(
+            vkRhi.GetCurrentCommandBuffer().GetHandle(),
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            m_Pipeline);
+    }
+
+    VkFormat VulkanPipeline::TranslateEngineAttributeFormatToVulkanFormat(
+        const VertexAttributeType type, const AttributeFormat format)
+    {
+        auto vulkanFormat = VK_FORMAT_UNDEFINED;
+        switch (type)
+        {
+            case VertexAttributeType::Float:
+            {
+                switch (format)
+                {
+                    case AttributeFormat::Float32:
+                        vulkanFormat = VK_FORMAT_R32_SFLOAT;
+                        break;
+                }
+            }
+            break;
+
+            case VertexAttributeType::Vec2:
+            {
+                switch (format)
+                {
+                    case AttributeFormat::Float32:
+                        vulkanFormat = VK_FORMAT_R32G32_SFLOAT;
+                        break;
+                }
+            }
+            break;
+
+            case VertexAttributeType::Vec3:
+            {
+                switch (format)
+                {
+                    case AttributeFormat::Float32:
+                        vulkanFormat = VK_FORMAT_R32G32B32_SFLOAT;
+                        break;
+                }
+            }
+            break;
+
+            case VertexAttributeType::Vec4:
+            {
+                switch (format)
+                {
+                    case AttributeFormat::Float32:
+                        vulkanFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
+                        break;
+                }
+            }
+            break;
+
+            default:
+                break;
+        }
+
+        return vulkanFormat;
+    }
+
+    uint32_t VulkanPipeline::GetEngineAttributeSize(
+        const VertexAttributeType type, const AttributeFormat format)
+    {
+        auto size = 0;
+        switch (format)
+        {
+            case AttributeFormat::Float32:
+                size = sizeof(float);
+                break;
+
+            default:
+                break;
+        }
+
+        switch (type)
+        {
+            case VertexAttributeType::Float:
+                size *= 1;
+                break;
+            case VertexAttributeType::Vec2:
+                size *= 2;
+                break;
+            case VertexAttributeType::Vec3:
+                size *= 3;
+                break;
+            case VertexAttributeType::Vec4:
+                size *= 4;
+                break;
+            case VertexAttributeType::Mat4:
+                size *= 16;
+                break;
+        }
+
+        return size;
     }
 } // namespace VoidArchitect::Platform

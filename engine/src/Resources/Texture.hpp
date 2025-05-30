@@ -19,7 +19,7 @@ namespace VoidArchitect::Resources
     enum class TextureUse
     {
         None = 0,
-        Color = 1 << 0,
+        Diffuse = 1 << 0,
         Normal = 1 << 1,
         Specular = 1 << 2,
         Emissive = 1 << 3,

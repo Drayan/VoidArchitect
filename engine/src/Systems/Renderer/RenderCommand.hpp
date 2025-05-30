@@ -4,6 +4,7 @@
 #pragma once
 
 #include "Camera.hpp"
+#include "Resources/Pipeline.hpp"
 #include "Resources/Texture.hpp"
 
 namespace VoidArchitect

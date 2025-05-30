@@ -1,3 +1,9 @@
+/*
+---
+shader:
+    stage: "pixel"
+---
+*/
 struct PSInput
 {
     [[vk::location(1)]]

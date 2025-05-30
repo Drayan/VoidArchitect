@@ -14,9 +14,10 @@ namespace VoidArchitect
         TextureSystem();
         ~TextureSystem();
 
-        Resources::Texture2DPtr LoadTexture2D(const std::string& name);
+        Resources::Texture2DPtr LoadTexture2D(const std::string& name, Resources::TextureUse use);
         Resources::Texture2DPtr CreateTexture2D(
             const std::string& name,
+            Resources::TextureUse use,
             uint32_t width,
             uint32_t height,
             uint8_t channels,

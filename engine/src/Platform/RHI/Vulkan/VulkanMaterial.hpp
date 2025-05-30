@@ -2,7 +2,9 @@
 // Created by Michael Desmedt on 20/05/2025.
 //
 #pragma once
-#include "Platform/RHI/Material.hpp"
+
+#include "Resources/Material.hpp"
+#include "Resources/Pipeline.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -16,29 +18,28 @@ namespace VoidArchitect::Platform
     class VulkanPipeline;
     class VulkanBuffer;
 
-    class VulkanMaterial : public IMaterial
+    class VulkanMaterial : public Resources::IMaterial
     {
     public:
         constexpr static size_t MAX_INSTANCES = 1024;
 
         VulkanMaterial(
-            const VulkanRHI& rhi,
+            const std::string& name,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
-            const std::unique_ptr<VulkanSwapchain>& swapchain,
-            const std::unique_ptr<VulkanRenderpass>& renderpass);
+            const Resources::PipelinePtr& pipeline);
         ~VulkanMaterial() override;
 
-        void Use(IRenderingHardware& rhi) override;
+        void InitializeResources(IRenderingHardware& rhi) override;
 
-        void SetGlobalUniforms(
-            IRenderingHardware& rhi, const Math::Mat4& projection, const Math::Mat4& view) override;
-        void SetObject(IRenderingHardware& rhi, const GeometryRenderData& data) override;
+        void SetObject(IRenderingHardware& rhi, const Resources::GeometryRenderData& data) override;
 
         bool AcquireResources(const UUID& id);
         void ReleaseResources(const UUID& id);
 
     private:
+        void ReleaseResources() override;
+
         struct VulkanDescriptorState
         {
             uint32_t Generation[3];
@@ -55,19 +56,10 @@ namespace VoidArchitect::Platform
         VkAllocationCallbacks* m_Allocator;
         VkDevice m_Device;
 
-        std::vector<VulkanShader> m_Shaders;
-
-        std::unique_ptr<VulkanPipeline> m_Pipeline;
-
-        VkDescriptorPool m_GlobalDescriptorPool;
-        VkDescriptorSetLayout m_GlobalDescriptorSetLayout;
-        VkDescriptorSet* m_GlobalDescriptorSets;
-
-        std::unique_ptr<VulkanBuffer> m_GlobalUniformBuffer;
+        Resources::PipelinePtr m_Pipeline;
 
         std::vector<VkDescriptorType> m_LocalDescriptorTypes;
         VkDescriptorPool m_LocalDescriptorPool;
-        VkDescriptorSetLayout m_LocalDescriptorSetLayout;
         std::unordered_map<UUID, VulkanMaterialInstanceLocalState> m_InstanceLocalStates;
 
         std::unique_ptr<VulkanBuffer> m_LocalUniformBuffer;

@@ -97,7 +97,8 @@ function(compile_hlsl_shaders)
         if (SHADER_PARTS)
             set(SHADER_NAME ${CMAKE_MATCH_1})
             set(SHADER_TYPE ${CMAKE_MATCH_2})
-            set(COMPILED_SHADER "${ASSETS_OUTPUT_DIR}/shaders/${SHADER_NAME}.${SHADER_TYPE}.spv")
+            set(COMPILED_SHADER "${ASSETS_OUTPUT_DIR}/shaders/${SHADER_NAME}.${SHADER_TYPE}.shader")
+            set(YAML_CONFIG "${ASSETS_OUTPUT_DIR}/shaders/${SHADER_NAME}.${SHADER_TYPE}.yaml")
 
             # Map shader type to appropriate DXC target profiles
             if (SHADER_TYPE STREQUAL "vert")
@@ -121,17 +122,30 @@ function(compile_hlsl_shaders)
                 SET(PROFILE "vs_6_0")
             endif ()
 
+            # Create a Python script for extracting YAML
+            # TEMP This will be integrated later on in a custom shader tool
+            set(EXTRACT_SCRIPT "${CMAKE_BINARY_DIR}/extract_yaml_header.py")
+            # Extract for extracting YAML header
+
+            add_custom_command(
+                    OUTPUT ${YAML_CONFIG}
+                    COMMAND ${CMAKE_COMMAND} -E env python3 ${EXTRACT_SCRIPT} ${SHADER_SOURCE} ${YAML_CONFIG} || ${CMAKE_COMMAND} -E touch "${YAML_CONFIG}"
+                    DEPENDS ${SHADER_SOURCE} ${EXTRACT_SCRIPT}
+                    COMMENT "Extracting YAML header from ${SHADER_FILENAME}"
+            )
+
+            # Compiling the shader source
             add_custom_command(
                     OUTPUT ${COMPILED_SHADER}
                     COMMAND ${DXC_EXECUTABLE} -spirv -E main -T ${PROFILE} -Fo ${COMPILED_SHADER} ${SHADER_SOURCE}
                     DEPENDS ${SHADER_SOURCE}
-                    COMMENT "Compiling ${SHADER_TYPE} shader: ${SHADER_FILENAME}"
+                    COMMENT " Compiling ${SHADER_TYPE} shader: ${SHADER_FILENAME}"
             )
 
             # Add this shader to the custom target dependencies
             add_custom_target(
                     shader_${SHADER_NAME}_${SHADER_TYPE}
-                    DEPENDS ${COMPILED_SHADER}
+                    DEPENDS ${COMPILED_SHADER} ${YAML_CONFIG}
             )
             add_dependencies(compile_shaders shader_${SHADER_NAME}_${SHADER_TYPE})
         else ()

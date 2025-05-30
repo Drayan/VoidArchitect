@@ -3,8 +3,50 @@
 //
 #include "VulkanUtils.hpp"
 
+#include "Systems/PipelineSystem.hpp"
+
 namespace VoidArchitect::Platform
 {
+    VkDescriptorType TranslateEngineResourceTypeToVulkan(const ResourceBindingType type)
+    {
+        // TODO These translation aren't probably the best, we should verify it as the engine grow.
+        switch (type)
+        {
+            case ResourceBindingType::ConstantBuffer:
+                return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            case ResourceBindingType::Texture1D:
+            case ResourceBindingType::Texture2D:
+            case ResourceBindingType::Texture3D:
+            case ResourceBindingType::TextureCube:
+                return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            case ResourceBindingType::Sampler:
+                return VK_DESCRIPTOR_TYPE_SAMPLER;
+            case ResourceBindingType::StorageBuffer:
+            case ResourceBindingType::StorageTexture:
+                return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+            default:
+                VA_ENGINE_WARN("[VulkanPipeline] Unknown resource type, defaulting to none.");
+                return VK_DESCRIPTOR_TYPE_MAX_ENUM;
+        }
+    }
+
+    VkShaderStageFlagBits TranslateEngineShaderStageToVulkan(const Resources::ShaderStage stage)
+    {
+        // TODO Add the other stage as progress
+        switch (stage)
+        {
+            case Resources::ShaderStage::Vertex:
+                return VK_SHADER_STAGE_VERTEX_BIT;
+            case Resources::ShaderStage::Pixel:
+                return VK_SHADER_STAGE_FRAGMENT_BIT;
+            case Resources::ShaderStage::Compute:
+                return VK_SHADER_STAGE_COMPUTE_BIT;
+            default:
+                VA_ENGINE_WARN("[VulkanPipeline] Unknown shader stage, defaulting to all.");
+                return VK_SHADER_STAGE_ALL_GRAPHICS;
+        }
+    }
+
     // NOTE See : https://registry.khronos.org/vulkan/specs/latest/html/vkspec.html#VkResult
     std::string VulkanGetResultString(const VkResult result, const bool extended)
     {

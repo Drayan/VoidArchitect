@@ -7,8 +7,8 @@
 
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
-#include "Platform/RHI/Material.hpp"
 #include "Renderer/RenderCommand.hpp"
+#include "Resources/Material.hpp"
 #include "Resources/Texture.hpp"
 
 namespace VoidArchitect
@@ -21,7 +21,7 @@ namespace VoidArchitect
 
     TextureSystem::~TextureSystem()
     {
-        IMaterial::SetDefaultDiffuseTexture(nullptr);
+        Resources::IMaterial::SetDefaultDiffuseTexture(nullptr);
         m_DefaultTexture = nullptr;
 
         if (!m_TextureCache.empty())
@@ -46,7 +46,8 @@ namespace VoidArchitect
         m_TextureCache.clear();
     }
 
-    Resources::Texture2DPtr TextureSystem::LoadTexture2D(const std::string& name)
+    Resources::Texture2DPtr
+    TextureSystem::LoadTexture2D(const std::string& name, const Resources::TextureUse use)
     {
         // Check if the texture is in the cache
         for (auto& [uuid, texture] : m_TextureCache)
@@ -88,6 +89,7 @@ namespace VoidArchitect
             // Cache the texture
             const auto handle = GetFreeTextureHandle();
             texture->m_Handle = handle;
+            texture->m_Use = use;
 
             m_Textures[handle] = {texture->m_UUID, data.size()};
             m_TextureCache[texture->m_UUID] = texturePtr;
@@ -106,6 +108,7 @@ namespace VoidArchitect
 
     Resources::Texture2DPtr TextureSystem::CreateTexture2D(
         const std::string& name,
+        const Resources::TextureUse use,
         const uint32_t width,
         const uint32_t height,
         const uint8_t channels,
@@ -128,6 +131,7 @@ namespace VoidArchitect
             // Cache the texture
             const auto handle = GetFreeTextureHandle();
             texture->m_Handle = handle;
+            texture->m_Use = use;
 
             m_Textures[handle] = {texture->m_UUID, data.size()};
             m_TextureCache[texture->m_UUID] = texturePtr;
@@ -173,9 +177,15 @@ namespace VoidArchitect
             }
         }
 
-        m_DefaultTexture =
-            CreateTexture2D("DefaultTexture", texSize, texSize, texChannels, false, texData);
-        IMaterial::SetDefaultDiffuseTexture(m_DefaultTexture);
+        m_DefaultTexture = CreateTexture2D(
+            "DefaultTexture",
+            Resources::TextureUse::Diffuse,
+            texSize,
+            texSize,
+            texChannels,
+            false,
+            texData);
+        Resources::IMaterial::SetDefaultDiffuseTexture(m_DefaultTexture);
     }
 
     uint32_t TextureSystem::GetFreeTextureHandle()
