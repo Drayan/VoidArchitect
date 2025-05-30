@@ -1,0 +1,95 @@
+//
+// Created by Michael Desmedt on 20/05/2025.
+//
+#pragma once
+
+#include "Core/Math/Mat4.hpp"
+#include "Core/Math/Vec4.hpp"
+#include "Core/Uuid.hpp"
+#include "Resources/Texture.hpp"
+
+namespace VoidArchitect::Platform
+{
+    class IRenderingHardware;
+}
+
+namespace VoidArchitect
+{
+    class MaterialSystem;
+
+    namespace Resources
+    {
+        class ITexture;
+        class Texture2D;
+        class IMaterial;
+
+        using MaterialPtr = std::shared_ptr<IMaterial>;
+
+        // NOTE Vulkan give us a max of 256 bytes on G_UBO
+        struct GlobalUniformObject
+        {
+            Math::Mat4 Projection;
+            Math::Mat4 View;
+            Math::Mat4 Reserved0;
+            Math::Mat4 Reserved1;
+        };
+
+        struct LocalUniformObject
+        {
+            Math::Vec4 DiffuseColor; // 16 bytes
+            Math::Vec4 Reserved0;    // 16 bytes
+            Math::Vec4 Reserved1;    // 16 bytes
+            Math::Vec4 Reserved2;    // 16 bytes
+        };
+
+        struct GeometryRenderData
+        {
+            GeometryRenderData();
+            GeometryRenderData(const Math::Mat4& model, MaterialPtr material);
+
+            Math::Mat4 Model;
+            MaterialPtr Material;
+        };
+
+        class IMaterial
+        {
+            friend class VoidArchitect::MaterialSystem;
+
+        public:
+            virtual ~IMaterial() = default;
+
+            virtual void SetObject(
+                Platform::IRenderingHardware& rhi, const GeometryRenderData& data) = 0;
+
+            static void SetDefaultDiffuseTexture(const Resources::Texture2DPtr& defaultTexture)
+            {
+                s_DefaultDiffuseTexture = defaultTexture;
+            }
+
+            [[nodiscard]] UUID GetUUID() const { return m_UUID; }
+            [[nodiscard]] const TexturePtr& GetTexture(size_t index = 0) const
+            {
+                return m_DiffuseTexture;
+            }
+
+            void SetTexture(size_t index, const TexturePtr& texture) { m_DiffuseTexture = texture; }
+
+        protected:
+            explicit IMaterial(const std::string& name);
+
+            virtual void InitializeResources(Platform::IRenderingHardware& rhi) = 0;
+            virtual void ReleaseResources() = 0;
+
+            static Texture2DPtr s_DefaultDiffuseTexture;
+            GlobalUniformObject m_GlobalUniformObject;
+
+            UUID m_UUID = InvalidUUID;
+            std::string m_Name;
+
+            Math::Vec4 m_DiffuseColor = Math::Vec4::One();
+
+            TexturePtr m_DiffuseTexture;
+        };
+
+    } // namespace Resources
+} // namespace VoidArchitect
