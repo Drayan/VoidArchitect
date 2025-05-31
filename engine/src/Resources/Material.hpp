@@ -46,7 +46,10 @@ namespace VoidArchitect
         struct GeometryRenderData
         {
             GeometryRenderData();
-            GeometryRenderData(const Math::Mat4& model, const MaterialPtr& material, const MeshPtr& mesh);
+            GeometryRenderData(
+                const Math::Mat4& model,
+                const MaterialPtr& material,
+                const MeshPtr& mesh);
 
             Math::Mat4 Model;
             MeshPtr Mesh;
@@ -60,9 +63,8 @@ namespace VoidArchitect
         public:
             virtual ~IMaterial() = default;
 
-            virtual void SetObject(
-                Platform::IRenderingHardware& rhi,
-                const GeometryRenderData& data) = 0;
+            virtual void SetModel(Platform::IRenderingHardware& rhi, const Math::Mat4& model) = 0;
+            virtual void Bind(Platform::IRenderingHardware& rhi) = 0;
 
             static void SetDefaultDiffuseTexture(const Resources::Texture2DPtr& defaultTexture)
             {

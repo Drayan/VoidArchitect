@@ -173,6 +173,8 @@ namespace VoidArchitect::Renderer
             Math::Mat4::Identity(),
             defaultMat,
             s_TestMesh);
+
+        defaultMat->Bind(*m_RenderingHardware);
         m_RenderingHardware->DrawMesh(geometry);
         return true;
     }

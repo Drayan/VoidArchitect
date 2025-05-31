@@ -75,25 +75,9 @@ namespace VoidArchitect::Platform
         VA_ENGINE_INFO("[VulkanMaterial] Material '{}' created.", m_Name);
     }
 
-    void VulkanMaterial::SetObject(
-        IRenderingHardware& rhi,
-        const Resources::GeometryRenderData& data)
+    void VulkanMaterial::SetModel(IRenderingHardware& rhi, const Math::Mat4& model)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
-        const uint32_t frameIndex = vulkanRhi.GetImageIndex();
-        auto& descriptorState = m_MaterialDescriptorStates[frameIndex];
-
-        // 1. Check if we need to update the material descriptor set.
-        if (descriptorState.matGeneration != m_Generation)
-        {
-            auto materialBO = Resources::MaterialUniformObject{
-                .DiffuseColor = m_DiffuseColor,
-            };
-            g_VkMaterialBufferManager->UpdateMaterial(m_BufferSlot, materialBO);
-        }
-
-        UpdateDescriptorSets(vulkanRhi);
-
         const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
         const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(m_Pipeline);
 
@@ -104,7 +88,28 @@ namespace VoidArchitect::Platform
             0,
             sizeof(Math::Mat4),
             // 64 bytes
-            &data.Model);
+            &model);
+    }
+
+    void VulkanMaterial::Bind(IRenderingHardware& rhi)
+    {
+        auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
+        const uint32_t frameIndex = vulkanRhi.GetImageIndex();
+        const auto& descriptorState = m_MaterialDescriptorStates[frameIndex];
+
+        // 1. Check if we need to update the material descriptor set.
+        if (descriptorState.matGeneration != m_Generation)
+        {
+            const auto materialBO = Resources::MaterialUniformObject{
+                .DiffuseColor = m_DiffuseColor,
+            };
+            g_VkMaterialBufferManager->UpdateMaterial(m_BufferSlot, materialBO);
+        }
+
+        UpdateDescriptorSets(vulkanRhi);
+
+        const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
+        const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(m_Pipeline);
 
         // Bind the descriptor set to be updated, or in case the shader(material) changed.
         vkCmdBindDescriptorSets(

@@ -30,7 +30,8 @@ namespace VoidArchitect::Platform
 
         void InitializeResources(IRenderingHardware& rhi) override;
 
-        void SetObject(IRenderingHardware& rhi, const Resources::GeometryRenderData& data) override;
+        void Bind(IRenderingHardware& rhi) override;
+        void SetModel(IRenderingHardware& rhi, const Math::Mat4& model) override;
 
     private:
         void ReleaseResources() override;

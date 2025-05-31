@@ -314,7 +314,7 @@ namespace VoidArchitect::Platform
 
     void VulkanRHI::DrawMesh(const Resources::GeometryRenderData& data)
     {
-        data.Material->SetObject(*this, data);
+        data.Material->SetModel(*this, data.Model);
         data.Mesh->Bind(*this);
         vkCmdDrawIndexed(
             GetCurrentCommandBuffer().GetHandle(),
