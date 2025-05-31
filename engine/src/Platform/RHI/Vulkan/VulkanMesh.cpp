@@ -12,9 +12,11 @@ namespace VoidArchitect
         VulkanMesh::VulkanMesh(
             VulkanRHI& rhi,
             VkAllocationCallbacks* allocator,
+            const std::string& name,
             const std::vector<Resources::MeshVertex>& vertices,
             const std::vector<uint32_t>& indices)
-            : m_Allocator(allocator)
+            : IMesh(name),
+              m_Allocator(allocator)
         {
             m_VertexBuffer = std::make_unique<VulkanVertexBuffer>(
                 rhi,
@@ -32,6 +34,12 @@ namespace VoidArchitect
         {
             m_VertexBuffer->Bind(rhi);
             m_IndexBuffer->Bind(rhi);
+        }
+
+        void VulkanMesh::Release()
+        {
+            m_VertexBuffer = nullptr;
+            m_IndexBuffer = nullptr;
         }
     } // Platform
 } // VoidArchitect

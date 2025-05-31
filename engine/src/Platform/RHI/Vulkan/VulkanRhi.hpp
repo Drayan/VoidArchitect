@@ -78,6 +78,7 @@ namespace VoidArchitect::Platform
             const ShaderConfig& config,
             const std::vector<uint8_t>& data) override;
         Resources::IMesh* CreateMesh(
+            const std::string& name,
             const std::vector<Resources::MeshVertex>& vertices,
             const std::vector<uint32_t>& indices) override;
 

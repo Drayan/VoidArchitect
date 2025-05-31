@@ -35,7 +35,7 @@ namespace VoidArchitect::Resources
 
     public:
         ITexture(
-            const std::string& name,
+            std::string name,
             uint32_t width,
             uint32_t height,
             uint8_t channelCount,

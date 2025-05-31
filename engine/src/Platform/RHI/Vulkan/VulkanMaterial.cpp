@@ -4,6 +4,7 @@
 #include "VulkanMaterial.hpp"
 
 #include <ranges>
+#include <utility>
 
 #include "VulkanBuffer.hpp"
 #include "VulkanCommandBuffer.hpp"
@@ -20,12 +21,13 @@ namespace VoidArchitect::Platform
         const std::string& name,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
-        const Resources::PipelinePtr& pipeline)
+        Resources::PipelinePtr pipeline)
         : IMaterial(name),
           m_Allocator(allocator),
           m_Device(device->GetLogicalDeviceHandle()),
-          m_Pipeline(pipeline),
-          m_MaterialDescriptorPool(VK_NULL_HANDLE)
+          m_Pipeline(std::move(pipeline)),
+          m_MaterialDescriptorPool(VK_NULL_HANDLE),
+          m_MaterialDescriptorSets{}
     {
         for (auto& descriptorSet : m_MaterialDescriptorSets)
             descriptorSet = VK_NULL_HANDLE;
@@ -55,6 +57,7 @@ namespace VoidArchitect::Platform
         poolInfo.maxSets = 3;
         poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
         poolInfo.pPoolSizes = poolSizes.data();
+        poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
         VA_VULKAN_CHECK_RESULT_WARN(
             vkCreateDescriptorPool(
@@ -125,6 +128,8 @@ namespace VoidArchitect::Platform
 
     void VulkanMaterial::ReleaseResources()
     {
+        vkFreeDescriptorSets(m_Device, m_MaterialDescriptorPool, 3, m_MaterialDescriptorSets);
+
         if (m_BufferSlot != std::numeric_limits<uint32_t>::max())
         {
             g_VkMaterialBufferManager->ReleaseSlot(m_BufferSlot);

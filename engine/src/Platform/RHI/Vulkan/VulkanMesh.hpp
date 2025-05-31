@@ -15,11 +15,13 @@ namespace VoidArchitect
             VulkanMesh(
                 VulkanRHI& rhi,
                 VkAllocationCallbacks* allocator,
+                const std::string& name,
                 const std::vector<Resources::MeshVertex>& vertices,
                 const std::vector<uint32_t>& indices);
             ~VulkanMesh() override = default;
 
             void Bind(Platform::IRenderingHardware& rhi) override;
+            void Release() override;
 
             uint32_t GetIndicesCount() override { return m_IndexBuffer->GetCount(); }
 

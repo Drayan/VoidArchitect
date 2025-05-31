@@ -373,10 +373,11 @@ namespace VoidArchitect::Platform
     }
 
     Resources::IMesh* VulkanRHI::CreateMesh(
+        const std::string& name,
         const std::vector<Resources::MeshVertex>& vertices,
         const std::vector<uint32_t>& indices)
     {
-        return new VulkanMesh(*this, m_Allocator, vertices, indices);
+        return new VulkanMesh(*this, m_Allocator, name, vertices, indices);
     }
 
     int32_t VulkanRHI::FindMemoryIndex(
@@ -391,7 +392,7 @@ namespace VoidArchitect::Platform
             if ((typeFilter & (1 << i))
                 && (memProperties.memoryTypes[i].propertyFlags & propertyFlags) == propertyFlags)
             {
-                return i;
+                return static_cast<int32_t>(i);
             }
         }
 

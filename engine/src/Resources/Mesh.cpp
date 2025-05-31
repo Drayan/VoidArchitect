@@ -3,7 +3,13 @@
 //
 #include "Mesh.hpp"
 
-namespace VoidArchitect {
-namespace Resources {
-} // Resources
-} // VoidArchitect
+#include <utility>
+
+namespace VoidArchitect::Resources
+{
+    IMesh::IMesh(std::string name)
+        : m_Name(std::move(name)),
+          m_Handle{}
+    {
+    }
+}

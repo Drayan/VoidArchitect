@@ -11,6 +11,7 @@
 #include "Resources/Material.hpp"
 #include "Resources/Texture.hpp"
 #include "Systems/MaterialSystem.hpp"
+#include "Systems/MeshSystem.hpp"
 #include "Systems/PipelineSystem.hpp"
 #include "Systems/ShaderSystem.hpp"
 #include "Systems/TextureSystem.hpp"
@@ -82,6 +83,7 @@ namespace VoidArchitect::Renderer
         g_TextureSystem = std::make_unique<TextureSystem>();
         g_PipelineSystem = std::make_unique<PipelineSystem>();
         g_MaterialSystem = std::make_unique<MaterialSystem>();
+        g_MeshSystem = std::make_unique<MeshSystem>();
 
         // TEMP Try to load a test material.
         s_TestMaterial = g_MaterialSystem->LoadMaterial("TestMaterial");
@@ -107,8 +109,7 @@ namespace VoidArchitect::Renderer
         };
 
         const std::vector<uint32_t> indices = {0, 1, 2, 0, 3, 1};
-        s_TestMesh = std::shared_ptr<Resources::IMesh>(
-            m_RenderingHardware->CreateMesh(vertices, indices));
+        s_TestMesh = g_MeshSystem->CreateMesh("TestMesh", vertices, indices);
 
         CreatePerspectiveCamera(45.0f, 0.1f, 100.0f);
 
@@ -125,6 +126,7 @@ namespace VoidArchitect::Renderer
         s_TestTexture = nullptr;
 
         // Shutdown subsystems
+        g_MeshSystem = nullptr;
         g_MaterialSystem = nullptr;
         g_PipelineSystem = nullptr;
         g_TextureSystem = nullptr;

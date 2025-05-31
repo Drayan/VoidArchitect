@@ -5,6 +5,8 @@
 
 #include <stb_image.h>
 
+#include <utility>
+
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Systems/Renderer/RenderCommand.hpp"
@@ -12,12 +14,12 @@
 namespace VoidArchitect::Resources
 {
     ITexture::ITexture(
-        const std::string& name,
+        std::string name,
         const uint32_t width,
         const uint32_t height,
         const uint8_t channelCount,
         const bool hasTransparency)
-        : m_Name(name),
+        : m_Name(std::move(name)),
           m_Handle{},
           m_Width(width),
           m_Height(height),

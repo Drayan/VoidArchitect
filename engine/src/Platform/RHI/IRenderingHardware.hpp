@@ -72,6 +72,7 @@ namespace VoidArchitect::Platform
             const ShaderConfig& config,
             const std::vector<uint8_t>& data) = 0;
         virtual Resources::IMesh* CreateMesh(
+            const std::string& name,
             const std::vector<Resources::MeshVertex>& vertices,
             const std::vector<uint32_t>& indices) = 0;
     };

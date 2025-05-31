@@ -25,7 +25,7 @@ namespace VoidArchitect::Platform
             const std::string& name,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
-            const Resources::PipelinePtr& pipeline);
+            Resources::PipelinePtr pipeline);
         ~VulkanMaterial() override;
 
         void InitializeResources(IRenderingHardware& rhi) override;
