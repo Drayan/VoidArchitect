@@ -34,12 +34,12 @@ namespace VoidArchitect
             Math::Mat4 Reserved1;
         };
 
-        struct LocalUniformObject
+        struct MaterialUniformObject
         {
             Math::Vec4 DiffuseColor; // 16 bytes
-            Math::Vec4 Reserved0;    // 16 bytes
-            Math::Vec4 Reserved1;    // 16 bytes
-            Math::Vec4 Reserved2;    // 16 bytes
+            Math::Vec4 Reserved0; // 16 bytes
+            Math::Vec4 Reserved1; // 16 bytes
+            Math::Vec4 Reserved2; // 16 bytes
         };
 
         struct GeometryRenderData
@@ -59,7 +59,8 @@ namespace VoidArchitect
             virtual ~IMaterial() = default;
 
             virtual void SetObject(
-                Platform::IRenderingHardware& rhi, const GeometryRenderData& data) = 0;
+                Platform::IRenderingHardware& rhi,
+                const GeometryRenderData& data) = 0;
 
             static void SetDefaultDiffuseTexture(const Resources::Texture2DPtr& defaultTexture)
             {
@@ -67,9 +68,19 @@ namespace VoidArchitect
             }
 
             [[nodiscard]] UUID GetUUID() const { return m_UUID; }
+
             [[nodiscard]] const TexturePtr& GetTexture(size_t index = 0) const
             {
                 return m_DiffuseTexture;
+            }
+
+            Math::Vec4 GetDiffuseColor() const { return m_DiffuseColor; };
+            uint32_t GetGeneration() const { return m_Generation; }
+
+            void SetDiffuseColor(const Math::Vec4& color)
+            {
+                m_DiffuseColor = color;
+                m_Generation++;
             }
 
             void SetTexture(size_t index, const TexturePtr& texture) { m_DiffuseTexture = texture; }
@@ -85,11 +96,11 @@ namespace VoidArchitect
 
             UUID m_UUID = InvalidUUID;
             std::string m_Name;
+            uint32_t m_Generation = std::numeric_limits<uint32_t>::max();
 
             Math::Vec4 m_DiffuseColor = Math::Vec4::One();
 
             TexturePtr m_DiffuseTexture;
         };
-
     } // namespace Resources
 } // namespace VoidArchitect

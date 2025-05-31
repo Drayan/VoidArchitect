@@ -22,6 +22,6 @@ namespace VoidArchitect::Resources
     {
     }
 
-    IMaterial::IMaterial(const std::string& name) : m_Name(name) {}
+    IMaterial::IMaterial(const std::string& name) : m_Name(name), m_Generation(0) {}
 
 } // namespace VoidArchitect::Resources

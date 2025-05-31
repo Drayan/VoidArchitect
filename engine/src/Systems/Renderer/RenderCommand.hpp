@@ -4,6 +4,7 @@
 #pragma once
 
 #include "Camera.hpp"
+#include "Resources/Material.hpp"
 #include "Resources/Pipeline.hpp"
 #include "Resources/Texture.hpp"
 
@@ -33,19 +34,24 @@ namespace VoidArchitect
 
             static Camera& CreatePerspectiveCamera(float fov, float near, float far);
             static Camera& CreateOrthographicCamera(
-                float left, float right, float bottom, float top, float near, float far);
+                float left,
+                float right,
+                float bottom,
+                float top,
+                float near,
+                float far);
 
             static Platform::RHI_API_TYPE GetApiType() { return m_ApiType; }
             static Camera& GetMainCamera() { return m_Cameras[0]; }
 
             // TEMP: We'll expose a static method to swap the test texture
             static void SwapTestTexture();
+            static void SwapColor();
             static Platform::IRenderingHardware& GetRHIRef() { return *m_RenderingHardware; };
 
         private:
             static Resources::Texture2DPtr s_TestTexture;
-            static Resources::Texture2DPtr s_TempTexture;
-            static Resources::Texture2DPtr s_TempTexture2;
+            static Resources::MaterialPtr s_TestMaterial;
 
             static Platform::RHI_API_TYPE m_ApiType;
             static Platform::IRenderingHardware* m_RenderingHardware;

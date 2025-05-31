@@ -40,6 +40,10 @@ void TestLayer::OnEvent(VoidArchitect::Event& e)
             {
                 VoidArchitect::Renderer::RenderCommand::SwapTestTexture();
             }
+            if (e.GetKeyCode() == SDLK_C)
+            {
+                VoidArchitect::Renderer::RenderCommand::SwapColor();
+            }
             return false;
         });
 }

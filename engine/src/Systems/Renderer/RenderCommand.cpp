@@ -22,6 +22,7 @@
 namespace VoidArchitect::Renderer
 {
     Resources::Texture2DPtr RenderCommand::s_TestTexture;
+    Resources::MaterialPtr RenderCommand::s_TestMaterial;
 
     Platform::RHI_API_TYPE RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
     Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
@@ -30,7 +31,8 @@ namespace VoidArchitect::Renderer
     std::vector<Camera> RenderCommand::m_Cameras;
 
     void RenderCommand::Initialize(
-        const Platform::RHI_API_TYPE apiType, std::unique_ptr<Window>& window)
+        const Platform::RHI_API_TYPE apiType,
+        std::unique_ptr<Window>& window)
     {
         m_ApiType = apiType;
 
@@ -39,19 +41,35 @@ namespace VoidArchitect::Renderer
 
         // Retrieve Pipeline's shared resources setup.
         // TODO This should be managed by the pipeline system.
-        const PipelineInputLayout sharedInputLayout{std::vector{
-            SpaceLayout{
-                0,
-                std::vector{ResourceBinding{
-                    ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::Vertex}},
-            },
-            SpaceLayout{
-                1,
-                std::vector{
-                    ResourceBinding{
-                        ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::Pixel},
-                    ResourceBinding{
-                        ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel}}}}};
+        const PipelineInputLayout sharedInputLayout{
+            std::vector{
+                SpaceLayout{
+                    0,
+                    std::vector{
+                        ResourceBinding{
+                            ResourceBindingType::ConstantBuffer,
+                            0,
+                            Resources::ShaderStage::Vertex
+                        }
+                    },
+                },
+                SpaceLayout{
+                    1,
+                    std::vector{
+                        ResourceBinding{
+                            ResourceBindingType::ConstantBuffer,
+                            0,
+                            Resources::ShaderStage::Pixel
+                        },
+                        ResourceBinding{
+                            ResourceBindingType::Texture2D,
+                            1,
+                            Resources::ShaderStage::Pixel
+                        }
+                    }
+                }
+            }
+        };
 
         switch (apiType)
         {
@@ -68,6 +86,9 @@ namespace VoidArchitect::Renderer
         g_PipelineSystem = std::make_unique<PipelineSystem>();
         g_MaterialSystem = std::make_unique<MaterialSystem>();
 
+        // TEMP Try to load a test material.
+        s_TestMaterial = g_MaterialSystem->LoadMaterial("TestMaterial");
+
         CreatePerspectiveCamera(45.0f, 0.1f, 100.0f);
 
         SwapTestTexture();
@@ -78,6 +99,7 @@ namespace VoidArchitect::Renderer
         // Wait that any pending operation is completed before beginning the shutdown procedure.
         m_RenderingHardware->WaitIdle(0);
 
+        s_TestMaterial = nullptr;
         s_TestTexture = nullptr;
 
         // Shutdown subsystems
@@ -115,13 +137,17 @@ namespace VoidArchitect::Renderer
         // TEMP Use the test pipeline.
         g_PipelineSystem->GetDefaultPipeline()->Bind(*m_RenderingHardware);
 
-        const auto& defaultMat = g_MaterialSystem->GetDefaultMaterial();
-        const auto geometry = Resources::GeometryRenderData(Math::Mat4::Identity(), defaultMat);
-
+        // Update the camera state and send it to the GPU.
         camera.RecalculateView();
         m_RenderingHardware->UpdateGlobalState(
-            g_PipelineSystem->GetDefaultPipeline(), camera.GetProjection(), camera.GetView());
-        // m_RenderingHardware->UpdateObjectState(geometry);
+            g_PipelineSystem->GetDefaultPipeline(),
+            camera.GetProjection(),
+            camera.GetView());
+
+        // TEMP Testing to draw a single 'object' with the default material.
+        const auto& defaultMat =
+            s_TestMaterial != nullptr ? s_TestMaterial : g_MaterialSystem->GetDefaultMaterial();
+        const auto geometry = Resources::GeometryRenderData(Math::Mat4::Identity(), defaultMat);
         defaultMat->SetObject(*m_RenderingHardware, geometry);
         return true;
     }
@@ -140,7 +166,12 @@ namespace VoidArchitect::Renderer
     }
 
     Camera& RenderCommand::CreateOrthographicCamera(
-        float left, float right, float bottom, float top, float near, float far)
+        float left,
+        float right,
+        float bottom,
+        float top,
+        float near,
+        float far)
     {
         return m_Cameras.emplace_back(top, bottom, left, right, near, far);
     }
@@ -159,13 +190,30 @@ namespace VoidArchitect::Renderer
             "wall3_shga",
             "wall4_color",
             "wall4_n",
-            "wall4_shga"};
+            "wall4_shga"
+        };
         static size_t index = std::size(textures) - 1;
         index = (index + 1) % std::size(textures);
 
         s_TestTexture =
             g_TextureSystem->LoadTexture2D(textures[index], Resources::TextureUse::Diffuse);
-        const auto defaultMat = g_MaterialSystem->GetDefaultMaterial();
-        defaultMat->SetTexture(/*Resources::TextureSlot::Diffuse*/ 0, s_TestTexture);
+        s_TestMaterial->SetTexture(/*Resources::TextureSlot::Diffuse*/ 0, s_TestTexture);
+    }
+
+    void RenderCommand::SwapColor()
+    {
+        const Math::Vec4 colors[] = {
+            Math::Vec4(1.0f, 0.0f, 0.0f, 1.0f),
+            Math::Vec4(0.0f, 1.0f, 0.0f, 1.0f),
+            Math::Vec4(0.0f, 0.0f, 1.0f, 1.0f),
+            Math::Vec4(1.0f, 1.0f, 0.0f, 1.0f),
+            Math::Vec4(1.0f, 0.0f, 1.0f, 1.0f),
+            Math::Vec4(0.0f, 1.0f, 1.0f, 1.0f),
+            Math::Vec4(1.0f, 1.0f, 1.0f, 1.0f),
+        };
+        static size_t index = std::size(colors) - 1;
+        index = (index + 1) % std::size(colors);
+
+        s_TestMaterial->SetDiffuseColor(colors[index]);
     }
 } // namespace VoidArchitect::Renderer

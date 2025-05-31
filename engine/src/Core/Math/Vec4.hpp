@@ -19,6 +19,8 @@ namespace VoidArchitect::Math
         static Vec4 Zero();
         static Vec4 One();
 
+        static Vec4 FromString(const std::string& str);
+
         Vec4();
         Vec4(float x, float y, float z, float w);
 

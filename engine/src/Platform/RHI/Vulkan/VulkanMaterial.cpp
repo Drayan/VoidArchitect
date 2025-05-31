@@ -5,21 +5,17 @@
 
 #include <ranges>
 
-#include "Core/Math/Vec3.hpp"
-
 #include "VulkanBuffer.hpp"
 #include "VulkanCommandBuffer.hpp"
 #include "VulkanDescriptorSetLayoutManager.hpp"
+#include "VulkanMaterialBufferManager.hpp"
 #include "VulkanPipeline.hpp"
-#include "VulkanShader.hpp"
 #include "VulkanSwapchain.hpp"
 #include "VulkanTexture.hpp"
 #include "VulkanUtils.hpp"
 
 namespace VoidArchitect::Platform
 {
-    constexpr std::string BUILTIN_OBJECT_SHADER_NAME = "BuiltinObject";
-
     VulkanMaterial::VulkanMaterial(
         const std::string& name,
         const std::unique_ptr<VulkanDevice>& device,
@@ -29,9 +25,10 @@ namespace VoidArchitect::Platform
           m_Allocator(allocator),
           m_Device(device->GetLogicalDeviceHandle()),
           m_Pipeline(pipeline),
-          m_LocalDescriptorPool{},
-          m_LocalUniformBufferIndex{}
+          m_MaterialDescriptorPool(VK_NULL_HANDLE)
     {
+        for (auto& descriptorSet : m_MaterialDescriptorSets)
+            descriptorSet = VK_NULL_HANDLE;
     }
 
     VulkanMaterial::~VulkanMaterial() { VulkanMaterial::ReleaseResources(); }
@@ -41,54 +38,65 @@ namespace VoidArchitect::Platform
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
         auto& device = vulkanRhi.GetDeviceRef();
 
+        m_BufferSlot = g_VkMaterialBufferManager->AllocateSlot(m_UUID);
+
         // --- Local Descriptors ---
         // TODO Maybe we should retrieve the pipeline configuration and use that to determine the
         //  resources bindings.
-        m_LocalDescriptorTypes = std::vector{
+        std::vector<VkDescriptorPoolSize> poolSizes = {
             // Binding 0 - Uniform buffer
-            VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 3},
             // Binding 1 - Diffuse sampler layout.
-            VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 3}
         };
 
-        std::vector<VkDescriptorPoolSize> localPoolSizes;
-        for (auto type : m_LocalDescriptorTypes)
-        {
-            auto poolSize = VkDescriptorPoolSize{};
-            poolSize.type = type;
-            poolSize.descriptorCount = MAX_INSTANCES;
-
-            localPoolSizes.push_back(poolSize);
-        }
-
-        auto localPoolInfo = VkDescriptorPoolCreateInfo{};
-        localPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        localPoolInfo.maxSets = MAX_INSTANCES;
-        localPoolInfo.poolSizeCount = localPoolSizes.size();
-        localPoolInfo.pPoolSizes = localPoolSizes.data();
+        VkDescriptorPoolCreateInfo poolInfo{};
+        poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        poolInfo.maxSets = 3;
+        poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+        poolInfo.pPoolSizes = poolSizes.data();
 
         VA_VULKAN_CHECK_RESULT_WARN(
-            vkCreateDescriptorPool(m_Device, &localPoolInfo, m_Allocator, &m_LocalDescriptorPool));
+            vkCreateDescriptorPool(
+                m_Device, &poolInfo, m_Allocator, &m_MaterialDescriptorPool));
 
-        m_LocalUniformBuffer = std::make_unique<VulkanBuffer>(
-            vulkanRhi,
-            device,
-            m_Allocator,
-            sizeof(Resources::LocalUniformObject),
-            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        const auto materialLayout = g_VkDescriptorSetLayoutManager->GetPerMaterialLayout();
+        const VkDescriptorSetLayout layouts[] = {materialLayout, materialLayout, materialLayout};
 
-        VA_ENGINE_INFO("[VulkanMaterial] Material created.");
+        VkDescriptorSetAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = m_MaterialDescriptorPool;
+        allocInfo.descriptorSetCount = 3;
+        allocInfo.pSetLayouts = layouts;
+
+        VA_VULKAN_CHECK_RESULT_WARN(
+            vkAllocateDescriptorSets(m_Device, &allocInfo, m_MaterialDescriptorSets));
+
+        VA_ENGINE_INFO("[VulkanMaterial] Material '{}' created.", m_Name);
     }
 
     void VulkanMaterial::SetObject(
-        IRenderingHardware& rhi, const Resources::GeometryRenderData& data)
+        IRenderingHardware& rhi,
+        const Resources::GeometryRenderData& data)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
+        const uint32_t frameIndex = vulkanRhi.GetImageIndex();
+        auto& descriptorState = m_MaterialDescriptorStates[frameIndex];
+
+        // 1. Check if we need to update the material descriptor set.
+        if (descriptorState.matGeneration != m_Generation)
+        {
+            auto materialBO = Resources::MaterialUniformObject{
+                .DiffuseColor = m_DiffuseColor,
+            };
+            g_VkMaterialBufferManager->UpdateMaterial(m_BufferSlot, materialBO);
+        }
+
+        UpdateDescriptorSets(vulkanRhi);
+
         const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
         const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(m_Pipeline);
 
-        // NOTE VulkanSpec guarantee 128 bytes.
         vkCmdPushConstants(
             cmdBuf.GetHandle(),
             vkPipeline->GetPipelineLayout(),
@@ -98,188 +106,24 @@ namespace VoidArchitect::Platform
             // 64 bytes
             &data.Model);
 
-        // Obtain material data
-        // TEMP
-        AcquireResources(data.Material->GetUUID());
-
-        if (m_InstanceLocalStates.contains(data.Material->GetUUID()))
-        {
-            auto& instanceState = m_InstanceLocalStates[data.Material->GetUUID()];
-            auto& localDescriptorSet = instanceState.m_DescriptorSet[vulkanRhi.GetImageIndex()];
-
-            std::vector<VkWriteDescriptorSet> descriptorWrites;
-
-            // Descriptor 0 - Uniform buffer
-            auto range = sizeof(Resources::LocalUniformObject);
-            auto offset = sizeof(Resources::LocalUniformObject) * instanceState.m_InstanceIndex;
-
-            auto obo = std::vector{Resources::LocalUniformObject{
-                .DiffuseColor = Math::Vec4::One(),
-            }};
-
-            m_LocalUniformBuffer->LoadData(obo);
-
-            // Only do this if the descriptor has not yet been updated.
-            if (instanceState.m_DescriptorStates[0].Generation[vulkanRhi.GetImageIndex()]
-                == std::numeric_limits<uint32_t>::max())
-            {
-                // Update the descriptor set
-                VkDescriptorBufferInfo bufferInfo{};
-                bufferInfo.buffer = m_LocalUniformBuffer->GetHandle();
-                bufferInfo.offset = offset;
-                bufferInfo.range = range;
-
-                VkWriteDescriptorSet writeDescriptorSet{};
-                writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                writeDescriptorSet.dstSet = localDescriptorSet;
-                writeDescriptorSet.dstBinding = 0; // Local index
-                writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                writeDescriptorSet.descriptorCount = 1;
-                writeDescriptorSet.pBufferInfo = &bufferInfo;
-
-                descriptorWrites.push_back(writeDescriptorSet);
-
-                // Update the frame generation. In this case it is only necessary once since this is
-                // a buffer.
-                instanceState.m_DescriptorStates[0].Generation[vulkanRhi.GetImageIndex()] = 1;
-            }
-
-            // TODO: Samplers
-            const uint32_t samplerCount = 1;
-            VkDescriptorImageInfo imageInfos[samplerCount];
-            for (uint32_t i = 0; i < samplerCount; i++)
-            {
-                auto texture =
-                    std::dynamic_pointer_cast<VulkanTexture2D>(data.Material->GetTexture(i));
-                auto& descriptorGeneration =
-                    instanceState.m_DescriptorStates[1].Generation[vulkanRhi.GetImageIndex()];
-                auto& descriptorTextureUUID =
-                    instanceState.m_DescriptorStates[1].Id[vulkanRhi.GetImageIndex()];
-
-                // If the texture hasn't been loaded yet, use the default.
-                // TODO: Determine which use the texture has and pull appropriate default.
-                if (texture == nullptr
-                    || texture->GetGeneration() == std::numeric_limits<uint32_t>::max())
-                {
-                    texture = std::dynamic_pointer_cast<VulkanTexture2D>(s_DefaultDiffuseTexture);
-                    descriptorGeneration = std::numeric_limits<uint32_t>::max();
-                }
-
-                // Check if the descriptor needs updating first.
-                if (texture != nullptr
-                    && (descriptorTextureUUID != texture->GetUUID()
-                        || descriptorGeneration != texture->GetGeneration()
-                        || descriptorGeneration == std::numeric_limits<uint32_t>::max()))
-                {
-                    // Update the descriptor set
-                    imageInfos[i].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                    imageInfos[i].imageView = texture->GetImageView();
-                    imageInfos[i].sampler = texture->GetSampler();
-
-                    VkWriteDescriptorSet writeDescriptorSet{};
-                    writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                    writeDescriptorSet.dstSet = localDescriptorSet;
-                    writeDescriptorSet.dstBinding = 1; // Local index
-                    writeDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                    writeDescriptorSet.descriptorCount = 1;
-                    writeDescriptorSet.pImageInfo = &imageInfos[i];
-
-                    descriptorWrites.push_back(writeDescriptorSet);
-
-                    if (texture->GetGeneration() != std::numeric_limits<uint32_t>::max())
-                    {
-                        descriptorGeneration = texture->GetGeneration();
-                        descriptorTextureUUID = texture->GetUUID();
-                    }
-                }
-            }
-
-            if (!descriptorWrites.empty())
-            {
-                vkUpdateDescriptorSets(
-                    m_Device,
-                    static_cast<uint32_t>(descriptorWrites.size()),
-                    descriptorWrites.data(),
-                    0,
-                    nullptr);
-            }
-
-            // Bind the descriptor set to be updated, or in case the shader(material) changed.
-            vkCmdBindDescriptorSets(
-                cmdBuf.GetHandle(),
-                VK_PIPELINE_BIND_POINT_GRAPHICS,
-                vkPipeline->GetPipelineLayout(),
-                1,
-                1,
-                &localDescriptorSet,
-                0,
-                nullptr);
-        }
+        // Bind the descriptor set to be updated, or in case the shader(material) changed.
+        vkCmdBindDescriptorSets(
+            cmdBuf.GetHandle(),
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            vkPipeline->GetPipelineLayout(),
+            1,
+            1,
+            &m_MaterialDescriptorSets[frameIndex],
+            0,
+            nullptr);
     }
 
-    bool VulkanMaterial::AcquireResources(const UUID& id)
-    {
-        // If this object is not listed into the instances, add it.
-        if (!m_InstanceLocalStates.contains(id))
-        {
-            auto instanceState = VulkanMaterialInstanceLocalState{};
-            instanceState.m_InstanceIndex = m_LocalUniformBufferIndex++;
-            for (uint32_t i = 0; i < m_LocalDescriptorTypes.size(); i++)
-            {
-                const VulkanDescriptorState state{
-                    .Generation =
-                        {std::numeric_limits<uint32_t>::max(),
-                         std::numeric_limits<uint32_t>::max(),
-                         std::numeric_limits<uint32_t>::max()},
-                    .Id = {InvalidUUID, InvalidUUID, InvalidUUID}};
-                instanceState.m_DescriptorStates = std::vector{state, state, state};
-            }
-
-            // Allocate descriptor sets
-            const auto materialDescriptorSetLayout =
-                g_VkDescriptorSetLayoutManager->GetPerMaterialLayout();
-            const VkDescriptorSetLayout layouts[] = {
-                materialDescriptorSetLayout,
-                materialDescriptorSetLayout,
-                materialDescriptorSetLayout};
-
-            VkDescriptorSetAllocateInfo allocInfo{};
-            allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-            allocInfo.descriptorPool = m_LocalDescriptorPool;
-            allocInfo.descriptorSetCount = 3;
-            allocInfo.pSetLayouts = layouts;
-
-            if (VA_VULKAN_CHECK_RESULT(
-                    vkAllocateDescriptorSets(m_Device, &allocInfo, instanceState.m_DescriptorSet)))
-            {
-                VA_ENGINE_ERROR("[VulkanMaterial] Failed to allocate descriptor sets.");
-                return false;
-            }
-
-            m_InstanceLocalStates[id] = instanceState;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    void VulkanMaterial::ReleaseResources(const UUID& id)
-    {
-        if (m_InstanceLocalStates.contains(id))
-        {
-            m_InstanceLocalStates.erase(id);
-        }
-    }
     void VulkanMaterial::ReleaseResources()
     {
-        // We should release any instances remaining.
-        m_InstanceLocalStates.clear();
-
-        if (m_LocalUniformBuffer != nullptr)
+        if (m_BufferSlot != std::numeric_limits<uint32_t>::max())
         {
-            m_LocalUniformBuffer = nullptr;
-            VA_ENGINE_DEBUG("[VulkanMaterial] Local uniform buffer destroyed.");
+            g_VkMaterialBufferManager->ReleaseSlot(m_BufferSlot);
+            m_BufferSlot = std::numeric_limits<uint32_t>::max();
         }
 
         if (m_Pipeline != nullptr)
@@ -287,11 +131,84 @@ namespace VoidArchitect::Platform
             m_Pipeline = nullptr;
         }
 
-        if (m_LocalDescriptorPool != VK_NULL_HANDLE)
+        if (m_MaterialDescriptorPool != VK_NULL_HANDLE)
         {
-            vkDestroyDescriptorPool(m_Device, m_LocalDescriptorPool, m_Allocator);
-            m_LocalDescriptorPool = VK_NULL_HANDLE;
+            vkDestroyDescriptorPool(m_Device, m_MaterialDescriptorPool, m_Allocator);
+            m_MaterialDescriptorPool = VK_NULL_HANDLE;
             VA_ENGINE_DEBUG("[VulkanMaterial] Descriptor pool destroyed.");
+        }
+    }
+
+    void VulkanMaterial::UpdateDescriptorSets(VulkanRHI& rhi)
+    {
+        const uint32_t frameIndex = rhi.GetImageIndex();
+        auto& descriptorState = m_MaterialDescriptorStates[frameIndex];
+
+        std::vector<VkWriteDescriptorSet> writes{};
+
+        // 1. If we need, we update the material descriptor set for uniform buffer.
+        if (descriptorState.matGeneration != m_Generation)
+        {
+            auto bindingInfo = g_VkMaterialBufferManager->GetBindingInfo(m_BufferSlot);
+
+            VkDescriptorBufferInfo bufferInfo{};
+            bufferInfo.buffer = bindingInfo.buffer;
+            bufferInfo.offset = bindingInfo.offset;
+            bufferInfo.range = bindingInfo.range;
+
+            VkWriteDescriptorSet write{};
+            write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            write.dstSet = m_MaterialDescriptorSets[frameIndex];
+            write.dstBinding = 0;
+            write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            write.descriptorCount = 1;
+            write.pBufferInfo = &bufferInfo;
+
+            writes.push_back(write);
+
+            descriptorState.matGeneration = m_Generation;
+        }
+
+        // 2. Update textures
+        auto texture = std::dynamic_pointer_cast<VulkanTexture2D>(m_DiffuseTexture);
+
+        if (!texture || texture->GetGeneration() == std::numeric_limits<uint32_t>::max())
+        {
+            texture = std::dynamic_pointer_cast<VulkanTexture2D>(s_DefaultDiffuseTexture);
+        }
+
+        if (texture && (descriptorState.texUUID != texture->GetUUID() || descriptorState.
+            texGeneration != texture->GetGeneration() || descriptorState.matGeneration !=
+            m_Generation))
+        {
+            VkDescriptorImageInfo imageInfo{};
+            imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            imageInfo.imageView = texture->GetImageView();
+            imageInfo.sampler = texture->GetSampler();
+
+            VkWriteDescriptorSet write{};
+            write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            write.dstSet = m_MaterialDescriptorSets[frameIndex];
+            write.dstBinding = 1;
+            write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            write.descriptorCount = 1;
+            write.pImageInfo = &imageInfo;
+
+            writes.push_back(write);
+
+            descriptorState.texUUID = texture->GetUUID();
+            descriptorState.texGeneration = texture->GetGeneration();
+        }
+
+        // 3. Apply updates
+        if (!writes.empty())
+        {
+            vkUpdateDescriptorSets(
+                m_Device,
+                static_cast<uint32_t>(writes.size()),
+                writes.data(),
+                0,
+                nullptr);
         }
     }
 } // namespace VoidArchitect::Platform

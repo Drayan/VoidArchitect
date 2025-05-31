@@ -21,8 +21,6 @@ namespace VoidArchitect::Platform
     class VulkanMaterial : public Resources::IMaterial
     {
     public:
-        constexpr static size_t MAX_INSTANCES = 1024;
-
         VulkanMaterial(
             const std::string& name,
             const std::unique_ptr<VulkanDevice>& device,
@@ -34,35 +32,26 @@ namespace VoidArchitect::Platform
 
         void SetObject(IRenderingHardware& rhi, const Resources::GeometryRenderData& data) override;
 
-        bool AcquireResources(const UUID& id);
-        void ReleaseResources(const UUID& id);
-
     private:
         void ReleaseResources() override;
-
-        struct VulkanDescriptorState
-        {
-            uint32_t Generation[3];
-            UUID Id[3];
-        };
-
-        struct VulkanMaterialInstanceLocalState
-        {
-            size_t m_InstanceIndex;
-            VkDescriptorSet m_DescriptorSet[3];
-            std::vector<VulkanDescriptorState> m_DescriptorStates;
-        };
+        void UpdateDescriptorSets(VulkanRHI& rhi);
 
         VkAllocationCallbacks* m_Allocator;
         VkDevice m_Device;
-
         Resources::PipelinePtr m_Pipeline;
 
-        std::vector<VkDescriptorType> m_LocalDescriptorTypes;
-        VkDescriptorPool m_LocalDescriptorPool;
-        std::unordered_map<UUID, VulkanMaterialInstanceLocalState> m_InstanceLocalStates;
+        uint32_t m_BufferSlot = std::numeric_limits<uint32_t>::max();
 
-        std::unique_ptr<VulkanBuffer> m_LocalUniformBuffer;
-        uint32_t m_LocalUniformBufferIndex;
+        VkDescriptorPool m_MaterialDescriptorPool;
+        VkDescriptorSet m_MaterialDescriptorSets[3];
+
+        struct DescriptorState
+        {
+            uint32_t matGeneration = std::numeric_limits<uint32_t>::max();
+            uint32_t texGeneration = std::numeric_limits<uint32_t>::max();
+            UUID texUUID = InvalidUUID;
+        };
+
+        std::array<DescriptorState, 3> m_MaterialDescriptorStates;
     };
 } // namespace VoidArchitect::Platform
