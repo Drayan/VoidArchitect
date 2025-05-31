@@ -3,10 +3,6 @@
 //
 #include "RenderCommand.hpp"
 
-// TEMP Temporary block
-#include <stb_image.h>
-// TEMP End of temporary
-
 #include "Camera.hpp"
 #include "Core/Logger.hpp"
 #include "Core/Window.hpp"
@@ -23,6 +19,7 @@ namespace VoidArchitect::Renderer
 {
     Resources::Texture2DPtr RenderCommand::s_TestTexture;
     Resources::MaterialPtr RenderCommand::s_TestMaterial;
+    Resources::MeshPtr RenderCommand::s_TestMesh;
 
     Platform::RHI_API_TYPE RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
     Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
@@ -89,6 +86,30 @@ namespace VoidArchitect::Renderer
         // TEMP Try to load a test material.
         s_TestMaterial = g_MaterialSystem->LoadMaterial("TestMaterial");
 
+        // TEMP Create a test mesh.
+        const std::vector vertices = {
+            Resources::MeshVertex{
+                .Position = Math::Vec3(-0.5f, -0.5f, 0.0f),
+                .UV0 = Math::Vec2(0.0f, 0.0f),
+            },
+            Resources::MeshVertex{
+                .Position = Math::Vec3(0.5f, 0.5f, 0.0f),
+                .UV0 = Math::Vec2(1.0f, 1.0f),
+            },
+            Resources::MeshVertex{
+                .Position = Math::Vec3(-0.5f, 0.5f, 0.0f),
+                .UV0 = Math::Vec2(0.0f, 1.0f),
+            },
+            Resources::MeshVertex{
+                .Position = Math::Vec3(0.5f, -0.5f, 0.0f),
+                .UV0 = Math::Vec2(1.0f, 0.0f),
+            }
+        };
+
+        const std::vector<uint32_t> indices = {0, 1, 2, 0, 3, 1};
+        s_TestMesh = std::shared_ptr<Resources::IMesh>(
+            m_RenderingHardware->CreateMesh(vertices, indices));
+
         CreatePerspectiveCamera(45.0f, 0.1f, 100.0f);
 
         SwapTestTexture();
@@ -99,6 +120,7 @@ namespace VoidArchitect::Renderer
         // Wait that any pending operation is completed before beginning the shutdown procedure.
         m_RenderingHardware->WaitIdle(0);
 
+        s_TestMesh = nullptr;
         s_TestMaterial = nullptr;
         s_TestTexture = nullptr;
 
@@ -147,8 +169,11 @@ namespace VoidArchitect::Renderer
         // TEMP Testing to draw a single 'object' with the default material.
         const auto& defaultMat =
             s_TestMaterial != nullptr ? s_TestMaterial : g_MaterialSystem->GetDefaultMaterial();
-        const auto geometry = Resources::GeometryRenderData(Math::Mat4::Identity(), defaultMat);
-        defaultMat->SetObject(*m_RenderingHardware, geometry);
+        const auto geometry = Resources::GeometryRenderData(
+            Math::Mat4::Identity(),
+            defaultMat,
+            s_TestMesh);
+        m_RenderingHardware->DrawMesh(geometry);
         return true;
     }
 

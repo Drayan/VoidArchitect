@@ -16,12 +16,18 @@ namespace VoidArchitect::Resources
     {
     }
 
-    GeometryRenderData::GeometryRenderData(const Math::Mat4& model, MaterialPtr material)
+    GeometryRenderData::GeometryRenderData(
+        const Math::Mat4& model,
+        const MaterialPtr& material,
+        const MeshPtr& mesh)
         : Model(model),
-          Material(std::move(material))
+          Mesh(mesh),
+          Material(material)
     {
     }
 
-    IMaterial::IMaterial(const std::string& name) : m_Name(name), m_Generation(0) {}
-
+    IMaterial::IMaterial(const std::string& name)
+        : m_Name(name), m_Generation(0)
+    {
+    }
 } // namespace VoidArchitect::Resources

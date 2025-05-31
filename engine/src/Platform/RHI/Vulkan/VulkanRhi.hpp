@@ -42,7 +42,8 @@ namespace VoidArchitect::Platform
     {
     public:
         explicit VulkanRHI(
-            std::unique_ptr<Window>& window, const PipelineInputLayout& sharedInputLayout);
+            std::unique_ptr<Window>& window,
+            const PipelineInputLayout& sharedInputLayout);
         ~VulkanRHI() override;
 
         void Resize(uint32_t width, uint32_t height) override;
@@ -55,7 +56,8 @@ namespace VoidArchitect::Platform
             const Resources::PipelinePtr& pipeline,
             const Math::Mat4& projection,
             const Math::Mat4& view) override;
-        void UpdateObjectState(const Resources::GeometryRenderData& data) override;
+
+        void DrawMesh(const Resources::GeometryRenderData& data) override;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
@@ -69,11 +71,15 @@ namespace VoidArchitect::Platform
             const std::vector<uint8_t>& data) override;
         Resources::IPipeline* CreatePipeline(PipelineConfig& config) override;
         Resources::IMaterial* CreateMaterial(
-            const std::string& name, const Resources::PipelinePtr& pipeline) override;
+            const std::string& name,
+            const Resources::PipelinePtr& pipeline) override;
         Resources::IShader* CreateShader(
             const std::string& name,
             const ShaderConfig& config,
             const std::vector<uint8_t>& data) override;
+        Resources::IMesh* CreateMesh(
+            const std::vector<Resources::MeshVertex>& vertices,
+            const std::vector<uint32_t>& indices) override;
 
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
         {
@@ -122,9 +128,11 @@ namespace VoidArchitect::Platform
         void CreateDebugMessenger();
         void DestroyDebugMessenger() const;
         static void AddDebugExtensions(
-            char const* const*& extensions, unsigned int& extensionCount);
+            char const* const*& extensions,
+            unsigned int& extensionCount);
         static void CleaningDebugExtensionsArray(
-            char const* const*& extensions, unsigned int extensionCount);
+            char const* const*& extensions,
+            unsigned int extensionCount);
 
         VkDebugUtilsMessengerEXT m_DebugMessenger;
 #endif
@@ -158,9 +166,6 @@ namespace VoidArchitect::Platform
         VkDescriptorSet* m_GlobalDescriptorSets;
 
         std::unique_ptr<VulkanBuffer> m_GlobalUniformBuffer;
-
-        std::unique_ptr<VulkanVertexBuffer> m_VertexBuffer;
-        std::unique_ptr<VulkanIndexBuffer> m_IndexBuffer;
 
         uint32_t m_FramebufferWidth;
         uint32_t m_FramebufferHeight;

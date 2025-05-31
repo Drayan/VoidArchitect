@@ -5,11 +5,20 @@
 
 namespace VoidArchitect::Math
 {
-    Vec3::Vec3() : m_Vector() {}
+    Vec3::Vec3()
+        : m_Vector()
+    {
+    }
 
-    Vec3::Vec3(const impl::glm::vec3& vector) : m_Vector(vector) {}
+    Vec3::Vec3(const impl::glm::vec3& vector)
+        : m_Vector(vector)
+    {
+    }
 
-    Vec3::Vec3(const float x, const float y, const float z) : m_Vector(x, y, z) {}
+    Vec3::Vec3(const float x, const float y, const float z)
+        : m_Vector(x, y, z)
+    {
+    }
 
     void Vec3::Normalize() { m_Vector = impl::glm::normalize(m_Vector); }
 

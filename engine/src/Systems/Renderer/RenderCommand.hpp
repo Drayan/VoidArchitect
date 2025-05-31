@@ -5,7 +5,6 @@
 
 #include "Camera.hpp"
 #include "Resources/Material.hpp"
-#include "Resources/Pipeline.hpp"
 #include "Resources/Texture.hpp"
 
 namespace VoidArchitect
@@ -52,6 +51,7 @@ namespace VoidArchitect
         private:
             static Resources::Texture2DPtr s_TestTexture;
             static Resources::MaterialPtr s_TestMaterial;
+            static Resources::MeshPtr s_TestMesh;
 
             static Platform::RHI_API_TYPE m_ApiType;
             static Platform::IRenderingHardware* m_RenderingHardware;

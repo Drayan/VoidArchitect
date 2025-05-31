@@ -3,6 +3,7 @@
 //
 #pragma once
 
+#include "Mesh.hpp"
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec4.hpp"
 #include "Core/Uuid.hpp"
@@ -45,9 +46,10 @@ namespace VoidArchitect
         struct GeometryRenderData
         {
             GeometryRenderData();
-            GeometryRenderData(const Math::Mat4& model, MaterialPtr material);
+            GeometryRenderData(const Math::Mat4& model, const MaterialPtr& material, const MeshPtr& mesh);
 
             Math::Mat4 Model;
+            MeshPtr Mesh;
             MaterialPtr Material;
         };
 

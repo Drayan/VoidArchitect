@@ -3,6 +3,7 @@
 //
 #pragma once
 #include "IRenderingHardware.hpp"
+#include "Resources/Mesh.hpp"
 
 namespace VoidArchitect
 {
@@ -30,7 +31,7 @@ namespace VoidArchitect::Platform
     enum class RHI_API_TYPE
     {
         None = 0, // Headless application, e.g., for the server.
-        Vulkan,   // Vulkan implementation of RHI.
+        Vulkan, // Vulkan implementation of RHI.
     };
 
     class IRenderingHardware
@@ -49,7 +50,8 @@ namespace VoidArchitect::Platform
             const Resources::PipelinePtr& pipeline,
             const Math::Mat4& projection,
             const Math::Mat4& view) = 0;
-        virtual void UpdateObjectState(const Resources::GeometryRenderData& data) = 0;
+
+        virtual void DrawMesh(const Resources::GeometryRenderData& data) = 0;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
@@ -63,10 +65,14 @@ namespace VoidArchitect::Platform
             const std::vector<uint8_t>& data) = 0;
         virtual Resources::IPipeline* CreatePipeline(PipelineConfig& config) = 0;
         virtual Resources::IMaterial* CreateMaterial(
-            const std::string& name, const Resources::PipelinePtr& pipeline) = 0;
+            const std::string& name,
+            const Resources::PipelinePtr& pipeline) = 0;
         virtual Resources::IShader* CreateShader(
             const std::string& name,
             const ShaderConfig& config,
             const std::vector<uint8_t>& data) = 0;
+        virtual Resources::IMesh* CreateMesh(
+            const std::vector<Resources::MeshVertex>& vertices,
+            const std::vector<uint32_t>& indices) = 0;
     };
 } // namespace VoidArchitect::Platform

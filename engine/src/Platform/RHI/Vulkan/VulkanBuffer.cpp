@@ -119,7 +119,10 @@ namespace VoidArchitect::Platform
     }
 
     bool VulkanBuffer::Resize(
-        const VulkanRHI& rhi, const uint64_t newSize, const VkQueue queue, const VkCommandPool pool)
+        const VulkanRHI& rhi,
+        const uint64_t newSize,
+        const VkQueue queue,
+        const VkCommandPool pool)
     {
         // Create a new buffer.
         auto bufferCreateInfo = VkBufferCreateInfo{};
@@ -178,7 +181,9 @@ namespace VoidArchitect::Platform
     }
 
     void* VulkanBuffer::LockMemory(
-        const uint64_t offset, const uint64_t size, const VkMemoryMapFlags flags) const
+        const uint64_t offset,
+        const uint64_t size,
+        const VkMemoryMapFlags flags) const
     {
         void* data;
         vkMapMemory(m_Device, m_Memory, offset, size, flags, &data);
@@ -215,17 +220,17 @@ namespace VoidArchitect::Platform
         const VulkanRHI& rhi,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
-        const std::vector<float>& data,
+        const std::vector<Resources::MeshVertex>& data,
         const bool bindOnCreate)
         : VulkanBuffer(
-              rhi,
-              device,
-              allocator,
-              data.size() * sizeof(float),
-              VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
-                  | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-              bindOnCreate)
+            rhi,
+            device,
+            allocator,
+            data.size() * sizeof(Resources::MeshVertex),
+            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+            | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+            bindOnCreate)
     {
         const auto staging = VulkanStagingBuffer(rhi, device, allocator, data);
         auto fence = VulkanFence(m_Device, m_Allocator);
@@ -241,9 +246,21 @@ namespace VoidArchitect::Platform
         fence.Wait();
     }
 
-    void VulkanVertexBuffer::Bind() {}
+    void VulkanVertexBuffer::Bind(IRenderingHardware& rhi)
+    {
+        auto& vkRhi = dynamic_cast<VulkanRHI&>(rhi);
+        VkDeviceSize offsets = {0};
+        vkCmdBindVertexBuffers(
+            vkRhi.GetCurrentCommandBuffer().GetHandle(),
+            0,
+            1,
+            &m_Buffer,
+            &offsets);
+    }
 
-    void VulkanVertexBuffer::Unbind() {}
+    void VulkanVertexBuffer::Unbind()
+    {
+    }
 
     VulkanIndexBuffer::VulkanIndexBuffer(
         const VulkanRHI& rhi,
@@ -252,14 +269,14 @@ namespace VoidArchitect::Platform
         const std::vector<uint32_t>& data,
         bool bindOnCreate)
         : VulkanBuffer(
-              rhi,
-              device,
-              allocator,
-              data.size() * sizeof(uint32_t),
-              VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
-                  | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-              VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-              bindOnCreate)
+            rhi,
+            device,
+            allocator,
+            data.size() * sizeof(uint32_t),
+            VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT
+            | VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+            bindOnCreate)
     {
         const auto staging = VulkanStagingBuffer(rhi, device, allocator, data);
         auto fence = VulkanFence(m_Device, m_Allocator);
@@ -275,7 +292,17 @@ namespace VoidArchitect::Platform
         fence.Wait();
     }
 
-    void VulkanIndexBuffer::Bind() {}
+    void VulkanIndexBuffer::Bind(IRenderingHardware& rhi)
+    {
+        auto& vkRhi = dynamic_cast<VulkanRHI&>(rhi);
+        vkCmdBindIndexBuffer(
+            vkRhi.GetCurrentCommandBuffer().GetHandle(),
+            m_Buffer,
+            0,
+            VK_INDEX_TYPE_UINT32);
+    }
 
-    void VulkanIndexBuffer::Unbind() {}
+    void VulkanIndexBuffer::Unbind()
+    {
+    }
 } // namespace VoidArchitect::Platform

@@ -13,6 +13,7 @@
 #include "VulkanFence.hpp"
 #include "VulkanMaterial.hpp"
 #include "VulkanMaterialBufferManager.hpp"
+#include "VulkanMesh.hpp"
 #include "VulkanPipeline.hpp"
 #include "VulkanRenderpass.hpp"
 #include "VulkanShader.hpp"
@@ -68,53 +69,11 @@ namespace VoidArchitect::Platform
             m_Allocator);
 
         CreateGlobalUBO();
-
-        // TEMP Create testing buffers here.
-        const std::vector vertices = {
-            -0.5f,
-            -0.5f,
-            0.0f,
-
-            0.0f,
-            0.0f,
-
-            0.5f,
-            0.5f,
-            0.0f,
-
-            1.0f,
-            1.0f,
-
-            -0.5f,
-            0.5f,
-            0.0f,
-
-            0.0f,
-            1.0f,
-
-            0.5f,
-            -0.5f,
-            0.0f,
-
-            1.0f,
-            0.0f,
-        };
-        const std::vector<uint32_t> indices = {0, 1, 2, 0, 3, 1};
-        m_VertexBuffer =
-            std::make_unique<VulkanVertexBuffer>(*this, m_Device, m_Allocator, vertices);
-
-        m_IndexBuffer = std::make_unique<VulkanIndexBuffer>(*this, m_Device, m_Allocator, indices);
-        // TEMP End of temporary code
     }
 
     VulkanRHI::~VulkanRHI()
     {
         m_Device->WaitIdle();
-
-        // TEMP Test code
-        m_VertexBuffer.reset();
-        m_IndexBuffer.reset();
-        // TEMP End of temp code
 
         // TEMP Global UBO
         if (m_GlobalDescriptorSets != nullptr)
@@ -252,18 +211,6 @@ namespace VoidArchitect::Platform
     {
         auto& cmdBuf = m_GraphicsCommandBuffers[m_ImageIndex];
 
-        // TEMP Testing vertex and index buffers
-        constexpr auto offsets = VkDeviceSize{0};
-        const auto vertexBuffer = m_VertexBuffer->GetHandle();
-        vkCmdBindVertexBuffers(cmdBuf.GetHandle(), 0, 1, &vertexBuffer, &offsets);
-        vkCmdBindIndexBuffer(
-            cmdBuf.GetHandle(),
-            m_IndexBuffer->GetHandle(),
-            0,
-            VK_INDEX_TYPE_UINT32);
-        vkCmdDrawIndexed(cmdBuf.GetHandle(), 6, 1, 0, 0, 0);
-        // TEMP End of temp bloc
-
         m_MainRenderpass->End(cmdBuf);
 
         cmdBuf.End();
@@ -365,9 +312,17 @@ namespace VoidArchitect::Platform
             nullptr);
     }
 
-    void VulkanRHI::UpdateObjectState(const Resources::GeometryRenderData& data)
+    void VulkanRHI::DrawMesh(const Resources::GeometryRenderData& data)
     {
-        // m_Material->SetObject(*this, data);
+        data.Material->SetObject(*this, data);
+        data.Mesh->Bind(*this);
+        vkCmdDrawIndexed(
+            GetCurrentCommandBuffer().GetHandle(),
+            data.Mesh->GetIndicesCount(),
+            1,
+            0,
+            0,
+            0);
     }
 
     Resources::Texture2D* VulkanRHI::CreateTexture2D(
@@ -415,6 +370,13 @@ namespace VoidArchitect::Platform
         const std::vector<uint8_t>& data)
     {
         return new VulkanShader(m_Device, m_Allocator, name, config, data);
+    }
+
+    Resources::IMesh* VulkanRHI::CreateMesh(
+        const std::vector<Resources::MeshVertex>& vertices,
+        const std::vector<uint32_t>& indices)
+    {
+        return new VulkanMesh(*this, m_Allocator, vertices, indices);
     }
 
     int32_t VulkanRHI::FindMemoryIndex(
