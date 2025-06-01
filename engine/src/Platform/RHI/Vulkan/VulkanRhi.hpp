@@ -2,13 +2,11 @@
 // Created by Michael Desmedt on 14/05/2025.
 //
 #pragma once
-#include "Platform/RHI/IRenderingHardware.hpp"
+#include <vulkan/vulkan.h>
 
-#include "Resources/Pipeline.hpp"
 #include "VulkanCommandBuffer.hpp"
 #include "VulkanDevice.hpp"
-
-#include <vulkan/vulkan.h>
+#include "Platform/RHI/IRenderingHardware.hpp"
 
 namespace VoidArchitect
 {
@@ -21,8 +19,8 @@ namespace VoidArchitect
         class Texture2D;
         class IMaterial;
         class IPipeline;
-    } // namespace Resources
-} // namespace VoidArchitect
+    }
+}
 
 namespace VoidArchitect::Platform
 {
@@ -35,8 +33,6 @@ namespace VoidArchitect::Platform
     class VulkanIndexBuffer;
     class VulkanBuffer;
     class VulkanMaterial;
-
-    // TEMP This should not stay here.
 
     class VulkanRHI final : public IRenderingHardware
     {

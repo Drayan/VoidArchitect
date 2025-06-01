@@ -592,7 +592,7 @@ namespace VoidArchitect::Platform
     {
         for (const auto& availableFormat : m_Formats)
         {
-            if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB
+            if (availableFormat.format == VK_FORMAT_R8G8B8A8_SRGB
                 && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
             {
                 return availableFormat;
@@ -683,9 +683,9 @@ namespace VoidArchitect::Platform
             0,
             m_FramebufferWidth,
             m_FramebufferHeight,
-            0.02f,
-            0.02f,
-            0.02f,
+            0.1f,
+            0.1f,
+            0.1f,
             1.0f,
             1.0f,
             0);

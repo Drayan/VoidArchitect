@@ -12,11 +12,6 @@ namespace VoidArchitect::Platform
     class VulkanFramebuffer
     {
     public:
-        // VulkanFramebuffer(
-        //     const std::unique_ptr<VulkanDevice>& device,
-        //     VkAllocationCallbacks* allocator,
-        //     const std::unique_ptr<VulkanRenderpass>& renderpass
-        // );
         VulkanFramebuffer(
             VkDevice device,
             VkAllocationCallbacks* allocator,
