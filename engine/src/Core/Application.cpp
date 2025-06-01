@@ -14,7 +14,7 @@
 #include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_timer.h>
 
-#include "Systems/Renderer/Camera.hpp"
+#include "Systems/ResourceSystem.hpp"
 
 namespace VoidArchitect
 {
@@ -28,6 +28,7 @@ namespace VoidArchitect
         // Setting up Subsystems
         try
         {
+            g_ResourceSystem = std::make_unique<ResourceSystem>();
             Renderer::RenderCommand::Initialize(Platform::RHI_API_TYPE::Vulkan, m_MainWindow);
         }
         catch (std::exception& e)
@@ -37,7 +38,11 @@ namespace VoidArchitect
         }
     }
 
-    Application::~Application() { Renderer::RenderCommand::Shutdown(); }
+    Application::~Application()
+    {
+        Renderer::RenderCommand::Shutdown();
+        g_ResourceSystem = nullptr;
+    }
 
     void Application::Run()
     {

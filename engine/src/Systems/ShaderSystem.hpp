@@ -22,14 +22,6 @@ namespace VoidArchitect
         Resources::ShaderPtr LoadShader(const std::string& name);
 
     private:
-        static constexpr std::string DefaultShaderPath = "assets/shaders/";
-        static constexpr std::string DefaultShaderExtension = ".shader";
-
-
-        ShaderConfig ParseShaderMetadata(const std::string& path);
-        ShaderConfig InferMetadataFromFilename(const std::string& name);
-        Resources::ShaderStage StringToShaderStage(const std::string& stage);
-
         void LoadDefaultShaders();
         void ReleaseShader(const Resources::IShader* shader);
         uint32_t GetFreeShaderHandle();
@@ -53,5 +45,4 @@ namespace VoidArchitect
     };
 
     inline std::unique_ptr<ShaderSystem> g_ShaderSystem;
-
 } // namespace VoidArchitect

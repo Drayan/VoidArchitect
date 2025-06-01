@@ -244,4 +244,6 @@ Temporary Items
 build/*
 assets/*
 !assets/shaders
+assets/shaders/*.shader
+assets/shaders/*.yaml
 !assets/materials

@@ -40,15 +40,6 @@ namespace VoidArchitect
         uint32_t GetFreeTextureHandle();
         void ReleaseTexture(const Resources::ITexture* texture);
 
-        // TEMP This will be removed once we have a proper resource manager
-        static std::vector<uint8_t> LoadRawData(
-            const std::string& name,
-            int32_t& width,
-            int32_t& height,
-            int32_t& channels,
-            bool& hasTransparency);
-        // TEMP End
-
         struct TextureDeleter
         {
             TextureSystem* system;
@@ -75,4 +66,4 @@ namespace VoidArchitect
     };
 
     inline std::unique_ptr<TextureSystem> g_TextureSystem;
-} // namespace VoidArchitect
+}

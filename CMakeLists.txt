@@ -58,7 +58,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_ROOT}/lib/${CMAKE_SYSTEM_NAME})
 
 # Assets configuration
 set(ASSETS_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")
-set(ASSETS_OUTPUT_DIR "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets")
+set(ASSETS_OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")
 
 # Find DXC executable from Vulkan SDK
 find_package(Vulkan REQUIRED COMPONENTS dxc)
@@ -211,14 +211,12 @@ setup_asset_directories()
 # Compile shaders
 compile_hlsl_shaders()
 
-symlink_assets("textures" "textures")
-
 # Add subprojects
 add_subdirectory(engine)
 add_subdirectory(client)
 
 # Make the client depend on our asset compilation
-add_dependencies(VoidArchitect_Client compile_shaders symlink_textures_assets)
+add_dependencies(VoidArchitect_Client compile_shaders)
 
 # Uncomment and adapt these lines when you need to copy other asset types
 # copy_assets("textures" "textures" "*.png;*.jpg;*.jpeg")
