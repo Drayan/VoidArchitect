@@ -7,6 +7,11 @@
 #include "Resources/Material.hpp"
 #include "Resources/Texture.hpp"
 
+namespace VoidArchitect::Resources
+{
+    struct GeometryRenderData;
+}
+
 namespace VoidArchitect
 {
     class Window;
@@ -19,6 +24,18 @@ namespace VoidArchitect
 
     namespace Renderer
     {
+        struct RenderPacket
+        {
+            float deltaTime;
+            Resources::GeometryRenderData& data;
+
+            RenderPacket(const float dt, Resources::GeometryRenderData& data)
+                : deltaTime(dt),
+                  data(data)
+            {
+            }
+        };
+
         class RenderCommand
         {
         public:
@@ -30,6 +47,8 @@ namespace VoidArchitect
             static bool BeginFrame(float deltaTime);
             static bool BeginFrame(Camera& camera, float deltaTime);
             static bool EndFrame(float deltaTime);
+
+            static void DrawPacket(const RenderPacket& packet);
 
             static Camera& CreatePerspectiveCamera(float fov, float near, float far);
             static Camera& CreateOrthographicCamera(

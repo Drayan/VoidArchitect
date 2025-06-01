@@ -9,7 +9,6 @@
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Platform/RHI/Vulkan/VulkanRhi.hpp"
 #include "Resources/Material.hpp"
-#include "Resources/Texture.hpp"
 #include "Systems/MaterialSystem.hpp"
 #include "Systems/MeshSystem.hpp"
 #include "Systems/PipelineSystem.hpp"
@@ -89,27 +88,7 @@ namespace VoidArchitect::Renderer
         s_TestMaterial = g_MaterialSystem->LoadMaterial("TestMaterial");
 
         // TEMP Create a test mesh.
-        const std::vector vertices = {
-            Resources::MeshVertex{
-                .Position = Math::Vec3(-0.5f, -0.5f, 0.0f),
-                .UV0 = Math::Vec2(0.0f, 0.0f),
-            },
-            Resources::MeshVertex{
-                .Position = Math::Vec3(0.5f, 0.5f, 0.0f),
-                .UV0 = Math::Vec2(1.0f, 1.0f),
-            },
-            Resources::MeshVertex{
-                .Position = Math::Vec3(-0.5f, 0.5f, 0.0f),
-                .UV0 = Math::Vec2(0.0f, 1.0f),
-            },
-            Resources::MeshVertex{
-                .Position = Math::Vec3(0.5f, -0.5f, 0.0f),
-                .UV0 = Math::Vec2(1.0f, 0.0f),
-            }
-        };
-
-        const std::vector<uint32_t> indices = {0, 1, 2, 0, 3, 1};
-        s_TestMesh = g_MeshSystem->CreateMesh("TestMesh", vertices, indices);
+        s_TestMesh = g_MeshSystem->CreateCube("TestMesh");
 
         CreatePerspectiveCamera(45.0f, 0.1f, 100.0f);
 
@@ -184,6 +163,12 @@ namespace VoidArchitect::Renderer
     bool RenderCommand::EndFrame(const float deltaTime)
     {
         return m_RenderingHardware->EndFrame(deltaTime);
+    }
+
+    void RenderCommand::DrawPacket(const RenderPacket& packet)
+    {
+        packet.data.Material->Bind(*m_RenderingHardware);
+        m_RenderingHardware->DrawMesh(packet.data);
     }
 
     Camera& RenderCommand::CreatePerspectiveCamera(float fov, float near, float far)

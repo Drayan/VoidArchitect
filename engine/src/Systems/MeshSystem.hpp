@@ -18,6 +18,19 @@ namespace VoidArchitect
             const std::string& name,
             const std::vector<Resources::MeshVertex>& vertices,
             const std::vector<uint32_t>& indices);
+        Resources::MeshPtr CreateSphere(
+            const std::string& name,
+            float radius = 0.5f,
+            uint32_t latitudeBands = 8,
+            uint32_t longitudeBands = 8);
+        Resources::MeshPtr CreateCube(const std::string& name, float size = 1.0f);
+        Resources::MeshPtr CreatePlane(
+            const std::string& name,
+            float width = 1.0f,
+            float height = 1.0f,
+            const Math::Vec3& normal = Math::Vec3::Up(),
+            uint32_t widthSegments = 1,
+            uint32_t heightSegments = 1);
 
     private:
         uint32_t GetFreeMeshHandle();

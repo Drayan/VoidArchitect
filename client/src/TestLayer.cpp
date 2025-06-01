@@ -3,10 +3,11 @@
 //
 #include "TestLayer.hpp"
 
-#include "../../../../../../opt/homebrew/Cellar/sdl3/3.2.12/include/SDL3/SDL_keycode.h"
 #include "Core/Logger.hpp"
 #include "Systems/Renderer/Camera.hpp"
 #include "Systems/Renderer/RenderCommand.hpp"
+
+#include <SDL3/SDL_keycode.h>
 
 void TestLayer::OnAttach()
 {
