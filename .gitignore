@@ -243,5 +243,5 @@ Temporary Items
 ### VoidArchitect ###
 build/*
 assets/*
-!assets/shaders/*
-!assets/materials/*
+!assets/shaders
+!assets/materials
