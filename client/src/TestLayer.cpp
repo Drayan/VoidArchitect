@@ -24,9 +24,9 @@ void TestLayer::OnDetach()
     VA_APP_TRACE("[TestLayer] OnDetach.");
 }
 
-void TestLayer::OnUpdate(float deltaTime)
+void TestLayer::OnFixedUpdate(const float fixedTimestep)
 {
-    m_DebugCameraController->OnUpdate(deltaTime);
+    m_DebugCameraController->OnFixedUpdate(fixedTimestep);
 }
 
 void TestLayer::OnEvent(VoidArchitect::Event& e)

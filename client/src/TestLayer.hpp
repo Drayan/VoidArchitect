@@ -10,7 +10,7 @@ class TestLayer : public VoidArchitect::Layer
 public:
     void OnAttach() override;
     void OnDetach() override;
-    void OnUpdate(float deltaTime) override;
+    void OnFixedUpdate(float fixedTimestep) override;
     void OnEvent(VoidArchitect::Event& e) override;
 
 private:

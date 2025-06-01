@@ -17,7 +17,7 @@ namespace VoidArchitect ::Renderer
     public:
         DebugCameraController(Camera& camera);
 
-        void OnUpdate(float deltaTime);
+        void OnFixedUpdate(float fixedTimestep);
         void OnEvent(Event& e);
 
         bool OnKeyPressed(KeyPressedEvent& e);
@@ -41,7 +41,7 @@ namespace VoidArchitect ::Renderer
         float m_Pitch = 0.0f;
         float m_Yaw = 0.0f;
 
-        float m_MovementSpeed = 5.0f;
+        float m_MovementSpeed = 5.f;
         float m_RotationSpeed = .005f;
 
         bool m_MoveForward = false;

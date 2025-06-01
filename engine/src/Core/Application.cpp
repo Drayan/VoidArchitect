@@ -12,6 +12,7 @@
 
 // TEMP Remove this include when we have proper keycode.
 #include <SDL3/SDL_keycode.h>
+#include <SDL3/SDL_timer.h>
 
 #include "Systems/Renderer/Camera.hpp"
 
@@ -40,17 +41,31 @@ namespace VoidArchitect
 
     void Application::Run()
     {
+        constexpr double FIXED_STEP = 1.0 / 60.0;
+        double accumulator = 0.0;
+        double currentTime = SDL_GetTicks() / 1000.f;
         while (m_Running)
         {
-            for (Layer* layer : m_LayerStack)
-                layer->OnUpdate(1.0f / 60.0f);
+            const double newTime = SDL_GetTicks() / 1000.f;
+            const double frameTime = newTime - currentTime;
+            currentTime = newTime;
+
+            accumulator += frameTime;
+
+            while (accumulator >= FIXED_STEP)
+            {
+                for (Layer* layer : m_LayerStack)
+                    layer->OnFixedUpdate(FIXED_STEP);
+
+                accumulator -= FIXED_STEP;
+            }
+
+            if (Renderer::RenderCommand::BeginFrame(frameTime))
+            {
+                Renderer::RenderCommand::EndFrame(frameTime);
+            }
 
             m_MainWindow->OnUpdate();
-
-            if (Renderer::RenderCommand::BeginFrame(1.0f / 60.0f))
-            {
-                Renderer::RenderCommand::EndFrame(1.0f / 60.0f);
-            }
         }
     }
 

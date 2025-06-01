@@ -35,7 +35,7 @@ namespace VoidArchitect::Renderer
         m_Up = m_CameraOrientation.RotateVector(Math::Vec3::Up());
     }
 
-    void DebugCameraController::OnUpdate(const float deltaTime)
+    void DebugCameraController::OnFixedUpdate(const float fixedTimestep)
     {
         m_CameraPosition = m_Camera.GetPosition();
 
@@ -57,7 +57,7 @@ namespace VoidArchitect::Renderer
         if (!velocity.IsZero())
             velocity.Normalize();
 
-        m_CameraPosition += velocity * m_MovementSpeed * deltaTime;
+        m_CameraPosition += velocity * m_MovementSpeed * fixedTimestep;
         m_Camera.SetPosition(m_CameraPosition);
         m_Camera.SetRotation(m_CameraOrientation);
     }
@@ -125,7 +125,7 @@ namespace VoidArchitect::Renderer
             case SDLK_SPACE:
                 m_MoveUp = true;
                 break;
-            default:;
+            default: ;
         }
 
         return false;
@@ -153,7 +153,7 @@ namespace VoidArchitect::Renderer
             case SDLK_SPACE:
                 m_MoveUp = false;
                 break;
-            default:;
+            default: ;
         }
 
         return false;
@@ -166,7 +166,7 @@ namespace VoidArchitect::Renderer
             case SDL_BUTTON_RIGHT:
                 m_MouseDrag = true;
                 break;
-            default:;
+            default: ;
         }
 
         return false;
@@ -179,7 +179,7 @@ namespace VoidArchitect::Renderer
             case SDL_BUTTON_RIGHT:
                 m_MouseDrag = false;
                 break;
-            default:;
+            default: ;
         }
 
         return false;
