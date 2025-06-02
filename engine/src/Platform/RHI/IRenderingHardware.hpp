@@ -9,6 +9,12 @@ namespace VoidArchitect
 {
     struct ShaderConfig;
     struct PipelineConfig;
+
+    namespace Renderer
+    {
+        struct RenderPassConfig;
+        struct RenderTargetConfig;
+    }
 } // namespace VoidArchitect
 
 namespace VoidArchitect::Math
@@ -23,6 +29,9 @@ namespace VoidArchitect::Resources
     class IMaterial;
     class IShader;
     class IPipeline;
+    class IRenderTarget;
+    class IRenderPass;
+
     using PipelinePtr = std::shared_ptr<IPipeline>;
 } // namespace VoidArchitect::Resources
 
@@ -75,5 +84,13 @@ namespace VoidArchitect::Platform
             const std::string& name,
             const std::vector<Resources::MeshVertex>& vertices,
             const std::vector<uint32_t>& indices) = 0;
+
+        ///////////////////////////////////////////////////////////////////////
+        //// RenderGraph Resources ////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+        virtual Resources::IRenderTarget* CreateRenderTarget(
+            const Renderer::RenderTargetConfig& config) = 0;
+        virtual Resources::IRenderPass* CreateRenderPass(
+            const Renderer::RenderPassConfig& config) = 0;
     };
 } // namespace VoidArchitect::Platform

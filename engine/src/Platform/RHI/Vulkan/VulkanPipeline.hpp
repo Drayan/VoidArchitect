@@ -17,7 +17,7 @@ namespace VoidArchitect
 namespace VoidArchitect::Platform
 {
     class VulkanDevice;
-    class VulkanRenderpass;
+    class VulkanRenderPass;
     class VulkanCommandBuffer;
     class VulkanShader;
 
@@ -28,7 +28,7 @@ namespace VoidArchitect::Platform
             const PipelineConfig& config,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
-            const std::unique_ptr<VulkanRenderpass>& renderPass);
+            const std::unique_ptr<VulkanRenderPass>& renderPass);
         ~VulkanPipeline() override;
 
         // void Bind(const VulkanCommandBuffer& cmdBuf, VkPipelineBindPoint bindPoint) const;

@@ -25,7 +25,7 @@ namespace VoidArchitect
 namespace VoidArchitect::Platform
 {
     class VulkanSwapchain;
-    class VulkanRenderpass;
+    class VulkanRenderPass;
     class VulkanPipeline;
     class VulkanFence;
     class VulkanShader;
@@ -78,6 +78,14 @@ namespace VoidArchitect::Platform
             const std::vector<Resources::MeshVertex>& vertices,
             const std::vector<uint32_t>& indices) override;
 
+        ///////////////////////////////////////////////////////////////////////
+        //// RenderGraph Resources ////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+        Resources::IRenderTarget* CreateRenderTarget(
+            const Renderer::RenderTargetConfig& config) override;
+        Resources::IRenderPass* CreateRenderPass(
+            const Renderer::RenderPassConfig& config) override;
+
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
         {
             return m_Capabilities;
@@ -93,7 +101,7 @@ namespace VoidArchitect::Platform
 
         std::unique_ptr<VulkanDevice>& GetDeviceRef() { return m_Device; }
         std::unique_ptr<VulkanSwapchain>& GetSwapchainRef() { return m_Swapchain; }
-        std::unique_ptr<VulkanRenderpass>& GetMainRenderpassRef() { return m_MainRenderpass; }
+        std::unique_ptr<VulkanRenderPass>& GetMainRenderpassRef() { return m_MainRenderpass; }
         [[nodiscard]] uint32_t GetImageIndex() const { return m_ImageIndex; }
 
         [[nodiscard]] int32_t FindMemoryIndex(uint32_t typeFilter, uint32_t propertyFlags) const;
@@ -149,7 +157,7 @@ namespace VoidArchitect::Platform
         uint32_t m_CurrentIndex;
         bool m_RecreatingSwapchain = false;
         std::unique_ptr<VulkanSwapchain> m_Swapchain;
-        std::unique_ptr<VulkanRenderpass> m_MainRenderpass;
+        std::unique_ptr<VulkanRenderPass> m_MainRenderpass;
         std::vector<VulkanCommandBuffer> m_GraphicsCommandBuffers;
 
         std::vector<VkSemaphore> m_ImageAvailableSemaphores;

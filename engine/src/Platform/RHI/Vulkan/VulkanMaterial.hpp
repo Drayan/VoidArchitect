@@ -14,7 +14,7 @@ namespace VoidArchitect::Platform
     class VulkanShader;
     class VulkanDevice;
     class VulkanSwapchain;
-    class VulkanRenderpass;
+    class VulkanRenderPass;
     class VulkanPipeline;
     class VulkanBuffer;
 

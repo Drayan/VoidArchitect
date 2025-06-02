@@ -29,8 +29,10 @@ namespace VoidArchitect
             [[nodiscard]] UUID GetUUID() const { return m_UUID; }
             [[nodiscard]] const std::string& GetName() const { return m_Name; }
 
-            virtual void Begin(Platform::IRenderingHardware& rhi) = 0;
+            virtual void Begin(Platform::IRenderingHardware& rhi, const RenderTargetPtr& target) = 0;
             virtual void End(Platform::IRenderingHardware& rhi) = 0;
+
+            [[nodiscard]] virtual bool IsCompatibleWith(const RenderTargetPtr& target) const = 0;
 
         protected:
             IRenderPass(const std::string& name);

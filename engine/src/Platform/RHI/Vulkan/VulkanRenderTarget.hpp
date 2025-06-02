@@ -14,18 +14,11 @@ namespace VoidArchitect::Renderer
 namespace VoidArchitect::Platform
 {
     class VulkanDevice;
-    class VulkanRenderpass;
+    class VulkanRenderPass;
 
     class VulkanRenderTarget : public Resources::IRenderTarget
     {
     public:
-        // VulkanRenderTarget(
-        //     VkDevice device,
-        //     VkAllocationCallbacks* allocator,
-        //     const std::unique_ptr<VulkanRenderpass>& renderpass,
-        //     uint32_t width,
-        //     uint32_t height,
-        //     const std::vector<VkImageView>& attachments);
         // Constructor for the main target (for the swapchain)
         VulkanRenderTarget(
             const Renderer::RenderTargetConfig& config,
@@ -44,7 +37,7 @@ namespace VoidArchitect::Platform
 
         // Vulkan-specific methods
         void CreateFramebuffer(
-            const std::unique_ptr<VulkanRenderpass>& renderpass,
+            const std::unique_ptr<VulkanRenderPass>& renderpass,
             const std::vector<VkImageView>& attachments);
         void UpdateAttachments(const std::vector<VkImageView>& attachments);
 

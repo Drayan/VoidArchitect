@@ -4,7 +4,7 @@
 #include "VulkanRenderTarget.hpp"
 
 #include "Core/Logger.hpp"
-#include "VulkanRenderpass.hpp"
+#include "VulkanRenderPass.hpp"
 #include "VulkanUtils.hpp"
 
 namespace VoidArchitect::Platform
@@ -13,7 +13,7 @@ namespace VoidArchitect::Platform
         const Renderer::RenderTargetConfig& config,
         VkDevice device,
         VkAllocationCallbacks* allocator)
-        : IRenderTarget(config.Name, config.Width, config.Height, config.Format, config.isMain),
+        : IRenderTarget(config.Name, config.Width, config.Height, config.Format, config.IsMain),
           m_Device(device),
           m_Allocator(allocator)
     {
@@ -31,7 +31,7 @@ namespace VoidArchitect::Platform
         VkDevice device,
         VkAllocationCallbacks* allocator,
         const std::vector<VkImageView>& attachments)
-        : IRenderTarget(config.Name, config.Width, config.Height, config.Format, config.isMain),
+        : IRenderTarget(config.Name, config.Width, config.Height, config.Format, config.IsMain),
           m_Device(device),
           m_Allocator(allocator),
           m_Attachments(attachments)
@@ -81,7 +81,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanRenderTarget::CreateFramebuffer(
-        const std::unique_ptr<VulkanRenderpass>& renderpass,
+        const std::unique_ptr<VulkanRenderPass>& renderpass,
         const std::vector<VkImageView>& attachments)
     {
         // Store attachment for potential future recreation

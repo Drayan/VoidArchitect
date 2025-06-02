@@ -7,7 +7,7 @@
 #include "Systems/PipelineSystem.hpp"
 #include "VulkanDescriptorSetLayoutManager.hpp"
 #include "VulkanDevice.hpp"
-#include "VulkanRenderpass.hpp"
+#include "VulkanRenderPass.hpp"
 #include "VulkanRhi.hpp"
 #include "VulkanShader.hpp"
 #include "VulkanUtils.hpp"
@@ -20,7 +20,7 @@ namespace VoidArchitect::Platform
         const PipelineConfig& config,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
-        const std::unique_ptr<VulkanRenderpass>& renderPass)
+        const std::unique_ptr<VulkanRenderPass>& renderPass)
         : m_Device(device->GetLogicalDeviceHandle()),
           m_Allocator(allocator)
     {

@@ -24,6 +24,8 @@ namespace VoidArchitect
 
     namespace Renderer
     {
+        class RenderGraph;
+
         struct RenderPacket
         {
             float deltaTime;
@@ -71,6 +73,8 @@ namespace VoidArchitect
             static Resources::Texture2DPtr s_TestTexture;
             static Resources::MaterialPtr s_TestMaterial;
             static Resources::MeshPtr s_TestMesh;
+
+            static std::unique_ptr<RenderGraph> s_RenderGraph;
 
             static Platform::RHI_API_TYPE m_ApiType;
             static Platform::IRenderingHardware* m_RenderingHardware;

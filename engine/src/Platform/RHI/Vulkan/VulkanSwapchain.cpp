@@ -5,7 +5,7 @@
 
 #include "Core/Logger.hpp"
 #include "VulkanImage.hpp"
-#include "VulkanRenderpass.hpp"
+#include "VulkanRenderPass.hpp"
 #include "VulkanRhi.hpp"
 #include "VulkanUtils.hpp"
 
@@ -115,7 +115,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanSwapchain::RegenerateFramebuffers(
-        const std::unique_ptr<VulkanRenderpass>& renderpass,
+        const std::unique_ptr<VulkanRenderPass>& renderpass,
         uint32_t width,
         uint32_t height)
     {
@@ -128,7 +128,7 @@ namespace VoidArchitect::Platform
                 .Width = width,
                 .Height = height,
                 .Format = TranslateVulkanTextureFormatToEngine(m_Format.format),
-                .isMain = true
+                .IsMain = true
             };
 
             std::vector attachments = {m_SwapchainImages[i].GetView(), m_DepthImage.GetView()};

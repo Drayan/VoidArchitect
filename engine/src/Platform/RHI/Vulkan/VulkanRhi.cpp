@@ -15,7 +15,7 @@
 #include "VulkanMaterialBufferManager.hpp"
 #include "VulkanMesh.hpp"
 #include "VulkanPipeline.hpp"
-#include "VulkanRenderpass.hpp"
+#include "VulkanRenderPass.hpp"
 #include "VulkanShader.hpp"
 #include "VulkanSwapchain.hpp"
 #include "VulkanTexture.hpp"
@@ -380,6 +380,72 @@ namespace VoidArchitect::Platform
         return new VulkanMesh(*this, m_Allocator, name, vertices, indices);
     }
 
+    Resources::IRenderTarget* VulkanRHI::CreateRenderTarget(
+        const Renderer::RenderTargetConfig& config)
+    {
+        if (config.IsMain)
+        {
+            // Main target: Use swapchain dimensions and format
+            auto mainConfig = config;
+            mainConfig.Width = m_FramebufferWidth;
+            mainConfig.Height = m_FramebufferHeight;
+
+            // Create the main render target (no attachment yet - managed by swapchain)
+            return new VulkanRenderTarget(
+                mainConfig,
+                m_Device->GetLogicalDeviceHandle(),
+                m_Allocator);
+        }
+        else if (!config.Attachments.empty())
+        {
+            // External textures provided
+            std::vector<VkImageView> vulkanViews;
+            vulkanViews.reserve(config.Attachments.size());
+
+            for (const auto& texture : config.Attachments)
+            {
+                if (auto vulkanTexture = std::dynamic_pointer_cast<VulkanTexture2D>(texture))
+                {
+                    vulkanViews.push_back(vulkanTexture->GetImageView());
+                }
+                else
+                {
+                    VA_ENGINE_ERROR(
+                        "[VulkanRHI] Invalid texture type for RenderTarget attachment.");
+                    return nullptr;
+                }
+            }
+
+            return new VulkanRenderTarget(
+                config,
+                m_Device->GetLogicalDeviceHandle(),
+                m_Allocator,
+                vulkanViews);
+        }
+        else
+        {
+            // Auto-create textures based on config
+            std::vector<VkImageView> vulkanViews;
+
+            VA_ENGINE_WARN(
+                "[VulkanRHI] Auto texture creation not yet implented. Provide attachments explicitly for now.");
+            return nullptr;
+        }
+    }
+
+    Resources::IRenderPass* VulkanRHI::CreateRenderPass(const Renderer::RenderPassConfig& config)
+    {
+        const auto swapchainFormat = m_Swapchain->GetFormat();
+        const auto depthFormat = m_Swapchain->GetDepthFormat();
+
+        return new VulkanRenderPass(
+            config,
+            m_Device,
+            m_Allocator,
+            swapchainFormat,
+            depthFormat);
+    }
+
     int32_t VulkanRHI::FindMemoryIndex(
         const uint32_t typeFilter,
         const uint32_t propertyFlags) const
@@ -700,7 +766,7 @@ namespace VoidArchitect::Platform
 
     void VulkanRHI::CreateRenderpass()
     {
-        m_MainRenderpass = std::make_unique<VulkanRenderpass>(
+        m_MainRenderpass = std::make_unique<VulkanRenderPass>(
             m_Device,
             m_Swapchain,
             m_Allocator,

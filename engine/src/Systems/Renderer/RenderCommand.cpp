@@ -4,6 +4,7 @@
 #include "RenderCommand.hpp"
 
 #include "Camera.hpp"
+#include "RenderGraph.hpp"
 #include "Core/Logger.hpp"
 #include "Core/Window.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
@@ -20,6 +21,8 @@ namespace VoidArchitect::Renderer
     Resources::Texture2DPtr RenderCommand::s_TestTexture;
     Resources::MaterialPtr RenderCommand::s_TestMaterial;
     Resources::MeshPtr RenderCommand::s_TestMesh;
+
+    std::unique_ptr<RenderGraph> RenderCommand::s_RenderGraph;
 
     Platform::RHI_API_TYPE RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
     Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
@@ -84,6 +87,15 @@ namespace VoidArchitect::Renderer
         g_MaterialSystem = std::make_unique<MaterialSystem>();
         g_MeshSystem = std::make_unique<MeshSystem>();
 
+        s_RenderGraph = std::make_unique<RenderGraph>(*m_RenderingHardware);
+        s_RenderGraph->SetupForwardRenderer(m_Width, m_Height);
+        s_RenderGraph->Compile();
+
+        if (!s_RenderGraph)
+        {
+            VA_ENGINE_CRITICAL("[RenderCommand] Failed to setup render graph.");
+        }
+
         // TEMP Try to load a test material.
         s_TestMaterial = g_MaterialSystem->LoadMaterial("TestMaterial");
 
@@ -99,6 +111,8 @@ namespace VoidArchitect::Renderer
     {
         // Wait that any pending operation is completed before beginning the shutdown procedure.
         m_RenderingHardware->WaitIdle(0);
+
+        s_RenderGraph = nullptr;
 
         s_TestMesh = nullptr;
         s_TestMaterial = nullptr;
@@ -137,26 +151,54 @@ namespace VoidArchitect::Renderer
         if (!m_RenderingHardware->BeginFrame(deltaTime))
             return false;
 
-        // TEMP Use the test pipeline.
-        g_PipelineSystem->GetDefaultPipeline()->Bind(*m_RenderingHardware);
+        if (s_RenderGraph)
+        {
+            camera.RecalculateView();
 
-        // Update the camera state and send it to the GPU.
-        camera.RecalculateView();
-        m_RenderingHardware->UpdateGlobalState(
-            g_PipelineSystem->GetDefaultPipeline(),
-            camera.GetProjection(),
-            camera.GetView());
+            FrameData frameData;
+            frameData.deltaTime = deltaTime;
+            frameData.Projection = camera.GetProjection();
+            frameData.View = camera.GetView();
 
-        // TEMP Testing to draw a single 'object' with the default material.
-        const auto& defaultMat =
-            s_TestMaterial != nullptr ? s_TestMaterial : g_MaterialSystem->GetDefaultMaterial();
-        const auto geometry = Resources::GeometryRenderData(
-            Math::Mat4::Identity(),
-            defaultMat,
-            s_TestMesh);
+            s_RenderGraph->Execute(frameData);
 
-        defaultMat->Bind(*m_RenderingHardware);
-        m_RenderingHardware->DrawMesh(geometry);
+            // TEMP: Continue with legary geometry rendering for now
+            // TODO: Move this inside RenderGraph::RenderPassContent
+            const auto& defaultMat = s_TestMaterial != nullptr
+                                         ? s_TestMaterial
+                                         : g_MaterialSystem->GetDefaultMaterial();
+            const auto geometry = Resources::GeometryRenderData(
+                Math::Mat4::Identity(),
+                defaultMat,
+                s_TestMesh);
+            defaultMat->Bind(*m_RenderingHardware);
+            m_RenderingHardware->DrawMesh(geometry);
+            // TEMP: End of legacy geometry rendering
+        }
+        else
+        {
+            // TEMP Use the test pipeline.
+            g_PipelineSystem->GetDefaultPipeline()->Bind(*m_RenderingHardware);
+
+            // Update the camera state and send it to the GPU.
+            camera.RecalculateView();
+            m_RenderingHardware->UpdateGlobalState(
+                g_PipelineSystem->GetDefaultPipeline(),
+                camera.GetProjection(),
+                camera.GetView());
+
+            // TEMP Testing to draw a single 'object' with the default material.
+            const auto& defaultMat =
+                s_TestMaterial != nullptr ? s_TestMaterial : g_MaterialSystem->GetDefaultMaterial();
+            const auto geometry = Resources::GeometryRenderData(
+                Math::Mat4::Identity(),
+                defaultMat,
+                s_TestMesh);
+
+            defaultMat->Bind(*m_RenderingHardware);
+            m_RenderingHardware->DrawMesh(geometry);
+        }
+
         return true;
     }
 

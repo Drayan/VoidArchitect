@@ -27,7 +27,7 @@ namespace VoidArchitect::Platform
         ~VulkanSwapchain();
 
         void RegenerateFramebuffers(
-            const std::unique_ptr<VulkanRenderpass>& renderpass,
+            const std::unique_ptr<VulkanRenderPass>& renderpass,
             uint32_t width,
             uint32_t height);
 
