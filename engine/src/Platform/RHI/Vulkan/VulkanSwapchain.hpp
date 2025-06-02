@@ -7,7 +7,7 @@
 
 #include <vulkan/vulkan.h>
 
-#include "VulkanFramebuffer.hpp"
+#include "VulkanRenderTarget.hpp"
 #include "VulkanImage.hpp"
 #include "VulkanRhi.hpp"
 
@@ -27,20 +27,30 @@ namespace VoidArchitect::Platform
         ~VulkanSwapchain();
 
         void RegenerateFramebuffers(
-            const std::unique_ptr<VulkanRenderpass>& renderpass, uint32_t width, uint32_t height);
+            const std::unique_ptr<VulkanRenderpass>& renderpass,
+            uint32_t width,
+            uint32_t height);
 
         bool AcquireNextImage(
-            uint64_t timeout, VkSemaphore semaphore, VkFence fence, uint32_t& out_imageIndex) const;
+            uint64_t timeout,
+            VkSemaphore semaphore,
+            VkFence fence,
+            uint32_t& out_imageIndex) const;
         void Present(VkQueue graphicsQueue, VkSemaphore renderComplete, uint32_t imageIndex) const;
 
-        VkFormat GetFormat() const { return m_Format.format; }
-        VkFormat GetDepthFormat() const { return m_DepthFormat; }
-        uint32_t GetImageCount() const { return static_cast<uint32_t>(m_SwapchainImages.size()); }
-        uint32_t GetMaxFrameInFlight() const { return m_MaxFrameInFlight; }
+        [[nodiscard]] VkFormat GetFormat() const { return m_Format.format; }
+        [[nodiscard]] VkFormat GetDepthFormat() const { return m_DepthFormat; }
 
-        VkFramebuffer GetFramebufferHandle(uint32_t index) const
+        [[nodiscard]] uint32_t GetImageCount() const
         {
-            return m_Framebuffers[index].GetHandle();
+            return static_cast<uint32_t>(m_SwapchainImages.size());
+        }
+
+        [[nodiscard]] uint32_t GetMaxFrameInFlight() const { return m_MaxFrameInFlight; }
+
+        [[nodiscard]] VkFramebuffer GetFramebufferHandle(const uint32_t index) const
+        {
+            return m_RenderTargets[index]->GetFramebuffer();
         }
 
         void Recreate(VulkanRHI& rhi, VkExtent2D extents, VkFormat depthFormat);
@@ -59,6 +69,6 @@ namespace VoidArchitect::Platform
         VulkanImage m_DepthImage;
         uint32_t m_MaxFrameInFlight = 2; // Support triple-buffering by default
 
-        std::vector<VulkanFramebuffer> m_Framebuffers;
+        std::vector<std::shared_ptr<VulkanRenderTarget>> m_RenderTargets;
     };
 } // namespace VoidArchitect::Platform

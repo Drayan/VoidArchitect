@@ -590,14 +590,39 @@ namespace VoidArchitect::Platform
 
     VkSurfaceFormatKHR VulkanRHI::ChooseSwapchainFormat() const
     {
+        constexpr VkFormat prefFormats[] = {
+            VK_FORMAT_R8G8B8A8_SRGB,
+            VK_FORMAT_B8G8R8A8_SRGB,
+            VK_FORMAT_R8G8B8A8_UNORM,
+            VK_FORMAT_B8G8R8A8_UNORM,
+        };
         for (const auto& availableFormat : m_Formats)
         {
-            if (availableFormat.format == VK_FORMAT_R8G8B8A8_SRGB
-                && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+            for (const auto& prefFormat : prefFormats)
             {
-                return availableFormat;
+                if (availableFormat.format == prefFormat && availableFormat.colorSpace ==
+                    VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+                {
+                    return availableFormat;
+                }
             }
         }
+
+        VA_ENGINE_WARN(
+            "[VulkanRHI] No suitable swapchain format found, choosing a default one : {}.",
+            static_cast<uint32_t>(m_Formats[0].format));
+
+#ifdef DEBUG
+        // In debug build, print the list of available formats.
+        VA_ENGINE_DEBUG("[VulkanRHI] Available formats:");
+        for (const auto& [format, colorSpace] : m_Formats)
+        {
+            VA_ENGINE_DEBUG(
+                "- {}/{}",
+                static_cast<uint32_t>(format),
+                static_cast<uint32_t>(colorSpace));
+        }
+#endif
 
         return m_Formats[0]; // If a required format is not found, we will use the first one.
     }

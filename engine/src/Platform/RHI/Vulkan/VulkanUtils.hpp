@@ -5,6 +5,7 @@
 #include <vulkan/vulkan_core.h>
 
 #include "Core/Logger.hpp"
+#include "Systems/Renderer/RenderGraph.hpp"
 
 namespace VoidArchitect
 {
@@ -18,8 +19,17 @@ namespace VoidArchitect
 
 namespace VoidArchitect::Platform
 {
+    // === Engine -> Vulkan translation functions ===
     VkDescriptorType TranslateEngineResourceTypeToVulkan(ResourceBindingType type);
     VkShaderStageFlagBits TranslateEngineShaderStageToVulkan(Resources::ShaderStage stage);
+    VkFormat TranslateEngineTextureFormatToVulkan(Renderer::TextureFormat format);
+    VkAttachmentLoadOp TranslateEngineLoadOpToVulkan(Renderer::LoadOp op);
+    VkAttachmentStoreOp TranslateEngineStoreOpToVulkan(Renderer::StoreOp op);
+
+    // === Vulkan -> Engine translation functions ===
+    Renderer::TextureFormat TranslateVulkanTextureFormatToEngine(VkFormat format);
+    Renderer::LoadOp TranslateVulkanLoadOpToEngine(VkAttachmentLoadOp op);
+    Renderer::StoreOp TranslateVulkanStoreOpToEngine(VkAttachmentStoreOp op);
 
     std::string VulkanGetResultString(VkResult result, bool extended = true);
 

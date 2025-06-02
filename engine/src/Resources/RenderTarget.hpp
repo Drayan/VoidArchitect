@@ -4,6 +4,7 @@
 #pragma once
 
 #include "Core/Uuid.hpp"
+#include "Systems/Renderer/RenderGraph.hpp"
 
 namespace VoidArchitect
 {
@@ -34,9 +35,10 @@ namespace VoidArchitect
 
         protected:
             IRenderTarget(
-                const std::string& name,
+                std::string name,
                 uint32_t width,
                 uint32_t height,
+                Renderer::TextureFormat format,
                 bool isMain = false);
 
             virtual void Release() = 0;
@@ -46,6 +48,7 @@ namespace VoidArchitect
             uint32_t m_Width;
             uint32_t m_Height;
             bool m_IsMain;
+            Renderer::TextureFormat m_Format;
         };
 
         using RenderTargetPtr = std::shared_ptr<IRenderTarget>;

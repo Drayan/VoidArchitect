@@ -3,6 +3,7 @@
 //
 #pragma once
 #include "Core/Math/Vec4.hpp"
+#include "Resources/RenderPass.hpp"
 
 namespace VoidArchitect
 {
@@ -32,11 +33,12 @@ namespace VoidArchitect
         enum class TextureFormat
         {
             RGBA8_UNORM,
-            RGBA_SRGB,
+            BGRA8_UNORM,
+            RGBA8_SRGB,
+            BGRA8_SRGB,
 
             D32_SFLOAT,
             D24_UNORM_S8_UINT,
-            D32_SFLOAT_S8_UINT,
         };
 
         struct RenderPassConfig
