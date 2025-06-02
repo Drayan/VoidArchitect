@@ -69,11 +69,11 @@ namespace VoidArchitect
             static void SwapColor();
             static Platform::IRenderingHardware& GetRHIRef() { return *m_RenderingHardware; };
 
-        private:
             static Resources::Texture2DPtr s_TestTexture;
             static Resources::MaterialPtr s_TestMaterial;
             static Resources::MeshPtr s_TestMesh;
 
+        private:
             static std::unique_ptr<RenderGraph> s_RenderGraph;
 
             static Platform::RHI_API_TYPE m_ApiType;

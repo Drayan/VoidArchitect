@@ -26,17 +26,19 @@ namespace VoidArchitect::Platform
             VkFormat depthFormat);
         ~VulkanSwapchain();
 
-        void RegenerateFramebuffers(
-            const std::unique_ptr<VulkanRenderPass>& renderpass,
-            uint32_t width,
-            uint32_t height);
-
         bool AcquireNextImage(
             uint64_t timeout,
             VkSemaphore semaphore,
             VkFence fence,
             uint32_t& out_imageIndex) const;
         void Present(VkQueue graphicsQueue, VkSemaphore renderComplete, uint32_t imageIndex) const;
+
+        [[nodiscard]] const VulkanImage& GetSwapchainImage(uint32_t index) const
+        {
+            return m_SwapchainImages[index];
+        }
+
+        [[nodiscard]] const VulkanImage& GetDepthImage() const { return m_DepthImage; }
 
         [[nodiscard]] VkFormat GetFormat() const { return m_Format.format; }
         [[nodiscard]] VkFormat GetDepthFormat() const { return m_DepthFormat; }
@@ -47,11 +49,6 @@ namespace VoidArchitect::Platform
         }
 
         [[nodiscard]] uint32_t GetMaxFrameInFlight() const { return m_MaxFrameInFlight; }
-
-        [[nodiscard]] VkFramebuffer GetFramebufferHandle(const uint32_t index) const
-        {
-            return m_RenderTargets[index]->GetFramebuffer();
-        }
 
         void Recreate(VulkanRHI& rhi, VkExtent2D extents, VkFormat depthFormat);
 
@@ -68,7 +65,5 @@ namespace VoidArchitect::Platform
         std::vector<VulkanImage> m_SwapchainImages;
         VulkanImage m_DepthImage;
         uint32_t m_MaxFrameInFlight = 2; // Support triple-buffering by default
-
-        std::vector<std::shared_ptr<VulkanRenderTarget>> m_RenderTargets;
     };
 } // namespace VoidArchitect::Platform

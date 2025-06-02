@@ -68,58 +68,64 @@ namespace VoidArchitect::Platform
         m_Height = height;
 
         // If we have a framebuffer, we need to recreate it with new dimensions.
-        if (m_Framebuffer != VK_NULL_HANDLE)
-        {
-            vkDestroyFramebuffer(m_Device, m_Framebuffer, m_Allocator);
-            m_Framebuffer = VK_NULL_HANDLE;
-
-            // NOTE : The caller (typically VulkanSwapchain) will need to call
-            // CreateFramebuffer() again with updated attachments.
-            VA_ENGINE_DEBUG(
-                "[VulkanRenderTarget] Framebuffer destroyed for resize, need recreation.");
-        }
+        InvalidateFramebuffers();
     }
 
-    void VulkanRenderTarget::CreateFramebuffer(
+    VkFramebuffer VulkanRenderTarget::GetFramebuffer(uint32_t imageIndex) const
+    {
+        if (imageIndex < m_Framebuffers.size())
+            return m_Framebuffers[imageIndex];
+
+        if (imageIndex > 0)
+        {
+            VA_ENGINE_WARN(
+                "[VulkanRenderTarget] Invalid framebuffer index {} for target '{}'.",
+                imageIndex,
+                m_Name);
+        }
+
+        return VK_NULL_HANDLE;
+    }
+
+    bool VulkanRenderTarget::HasValidFramebuffers() const
+    {
+        return !m_Framebuffers.empty() && m_Framebuffers[0] != VK_NULL_HANDLE;
+    }
+
+    void VulkanRenderTarget::InvalidateFramebuffers()
+    {
+        for (const auto framebuffer : m_Framebuffers)
+        {
+            if (framebuffer != VK_NULL_HANDLE)
+            {
+                vkDestroyFramebuffer(m_Device, framebuffer, m_Allocator);
+            }
+        }
+        m_Framebuffers.clear();
+        VA_ENGINE_DEBUG("[VulkanRenderTarget] Framebuffers invalidated for target '{}'.", m_Name);
+    }
+
+    void VulkanRenderTarget::CreateFramebufferForImage(
         const std::unique_ptr<VulkanRenderPass>& renderpass,
-        const std::vector<VkImageView>& attachments)
+        const std::vector<VkImageView>& attachments,
+        uint32_t imageIndex)
     {
-        // Store attachment for potential future recreation
-        m_Attachments = attachments;
-
-        CreateFramebufferInternal(renderpass->GetHandle(), attachments);
-    }
-
-    void VulkanRenderTarget::UpdateAttachments(const std::vector<VkImageView>& attachments)
-    {
-        m_Attachments = attachments;
-
-        // Destroy an existing framebuffer if it exists
-        if (m_Framebuffer != VK_NULL_HANDLE)
+        // Ensure the vector has the right size
+        if (m_Framebuffers.size() <= imageIndex)
         {
-            vkDestroyFramebuffer(m_Device, m_Framebuffer, m_Allocator);
-            m_Framebuffer = VK_NULL_HANDLE;
+            m_Framebuffers.resize(imageIndex + 1, VK_NULL_HANDLE);
         }
 
-        // NOTE : CreateFramebuffer() must be called again to recreate with new attachments
-        VA_ENGINE_DEBUG(
-            "[VulkanRenderTarget] Attachments updated for '{}', framebuffer needs recreation.",
-            m_Name);
-    }
-
-    void VulkanRenderTarget::CreateFramebufferInternal(
-        VkRenderPass renderPass,
-        const std::vector<VkImageView>& attachments)
-    {
-        // Destroy an existing framebuffer if it exists
-        if (m_Framebuffer != VK_NULL_HANDLE)
+        // Destroy existing framebuffer if it exists
+        if (m_Framebuffers[imageIndex] != VK_NULL_HANDLE)
         {
-            vkDestroyFramebuffer(m_Device, m_Framebuffer, m_Allocator);
+            vkDestroyFramebuffer(m_Device, m_Framebuffers[imageIndex], m_Allocator);
         }
 
+        // Create new framebuffer
         auto framebufferInfo = VkFramebufferCreateInfo{};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-        framebufferInfo.renderPass = renderPass;
+        framebufferInfo.renderPass = renderpass->GetHandle();
         framebufferInfo.attachmentCount = attachments.size();
         framebufferInfo.pAttachments = attachments.data();
         framebufferInfo.width = m_Width;
@@ -127,27 +133,30 @@ namespace VoidArchitect::Platform
         framebufferInfo.layers = 1;
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkCreateFramebuffer(m_Device, &framebufferInfo, m_Allocator, &m_Framebuffer));
+            vkCreateFramebuffer(m_Device, &framebufferInfo, m_Allocator, &m_Framebuffers[imageIndex]
+            ));
 
         VA_ENGINE_TRACE(
-            "[VulkanRenderTarget] Framebuffer created for '{}' ({}x{}) with {} attachments.",
+            "[VulkanRenderTarget] Framebuffer created for '{}' image index {}.",
             m_Name,
-            m_Width,
-            m_Height,
-            attachments.size());
+            imageIndex);
     }
 
     void VulkanRenderTarget::Release()
     {
-        if (m_Framebuffer != VK_NULL_HANDLE)
+        for (const auto framebuffer : m_Framebuffers)
         {
-            vkDestroyFramebuffer(m_Device, m_Framebuffer, m_Allocator);
-            m_Framebuffer = VK_NULL_HANDLE;
-            VA_ENGINE_TRACE("[VulkanRenderTarget] Framebuffer destroyed for '{}'.", m_Name);
+            if (framebuffer != VK_NULL_HANDLE)
+            {
+                vkDestroyFramebuffer(m_Device, framebuffer, m_Allocator);
+            }
         }
+        m_Framebuffers.clear();
 
         // NOTE : We don't own the VkImageView attachments, they're managed by VulkanSwapchain
         //          or other systems, so we don't destroy them here.
         m_Attachments.clear();
+
+        VA_ENGINE_TRACE("[VulkanRenderTarget] Target '{}' released.", m_Name);
     }
 }

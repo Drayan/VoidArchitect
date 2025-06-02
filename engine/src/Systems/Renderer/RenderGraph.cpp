@@ -5,9 +5,12 @@
 
 #include <ranges>
 
+#include "RenderCommand.hpp"
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
+#include "Resources/Material.hpp"
 #include "Resources/RenderTarget.hpp"
+#include "Systems/MaterialSystem.hpp"
 #include "Systems/PipelineSystem.hpp"
 
 namespace VoidArchitect
@@ -586,7 +589,7 @@ namespace VoidArchitect
             {
                 //Bind the default pipeline for this pass
                 //TODO : Each pass should specify its own pipeline in the future
-                auto pipeline = g_PipelineSystem->GetDefaultPipeline();
+                const auto pipeline = g_PipelineSystem->GetDefaultPipeline();
                 if (pipeline)
                 {
                     pipeline->Bind(m_RHI);
@@ -599,6 +602,16 @@ namespace VoidArchitect
                 //  For now, we'll let RenderCommand continue to handle the test geometry
                 //  In the future, this would iterate through a scene (ECS) and render all the entities
                 //  with a RenderComponent
+
+                const auto& defaultMat = RenderCommand::s_TestMaterial
+                                             ? RenderCommand::s_TestMaterial
+                                             : g_MaterialSystem->GetDefaultMaterial();
+                const auto geometry = Resources::GeometryRenderData(
+                    Math::Mat4::Identity(),
+                    defaultMat,
+                    RenderCommand::s_TestMesh);
+                defaultMat->Bind(m_RHI);
+                m_RHI.DrawMesh(geometry);
 
                 VA_ENGINE_TRACE("[RenderGraph] ForwardPass content rendered.");
             }

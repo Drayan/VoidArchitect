@@ -6,6 +6,7 @@
 
 #include "VulkanCommandBuffer.hpp"
 #include "VulkanDevice.hpp"
+#include "VulkanRenderTarget.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 
 namespace VoidArchitect
@@ -127,6 +128,9 @@ namespace VoidArchitect::Platform
 
         void DestroySyncObjects();
 
+        void EnsureMainTargetsFramebuffers();
+        void CreateFramebuffersForMainTarget(std::shared_ptr<VulkanRenderTarget> target);
+        void InvalidateMainTargetsFramebuffers();
         bool RecreateSwapchain();
 
 #ifdef DEBUG
@@ -157,6 +161,7 @@ namespace VoidArchitect::Platform
         uint32_t m_CurrentIndex;
         bool m_RecreatingSwapchain = false;
         std::unique_ptr<VulkanSwapchain> m_Swapchain;
+        std::vector<std::shared_ptr<VulkanRenderTarget>> m_MainRenderTargets;
         std::unique_ptr<VulkanRenderPass> m_MainRenderpass;
         std::vector<VulkanCommandBuffer> m_GraphicsCommandBuffers;
 

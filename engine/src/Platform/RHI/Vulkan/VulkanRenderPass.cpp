@@ -87,7 +87,8 @@ namespace VoidArchitect::Platform
         }
 
         // Call legacy Begin() method
-        Begin(vulkanRhi.GetCurrentCommandBuffer(), vulkanTarget->GetFramebuffer());
+        const auto imageIndex = vulkanTarget->IsMainTarget() ? vulkanRhi.GetImageIndex() : 0;
+        Begin(vulkanRhi.GetCurrentCommandBuffer(), vulkanTarget->GetFramebuffer(imageIndex));
     }
 
     void VulkanRenderPass::Begin(VulkanCommandBuffer& cmdBuf, const VkFramebuffer framebuffer) const
@@ -182,12 +183,11 @@ namespace VoidArchitect::Platform
             attachment.flags = 0;
 
             // Translate format, with special handling for swapchain/depth
-            if (attachmentConfig.Name == "color" && attachmentConfig.Format ==
-                Renderer::TextureFormat::RGBA8_SRGB)
+            if (attachmentConfig.Format == Renderer::TextureFormat::SWAPCHAIN_FORMAT)
             {
                 attachment.format = swapchainFormat;
             }
-            else if (attachmentConfig.Name == "depth")
+            else if (attachmentConfig.Format == Renderer::TextureFormat::SWAPCHAIN_DEPTH)
             {
                 attachment.format = depthFormat;
             }

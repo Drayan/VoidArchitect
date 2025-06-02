@@ -49,12 +49,6 @@ namespace VoidArchitect::Platform
         CreateDevice(window);
         CreateSwapchain();
         CreateRenderpass();
-
-        m_Swapchain->RegenerateFramebuffers(
-            m_MainRenderpass,
-            m_FramebufferWidth,
-            m_FramebufferHeight);
-
         CreateCommandBuffers();
         CreateSyncObjects();
 
@@ -127,6 +121,9 @@ namespace VoidArchitect::Platform
         m_CachedFramebufferWidth = width;
         m_CachedFramebufferHeight = height;
         m_FramebufferSizeGeneration++;
+
+        InvalidateMainTargetsFramebuffers();
+
         VA_ENGINE_DEBUG(
             "[VulkanRHI] Resizing to {}x{}, generation : {}",
             width,
@@ -169,6 +166,8 @@ namespace VoidArchitect::Platform
             return false;
         }
 
+        EnsureMainTargetsFramebuffers();
+
         if (!m_Swapchain->AcquireNextImage(
             std::numeric_limits<uint64_t>::max(),
             m_ImageAvailableSemaphores[m_CurrentIndex],
@@ -200,7 +199,7 @@ namespace VoidArchitect::Platform
         vkCmdSetViewport(cmdBuf.GetHandle(), 0, 1, &viewport);
         vkCmdSetScissor(cmdBuf.GetHandle(), 0, 1, &scissor);
 
-        m_MainRenderpass->Begin(cmdBuf, m_Swapchain->GetFramebufferHandle(m_ImageIndex));
+        //m_MainRenderpass->Begin(cmdBuf, m_Swapchain->GetFramebufferHandle(m_ImageIndex));
 
         g_VkMaterialBufferManager->FlushUpdates();
 
@@ -211,7 +210,7 @@ namespace VoidArchitect::Platform
     {
         auto& cmdBuf = m_GraphicsCommandBuffers[m_ImageIndex];
 
-        m_MainRenderpass->End(cmdBuf);
+        //m_MainRenderpass->End(cmdBuf);
 
         cmdBuf.End();
 
@@ -391,10 +390,18 @@ namespace VoidArchitect::Platform
             mainConfig.Height = m_FramebufferHeight;
 
             // Create the main render target (no attachment yet - managed by swapchain)
-            return new VulkanRenderTarget(
+            auto renderTarget = std::make_shared<VulkanRenderTarget>(
                 mainConfig,
                 m_Device->GetLogicalDeviceHandle(),
                 m_Allocator);
+
+            m_MainRenderTargets.push_back(renderTarget);
+
+            VA_ENGINE_TRACE(
+                "[VulkanRHI] Main target '{}' created and added to registry.",
+                config.Name);
+
+            return renderTarget.get();
         }
         else if (!config.Attachments.empty())
         {
@@ -895,6 +902,46 @@ namespace VoidArchitect::Platform
         m_ImagesInFlight.clear();
     }
 
+    void VulkanRHI::EnsureMainTargetsFramebuffers()
+    {
+        for (const auto& target : m_MainRenderTargets)
+        {
+            if (!target->HasValidFramebuffers())
+            {
+                CreateFramebuffersForMainTarget(target);
+            }
+        }
+    }
+
+    void VulkanRHI::CreateFramebuffersForMainTarget(std::shared_ptr<VulkanRenderTarget> target)
+    {
+        const auto imageCount = m_Swapchain->GetImageCount();
+
+        for (uint32_t i = 0; i < imageCount; i++)
+        {
+            std::vector attachments = {
+                m_Swapchain->GetSwapchainImage(i).GetView(),
+                m_Swapchain->GetDepthImage().GetView()
+            };
+
+            target->CreateFramebufferForImage(m_MainRenderpass, attachments, i);
+        }
+
+        VA_ENGINE_DEBUG(
+            "[VulkanRHI] Created {} framebuffers for main render target.",
+            imageCount);
+    }
+
+    void VulkanRHI::InvalidateMainTargetsFramebuffers()
+    {
+        for (const auto& target : m_MainRenderTargets)
+        {
+            target->InvalidateFramebuffers();
+        }
+
+        VA_ENGINE_DEBUG("[VulkanRHI] Invalidated all main render target framebuffers.");
+    }
+
     bool VulkanRHI::RecreateSwapchain()
     {
         if (m_RecreatingSwapchain)
@@ -943,15 +990,7 @@ namespace VoidArchitect::Platform
         m_MainRenderpass->SetWidth(m_FramebufferWidth);
         m_MainRenderpass->SetHeight(m_FramebufferHeight);
 
-        m_Swapchain->RegenerateFramebuffers(
-            m_MainRenderpass,
-            m_FramebufferWidth,
-            m_FramebufferHeight);
         CreateCommandBuffers();
-
-        // TODO We should update the global state.
-        // for (uint32_t i = 0; i < m_Swapchain->GetImageCount(); i++)
-        //     m_GlobalStateIsUpdated[i] = false;
 
         m_RecreatingSwapchain = false;
         VA_ENGINE_TRACE("[VulkanRHI] RecreateSwapchain finished.");

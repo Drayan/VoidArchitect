@@ -36,25 +36,23 @@ namespace VoidArchitect::Platform
         void Resize(uint32_t width, uint32_t height) override;
 
         // Vulkan-specific methods
-        void CreateFramebuffer(
+        [[nodiscard]] bool HasValidFramebuffers() const;
+        void InvalidateFramebuffers();
+        void CreateFramebufferForImage(
             const std::unique_ptr<VulkanRenderPass>& renderpass,
-            const std::vector<VkImageView>& attachments);
-        void UpdateAttachments(const std::vector<VkImageView>& attachments);
+            const std::vector<VkImageView>& attachments,
+            uint32_t imageIndex);
 
-        [[nodiscard]] VkFramebuffer GetFramebuffer() const { return m_Framebuffer; };
+        [[nodiscard]] VkFramebuffer GetFramebuffer(uint32_t imageIndex) const;
 
     protected:
         void Release() override;
 
     private:
-        void CreateFramebufferInternal(
-            VkRenderPass renderPass,
-            const std::vector<VkImageView>& attachments);
-
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;
-        VkFramebuffer m_Framebuffer = VK_NULL_HANDLE;
 
+        std::vector<VkFramebuffer> m_Framebuffers;
         std::vector<VkImageView> m_Attachments;
 
         // For texture-based targets, we might own the image views.

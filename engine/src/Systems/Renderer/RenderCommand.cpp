@@ -161,19 +161,6 @@ namespace VoidArchitect::Renderer
             frameData.View = camera.GetView();
 
             s_RenderGraph->Execute(frameData);
-
-            // TEMP: Continue with legary geometry rendering for now
-            // TODO: Move this inside RenderGraph::RenderPassContent
-            const auto& defaultMat = s_TestMaterial != nullptr
-                                         ? s_TestMaterial
-                                         : g_MaterialSystem->GetDefaultMaterial();
-            const auto geometry = Resources::GeometryRenderData(
-                Math::Mat4::Identity(),
-                defaultMat,
-                s_TestMesh);
-            defaultMat->Bind(*m_RenderingHardware);
-            m_RenderingHardware->DrawMesh(geometry);
-            // TEMP: End of legacy geometry rendering
         }
         else
         {
