@@ -7,7 +7,10 @@
 
 namespace VoidArchitect
 {
-    class RenderGraph;
+    namespace Renderer
+    {
+        class RenderGraph;
+    }
 
     namespace Platform
     {
@@ -21,7 +24,7 @@ namespace VoidArchitect
 
         class IRenderPass
         {
-            friend class VoidArchitect::RenderGraph;
+            friend class VoidArchitect::Renderer::RenderGraph;
 
         public:
             virtual ~IRenderPass() = default;
@@ -29,7 +32,9 @@ namespace VoidArchitect
             [[nodiscard]] UUID GetUUID() const { return m_UUID; }
             [[nodiscard]] const std::string& GetName() const { return m_Name; }
 
-            virtual void Begin(Platform::IRenderingHardware& rhi, const RenderTargetPtr& target) = 0;
+            virtual void Begin(
+                Platform::IRenderingHardware& rhi,
+                const RenderTargetPtr& target) = 0;
             virtual void End(Platform::IRenderingHardware& rhi) = 0;
 
             [[nodiscard]] virtual bool IsCompatibleWith(const RenderTargetPtr& target) const = 0;

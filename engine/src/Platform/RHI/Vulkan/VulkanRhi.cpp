@@ -390,7 +390,7 @@ namespace VoidArchitect::Platform
             mainConfig.Height = m_FramebufferHeight;
 
             // Create the main render target (no attachment yet - managed by swapchain)
-            auto renderTarget = std::make_shared<VulkanRenderTarget>(
+            const auto renderTarget = new VulkanRenderTarget(
                 mainConfig,
                 m_Device->GetLogicalDeviceHandle(),
                 m_Allocator);
@@ -401,7 +401,7 @@ namespace VoidArchitect::Platform
                 "[VulkanRHI] Main target '{}' created and added to registry.",
                 config.Name);
 
-            return renderTarget.get();
+            return renderTarget;
         }
         else if (!config.Attachments.empty())
         {
@@ -906,14 +906,14 @@ namespace VoidArchitect::Platform
     {
         for (const auto& target : m_MainRenderTargets)
         {
-            if (!target->HasValidFramebuffers())
+            if (target && !target->HasValidFramebuffers())
             {
                 CreateFramebuffersForMainTarget(target);
             }
         }
     }
 
-    void VulkanRHI::CreateFramebuffersForMainTarget(std::shared_ptr<VulkanRenderTarget> target)
+    void VulkanRHI::CreateFramebuffersForMainTarget(VulkanRenderTarget* target)
     {
         const auto imageCount = m_Swapchain->GetImageCount();
 
@@ -934,6 +934,7 @@ namespace VoidArchitect::Platform
 
     void VulkanRHI::InvalidateMainTargetsFramebuffers()
     {
+        m_Device->WaitIdle();
         for (const auto& target : m_MainRenderTargets)
         {
             target->InvalidateFramebuffers();

@@ -104,7 +104,7 @@ namespace VoidArchitect
         {
         public:
             explicit RenderGraph(Platform::IRenderingHardware& rhi);
-            ~RenderGraph() = default;
+            ~RenderGraph();
 
             // Graph construction
             Resources::RenderPassPtr AddRenderPass(const RenderPassConfig& config);
@@ -176,6 +176,7 @@ namespace VoidArchitect
 
             // State
             bool m_IsCompiled = false;
+            bool m_IsDestroying = false;
             uint32_t m_CurrentWidth = 0;
             uint32_t m_CurrentHeight = 0;
         };

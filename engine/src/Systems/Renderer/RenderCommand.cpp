@@ -137,7 +137,8 @@ namespace VoidArchitect::Renderer
         for (auto& camera : m_Cameras)
             camera.SetAspectRatio(width / static_cast<float>(height));
 
-        m_RenderingHardware->Resize(width, height);
+        s_RenderGraph->OnResize(width, height);
+        s_RenderGraph->Compile();
     }
 
     bool RenderCommand::BeginFrame(const float deltaTime)

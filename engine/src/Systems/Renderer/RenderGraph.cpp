@@ -24,6 +24,19 @@ namespace VoidArchitect
             m_RenderTargetsNodes.reserve(8);
         }
 
+        RenderGraph::~RenderGraph()
+        {
+            VA_ENGINE_TRACE("[RenderGraph] Destroying RenderGraph...");
+
+            m_IsDestroying = true;
+
+            m_ExecutionOrder.clear();
+            m_RenderTargetsNodes.clear();
+            m_RenderPassesNodes.clear();
+
+            VA_ENGINE_TRACE("[RenderGraph] RenderGraph destroyed.");
+        }
+
         Resources::RenderPassPtr RenderGraph::AddRenderPass(const RenderPassConfig& config)
         {
             // Create the render pass
@@ -40,6 +53,7 @@ namespace VoidArchitect
                 [this](Resources::IRenderPass* rawPass)
                 {
                     this->ReleaseRenderPass(rawPass);
+                    delete rawPass;
                 });
 
             // Create and store node
@@ -72,6 +86,7 @@ namespace VoidArchitect
                 [this](Resources::IRenderTarget* rawTarget)
                 {
                     this->ReleaseRenderTarget(rawTarget);
+                    delete rawTarget;
                 });
 
             // Create and store node
@@ -255,9 +270,9 @@ namespace VoidArchitect
                 return;
             }
 
-            VA_ENGINE_TRACE(
-                "[RenderGraph] Executing render graph with {} passes.",
-                m_ExecutionOrder.size());
+            // VA_ENGINE_TRACE(
+            //     "[RenderGraph] Executing render graph with {} passes.",
+            //     m_ExecutionOrder.size());
 
             // Execute passes in order (using cached execution order for performance)
             for (auto& pass : m_ExecutionOrder)
@@ -292,17 +307,17 @@ namespace VoidArchitect
 
                 auto& renderTarget = targetNode->RenderTarget;
 
-                VA_ENGINE_TRACE(
-                    "[RenderGraph] Executing pass '{}' -> target '{}'.",
-                    pass->GetName(),
-                    renderTarget->GetName());
+                // VA_ENGINE_TRACE(
+                //     "[RenderGraph] Executing pass '{}' -> target '{}'.",
+                //     pass->GetName(),
+                //     renderTarget->GetName());
 
                 pass->Begin(m_RHI, renderTarget);
                 RenderPassContent(pass, renderTarget, frameData);
                 pass->End(m_RHI);
             }
 
-            VA_ENGINE_TRACE("[RenderGraph] Render graph executed successfully.");
+            // VA_ENGINE_TRACE("[RenderGraph] Render graph executed successfully.");
         }
 
         void RenderGraph::OnResize(uint32_t width, uint32_t height)
@@ -319,6 +334,8 @@ namespace VoidArchitect
 
             m_CurrentWidth = width;
             m_CurrentHeight = height;
+
+            m_RHI.Resize(width, height);
 
             // Resize all main render targets
             for (auto& node : m_RenderTargetsNodes | std::views::values)
@@ -477,7 +494,7 @@ namespace VoidArchitect
 
         void RenderGraph::ReleaseRenderPass(const Resources::IRenderPass* pass)
         {
-            if (!pass) return;
+            if (!pass || m_IsDestroying) return;
 
             auto passUUID = pass->GetUUID();
 
@@ -496,11 +513,15 @@ namespace VoidArchitect
 
         void RenderGraph::ReleaseRenderTarget(const Resources::IRenderTarget* target)
         {
-            if (!target) return;
+            if (!target || m_IsDestroying) return;
 
             auto targetUUID = target->GetUUID();
 
-            m_RenderTargetsNodes.erase(targetUUID);
+            if (auto it = m_RenderTargetsNodes.find(targetUUID); it != m_RenderTargetsNodes.end())
+            {
+                it->second.RenderTarget = nullptr;
+                m_RenderTargetsNodes.erase(it);
+            }
 
             // Remove from all pass outputs
             for (auto& node : m_RenderPassesNodes | std::views::values)
@@ -613,7 +634,7 @@ namespace VoidArchitect
                 defaultMat->Bind(m_RHI);
                 m_RHI.DrawMesh(geometry);
 
-                VA_ENGINE_TRACE("[RenderGraph] ForwardPass content rendered.");
+                //VA_ENGINE_TRACE("[RenderGraph] ForwardPass content rendered.");
             }
             else
             {

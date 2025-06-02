@@ -8,7 +8,10 @@
 
 namespace VoidArchitect
 {
-    class RenderGraph;
+    namespace Renderer
+    {
+        class RenderGraph;
+    }
 
     namespace Platform
     {
@@ -19,7 +22,7 @@ namespace VoidArchitect
     {
         class IRenderTarget
         {
-            friend class VoidArchitect::RenderGraph;
+            friend class VoidArchitect::Renderer::RenderGraph;
 
         public:
             virtual ~IRenderTarget() = default;

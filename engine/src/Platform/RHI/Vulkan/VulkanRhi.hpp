@@ -129,7 +129,7 @@ namespace VoidArchitect::Platform
         void DestroySyncObjects();
 
         void EnsureMainTargetsFramebuffers();
-        void CreateFramebuffersForMainTarget(std::shared_ptr<VulkanRenderTarget> target);
+        void CreateFramebuffersForMainTarget(VulkanRenderTarget* target);
         void InvalidateMainTargetsFramebuffers();
         bool RecreateSwapchain();
 
@@ -161,7 +161,7 @@ namespace VoidArchitect::Platform
         uint32_t m_CurrentIndex;
         bool m_RecreatingSwapchain = false;
         std::unique_ptr<VulkanSwapchain> m_Swapchain;
-        std::vector<std::shared_ptr<VulkanRenderTarget>> m_MainRenderTargets;
+        std::vector<VulkanRenderTarget*> m_MainRenderTargets;
         std::unique_ptr<VulkanRenderPass> m_MainRenderpass;
         std::vector<VulkanCommandBuffer> m_GraphicsCommandBuffers;
 
