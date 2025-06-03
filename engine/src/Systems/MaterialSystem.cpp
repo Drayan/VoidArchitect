@@ -55,9 +55,7 @@ namespace VoidArchitect
         {
             case Platform::RHI_API_TYPE::Vulkan:
             {
-                material = Renderer::RenderCommand::GetRHIRef().CreateMaterial(
-                    config.name,
-                    config.pipeline);
+                material = Renderer::RenderCommand::GetRHIRef().CreateMaterial(config.name);
             }
             default:
                 break;
@@ -119,9 +117,7 @@ namespace VoidArchitect
         {
             case Platform::RHI_API_TYPE::Vulkan:
             {
-                material = Renderer::RenderCommand::GetRHIRef().CreateMaterial(
-                    name,
-                    g_PipelineSystem->GetDefaultPipeline());
+                material = Renderer::RenderCommand::GetRHIRef().CreateMaterial(name);
             }
             default:
                 break;

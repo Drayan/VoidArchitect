@@ -48,7 +48,6 @@ namespace VoidArchitect::Platform
         CreateInstance();
         CreateDevice(window);
         CreateSwapchain();
-        CreateRenderpass();
         CreateCommandBuffers();
         CreateSyncObjects();
 
@@ -98,9 +97,6 @@ namespace VoidArchitect::Platform
 
         m_GraphicsCommandBuffers.clear();
         VA_ENGINE_INFO("[VulkanRHI] Command buffers destroyed.");
-
-        m_MainRenderpass.reset();
-        VA_ENGINE_INFO("[VulkanRHI] Main renderpass destroyed.");
 
         m_Swapchain.reset();
         VA_ENGINE_INFO("[VulkanRHI] Swapchain destroyed.");
@@ -165,8 +161,6 @@ namespace VoidArchitect::Platform
             VA_ENGINE_WARN("[VulkanRHI] Failed to wait for fence.");
             return false;
         }
-
-        EnsureMainTargetsFramebuffers();
 
         if (!m_Swapchain->AcquireNextImage(
             std::numeric_limits<uint64_t>::max(),
@@ -311,9 +305,11 @@ namespace VoidArchitect::Platform
             nullptr);
     }
 
-    void VulkanRHI::DrawMesh(const Resources::GeometryRenderData& data)
+    void VulkanRHI::DrawMesh(
+        const Resources::GeometryRenderData& data,
+        const Resources::PipelinePtr& pipeline)
     {
-        data.Material->SetModel(*this, data.Model);
+        data.Material->SetModel(*this, data.Model, pipeline);
         data.Mesh->Bind(*this);
         vkCmdDrawIndexed(
             GetCurrentCommandBuffer().GetHandle(),
@@ -344,23 +340,23 @@ namespace VoidArchitect::Platform
             data);
     }
 
-    Resources::IPipeline* VulkanRHI::CreatePipeline(PipelineConfig& config)
+    Resources::IPipeline* VulkanRHI::CreatePipelineForRenderPass(
+        PipelineConfig& config,
+        Resources::IRenderPass* renderPass)
     {
-        // NOTE By convention, the rendering engine define space0 to be a global uniform buffer
-        //  containing the projection and view matrices. It state that the data into this buffer
-        //  will be updated at most once per frame.
-        //  Thus we will delete the space0 definition from the pipeline config. As it is managed
-        //  by the RHI, we don't need to create it in the pipeline.
+        auto* vkRenderPass = dynamic_cast<VulkanRenderPass*>(renderPass);
+        if (!vkRenderPass)
+        {
+            VA_ENGINE_ERROR("[VulkanRHI] Invalid render pass type.");
+            return nullptr;
+        }
 
-        // Create the requested pipeline with a base descriptor set layout.
-        return new VulkanPipeline(config, m_Device, m_Allocator, m_MainRenderpass);
+        return new VulkanPipeline(config, m_Device, m_Allocator, vkRenderPass);
     }
 
-    Resources::IMaterial* VulkanRHI::CreateMaterial(
-        const std::string& name,
-        const Resources::PipelinePtr& pipeline)
+    Resources::IMaterial* VulkanRHI::CreateMaterial(const std::string& name)
     {
-        return new VulkanMaterial(name, m_Device, m_Allocator, pipeline);
+        return new VulkanMaterial(name, m_Device, m_Allocator);
     }
 
     Resources::IShader* VulkanRHI::CreateShader(
@@ -771,24 +767,6 @@ namespace VoidArchitect::Platform
         return VK_FORMAT_UNDEFINED;
     }
 
-    void VulkanRHI::CreateRenderpass()
-    {
-        m_MainRenderpass = std::make_unique<VulkanRenderPass>(
-            m_Device,
-            m_Swapchain,
-            m_Allocator,
-            0,
-            0,
-            m_FramebufferWidth,
-            m_FramebufferHeight,
-            0.1f,
-            0.1f,
-            0.1f,
-            1.0f,
-            1.0f,
-            0);
-    }
-
     void VulkanRHI::CreateCommandBuffers()
     {
         m_GraphicsCommandBuffers.clear();
@@ -902,37 +880,7 @@ namespace VoidArchitect::Platform
         m_ImagesInFlight.clear();
     }
 
-    void VulkanRHI::EnsureMainTargetsFramebuffers()
-    {
-        for (const auto& target : m_MainRenderTargets)
-        {
-            if (target && !target->HasValidFramebuffers())
-            {
-                CreateFramebuffersForMainTarget(target);
-            }
-        }
-    }
-
-    void VulkanRHI::CreateFramebuffersForMainTarget(VulkanRenderTarget* target)
-    {
-        const auto imageCount = m_Swapchain->GetImageCount();
-
-        for (uint32_t i = 0; i < imageCount; i++)
-        {
-            std::vector attachments = {
-                m_Swapchain->GetSwapchainImage(i).GetView(),
-                m_Swapchain->GetDepthImage().GetView()
-            };
-
-            target->CreateFramebufferForImage(m_MainRenderpass, attachments, i);
-        }
-
-        VA_ENGINE_DEBUG(
-            "[VulkanRHI] Created {} framebuffers for main render target.",
-            imageCount);
-    }
-
-    void VulkanRHI::InvalidateMainTargetsFramebuffers()
+    void VulkanRHI::InvalidateMainTargetsFramebuffers() const
     {
         m_Device->WaitIdle();
         for (const auto& target : m_MainRenderTargets)
@@ -977,8 +925,6 @@ namespace VoidArchitect::Platform
         // Sync
         m_FramebufferWidth = m_CachedFramebufferWidth;
         m_FramebufferHeight = m_CachedFramebufferHeight;
-        m_MainRenderpass->SetWidth(m_FramebufferWidth);
-        m_MainRenderpass->SetHeight(m_FramebufferHeight);
         m_CachedFramebufferWidth = 0;
         m_CachedFramebufferHeight = 0;
 
@@ -986,10 +932,6 @@ namespace VoidArchitect::Platform
         m_FramebufferSizeLastGeneration = m_FramebufferSizeGeneration;
 
         m_GraphicsCommandBuffers.clear();
-        m_MainRenderpass->SetX(0);
-        m_MainRenderpass->SetY(0);
-        m_MainRenderpass->SetWidth(m_FramebufferWidth);
-        m_MainRenderpass->SetHeight(m_FramebufferHeight);
 
         CreateCommandBuffers();
 

@@ -20,7 +20,7 @@ namespace VoidArchitect::Platform
         const PipelineConfig& config,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
-        const std::unique_ptr<VulkanRenderPass>& renderPass)
+        VulkanRenderPass* renderPass)
         : m_Device(device->GetLogicalDeviceHandle()),
           m_Allocator(allocator)
     {
@@ -117,7 +117,7 @@ namespace VoidArchitect::Platform
         colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
         colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT
-                                              | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+            | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 
         auto colorBlendInfo = VkPipelineColorBlendStateCreateInfo{};
         colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
@@ -154,8 +154,10 @@ namespace VoidArchitect::Platform
             descriptorSetLayoutCreateInfo.bindingCount = static_cast<uint32_t>(bindings.size());
             descriptorSetLayoutCreateInfo.pBindings = bindings.data();
 
-            VA_VULKAN_CHECK_RESULT_WARN(vkCreateDescriptorSetLayout(
-                m_Device, &descriptorSetLayoutCreateInfo, m_Allocator, &m_DescriptorSetLayouts[i]));
+            VA_VULKAN_CHECK_RESULT_WARN(
+                vkCreateDescriptorSetLayout(
+                    m_Device, &descriptorSetLayoutCreateInfo, m_Allocator, &m_DescriptorSetLayouts[i
+                    ]));
 
             VA_ENGINE_TRACE(
                 "[VulkanPipeline] Descriptor set layout {} created, for pipeline '{}'.",
@@ -191,8 +193,9 @@ namespace VoidArchitect::Platform
         pipelineLayoutCreateInfo.pushConstantRangeCount = 1;
         pipelineLayoutCreateInfo.pPushConstantRanges = &pushConstantRange;
 
-        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreatePipelineLayout(
-            m_Device, &pipelineLayoutCreateInfo, m_Allocator, &m_PipelineLayout));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreatePipelineLayout(
+                m_Device, &pipelineLayoutCreateInfo, m_Allocator, &m_PipelineLayout));
         VA_ENGINE_TRACE("[VulkanPipeline] Pipeline layout created.");
 
         // --- Pipeline ---
@@ -223,8 +226,9 @@ namespace VoidArchitect::Platform
         pipelineCreateInfo.layout = m_PipelineLayout;
         pipelineCreateInfo.renderPass = renderPass->GetHandle();
 
-        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreateGraphicsPipelines(
-            m_Device, nullptr, 1, &pipelineCreateInfo, m_Allocator, &m_Pipeline));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreateGraphicsPipelines(
+                m_Device, nullptr, 1, &pipelineCreateInfo, m_Allocator, &m_Pipeline));
         VA_ENGINE_TRACE("[VulkanPipeline] Pipeline {} created.", config.name);
     }
 
@@ -265,7 +269,8 @@ namespace VoidArchitect::Platform
     }
 
     VkFormat VulkanPipeline::TranslateEngineAttributeFormatToVulkanFormat(
-        const VertexAttributeType type, const AttributeFormat format)
+        const VertexAttributeType type,
+        const AttributeFormat format)
     {
         auto vulkanFormat = VK_FORMAT_UNDEFINED;
         switch (type)
@@ -322,7 +327,8 @@ namespace VoidArchitect::Platform
     }
 
     uint32_t VulkanPipeline::GetEngineAttributeSize(
-        const VertexAttributeType type, const AttributeFormat format)
+        const VertexAttributeType type,
+        const AttributeFormat format)
     {
         auto size = 0;
         switch (format)

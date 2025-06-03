@@ -89,11 +89,17 @@ namespace VoidArchitect::Renderer
 
         s_RenderGraph = std::make_unique<RenderGraph>(*m_RenderingHardware);
         s_RenderGraph->SetupForwardRenderer(m_Width, m_Height);
-        s_RenderGraph->Compile();
+
+        if (!s_RenderGraph->Compile())
+        {
+            VA_ENGINE_CRITICAL("[RenderCommand] Failed to compile render graph.");
+            return;
+        }
 
         if (!s_RenderGraph)
         {
             VA_ENGINE_CRITICAL("[RenderCommand] Failed to setup render graph.");
+            return;
         }
 
         // TEMP Try to load a test material.
@@ -165,26 +171,8 @@ namespace VoidArchitect::Renderer
         }
         else
         {
-            // TEMP Use the test pipeline.
-            g_PipelineSystem->GetDefaultPipeline()->Bind(*m_RenderingHardware);
-
-            // Update the camera state and send it to the GPU.
-            camera.RecalculateView();
-            m_RenderingHardware->UpdateGlobalState(
-                g_PipelineSystem->GetDefaultPipeline(),
-                camera.GetProjection(),
-                camera.GetView());
-
-            // TEMP Testing to draw a single 'object' with the default material.
-            const auto& defaultMat =
-                s_TestMaterial != nullptr ? s_TestMaterial : g_MaterialSystem->GetDefaultMaterial();
-            const auto geometry = Resources::GeometryRenderData(
-                Math::Mat4::Identity(),
-                defaultMat,
-                s_TestMesh);
-
-            defaultMat->Bind(*m_RenderingHardware);
-            m_RenderingHardware->DrawMesh(geometry);
+            VA_ENGINE_CRITICAL("[RenderCommand] Render graph is not initialized.");
+            return false;
         }
 
         return true;
@@ -193,12 +181,6 @@ namespace VoidArchitect::Renderer
     bool RenderCommand::EndFrame(const float deltaTime)
     {
         return m_RenderingHardware->EndFrame(deltaTime);
-    }
-
-    void RenderCommand::DrawPacket(const RenderPacket& packet)
-    {
-        packet.data.Material->Bind(*m_RenderingHardware);
-        m_RenderingHardware->DrawMesh(packet.data);
     }
 
     Camera& RenderCommand::CreatePerspectiveCamera(float fov, float near, float far)

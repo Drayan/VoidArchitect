@@ -39,7 +39,7 @@ namespace VoidArchitect::Platform
         [[nodiscard]] bool HasValidFramebuffers() const;
         void InvalidateFramebuffers();
         void CreateFramebufferForImage(
-            const std::unique_ptr<VulkanRenderPass>& renderpass,
+            VkRenderPass renderpass,
             const std::vector<VkImageView>& attachments,
             uint32_t imageIndex);
 

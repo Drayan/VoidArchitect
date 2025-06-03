@@ -54,7 +54,9 @@ namespace VoidArchitect::Platform
             const Math::Mat4& projection,
             const Math::Mat4& view) override;
 
-        void DrawMesh(const Resources::GeometryRenderData& data) override;
+        void DrawMesh(
+            const Resources::GeometryRenderData& data,
+            const Resources::PipelinePtr& pipeline) override;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
@@ -66,10 +68,11 @@ namespace VoidArchitect::Platform
             uint8_t channels,
             bool hasTransparency,
             const std::vector<uint8_t>& data) override;
-        Resources::IPipeline* CreatePipeline(PipelineConfig& config) override;
+        Resources::IPipeline* CreatePipelineForRenderPass(
+            PipelineConfig& config,
+            Resources::IRenderPass* renderPass) override;
         Resources::IMaterial* CreateMaterial(
-            const std::string& name,
-            const Resources::PipelinePtr& pipeline) override;
+            const std::string& name) override;
         Resources::IShader* CreateShader(
             const std::string& name,
             const ShaderConfig& config,
@@ -102,7 +105,6 @@ namespace VoidArchitect::Platform
 
         std::unique_ptr<VulkanDevice>& GetDeviceRef() { return m_Device; }
         std::unique_ptr<VulkanSwapchain>& GetSwapchainRef() { return m_Swapchain; }
-        std::unique_ptr<VulkanRenderPass>& GetMainRenderpassRef() { return m_MainRenderpass; }
         [[nodiscard]] uint32_t GetImageIndex() const { return m_ImageIndex; }
 
         [[nodiscard]] int32_t FindMemoryIndex(uint32_t typeFilter, uint32_t propertyFlags) const;
@@ -119,7 +121,6 @@ namespace VoidArchitect::Platform
         [[nodiscard]] VkExtent2D ChooseSwapchainExtent() const;
         [[nodiscard]] VkFormat ChooseDepthFormat() const;
 
-        void CreateRenderpass();
         void CreateCommandBuffers();
         void CreateSyncObjects();
 
@@ -130,7 +131,7 @@ namespace VoidArchitect::Platform
 
         void EnsureMainTargetsFramebuffers();
         void CreateFramebuffersForMainTarget(VulkanRenderTarget* target);
-        void InvalidateMainTargetsFramebuffers();
+        void InvalidateMainTargetsFramebuffers() const;
         bool RecreateSwapchain();
 
 #ifdef DEBUG
@@ -162,7 +163,6 @@ namespace VoidArchitect::Platform
         bool m_RecreatingSwapchain = false;
         std::unique_ptr<VulkanSwapchain> m_Swapchain;
         std::vector<VulkanRenderTarget*> m_MainRenderTargets;
-        std::unique_ptr<VulkanRenderPass> m_MainRenderpass;
         std::vector<VulkanCommandBuffer> m_GraphicsCommandBuffers;
 
         std::vector<VkSemaphore> m_ImageAvailableSemaphores;

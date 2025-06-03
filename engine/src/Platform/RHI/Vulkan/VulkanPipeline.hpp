@@ -28,7 +28,7 @@ namespace VoidArchitect::Platform
             const PipelineConfig& config,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
-            const std::unique_ptr<VulkanRenderPass>& renderPass);
+            VulkanRenderPass* renderPass);
         ~VulkanPipeline() override;
 
         // void Bind(const VulkanCommandBuffer& cmdBuf, VkPipelineBindPoint bindPoint) const;
@@ -53,7 +53,8 @@ namespace VoidArchitect::Platform
 
     private:
         static VkFormat TranslateEngineAttributeFormatToVulkanFormat(
-            VertexAttributeType type, AttributeFormat format);
+            VertexAttributeType type,
+            AttributeFormat format);
         static uint32_t GetEngineAttributeSize(VertexAttributeType type, AttributeFormat format);
 
         VkDevice m_Device;

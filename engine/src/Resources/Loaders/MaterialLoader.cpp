@@ -64,7 +64,7 @@ namespace VoidArchitect::Resources::Loaders
                 }
                 else
                 {
-                    config.pipeline = g_PipelineSystem->GetDefaultPipeline();
+                    config.pipeline = nullptr;
                 }
 
                 // Properties (required)

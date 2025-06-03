@@ -60,7 +60,9 @@ namespace VoidArchitect::Platform
             const Math::Mat4& projection,
             const Math::Mat4& view) = 0;
 
-        virtual void DrawMesh(const Resources::GeometryRenderData& data) = 0;
+        virtual void DrawMesh(
+            const Resources::GeometryRenderData& data,
+            const Resources::PipelinePtr& pipeline) = 0;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
@@ -72,10 +74,11 @@ namespace VoidArchitect::Platform
             uint8_t channels,
             bool hasTransparency,
             const std::vector<uint8_t>& data) = 0;
-        virtual Resources::IPipeline* CreatePipeline(PipelineConfig& config) = 0;
+        virtual Resources::IPipeline* CreatePipelineForRenderPass(
+            PipelineConfig& config,
+            Resources::IRenderPass* renderPass) = 0;
         virtual Resources::IMaterial* CreateMaterial(
-            const std::string& name,
-            const Resources::PipelinePtr& pipeline) = 0;
+            const std::string& name) = 0;
         virtual Resources::IShader* CreateShader(
             const std::string& name,
             const ShaderConfig& config,

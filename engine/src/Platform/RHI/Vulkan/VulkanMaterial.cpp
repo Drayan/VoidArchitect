@@ -20,12 +20,10 @@ namespace VoidArchitect::Platform
     VulkanMaterial::VulkanMaterial(
         const std::string& name,
         const std::unique_ptr<VulkanDevice>& device,
-        VkAllocationCallbacks* allocator,
-        Resources::PipelinePtr pipeline)
+        VkAllocationCallbacks* allocator)
         : IMaterial(name),
           m_Allocator(allocator),
           m_Device(device->GetLogicalDeviceHandle()),
-          m_Pipeline(std::move(pipeline)),
           m_MaterialDescriptorPool(VK_NULL_HANDLE),
           m_MaterialDescriptorSets{}
     {
@@ -78,11 +76,14 @@ namespace VoidArchitect::Platform
         VA_ENGINE_INFO("[VulkanMaterial] Material '{}' created.", m_Name);
     }
 
-    void VulkanMaterial::SetModel(IRenderingHardware& rhi, const Math::Mat4& model)
+    void VulkanMaterial::SetModel(
+        IRenderingHardware& rhi,
+        const Math::Mat4& model,
+        const Resources::PipelinePtr& pipeline)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
         const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
-        const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(m_Pipeline);
+        const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(pipeline);
 
         vkCmdPushConstants(
             cmdBuf.GetHandle(),
@@ -94,7 +95,7 @@ namespace VoidArchitect::Platform
             &model);
     }
 
-    void VulkanMaterial::Bind(IRenderingHardware& rhi)
+    void VulkanMaterial::Bind(IRenderingHardware& rhi, const Resources::PipelinePtr& pipeline)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
         const uint32_t frameIndex = vulkanRhi.GetImageIndex();
@@ -112,7 +113,7 @@ namespace VoidArchitect::Platform
         UpdateDescriptorSets(vulkanRhi);
 
         const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
-        const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(m_Pipeline);
+        const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(pipeline);
 
         // Bind the descriptor set to be updated, or in case the shader(material) changed.
         vkCmdBindDescriptorSets(
@@ -134,11 +135,6 @@ namespace VoidArchitect::Platform
         {
             g_VkMaterialBufferManager->ReleaseSlot(m_BufferSlot);
             m_BufferSlot = std::numeric_limits<uint32_t>::max();
-        }
-
-        if (m_Pipeline != nullptr)
-        {
-            m_Pipeline = nullptr;
         }
 
         if (m_MaterialDescriptorPool != VK_NULL_HANDLE)

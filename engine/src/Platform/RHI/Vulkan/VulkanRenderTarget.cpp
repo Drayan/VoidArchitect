@@ -106,7 +106,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanRenderTarget::CreateFramebufferForImage(
-        const std::unique_ptr<VulkanRenderPass>& renderpass,
+        const VkRenderPass renderpass,
         const std::vector<VkImageView>& attachments,
         uint32_t imageIndex)
     {
@@ -125,7 +125,7 @@ namespace VoidArchitect::Platform
         // Create new framebuffer
         auto framebufferInfo = VkFramebufferCreateInfo{};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-        framebufferInfo.renderPass = renderpass->GetHandle();
+        framebufferInfo.renderPass = renderpass;
         framebufferInfo.attachmentCount = attachments.size();
         framebufferInfo.pAttachments = attachments.data();
         framebufferInfo.width = m_Width;

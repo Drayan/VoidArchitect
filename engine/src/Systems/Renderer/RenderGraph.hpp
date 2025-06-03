@@ -2,8 +2,11 @@
 // Created by Michael Desmedt on 02/06/2025.
 //
 #pragma once
+#include <memory>
+
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec4.hpp"
+#include "Resources/Pipeline.hpp"
 #include "Resources/RenderPass.hpp"
 
 namespace VoidArchitect
@@ -56,9 +59,25 @@ namespace VoidArchitect
             SWAPCHAIN_DEPTH
         };
 
+        enum class RenderPassType
+        {
+            ForwardOpaque,
+            ForwardTransparent,
+            Shadow,
+            DepthPrepass,
+            PostProcess,
+            UI,
+            Unknown
+        };
+
+        const char* RenderPassTypeToString(RenderPassType type);
+
         struct RenderPassConfig
         {
             std::string Name;
+            RenderPassType Type = RenderPassType::Unknown;
+
+            std::vector<std::string> CompatiblePipelines;
 
             struct AttachmentConfig
             {
@@ -74,16 +93,7 @@ namespace VoidArchitect
                 uint32_t ClearStencil = 0;
             };
 
-            struct SubpassConfig
-            {
-                std::string Name;
-
-                std::vector<std::string> ColorAttachments;
-                std::optional<std::string> DepthAttachment;
-            };
-
             std::vector<AttachmentConfig> Attachments;
-            std::vector<SubpassConfig> Subpasses;
         };
 
         struct RenderTargetConfig
@@ -113,13 +123,17 @@ namespace VoidArchitect
 
             // Connect passes to targets
             void ConnectPassToTarget(
-                Resources::RenderPassPtr pass,
-                Resources::RenderTargetPtr target);
+                const Resources::RenderPassPtr& pass,
+                const Resources::RenderTargetPtr& target);
 
             // Graph lifecycle
             bool Validate();
-            void Compile();
+            bool Compile();
             void Execute(const FrameData& frameData);
+
+            // Compilation process
+            bool CompileRenderPasses();
+            bool CompilePipelines();
 
             // Resize handling
             void OnResize(uint32_t width, uint32_t height);
@@ -157,6 +171,8 @@ namespace VoidArchitect
             // Internal methods
             bool ValidateNoCycles();
             bool ValidateReferences();
+            bool ValidatePassPipelineCompatibility();
+
             std::vector<Resources::RenderPassPtr> GetExecutionOrder();
             void CreateRHIResources();
 
@@ -165,6 +181,30 @@ namespace VoidArchitect
                 Resources::RenderPassPtr pass,
                 Resources::RenderTargetPtr target,
                 const FrameData& frameData);
+
+            void RenderForwardPass(
+                const RenderPassConfig& passConfig,
+                const Resources::PipelinePtr& pipeline,
+                const FrameData&
+                frameData);
+            void RenderShadowPass(
+                const RenderPassConfig& passConfig,
+                const Resources::PipelinePtr& pipeline,
+                const FrameData&
+                frameData);
+            void RenderDepthPrepassPass(
+                const RenderPassConfig& passConfig,
+                const Resources::PipelinePtr& pipeline,
+                const FrameData& frameData);
+            void RenderPostProcessPass(
+                const RenderPassConfig& passConfig,
+                const Resources::PipelinePtr& pipeline,
+                const FrameData& frameData);
+            void RenderUIPass(
+                const RenderPassConfig& passConfig,
+                const Resources::PipelinePtr& pipeline,
+                const FrameData&
+                frameData);
 
             Platform::IRenderingHardware& m_RHI;
 
