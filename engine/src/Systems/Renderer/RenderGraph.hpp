@@ -6,7 +6,7 @@
 
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec4.hpp"
-#include "Resources/Pipeline.hpp"
+#include "Resources/RenderState.hpp"
 #include "Resources/RenderPass.hpp"
 
 namespace VoidArchitect
@@ -184,25 +184,25 @@ namespace VoidArchitect
 
             void RenderForwardPass(
                 const RenderPassConfig& passConfig,
-                const Resources::PipelinePtr& pipeline,
+                const Resources::RenderStatePtr& pipeline,
                 const FrameData&
                 frameData);
             void RenderShadowPass(
                 const RenderPassConfig& passConfig,
-                const Resources::PipelinePtr& pipeline,
+                const Resources::RenderStatePtr& pipeline,
                 const FrameData&
                 frameData);
             void RenderDepthPrepassPass(
                 const RenderPassConfig& passConfig,
-                const Resources::PipelinePtr& pipeline,
+                const Resources::RenderStatePtr& pipeline,
                 const FrameData& frameData);
             void RenderPostProcessPass(
                 const RenderPassConfig& passConfig,
-                const Resources::PipelinePtr& pipeline,
+                const Resources::RenderStatePtr& pipeline,
                 const FrameData& frameData);
             void RenderUIPass(
                 const RenderPassConfig& passConfig,
-                const Resources::PipelinePtr& pipeline,
+                const Resources::RenderStatePtr& pipeline,
                 const FrameData&
                 frameData);
 

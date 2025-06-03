@@ -4,7 +4,7 @@
 #pragma once
 #include <memory>
 
-#include "Resources/Pipeline.hpp"
+#include "Resources/RenderState.hpp"
 #include "Resources/RenderPass.hpp"
 #include "Resources/Shader.hpp"
 
@@ -73,12 +73,12 @@ namespace VoidArchitect
         std::vector<ResourceBinding> bindings;
     };
 
-    struct PipelineInputLayout
+    struct RenderStateInputLayout
     {
         std::vector<SpaceLayout> spaces;
     };
 
-    struct PipelineConfig
+    struct RenderStateConfig
     {
         std::string name;
         std::vector<Resources::ShaderPtr> shaders;
@@ -91,27 +91,27 @@ namespace VoidArchitect
         std::vector<VertexAttribute> vertexAttributes;
 
         // TODO InputLayout; -> Which data bindings are used?
-        PipelineInputLayout inputLayout;
+        RenderStateInputLayout inputLayout;
 
         // TODO RenderState -> Allow configuration options like culling, depth testing, etc.
         // TODO RenderPass
     };
 
-    struct PipelineSignature
+    struct RenderStateSignature
     {
         std::vector<Renderer::TextureFormat> colorFormats;
         std::optional<Renderer::TextureFormat> depthFormat;
 
-        bool operator==(const PipelineSignature& other) const;
+        bool operator==(const RenderStateSignature& other) const;
         [[nodiscard]] size_t GetHash() const;
     };
 
-    struct PipelineCacheKey
+    struct RenderStateCacheKey
     {
         std::string templateName;
-        PipelineSignature signature;
+        RenderStateSignature signature;
 
-        bool operator==(const PipelineCacheKey& other) const;
+        bool operator==(const RenderStateCacheKey& other) const;
         [[nodiscard]] size_t GetHash() const;
     };
 }
@@ -119,18 +119,18 @@ namespace VoidArchitect
 namespace std
 {
     template <>
-    struct hash<VoidArchitect::PipelineSignature>
+    struct hash<VoidArchitect::RenderStateSignature>
     {
-        size_t operator()(const VoidArchitect::PipelineSignature& signature) const noexcept
+        size_t operator()(const VoidArchitect::RenderStateSignature& signature) const noexcept
         {
             return signature.GetHash();
         }
     };
 
     template <>
-    struct hash<VoidArchitect::PipelineCacheKey>
+    struct hash<VoidArchitect::RenderStateCacheKey>
     {
-        size_t operator()(const VoidArchitect::PipelineCacheKey& key) const noexcept
+        size_t operator()(const VoidArchitect::RenderStateCacheKey& key) const noexcept
         {
             return key.GetHash();
         }
@@ -139,50 +139,51 @@ namespace std
 
 namespace VoidArchitect
 {
-    class PipelineSystem
+    class RenderStateSystem
     {
     public:
-        PipelineSystem();
-        ~PipelineSystem() = default;
+        RenderStateSystem();
+        ~RenderStateSystem() = default;
 
-        void RegisterPipelineTemplate(const std::string& name, const PipelineConfig& config);
-        [[nodiscard]] bool HasPipelineTemplate(const std::string& name) const;
-        [[nodiscard]] const PipelineConfig& GetPipelineTemplate(const std::string& name) const;
+        void RegisterRenderStateTemplate(const std::string& name, const RenderStateConfig& config);
+        [[nodiscard]] bool HasRenderStateTemplate(const std::string& name) const;
+        [[nodiscard]] const RenderStateConfig& GetRenderStateTemplate(
+            const std::string& name) const;
 
-        Resources::PipelinePtr CreatePipelineForPass(
+        Resources::RenderStatePtr CreateRenderState(
             const std::string& templateName,
             const Renderer::RenderPassConfig& passConfig,
             const Resources::RenderPassPtr& renderPass);
-        Resources::PipelinePtr GetCachedPipeline(
+        Resources::RenderStatePtr GetCachedRenderState(
             const std::string& templateName,
-            const PipelineSignature& signature);
+            const RenderStateSignature& signature);
 
         void ClearCache();
 
-        [[nodiscard]] bool IsPipelineCompatibleWithPass(
-            const std::string& pipelineName,
+        [[nodiscard]] bool IsRenderStateCompatibleWithPass(
+            const std::string& renderStateName,
             Renderer::RenderPassType passType) const;
-        [[nodiscard]] std::vector<std::string> GetCompatiblePipelinesForPass(
+        [[nodiscard]] std::vector<std::string> GetCompatibleRenderStatesForPass(
             Renderer::RenderPassType passType) const;
 
-        PipelineSignature CreateSignatureFromPass(const Renderer::RenderPassConfig& passConfig);
+        RenderStateSignature CreateSignatureFromPass(const Renderer::RenderPassConfig& passConfig);
 
     private:
-        void GenerateDefaultPipelines();
-        uint32_t GetFreePipelineHandle();
-        void ReleasePipeline(const Resources::IPipeline* pipeline);
+        void GenerateDefaultRenderStates();
+        uint32_t GetFreeRenderStateHandle();
+        void ReleaseRenderState(const Resources::IRenderState* pipeline);
 
-        struct PipelineDeleter
+        struct RenderStateDeleter
         {
-            PipelineSystem* system;
-            void operator()(const Resources::IPipeline* pipeline) const;
+            RenderStateSystem* system;
+            void operator()(const Resources::IRenderState* renderState) const;
         };
 
-        std::unordered_map<std::string, PipelineConfig> m_PipelineTemplates;
-        std::unordered_map<PipelineCacheKey, Resources::PipelinePtr> m_CachedPipelines;
+        std::unordered_map<std::string, RenderStateConfig> m_RenderStateTemplates;
+        std::unordered_map<RenderStateCacheKey, Resources::RenderStatePtr> m_RenderStateCache;
 
-        Resources::PipelinePtr m_DefaultPipeline;
+        Resources::RenderStatePtr m_DefaultState;
     };
 
-    inline std::unique_ptr<PipelineSystem> g_PipelineSystem;
+    inline std::unique_ptr<RenderStateSystem> g_RenderStateSystem;
 } // namespace VoidArchitect

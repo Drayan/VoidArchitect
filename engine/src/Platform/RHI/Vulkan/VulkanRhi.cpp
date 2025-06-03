@@ -33,13 +33,13 @@ namespace VoidArchitect::Platform
 
     VulkanRHI::VulkanRHI(
         std::unique_ptr<Window>& window,
-        const PipelineInputLayout& sharedInputLayout)
+        const RenderStateInputLayout& sharedInputLayout)
         : m_Window(window),
           m_Allocator(nullptr),
           m_Instance{},
           m_Capabilities{},
-          m_FramebufferWidth(window->GetWidth()),
-          m_FramebufferHeight(window->GetHeight())
+          m_CurrentWidth(window->GetWidth()),
+          m_CurrentHeight(window->GetHeight())
     {
         // NOTE Currently we don't provide an allocator, but we might want to do it in the future
         //  that's why there's m_Allocator already.
@@ -114,9 +114,9 @@ namespace VoidArchitect::Platform
 
     void VulkanRHI::Resize(uint32_t width, uint32_t height)
     {
-        m_CachedFramebufferWidth = width;
-        m_CachedFramebufferHeight = height;
-        m_FramebufferSizeGeneration++;
+        m_PendingWidth = width;
+        m_PendingHeight = height;
+        m_ResizeGeneration++;
 
         InvalidateMainTargetsFramebuffers();
 
@@ -124,7 +124,7 @@ namespace VoidArchitect::Platform
             "[VulkanRHI] Resizing to {}x{}, generation : {}",
             width,
             height,
-            m_FramebufferSizeGeneration);
+            m_ResizeGeneration);
     }
 
     void VulkanRHI::WaitIdle(uint64_t timeout) { m_Device->WaitIdle(); }
@@ -144,7 +144,7 @@ namespace VoidArchitect::Platform
         }
 
         // Check if the framebuffer has been resized. If so, a new swapchain must be created.
-        if (m_FramebufferSizeGeneration != m_FramebufferSizeLastGeneration)
+        if (m_ResizeGeneration != m_ResizeLastGeneration)
         {
             m_Device->WaitIdle();
 
@@ -178,16 +178,16 @@ namespace VoidArchitect::Platform
 
         const VkViewport viewport = {
             .x = 0.0f,
-            .y = static_cast<float>(m_FramebufferHeight),
-            .width = static_cast<float>(m_FramebufferWidth),
-            .height = -static_cast<float>(m_FramebufferHeight),
+            .y = static_cast<float>(m_CurrentHeight),
+            .width = static_cast<float>(m_CurrentWidth),
+            .height = -static_cast<float>(m_CurrentHeight),
             .minDepth = 0.0f,
             .maxDepth = 1.0f
         };
 
         const VkRect2D scissor = {
             .offset = {0, 0},
-            .extent = {m_FramebufferWidth, m_FramebufferHeight}
+            .extent = {m_CurrentWidth, m_CurrentHeight}
         };
 
         vkCmdSetViewport(cmdBuf.GetHandle(), 0, 1, &viewport);
@@ -257,7 +257,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanRHI::UpdateGlobalState(
-        const Resources::PipelinePtr& pipeline,
+        const Resources::RenderStatePtr& pipeline,
         const Math::Mat4& projection,
         const Math::Mat4& view)
     {
@@ -307,7 +307,7 @@ namespace VoidArchitect::Platform
 
     void VulkanRHI::DrawMesh(
         const Resources::GeometryRenderData& data,
-        const Resources::PipelinePtr& pipeline)
+        const Resources::RenderStatePtr& pipeline)
     {
         data.Material->SetModel(*this, data.Model, pipeline);
         data.Mesh->Bind(*this);
@@ -340,8 +340,8 @@ namespace VoidArchitect::Platform
             data);
     }
 
-    Resources::IPipeline* VulkanRHI::CreatePipelineForRenderPass(
-        PipelineConfig& config,
+    Resources::IRenderState* VulkanRHI::CreatePipeline(
+        RenderStateConfig& config,
         Resources::IRenderPass* renderPass)
     {
         auto* vkRenderPass = dynamic_cast<VulkanRenderPass*>(renderPass);
@@ -382,8 +382,8 @@ namespace VoidArchitect::Platform
         {
             // Main target: Use swapchain dimensions and format
             auto mainConfig = config;
-            mainConfig.Width = m_FramebufferWidth;
-            mainConfig.Height = m_FramebufferHeight;
+            mainConfig.Width = m_CurrentWidth;
+            mainConfig.Height = m_CurrentHeight;
 
             // Create the main render target (no attachment yet - managed by swapchain)
             const auto renderTarget = new VulkanRenderTarget(
@@ -899,7 +899,7 @@ namespace VoidArchitect::Platform
             return false;
         }
 
-        if (m_FramebufferWidth == 0 || m_FramebufferHeight == 0)
+        if (m_CurrentWidth == 0 || m_CurrentHeight == 0)
         {
             VA_ENGINE_DEBUG(
                 "[VulkanRHI] RecreateSwapchain called when window is < 1 in a dimension.");
@@ -919,17 +919,17 @@ namespace VoidArchitect::Platform
 
         m_Swapchain->Recreate(
             *this,
-            {m_CachedFramebufferWidth, m_CachedFramebufferHeight},
+            {m_PendingWidth, m_PendingHeight},
             depthFormat);
 
         // Sync
-        m_FramebufferWidth = m_CachedFramebufferWidth;
-        m_FramebufferHeight = m_CachedFramebufferHeight;
-        m_CachedFramebufferWidth = 0;
-        m_CachedFramebufferHeight = 0;
+        m_CurrentWidth = m_PendingWidth;
+        m_CurrentHeight = m_PendingHeight;
+        m_PendingWidth = 0;
+        m_PendingHeight = 0;
 
         // Update framebuffer size generation.
-        m_FramebufferSizeLastGeneration = m_FramebufferSizeGeneration;
+        m_ResizeLastGeneration = m_ResizeGeneration;
 
         m_GraphicsCommandBuffers.clear();
 

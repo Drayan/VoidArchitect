@@ -3,7 +3,7 @@
 //
 #include "VulkanUtils.hpp"
 
-#include "Systems/PipelineSystem.hpp"
+#include "Systems/RenderStateSystem.hpp"
 
 namespace VoidArchitect::Platform
 {

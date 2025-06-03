@@ -1,7 +1,7 @@
 //
 // Created by Michael Desmedt on 27/05/2025.
 //
-#include "PipelineSystem.hpp"
+#include "RenderStateSystem.hpp"
 
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
@@ -11,7 +11,7 @@
 
 namespace VoidArchitect
 {
-    size_t PipelineSignature::GetHash() const
+    size_t RenderStateSignature::GetHash() const
     {
         size_t hash = 0;
         for (const auto& format : colorFormats)
@@ -29,75 +29,76 @@ namespace VoidArchitect
         return hash;
     }
 
-    size_t PipelineCacheKey::GetHash() const
+    size_t RenderStateCacheKey::GetHash() const
     {
         return std::hash<std::string>{}(templateName) ^ signature.GetHash();
     }
 
-    bool PipelineCacheKey::operator==(const PipelineCacheKey& other) const
+    bool RenderStateCacheKey::operator==(const RenderStateCacheKey& other) const
     {
         return templateName == other.templateName && signature == other.signature;
     }
 
-    bool PipelineSignature::operator==(const PipelineSignature& other) const
+    bool RenderStateSignature::operator==(const RenderStateSignature& other) const
     {
         return colorFormats == other.colorFormats && depthFormat == other.depthFormat;
     }
 
-    PipelineSystem::PipelineSystem()
+    RenderStateSystem::RenderStateSystem()
     {
-        GenerateDefaultPipelines();
+        GenerateDefaultRenderStates();
     }
 
-    void PipelineSystem::RegisterPipelineTemplate(
+    void RenderStateSystem::RegisterRenderStateTemplate(
         const std::string& name,
-        const PipelineConfig& config)
+        const RenderStateConfig& config)
     {
-        m_PipelineTemplates[name] = config;
+        m_RenderStateTemplates[name] = config;
 
         VA_ENGINE_TRACE(
-            "[PipelineSystem] Pipeline template '{}' registered with compatibility",
+            "[RenderStateSystem] Pipeline template '{}' registered with compatibility",
             name);
         for (const auto& passType : config.compatiblePassTypes)
         {
             VA_ENGINE_TRACE(
-                "[PipelineSystem] - Pass Type: {}",
+                "[RenderStateSystem] - Pass Type: {}",
                 Renderer::RenderPassTypeToString(passType));
         }
         for (const auto& passName : config.compatiblePassNames)
         {
-            VA_ENGINE_TRACE("[PipelineSystem] - Pass Name: {}", passName);
+            VA_ENGINE_TRACE("[RenderStateSystem] - Pass Name: {}", passName);
         }
     }
 
-    bool PipelineSystem::HasPipelineTemplate(const std::string& name) const
+    bool RenderStateSystem::HasRenderStateTemplate(const std::string& name) const
     {
-        return m_PipelineTemplates.contains(name);
+        return m_RenderStateTemplates.contains(name);
     }
 
-    const PipelineConfig& PipelineSystem::GetPipelineTemplate(const std::string& name) const
+    const RenderStateConfig& RenderStateSystem::GetRenderStateTemplate(
+        const std::string& name) const
     {
-        auto it = m_PipelineTemplates.find(name);
-        if (it == m_PipelineTemplates.end())
+        auto it = m_RenderStateTemplates.find(name);
+        if (it == m_RenderStateTemplates.end())
         {
-            VA_ENGINE_ERROR("[PipelineSystem] Pipeline template '{}' not found.", name);
-            static const PipelineConfig emptyConfig{};
+            VA_ENGINE_ERROR("[RenderStateSystem] Pipeline template '{}' not found.", name);
+            static const RenderStateConfig emptyConfig{};
             return emptyConfig;
         }
 
         return it->second;
     }
 
-    Resources::PipelinePtr PipelineSystem::CreatePipelineForPass(
+    Resources::RenderStatePtr RenderStateSystem::CreateRenderState(
         const std::string& templateName,
         const Renderer::RenderPassConfig& passConfig,
         const Resources::RenderPassPtr& renderPass)
     {
-        // Check if the pipeline template exists
-        if (!HasPipelineTemplate(templateName))
+        // Check if the render state template exists
+        if (!HasRenderStateTemplate(templateName))
         {
             VA_ENGINE_ERROR(
-                "[PipelineSystem] Pipeline template '{}' not found for pass '{}'.",
+                "[RenderStateSystem] Pipeline template '{}' not found for pass '{}'.",
                 templateName,
                 passConfig.Name);
             return nullptr;
@@ -106,18 +107,18 @@ namespace VoidArchitect
         // Create the signature
         auto signature = CreateSignatureFromPass(passConfig);
 
-        // Check if the pipeline isn't already in the cache
-        PipelineCacheKey cacheKey(templateName, signature);
-        if (auto cached = GetCachedPipeline(templateName, signature))
+        // Check if the render state isn't already in the cache
+        RenderStateCacheKey cacheKey(templateName, signature);
+        if (auto cached = GetCachedRenderState(templateName, signature))
         {
             VA_ENGINE_DEBUG(
-                "[PipelineSystem] Using cached pipeline '{}' for pass '{}'.",
+                "[RenderStateSystem] Using cached render state '{}' for pass '{}'.",
                 templateName,
                 passConfig.Name);
             return cached;
         }
 
-        auto config = GetPipelineTemplate(templateName);
+        auto config = GetRenderStateTemplate(templateName);
 
         // Add required data to the config
         switch (config.vertexFormat)
@@ -179,45 +180,45 @@ namespace VoidArchitect
             case VertexFormat::Custom:
             default:
                 VA_ENGINE_WARN(
-                    "[PipelineSystem] Unknown vertex format for pipeline '{}'.",
+                    "[RenderStateSystem] Unknown vertex format for render state '{}'.",
                     config.name);
                 break;
         }
 
-        // Create a new pipeline resource
-        const auto pipeline = Renderer::RenderCommand::GetRHIRef().CreatePipelineForRenderPass(
+        // Create a new render state resource
+        const auto renderState = Renderer::RenderCommand::GetRHIRef().CreatePipeline(
             config,
             renderPass.get());
 
-        if (!pipeline)
+        if (!renderState)
         {
             VA_ENGINE_WARN(
-                "[PipelineSystem] Failed to create pipeline '{}' for pass '{}'.",
+                "[RenderStateSystem] Failed to create render state '{}' for pass '{}'.",
                 config.name,
                 passConfig.Name);
             return nullptr;
         }
 
-        // Store the pipeline in the cache
-        auto pipelinePtr = Resources::PipelinePtr(pipeline, PipelineDeleter{this});
+        // Store the render state in the cache
+        auto renderStatePtr = Resources::RenderStatePtr(renderState, RenderStateDeleter{this});
 
-        m_CachedPipelines[cacheKey] = pipelinePtr;
+        m_RenderStateCache[cacheKey] = renderStatePtr;
 
         VA_ENGINE_TRACE(
-            "[PipelineSystem] Pipeline '{}' created for pass '{}' (Type: {}).",
+            "[RenderStateSystem] Pipeline '{}' created for pass '{}' (Type: {}).",
             config.name,
             passConfig.Name,
             Renderer::RenderPassTypeToString(passConfig.Type));
 
-        return pipelinePtr;
+        return renderStatePtr;
     }
 
-    Resources::PipelinePtr PipelineSystem::GetCachedPipeline(
+    Resources::RenderStatePtr RenderStateSystem::GetCachedRenderState(
         const std::string& templateName,
-        const PipelineSignature& signature)
+        const RenderStateSignature& signature)
     {
-        const PipelineCacheKey cacheKey(templateName, signature);
-        if (const auto it = m_CachedPipelines.find(cacheKey); it != m_CachedPipelines.end())
+        const RenderStateCacheKey cacheKey(templateName, signature);
+        if (const auto it = m_RenderStateCache.find(cacheKey); it != m_RenderStateCache.end())
         {
             if (auto& cachedPipeline = it->second)
             {
@@ -225,30 +226,30 @@ namespace VoidArchitect
             }
 
             VA_ENGINE_WARN(
-                "[PipelineSystem] Cached pipeline '{}' is expired.",
+                "[RenderStateSystem] Cached render state '{}' is expired.",
                 templateName);
-            m_CachedPipelines.erase(it);
+            m_RenderStateCache.erase(it);
         }
 
         return nullptr;
     }
 
-    void PipelineSystem::ClearCache()
+    void RenderStateSystem::ClearCache()
     {
-        m_CachedPipelines.clear();
-        VA_ENGINE_DEBUG("[PipelineSystem] Cache cleared.");
+        m_RenderStateCache.clear();
+        VA_ENGINE_DEBUG("[RenderStateSystem] Cache cleared.");
     }
 
-    bool PipelineSystem::IsPipelineCompatibleWithPass(
-        const std::string& pipelineName,
+    bool RenderStateSystem::IsRenderStateCompatibleWithPass(
+        const std::string& renderStateName,
         Renderer::RenderPassType passType) const
     {
-        auto it = m_PipelineTemplates.find(pipelineName);
-        if (it == m_PipelineTemplates.end())
+        auto it = m_RenderStateTemplates.find(renderStateName);
+        if (it == m_RenderStateTemplates.end())
         {
             VA_ENGINE_WARN(
-                "[PipelineSystem] Pipeline '{}' not found in the cache.",
-                pipelineName);
+                "[RenderStateSystem] Pipeline '{}' not found in the cache.",
+                renderStateName);
             return false;
         }
 
@@ -258,28 +259,28 @@ namespace VoidArchitect
             .end();
     }
 
-    std::vector<std::string> PipelineSystem::GetCompatiblePipelinesForPass(
+    std::vector<std::string> RenderStateSystem::GetCompatibleRenderStatesForPass(
         Renderer::RenderPassType passType) const
     {
         std::vector<std::string> compatiblePipelines;
 
-        for (const auto& [pipelineName, config] : m_PipelineTemplates)
+        for (const auto& [renderStateName, config] : m_RenderStateTemplates)
         {
             if (std::ranges::find(config.compatiblePassTypes, passType) != config.
                 compatiblePassTypes
                 .end())
             {
-                compatiblePipelines.push_back(pipelineName);
+                compatiblePipelines.push_back(renderStateName);
             }
         }
 
         return compatiblePipelines;
     }
 
-    PipelineSignature PipelineSystem::CreateSignatureFromPass(
+    RenderStateSignature RenderStateSystem::CreateSignatureFromPass(
         const Renderer::RenderPassConfig& passConfig)
     {
-        PipelineSignature signature;
+        RenderStateSignature signature;
 
         for (const auto& attachment : passConfig.Attachments)
         {
@@ -301,40 +302,41 @@ namespace VoidArchitect
         return signature;
     }
 
-    void PipelineSystem::GenerateDefaultPipelines()
+    void RenderStateSystem::GenerateDefaultRenderStates()
     {
-        auto pipelineConfig = PipelineConfig{};
-        pipelineConfig.name = "Default";
+        auto renderStateConfig = RenderStateConfig{};
+        renderStateConfig.name = "Default";
 
-        pipelineConfig.compatiblePassTypes = {
+        renderStateConfig.compatiblePassTypes = {
             Renderer::RenderPassType::ForwardOpaque,
             Renderer::RenderPassType::DepthPrepass
         };
-        pipelineConfig.compatiblePassNames = {"ForwardPass"};
+        renderStateConfig.compatiblePassNames = {"ForwardPass"};
 
-        // Try to load the default shaders into the pipeline.
+        // Try to load the default shaders into the render state.
         auto vertexShader = g_ShaderSystem->LoadShader("BuiltinObject.vert");
         auto pixelShader = g_ShaderSystem->LoadShader("BuiltinObject.pixl");
 
-        pipelineConfig.shaders.emplace_back(vertexShader);
-        pipelineConfig.shaders.emplace_back(pixelShader);
+        renderStateConfig.shaders.emplace_back(vertexShader);
+        renderStateConfig.shaders.emplace_back(pixelShader);
 
-        pipelineConfig.vertexFormat = VertexFormat::PositionUV;
-        pipelineConfig.inputLayout = PipelineInputLayout{}; // Use default configuration
+        renderStateConfig.vertexFormat = VertexFormat::PositionUV;
+        renderStateConfig.inputLayout = RenderStateInputLayout{}; // Use default configuration
 
-        RegisterPipelineTemplate("Default", pipelineConfig);
+        RegisterRenderStateTemplate("Default", renderStateConfig);
 
-        VA_ENGINE_INFO("[PipelineSystem] Default pipeline template registered.");
+        VA_ENGINE_INFO("[RenderStateSystem] Default render state template registered.");
     }
 
-    void PipelineSystem::ReleasePipeline(const Resources::IPipeline* pipeline)
+    void RenderStateSystem::ReleaseRenderState(const Resources::IRenderState* renderState)
     {
         // Remove from the cache
     }
 
-    void PipelineSystem::PipelineDeleter::operator()(const Resources::IPipeline* pipeline) const
+    void RenderStateSystem::RenderStateDeleter::operator()(
+        const Resources::IRenderState* renderState) const
     {
-        system->ReleasePipeline(pipeline);
-        delete pipeline;
+        system->ReleaseRenderState(renderState);
+        delete renderState;
     }
 } // namespace VoidArchitect

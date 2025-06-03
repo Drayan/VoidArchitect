@@ -33,22 +33,6 @@ namespace VoidArchitect::Platform
             VkAllocationCallbacks* allocator,
             VkFormat swapchainFormat,
             VkFormat depthFormat);
-
-        // Legacy constructor for backward compatibility (deprecated)
-        VulkanRenderPass(
-            const std::unique_ptr<VulkanDevice>& device,
-            const std::unique_ptr<VulkanSwapchain>& swapchain,
-            VkAllocationCallbacks* allocator,
-            int32_t x,
-            int32_t y,
-            uint32_t w,
-            uint32_t h,
-            float r,
-            float g,
-            float b,
-            float a,
-            float depth,
-            uint32_t stencil);
         ~VulkanRenderPass() override;
 
         void Begin(IRenderingHardware& rhi, const Resources::RenderTargetPtr& target) override;
@@ -86,14 +70,6 @@ namespace VoidArchitect::Platform
             const Renderer::RenderPassConfig& config,
             VkFormat swapchainFormat,
             VkFormat depthFormat);
-        void CreateLegacyRenderPass(
-            const std::unique_ptr<VulkanSwapchain>& swapchain,
-            float r,
-            float g,
-            float b,
-            float a,
-            float depth,
-            uint32_t stencil);
 
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;

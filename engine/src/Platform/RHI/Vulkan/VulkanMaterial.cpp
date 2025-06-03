@@ -79,7 +79,7 @@ namespace VoidArchitect::Platform
     void VulkanMaterial::SetModel(
         IRenderingHardware& rhi,
         const Math::Mat4& model,
-        const Resources::PipelinePtr& pipeline)
+        const Resources::RenderStatePtr& pipeline)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
         const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
@@ -95,7 +95,7 @@ namespace VoidArchitect::Platform
             &model);
     }
 
-    void VulkanMaterial::Bind(IRenderingHardware& rhi, const Resources::PipelinePtr& pipeline)
+    void VulkanMaterial::Bind(IRenderingHardware& rhi, const Resources::RenderStatePtr& pipeline)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
         const uint32_t frameIndex = vulkanRhi.GetImageIndex();

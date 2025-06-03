@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "Mesh.hpp"
-#include "Pipeline.hpp"
+#include "RenderState.hpp"
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec4.hpp"
 #include "Core/Uuid.hpp"
@@ -69,10 +69,10 @@ namespace VoidArchitect
             virtual void SetModel(
                 Platform::IRenderingHardware& rhi,
                 const Math::Mat4& model,
-                const PipelinePtr& pipeline) = 0;
+                const RenderStatePtr& pipeline) = 0;
             virtual void Bind(
                 Platform::IRenderingHardware& rhi,
-                const PipelinePtr& pipeline) = 0;
+                const RenderStatePtr& pipeline) = 0;
 
             static void SetDefaultDiffuseTexture(const Resources::Texture2DPtr& defaultTexture)
             {

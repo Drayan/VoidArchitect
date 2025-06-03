@@ -7,7 +7,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "Systems/PipelineSystem.hpp"
+#include "Systems/RenderStateSystem.hpp"
 
 namespace VoidArchitect::Resources::Loaders
 {

@@ -1,7 +1,7 @@
 #include "MaterialSystem.hpp"
 
 #include "Core/Logger.hpp"
-#include "PipelineSystem.hpp"
+#include "RenderStateSystem.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Renderer/RenderCommand.hpp"
 #include "Resources/Material.hpp"

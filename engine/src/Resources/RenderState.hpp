@@ -9,20 +9,20 @@ namespace VoidArchitect::Platform
 {
     class IRenderingHardware;
 }
+
 namespace VoidArchitect
 {
-    class PipelineSystem;
+    class RenderStateSystem;
 }
 
 namespace VoidArchitect::Resources
 {
-
-    class IPipeline
+    class IRenderState
     {
-        friend class VoidArchitect::PipelineSystem;
+        friend class VoidArchitect::RenderStateSystem;
 
     public:
-        virtual ~IPipeline() = default;
+        virtual ~IRenderState() = default;
 
         virtual void Bind(Platform::IRenderingHardware& rhi) = 0;
 
@@ -30,6 +30,5 @@ namespace VoidArchitect::Resources
         UUID m_UUID;
     };
 
-    using PipelinePtr = std::shared_ptr<IPipeline>;
-
+    using RenderStatePtr = std::shared_ptr<IRenderState>;
 } // namespace VoidArchitect::Resources

@@ -29,32 +29,6 @@ namespace VoidArchitect::Platform
         CreateRenderPassFromConfig(config, swapchainFormat, depthFormat);
     }
 
-    VulkanRenderPass::VulkanRenderPass(
-        const std::unique_ptr<VulkanDevice>& device,
-        const std::unique_ptr<VulkanSwapchain>& swapchain,
-        VkAllocationCallbacks* allocator,
-        int32_t x,
-        int32_t y,
-        uint32_t w,
-        uint32_t h,
-        float r,
-        float g,
-        float b,
-        float a,
-        float depth,
-        uint32_t stencil)
-        : IRenderPass("LegacyRenderPass"),
-          m_Device(device->GetLogicalDeviceHandle()),
-          m_Allocator(allocator),
-          m_x(x),
-          m_y(y),
-          m_w(w),
-          m_h(h),
-          m_IsLegacy(true)
-    {
-        CreateLegacyRenderPass(swapchain, r, g, b, a, depth, stencil);
-    }
-
     VulkanRenderPass::~VulkanRenderPass()
     {
         Release();
@@ -324,87 +298,5 @@ namespace VoidArchitect::Platform
             config.Name,
             colorRefs.size(),
             depthRef.has_value() ? 1 : 0);
-    }
-
-    void VulkanRenderPass::CreateLegacyRenderPass(
-        const std::unique_ptr<VulkanSwapchain>& swapchain,
-        const float r,
-        const float g,
-        const float b,
-        const float a,
-        const float depth,
-        const uint32_t stencil)
-    {
-        auto mainSubpass = VkSubpassDescription{};
-        mainSubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-
-        const std::vector attachments = {
-            // Color attachment
-            VkAttachmentDescription{
-                .flags = 0,
-                .format = swapchain->GetFormat(),
-                .samples = VK_SAMPLE_COUNT_1_BIT,
-                .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-                .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-                .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-                .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-                .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-                .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-            },
-            // Depth attachment
-            VkAttachmentDescription{
-                .flags = 0,
-                .format = swapchain->GetDepthFormat(),
-                .samples = VK_SAMPLE_COUNT_1_BIT,
-                .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-                .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-                .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-                .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-                .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-                .finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-            }
-        };
-        const std::vector attachmentRefs = {
-            // Color attachment
-            VkAttachmentReference{
-                .attachment = 0,
-                .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-            },
-            // Depth attachment
-            VkAttachmentReference{
-                .attachment = 1,
-                .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-            }
-        };
-        mainSubpass.colorAttachmentCount = 1;
-        mainSubpass.pColorAttachments = &attachmentRefs[0];
-        mainSubpass.pDepthStencilAttachment = &attachmentRefs[1];
-
-        auto dependencies = VkSubpassDependency{};
-        dependencies.srcSubpass = VK_SUBPASS_EXTERNAL;
-        dependencies.dstSubpass = 0;
-        dependencies.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependencies.srcAccessMask = 0;
-        dependencies.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependencies.dstAccessMask =
-            VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        dependencies.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-        auto createInfo = VkRenderPassCreateInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-        createInfo.attachmentCount = attachments.size();
-        createInfo.pAttachments = attachments.data();
-        createInfo.subpassCount = 1;
-        createInfo.pSubpasses = &mainSubpass;
-        createInfo.dependencyCount = 1;
-        createInfo.pDependencies = &dependencies;
-
-        VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkCreateRenderPass(m_Device, &createInfo, m_Allocator, &m_Renderpass));
-
-        m_ClearValues.emplace_back(VkClearValue{.color = {{r, g, b, a}}});
-        m_ClearValues.emplace_back(VkClearValue{.depthStencil = {depth, stencil}});
-
-        VA_ENGINE_TRACE("[VulkanRenderpass] Legacy renderpass created.");
     }
 } // namespace VoidArchitect::Platform

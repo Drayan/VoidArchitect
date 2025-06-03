@@ -4,14 +4,14 @@
 #pragma once
 #include <vulkan/vulkan.h>
 
-#include "Resources/Pipeline.hpp"
+#include "Resources/RenderState.hpp"
 
-#include "Systems/PipelineSystem.hpp"
+#include "Systems/RenderStateSystem.hpp"
 #include "VulkanCommandBuffer.hpp"
 
 namespace VoidArchitect
 {
-    struct PipelineConfig;
+    struct RenderStateConfig;
 }
 
 namespace VoidArchitect::Platform
@@ -21,11 +21,11 @@ namespace VoidArchitect::Platform
     class VulkanCommandBuffer;
     class VulkanShader;
 
-    class VulkanPipeline : public Resources::IPipeline
+    class VulkanPipeline : public Resources::IRenderState
     {
     public:
         VulkanPipeline(
-            const PipelineConfig& config,
+            const RenderStateConfig& config,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
             VulkanRenderPass* renderPass);

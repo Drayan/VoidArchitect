@@ -4,7 +4,7 @@
 #pragma once
 
 #include "Resources/Material.hpp"
-#include "Resources/Pipeline.hpp"
+#include "Resources/RenderState.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -29,11 +29,11 @@ namespace VoidArchitect::Platform
 
         void InitializeResources(IRenderingHardware& rhi) override;
 
-        void Bind(IRenderingHardware& rhi, const Resources::PipelinePtr& pipeline) override;
+        void Bind(IRenderingHardware& rhi, const Resources::RenderStatePtr& pipeline) override;
         void SetModel(
             IRenderingHardware& rhi,
             const Math::Mat4& model,
-            const Resources::PipelinePtr& pipeline) override;
+            const Resources::RenderStatePtr& pipeline) override;
 
     private:
         void ReleaseResources() override;

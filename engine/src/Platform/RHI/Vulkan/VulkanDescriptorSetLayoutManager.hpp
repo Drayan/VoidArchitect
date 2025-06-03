@@ -5,13 +5,12 @@
 
 #include "VulkanDevice.hpp"
 
-
 #include <vulkan/vulkan.h>
 
 namespace VoidArchitect
 {
     struct SpaceLayout;
-    struct PipelineInputLayout;
+    struct RenderStateInputLayout;
 
     namespace Platform
     {
@@ -23,15 +22,23 @@ namespace VoidArchitect
             VulkanDescriptorSetLayoutManager(
                 const std::unique_ptr<VulkanDevice>& device,
                 VkAllocationCallbacks* allocator,
-                const PipelineInputLayout& sharedInputLayout);
+                const RenderStateInputLayout& sharedInputLayout);
             ~VulkanDescriptorSetLayoutManager();
 
             static std::vector<VkDescriptorSetLayoutBinding>
             CreateDescriptorSetLayoutBindingsFromSpace(const SpaceLayout& spaceLayout);
 
-            VkDescriptorSetLayout GetGlobalLayout() const { return m_GlobalLayout; }
-            VkDescriptorSetLayout GetPerMaterialLayout() const { return m_PerMaterialLayout; }
-            VkDescriptorSetLayout GetPerObjectLayout() const { return m_PerObjectLayout; }
+            [[nodiscard]] VkDescriptorSetLayout GetGlobalLayout() const { return m_GlobalLayout; }
+
+            [[nodiscard]] VkDescriptorSetLayout GetPerMaterialLayout() const
+            {
+                return m_PerMaterialLayout;
+            }
+
+            [[nodiscard]] VkDescriptorSetLayout GetPerObjectLayout() const
+            {
+                return m_PerObjectLayout;
+            }
 
         private:
             VkDevice m_Device;
@@ -45,6 +52,5 @@ namespace VoidArchitect
         };
 
         inline std::unique_ptr<VulkanDescriptorSetLayoutManager> g_VkDescriptorSetLayoutManager;
-
     } // namespace Platform
 } // namespace VoidArchitect

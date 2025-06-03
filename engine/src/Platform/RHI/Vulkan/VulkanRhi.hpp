@@ -11,7 +11,7 @@
 
 namespace VoidArchitect
 {
-    struct PipelineInputLayout;
+    struct RenderStateInputLayout;
     class Window;
     struct GeometryRenderData;
 
@@ -19,7 +19,7 @@ namespace VoidArchitect
     {
         class Texture2D;
         class IMaterial;
-        class IPipeline;
+        class IRenderState;
     }
 }
 
@@ -40,7 +40,7 @@ namespace VoidArchitect::Platform
     public:
         explicit VulkanRHI(
             std::unique_ptr<Window>& window,
-            const PipelineInputLayout& sharedInputLayout);
+            const RenderStateInputLayout& sharedInputLayout);
         ~VulkanRHI() override;
 
         void Resize(uint32_t width, uint32_t height) override;
@@ -50,13 +50,13 @@ namespace VoidArchitect::Platform
         bool EndFrame(float deltaTime) override;
 
         void UpdateGlobalState(
-            const Resources::PipelinePtr& pipeline,
+            const Resources::RenderStatePtr& pipeline,
             const Math::Mat4& projection,
             const Math::Mat4& view) override;
 
         void DrawMesh(
             const Resources::GeometryRenderData& data,
-            const Resources::PipelinePtr& pipeline) override;
+            const Resources::RenderStatePtr& pipeline) override;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
@@ -68,8 +68,8 @@ namespace VoidArchitect::Platform
             uint8_t channels,
             bool hasTransparency,
             const std::vector<uint8_t>& data) override;
-        Resources::IPipeline* CreatePipelineForRenderPass(
-            PipelineConfig& config,
+        Resources::IRenderState* CreatePipeline(
+            RenderStateConfig& config,
             Resources::IRenderPass* renderPass) override;
         Resources::IMaterial* CreateMaterial(
             const std::string& name) override;
@@ -129,8 +129,6 @@ namespace VoidArchitect::Platform
 
         void DestroySyncObjects();
 
-        void EnsureMainTargetsFramebuffers();
-        void CreateFramebuffersForMainTarget(VulkanRenderTarget* target);
         void InvalidateMainTargetsFramebuffers() const;
         bool RecreateSwapchain();
 
@@ -177,11 +175,11 @@ namespace VoidArchitect::Platform
 
         std::unique_ptr<VulkanBuffer> m_GlobalUniformBuffer;
 
-        uint32_t m_FramebufferWidth;
-        uint32_t m_FramebufferHeight;
-        uint32_t m_CachedFramebufferWidth;
-        uint32_t m_CachedFramebufferHeight;
-        uint64_t m_FramebufferSizeGeneration;
-        uint64_t m_FramebufferSizeLastGeneration;
+        uint32_t m_CurrentWidth;
+        uint32_t m_CurrentHeight;
+        uint32_t m_PendingWidth;
+        uint32_t m_PendingHeight;
+        uint64_t m_ResizeGeneration;
+        uint64_t m_ResizeLastGeneration;
     };
 } // namespace VoidArchitect::Platform

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Resources/Material.hpp"
-#include "Resources/Pipeline.hpp"
+#include "Resources/RenderState.hpp"
 
 namespace VoidArchitect
 {
@@ -19,7 +19,7 @@ namespace VoidArchitect
 
         TextureConfig diffuseTexture;
 
-        Resources::PipelinePtr pipeline;
+        Resources::RenderStatePtr pipeline;
     };
 
     class MaterialSystem

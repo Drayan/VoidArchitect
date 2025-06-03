@@ -12,7 +12,7 @@
 #include "Resources/Material.hpp"
 #include "Systems/MaterialSystem.hpp"
 #include "Systems/MeshSystem.hpp"
-#include "Systems/PipelineSystem.hpp"
+#include "Systems/RenderStateSystem.hpp"
 #include "Systems/ShaderSystem.hpp"
 #include "Systems/TextureSystem.hpp"
 
@@ -41,7 +41,7 @@ namespace VoidArchitect::Renderer
 
         // Retrieve Pipeline's shared resources setup.
         // TODO This should be managed by the pipeline system.
-        const PipelineInputLayout sharedInputLayout{
+        const RenderStateInputLayout sharedInputLayout{
             std::vector{
                 SpaceLayout{
                     0,
@@ -83,7 +83,7 @@ namespace VoidArchitect::Renderer
         // Initialize subsystems
         g_ShaderSystem = std::make_unique<ShaderSystem>();
         g_TextureSystem = std::make_unique<TextureSystem>();
-        g_PipelineSystem = std::make_unique<PipelineSystem>();
+        g_RenderStateSystem = std::make_unique<RenderStateSystem>();
         g_MaterialSystem = std::make_unique<MaterialSystem>();
         g_MeshSystem = std::make_unique<MeshSystem>();
 
@@ -127,7 +127,7 @@ namespace VoidArchitect::Renderer
         // Shutdown subsystems
         g_MeshSystem = nullptr;
         g_MaterialSystem = nullptr;
-        g_PipelineSystem = nullptr;
+        g_RenderStateSystem = nullptr;
         g_TextureSystem = nullptr;
         g_ShaderSystem = nullptr;
 

@@ -11,7 +11,7 @@
 #include "Resources/Material.hpp"
 #include "Resources/RenderTarget.hpp"
 #include "Systems/MaterialSystem.hpp"
-#include "Systems/PipelineSystem.hpp"
+#include "Systems/RenderStateSystem.hpp"
 
 namespace VoidArchitect::Renderer
 {
@@ -407,7 +407,7 @@ namespace VoidArchitect::Renderer
             for (const auto& pipelineName : passConfig.CompatiblePipelines)
             {
                 // Check that the template exists
-                if (!g_PipelineSystem->HasPipelineTemplate(pipelineName))
+                if (!g_RenderStateSystem->HasRenderStateTemplate(pipelineName))
                 {
                     VA_ENGINE_ERROR(
                         "[RenderGraph] Pipeline template '{}' not found for pass '{}'.",
@@ -417,7 +417,7 @@ namespace VoidArchitect::Renderer
                 }
 
                 // Create the pipeline for this pass
-                const auto pipeline = g_PipelineSystem->CreatePipelineForPass(
+                const auto pipeline = g_RenderStateSystem->CreateRenderState(
                     pipelineName,
                     passConfig,
                     renderPass);
@@ -782,8 +782,8 @@ namespace VoidArchitect::Renderer
         // Later, we will select the best one based on some parameters.
         const auto& pipelineName = passConfig.CompatiblePipelines[0];
 
-        auto signature = g_PipelineSystem->CreateSignatureFromPass(passConfig);
-        auto pipeline = g_PipelineSystem->GetCachedPipeline(pipelineName, signature);
+        auto signature = g_RenderStateSystem->CreateSignatureFromPass(passConfig);
+        auto pipeline = g_RenderStateSystem->GetCachedRenderState(pipelineName, signature);
 
         if (!pipeline)
         {
@@ -829,7 +829,7 @@ namespace VoidArchitect::Renderer
 
     void RenderGraph::RenderForwardPass(
         const RenderPassConfig& passConfig,
-        const Resources::PipelinePtr& pipeline,
+        const Resources::RenderStatePtr& pipeline,
         const FrameData& frameData)
     {
         // For now, just a simple test with a material
@@ -855,7 +855,7 @@ namespace VoidArchitect::Renderer
 
     void RenderGraph::RenderShadowPass(
         const RenderPassConfig& passConfig,
-        const Resources::PipelinePtr& pipeline,
+        const Resources::RenderStatePtr& pipeline,
         const FrameData& frameData)
     {
         // TODO: Implement shadow mapping
@@ -863,7 +863,7 @@ namespace VoidArchitect::Renderer
 
     void RenderGraph::RenderDepthPrepassPass(
         const RenderPassConfig& passConfig,
-        const Resources::PipelinePtr& pipeline,
+        const Resources::RenderStatePtr& pipeline,
         const FrameData& frameData)
     {
         // TODO: Implement depth prepass
@@ -871,7 +871,7 @@ namespace VoidArchitect::Renderer
 
     void RenderGraph::RenderPostProcessPass(
         const RenderPassConfig& passConfig,
-        const Resources::PipelinePtr& pipeline,
+        const Resources::RenderStatePtr& pipeline,
         const FrameData& frameData)
     {
         //TODO: Implement post process
@@ -879,7 +879,7 @@ namespace VoidArchitect::Renderer
 
     void RenderGraph::RenderUIPass(
         const RenderPassConfig& passConfig,
-        const Resources::PipelinePtr& pipeline,
+        const Resources::RenderStatePtr& pipeline,
         const FrameData& frameData)
     {
         //TODO: Implement UI rendering

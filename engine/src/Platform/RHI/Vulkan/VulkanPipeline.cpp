@@ -4,7 +4,7 @@
 #include "VulkanPipeline.hpp"
 
 #include "Core/Math/Mat4.hpp"
-#include "Systems/PipelineSystem.hpp"
+#include "Systems/RenderStateSystem.hpp"
 #include "VulkanDescriptorSetLayoutManager.hpp"
 #include "VulkanDevice.hpp"
 #include "VulkanRenderPass.hpp"
@@ -17,7 +17,7 @@ namespace VoidArchitect::Platform
     // NOTE The Renderpass is currently completely hard coded, so we will just pass it from the RHI
     //  but it should comes from the config in the future.
     VulkanPipeline::VulkanPipeline(
-        const PipelineConfig& config,
+        const RenderStateConfig& config,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
         VulkanRenderPass* renderPass)

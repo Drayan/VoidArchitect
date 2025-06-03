@@ -8,7 +8,7 @@
 namespace VoidArchitect
 {
     struct ShaderConfig;
-    struct PipelineConfig;
+    struct RenderStateConfig;
 
     namespace Renderer
     {
@@ -28,11 +28,11 @@ namespace VoidArchitect::Resources
     class Texture2D;
     class IMaterial;
     class IShader;
-    class IPipeline;
+    class IRenderState;
     class IRenderTarget;
     class IRenderPass;
 
-    using PipelinePtr = std::shared_ptr<IPipeline>;
+    using RenderStatePtr = std::shared_ptr<IRenderState>;
 } // namespace VoidArchitect::Resources
 
 namespace VoidArchitect::Platform
@@ -56,13 +56,13 @@ namespace VoidArchitect::Platform
         virtual bool EndFrame(float deltaTime) = 0;
 
         virtual void UpdateGlobalState(
-            const Resources::PipelinePtr& pipeline,
+            const Resources::RenderStatePtr& pipeline,
             const Math::Mat4& projection,
             const Math::Mat4& view) = 0;
 
         virtual void DrawMesh(
             const Resources::GeometryRenderData& data,
-            const Resources::PipelinePtr& pipeline) = 0;
+            const Resources::RenderStatePtr& pipeline) = 0;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
@@ -74,8 +74,8 @@ namespace VoidArchitect::Platform
             uint8_t channels,
             bool hasTransparency,
             const std::vector<uint8_t>& data) = 0;
-        virtual Resources::IPipeline* CreatePipelineForRenderPass(
-            PipelineConfig& config,
+        virtual Resources::IRenderState* CreatePipeline(
+            RenderStateConfig& config,
             Resources::IRenderPass* renderPass) = 0;
         virtual Resources::IMaterial* CreateMaterial(
             const std::string& name) = 0;
