@@ -10,4 +10,4 @@ namespace VoidArchitect::Resources::Loaders
     public:
         virtual ~IResourceDefinition() = default;
     };
-}
+} // namespace VoidArchitect::Resources::Loaders

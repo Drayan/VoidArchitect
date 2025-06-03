@@ -53,8 +53,7 @@ namespace VoidArchitect::Platform
 
     private:
         static VkFormat TranslateEngineAttributeFormatToVulkanFormat(
-            VertexAttributeType type,
-            AttributeFormat format);
+            VertexAttributeType type, AttributeFormat format);
         static uint32_t GetEngineAttributeSize(VertexAttributeType type, AttributeFormat format);
 
         VkDevice m_Device;

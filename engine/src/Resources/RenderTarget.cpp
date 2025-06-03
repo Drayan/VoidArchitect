@@ -20,4 +20,4 @@ namespace VoidArchitect::Resources
           m_Format(format)
     {
     }
-}
+} // namespace VoidArchitect::Resources

@@ -240,8 +240,11 @@ Temporary Items
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,clion,visualstudiocode,git,cmake,ninja,c++
 
+# Ignore XCode project files
+.xcode
+
 ### VoidArchitect ###
-build/*
+build/
 assets/*
 !assets/shaders
 assets/shaders/*.shader

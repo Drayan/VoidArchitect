@@ -54,12 +54,7 @@ namespace VoidArchitect
 
             static Camera& CreatePerspectiveCamera(float fov, float near, float far);
             static Camera& CreateOrthographicCamera(
-                float left,
-                float right,
-                float bottom,
-                float top,
-                float near,
-                float far);
+                float left, float right, float bottom, float top, float near, float far);
 
             static Platform::RHI_API_TYPE GetApiType() { return m_ApiType; }
             static Camera& GetMainCamera() { return m_Cameras[0]; }

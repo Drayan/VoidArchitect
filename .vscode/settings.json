@@ -27,4 +27,8 @@
             "color": "#343944",
         }
     ],
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "files.associations": {
+        "vector": "cpp"
+    },
 }

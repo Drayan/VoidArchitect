@@ -34,8 +34,7 @@ namespace VoidArchitect
             m_StagingData.resize(MAX_MATERIALS);
 
             VA_ENGINE_INFO(
-                "[VulkanMaterialBufferManager] Initialized with {} slots.",
-                MAX_MATERIALS);
+                "[VulkanMaterialBufferManager] Initialized with {} slots.", MAX_MATERIALS);
         }
 
         uint32_t VulkanMaterialBufferManager::AllocateSlot(const UUID& materialUUID)
@@ -91,8 +90,7 @@ namespace VoidArchitect
         }
 
         void VulkanMaterialBufferManager::UpdateMaterial(
-            uint32_t slotIndex,
-            const Resources::MaterialUniformObject& data)
+            uint32_t slotIndex, const Resources::MaterialUniformObject& data)
         {
             if (slotIndex >= MAX_MATERIALS || !m_MaterialSlots[slotIndex].isActive)
             {
@@ -121,8 +119,7 @@ namespace VoidArchitect
             return {
                 m_MaterialUniformBuffer->GetHandle(),
                 slotIndex * static_cast<uint32_t>(sizeof(Resources::MaterialUniformObject)),
-                sizeof(Resources::MaterialUniformObject)
-            };
+                sizeof(Resources::MaterialUniformObject)};
         }
 
         void VulkanMaterialBufferManager::FlushUpdates()

@@ -31,10 +31,9 @@ namespace VoidArchitect
         }
 
         // Load the shader with the resource loader
-        const auto shaderData = g_ResourceSystem->LoadResource<
-            Resources::Loaders::ShaderDataDefinition>(
-            ResourceType::Shader,
-            name);
+        const auto shaderData =
+            g_ResourceSystem->LoadResource<Resources::Loaders::ShaderDataDefinition>(
+                ResourceType::Shader, name);
 
         // 5. Create a new shader resource
         Resources::IShader* shader = nullptr;
@@ -43,9 +42,7 @@ namespace VoidArchitect
             case Platform::RHI_API_TYPE::Vulkan:
             {
                 shader = Renderer::RenderCommand::GetRHIRef().CreateShader(
-                    name,
-                    shaderData->GetConfig(),
-                    shaderData->GetCode());
+                    name, shaderData->GetConfig(), shaderData->GetCode());
             }
             default:
                 break;

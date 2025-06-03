@@ -10,17 +10,13 @@
 namespace VoidArchitect::Resources::Loaders
 {
     ShaderDataDefinition::ShaderDataDefinition(
-        const ShaderConfig& config,
-        std::vector<uint8_t> code)
+        const ShaderConfig& config, std::vector<uint8_t> code)
         : m_ShaderConfig(config),
           m_Code(std::move(code))
     {
     }
 
-    ShaderLoader::ShaderLoader(const std::string& baseAssetPath)
-        : ILoader(baseAssetPath)
-    {
-    }
+    ShaderLoader::ShaderLoader(const std::string& baseAssetPath) : ILoader(baseAssetPath) {}
 
     std::shared_ptr<IResourceDefinition> ShaderLoader::Load(const std::string& name)
     {
@@ -83,8 +79,7 @@ namespace VoidArchitect::Resources::Loaders
                 else
                 {
                     VA_ENGINE_WARN(
-                        "[ShaderLoader] Shader metadata file '{}' is missing stage.",
-                        yamlPath);
+                        "[ShaderLoader] Shader metadata file '{}' is missing stage.", yamlPath);
                     return InferMetadataFromFilename(path);
                 }
 
@@ -102,8 +97,7 @@ namespace VoidArchitect::Resources::Loaders
             else
             {
                 VA_ENGINE_WARN(
-                    "[ShaderLoader] Missing 'shader' section in YAML header of shader {}",
-                    path);
+                    "[ShaderLoader] Missing 'shader' section in YAML header of shader {}", path);
                 return InferMetadataFromFilename(path);
             }
 
@@ -140,8 +134,7 @@ namespace VoidArchitect::Resources::Loaders
         }
 
         VA_ENGINE_WARN(
-            "[ShaderLoader] Failed to determine shader stage for '{}', defaulting to Pixel.",
-            name);
+            "[ShaderLoader] Failed to determine shader stage for '{}', defaulting to Pixel.", name);
         return {ShaderStage::Pixel, "main"};
     }
 
@@ -159,4 +152,4 @@ namespace VoidArchitect::Resources::Loaders
         VA_ENGINE_WARN("[ShaderLoader] Unknown shader stage '{}', defaulting to Pixel.", stage);
         return Resources::ShaderStage::Pixel;
     }
-}
+} // namespace VoidArchitect::Resources::Loaders

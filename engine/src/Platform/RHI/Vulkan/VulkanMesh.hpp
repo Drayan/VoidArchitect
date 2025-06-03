@@ -2,8 +2,8 @@
 // Created by Michael Desmedt on 31/05/2025.
 //
 #pragma once
-#include "VulkanBuffer.hpp"
 #include "Resources/Mesh.hpp"
+#include "VulkanBuffer.hpp"
 
 namespace VoidArchitect
 {
@@ -31,5 +31,5 @@ namespace VoidArchitect
             std::unique_ptr<VulkanBuffer> m_VertexBuffer;
             std::unique_ptr<VulkanBuffer> m_IndexBuffer;
         };
-    } // Platform
-} // VoidArchitect
+    } // namespace Platform
+} // namespace VoidArchitect

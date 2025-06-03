@@ -2,9 +2,9 @@
 // Created by Michael Desmedt on 31/05/2025.
 //
 #pragma once
-#include "Core/Uuid.hpp"
 #include "Core/Math/Vec2.hpp"
 #include "Core/Math/Vec3.hpp"
+#include "Core/Uuid.hpp"
 
 namespace VoidArchitect
 {
@@ -44,5 +44,5 @@ namespace VoidArchitect
         };
 
         using MeshPtr = std::shared_ptr<IMesh>;
-    } // Resources
-} // VoidArchitect
+    } // namespace Resources
+} // namespace VoidArchitect

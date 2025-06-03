@@ -47,8 +47,7 @@ namespace VoidArchitect::Platform
             // Binding 0 - Uniform buffer
             {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 3},
             // Binding 1 - Diffuse sampler layout.
-            {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 3}
-        };
+            {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 3}};
 
         VkDescriptorPoolCreateInfo poolInfo{};
         poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -58,8 +57,7 @@ namespace VoidArchitect::Platform
         poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
         VA_VULKAN_CHECK_RESULT_WARN(
-            vkCreateDescriptorPool(
-                m_Device, &poolInfo, m_Allocator, &m_MaterialDescriptorPool));
+            vkCreateDescriptorPool(m_Device, &poolInfo, m_Allocator, &m_MaterialDescriptorPool));
 
         const auto materialLayout = g_VkDescriptorSetLayoutManager->GetPerMaterialLayout();
         const VkDescriptorSetLayout layouts[] = {materialLayout, materialLayout, materialLayout};
@@ -77,9 +75,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanMaterial::SetModel(
-        IRenderingHardware& rhi,
-        const Math::Mat4& model,
-        const Resources::RenderStatePtr& pipeline)
+        IRenderingHardware& rhi, const Math::Mat4& model, const Resources::RenderStatePtr& pipeline)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
         const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
@@ -183,9 +179,10 @@ namespace VoidArchitect::Platform
             texture = std::dynamic_pointer_cast<VulkanTexture2D>(s_DefaultDiffuseTexture);
         }
 
-        if (texture && (descriptorState.texUUID != texture->GetUUID() || descriptorState.
-            texGeneration != texture->GetGeneration() || descriptorState.matGeneration !=
-            m_Generation))
+        if (texture
+            && (descriptorState.texUUID != texture->GetUUID()
+                || descriptorState.texGeneration != texture->GetGeneration()
+                || descriptorState.matGeneration != m_Generation))
         {
             VkDescriptorImageInfo imageInfo{};
             imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -210,11 +207,7 @@ namespace VoidArchitect::Platform
         if (!writes.empty())
         {
             vkUpdateDescriptorSets(
-                m_Device,
-                static_cast<uint32_t>(writes.size()),
-                writes.data(),
-                0,
-                nullptr);
+                m_Device, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
         }
     }
 } // namespace VoidArchitect::Platform

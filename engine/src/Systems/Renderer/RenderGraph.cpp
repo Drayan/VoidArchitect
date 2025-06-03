@@ -5,9 +5,9 @@
 
 #include <ranges>
 
-#include "RenderCommand.hpp"
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
+#include "RenderCommand.hpp"
 #include "Resources/Material.hpp"
 #include "Resources/RenderTarget.hpp"
 #include "Systems/MaterialSystem.hpp"
@@ -38,8 +38,7 @@ namespace VoidArchitect::Renderer
         }
     }
 
-    RenderGraph::RenderGraph(Platform::IRenderingHardware& rhi)
-        : m_RHI(rhi)
+    RenderGraph::RenderGraph(Platform::IRenderingHardware& rhi) : m_RHI(rhi)
     {
         m_RenderPassesNodes.reserve(16);
         m_RenderTargetsNodes.reserve(8);
@@ -165,13 +164,13 @@ namespace VoidArchitect::Renderer
     }
 
     void RenderGraph::ConnectPassToTarget(
-        const Resources::RenderPassPtr& pass,
-        const Resources::RenderTargetPtr& target)
+        const Resources::RenderPassPtr& pass, const Resources::RenderTargetPtr& target)
     {
         if (!pass || !target)
         {
             VA_ENGINE_ERROR(
-                "[RenderGraph] Cannot connect RenderPass to RenderTarget, at least one of them is invalid.");
+                "[RenderGraph] Cannot connect RenderPass to RenderTarget, at least one of them is "
+                "invalid.");
             return;
         }
 
@@ -238,8 +237,7 @@ namespace VoidArchitect::Renderer
             if (passNode.OutputsUUIDs.empty())
             {
                 VA_ENGINE_ERROR(
-                    "[RenderGraph] RenderPass '{}' has no output.",
-                    passNode.Config.Name);
+                    "[RenderGraph] RenderPass '{}' has no output.", passNode.Config.Name);
                 return false;
             }
         }
@@ -333,16 +331,13 @@ namespace VoidArchitect::Renderer
             if (!passNode)
             {
                 VA_ENGINE_ERROR(
-                    "[RenderGraph] Failed to find RenderPass node for pass '{}'.",
-                    pass->GetName());
+                    "[RenderGraph] Failed to find RenderPass node for pass '{}'.", pass->GetName());
                 continue;
             }
 
             if (passNode->OutputsUUIDs.empty())
             {
-                VA_ENGINE_ERROR(
-                    "[RenderGraph] RenderPass '{}' has no output.",
-                    pass->GetName());
+                VA_ENGINE_ERROR("[RenderGraph] RenderPass '{}' has no output.", pass->GetName());
                 continue;
             }
 
@@ -417,15 +412,12 @@ namespace VoidArchitect::Renderer
                 }
 
                 // Create the pipeline for this pass
-                const auto pipeline = g_RenderStateSystem->CreateRenderState(
-                    pipelineName,
-                    passConfig,
-                    renderPass);
+                const auto pipeline =
+                    g_RenderStateSystem->CreateRenderState(pipelineName, passConfig, renderPass);
                 if (!pipeline)
                 {
                     VA_ENGINE_ERROR(
-                        "[RenderGraph] Failed to create pipeline for pass '{}'.",
-                        passConfig.Name);
+                        "[RenderGraph] Failed to create pipeline for pass '{}'.", passConfig.Name);
                     return false;
                 }
 
@@ -468,9 +460,7 @@ namespace VoidArchitect::Renderer
                 node.Config.Width = width;
                 node.Config.Height = height;
 
-                VA_ENGINE_TRACE(
-                    "[RenderGraph] Resized main RenderTarget '{}'.",
-                    node.Config.Name);
+                VA_ENGINE_TRACE("[RenderGraph] Resized main RenderTarget '{}'.", node.Config.Name);
             }
         }
 
@@ -537,12 +527,10 @@ namespace VoidArchitect::Renderer
 
         VA_ENGINE_INFO("[RenderGraph] Forward Renderer setup complete.");
         VA_ENGINE_INFO(
-            "[RenderGraph]   - Main Target: '{}' ({}x{})",
-            mainTarget->GetName(),
-            width,
-            height);
+            "[RenderGraph]   - Main Target: '{}' ({}x{})", mainTarget->GetName(), width, height);
         VA_ENGINE_INFO(
-            "[RenderGraph]   - Forward Pass: '{}' (Type: {}) with {} attachments and {} compatible pipelines.",
+            "[RenderGraph]   - Forward Pass: '{}' (Type: {}) with {} attachments and {} compatible "
+            "pipelines.",
             forwardPass->GetName(),
             RenderPassTypeToString(forwardPassConfig.Type),
             forwardPassConfig.Attachments.size(),
@@ -610,7 +598,8 @@ namespace VoidArchitect::Renderer
 
     void RenderGraph::ReleaseRenderPass(const Resources::IRenderPass* pass)
     {
-        if (!pass || m_IsDestroying) return;
+        if (!pass || m_IsDestroying)
+            return;
 
         auto passUUID = pass->GetUUID();
 
@@ -629,7 +618,8 @@ namespace VoidArchitect::Renderer
 
     void RenderGraph::ReleaseRenderTarget(const Resources::IRenderTarget* target)
     {
-        if (!target || m_IsDestroying) return;
+        if (!target || m_IsDestroying)
+            return;
 
         auto targetUUID = target->GetUUID();
 
@@ -657,9 +647,7 @@ namespace VoidArchitect::Renderer
 
             if (passConfig.Type == RenderPassType::Unknown)
             {
-                VA_ENGINE_WARN(
-                    "[RenderGraph] RenderPass '{}' has unknown type.",
-                    passConfig.Name);
+                VA_ENGINE_WARN("[RenderGraph] RenderPass '{}' has unknown type.", passConfig.Name);
                 return false;
             }
 
@@ -678,8 +666,7 @@ namespace VoidArchitect::Renderer
             if (passConfig.CompatiblePipelines.empty())
             {
                 VA_ENGINE_ERROR(
-                    "[RenderGraph] RenderPass '{}' has no compatible pipeline.",
-                    passConfig.Name);
+                    "[RenderGraph] RenderPass '{}' has no compatible pipeline.", passConfig.Name);
                 return false;
             }
         }
@@ -763,8 +750,7 @@ namespace VoidArchitect::Renderer
         if (!passNode)
         {
             VA_ENGINE_ERROR(
-                "[RenderGraph] Failed to find RenderPass node for pass '{}'.",
-                pass->GetName());
+                "[RenderGraph] Failed to find RenderPass node for pass '{}'.", pass->GetName());
             return;
         }
 
@@ -773,8 +759,7 @@ namespace VoidArchitect::Renderer
         if (passConfig.CompatiblePipelines.empty())
         {
             VA_ENGINE_WARN(
-                "[RenderGraph] RenderPass '{}' has no compatible pipelines.",
-                pass->GetName());
+                "[RenderGraph] RenderPass '{}' has no compatible pipelines.", pass->GetName());
             return;
         }
 
@@ -845,9 +830,7 @@ namespace VoidArchitect::Renderer
         }
 
         const auto geometry = Resources::GeometryRenderData(
-            Math::Mat4::Identity(),
-            defaultMat,
-            RenderCommand::s_TestMesh);
+            Math::Mat4::Identity(), defaultMat, RenderCommand::s_TestMesh);
 
         defaultMat->Bind(m_RHI, pipeline);
         m_RHI.DrawMesh(geometry, pipeline);
@@ -874,7 +857,7 @@ namespace VoidArchitect::Renderer
         const Resources::RenderStatePtr& pipeline,
         const FrameData& frameData)
     {
-        //TODO: Implement post process
+        // TODO: Implement post process
     }
 
     void RenderGraph::RenderUIPass(
@@ -882,7 +865,7 @@ namespace VoidArchitect::Renderer
         const Resources::RenderStatePtr& pipeline,
         const FrameData& frameData)
     {
-        //TODO: Implement UI rendering
+        // TODO: Implement UI rendering
     }
-} // Renderer
+} // namespace VoidArchitect::Renderer
 // VoidArchitect

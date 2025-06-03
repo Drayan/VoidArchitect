@@ -6,8 +6,8 @@
 
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec4.hpp"
-#include "Resources/RenderState.hpp"
 #include "Resources/RenderPass.hpp"
+#include "Resources/RenderState.hpp"
 
 namespace VoidArchitect
 {
@@ -20,7 +20,7 @@ namespace VoidArchitect
     {
         class Texture2D;
         using Texture2DPtr = std::shared_ptr<Texture2D>;
-    }
+    } // namespace Resources
 
     namespace Renderer
     {
@@ -123,8 +123,7 @@ namespace VoidArchitect
 
             // Connect passes to targets
             void ConnectPassToTarget(
-                const Resources::RenderPassPtr& pass,
-                const Resources::RenderTargetPtr& target);
+                const Resources::RenderPassPtr& pass, const Resources::RenderTargetPtr& target);
 
             // Graph lifecycle
             bool Validate();
@@ -141,7 +140,7 @@ namespace VoidArchitect
             // Convenience methods for common setups
             void SetupForwardRenderer(uint32_t width, uint32_t height);
 
-            //Debug/introspection
+            // Debug/introspection
             const std::string& GetRenderPassName(Resources::RenderPassPtr pass) const;
             const std::string& GetRenderTargetName(Resources::RenderTargetPtr target) const;
 
@@ -185,13 +184,11 @@ namespace VoidArchitect
             void RenderForwardPass(
                 const RenderPassConfig& passConfig,
                 const Resources::RenderStatePtr& pipeline,
-                const FrameData&
-                frameData);
+                const FrameData& frameData);
             void RenderShadowPass(
                 const RenderPassConfig& passConfig,
                 const Resources::RenderStatePtr& pipeline,
-                const FrameData&
-                frameData);
+                const FrameData& frameData);
             void RenderDepthPrepassPass(
                 const RenderPassConfig& passConfig,
                 const Resources::RenderStatePtr& pipeline,
@@ -203,8 +200,7 @@ namespace VoidArchitect
             void RenderUIPass(
                 const RenderPassConfig& passConfig,
                 const Resources::RenderStatePtr& pipeline,
-                const FrameData&
-                frameData);
+                const FrameData& frameData);
 
             Platform::IRenderingHardware& m_RHI;
 
@@ -222,5 +218,5 @@ namespace VoidArchitect
         };
 
         inline std::unique_ptr<RenderGraph> g_RenderGraph;
-    }
-}
+    } // namespace Renderer
+} // namespace VoidArchitect

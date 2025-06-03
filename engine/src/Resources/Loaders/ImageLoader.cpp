@@ -25,10 +25,7 @@ namespace VoidArchitect::Resources::Loaders
     {
     }
 
-    ImageLoader::ImageLoader(const std::string& baseAssetPath)
-        : ILoader(baseAssetPath)
-    {
-    }
+    ImageLoader::ImageLoader(const std::string& baseAssetPath) : ILoader(baseAssetPath) {}
 
     std::shared_ptr<IResourceDefinition> ImageLoader::Load(const std::string& name)
     {
@@ -61,12 +58,8 @@ namespace VoidArchitect::Resources::Loaders
             }
         }
 
-        auto imageDefinition = new ImageDataDefinition(
-            std::move(data),
-            width,
-            height,
-            4,
-            hasTransparency);
+        auto imageDefinition =
+            new ImageDataDefinition(std::move(data), width, height, 4, hasTransparency);
         return ImageDataDefinitionPtr(imageDefinition);
     }
-}
+} // namespace VoidArchitect::Resources::Loaders

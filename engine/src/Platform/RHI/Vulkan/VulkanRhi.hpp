@@ -4,10 +4,10 @@
 #pragma once
 #include <vulkan/vulkan.h>
 
+#include "Platform/RHI/IRenderingHardware.hpp"
 #include "VulkanCommandBuffer.hpp"
 #include "VulkanDevice.hpp"
 #include "VulkanRenderTarget.hpp"
-#include "Platform/RHI/IRenderingHardware.hpp"
 
 namespace VoidArchitect
 {
@@ -20,8 +20,8 @@ namespace VoidArchitect
         class Texture2D;
         class IMaterial;
         class IRenderState;
-    }
-}
+    } // namespace Resources
+} // namespace VoidArchitect
 
 namespace VoidArchitect::Platform
 {
@@ -39,8 +39,7 @@ namespace VoidArchitect::Platform
     {
     public:
         explicit VulkanRHI(
-            std::unique_ptr<Window>& window,
-            const RenderStateInputLayout& sharedInputLayout);
+            std::unique_ptr<Window>& window, const RenderStateInputLayout& sharedInputLayout);
         ~VulkanRHI() override;
 
         void Resize(uint32_t width, uint32_t height) override;
@@ -69,10 +68,8 @@ namespace VoidArchitect::Platform
             bool hasTransparency,
             const std::vector<uint8_t>& data) override;
         Resources::IRenderState* CreatePipeline(
-            RenderStateConfig& config,
-            Resources::IRenderPass* renderPass) override;
-        Resources::IMaterial* CreateMaterial(
-            const std::string& name) override;
+            RenderStateConfig& config, Resources::IRenderPass* renderPass) override;
+        Resources::IMaterial* CreateMaterial(const std::string& name) override;
         Resources::IShader* CreateShader(
             const std::string& name,
             const ShaderConfig& config,
@@ -87,8 +84,7 @@ namespace VoidArchitect::Platform
         ///////////////////////////////////////////////////////////////////////
         Resources::IRenderTarget* CreateRenderTarget(
             const Renderer::RenderTargetConfig& config) override;
-        Resources::IRenderPass* CreateRenderPass(
-            const Renderer::RenderPassConfig& config) override;
+        Resources::IRenderPass* CreateRenderPass(const Renderer::RenderPassConfig& config) override;
 
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
         {
@@ -136,11 +132,9 @@ namespace VoidArchitect::Platform
         void CreateDebugMessenger();
         void DestroyDebugMessenger() const;
         static void AddDebugExtensions(
-            char const* const*& extensions,
-            unsigned int& extensionCount);
+            char const* const*& extensions, unsigned int& extensionCount);
         static void CleaningDebugExtensionsArray(
-            char const* const*& extensions,
-            unsigned int extensionCount);
+            char const* const*& extensions, unsigned int extensionCount);
 
         VkDebugUtilsMessengerEXT m_DebugMessenger;
 #endif

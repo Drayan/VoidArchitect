@@ -33,4 +33,4 @@ namespace VoidArchitect
     };
 
     inline std::unique_ptr<ResourceSystem> g_ResourceSystem;
-} // VoidArchitect
+} // namespace VoidArchitect

@@ -66,4 +66,4 @@ namespace VoidArchitect
     };
 
     inline std::unique_ptr<TextureSystem> g_TextureSystem;
-}
+} // namespace VoidArchitect

@@ -5,8 +5,5 @@
 
 namespace VoidArchitect::Resources
 {
-    IRenderPass::IRenderPass(const std::string& name)
-        : m_Name(name)
-    {
-    }
-}
+    IRenderPass::IRenderPass(const std::string& name) : m_Name(name) {}
+} // namespace VoidArchitect::Resources

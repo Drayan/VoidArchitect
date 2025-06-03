@@ -29,10 +29,7 @@ namespace VoidArchitect::Platform
         CreateRenderPassFromConfig(config, swapchainFormat, depthFormat);
     }
 
-    VulkanRenderPass::~VulkanRenderPass()
-    {
-        Release();
-    }
+    VulkanRenderPass::~VulkanRenderPass() { Release(); }
 
     void VulkanRenderPass::Begin(IRenderingHardware& rhi, const Resources::RenderTargetPtr& target)
     {
@@ -42,8 +39,7 @@ namespace VoidArchitect::Platform
         if (!vulkanTarget)
         {
             VA_ENGINE_ERROR(
-                "[VulkanRenderpass] Invalid render target for renderpass '{}'.",
-                m_Name);
+                "[VulkanRenderpass] Invalid render target for renderpass '{}'.", m_Name);
             return;
         }
 
@@ -75,8 +71,7 @@ namespace VoidArchitect::Platform
             {
                 const std::vector attachments = {
                     swapchain->GetSwapchainImage(i).GetView(),
-                    swapchain->GetDepthImage().GetView()
-                };
+                    swapchain->GetDepthImage().GetView()};
 
                 vulkanTarget->CreateFramebufferForImage(m_Renderpass, attachments, i);
             }
@@ -160,9 +155,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanRenderPass::CreateRenderPassFromConfig(
-        const Renderer::RenderPassConfig& config,
-        VkFormat swapchainFormat,
-        VkFormat depthFormat)
+        const Renderer::RenderPassConfig& config, VkFormat swapchainFormat, VkFormat depthFormat)
     {
         std::vector<VkAttachmentDescription> attachments;
         std::vector<VkAttachmentReference> colorRefs;
@@ -199,20 +192,19 @@ namespace VoidArchitect::Platform
 
             bool isDepthAttachment = false;
 
-            if (attachmentConfig.Name == "depth" || attachmentConfig.Format ==
-                Renderer::TextureFormat::SWAPCHAIN_DEPTH || attachmentConfig.Format ==
-                Renderer::TextureFormat::D32_SFLOAT || attachmentConfig.Format ==
-                Renderer::TextureFormat::D24_UNORM_S8_UINT)
+            if (attachmentConfig.Name == "depth"
+                || attachmentConfig.Format == Renderer::TextureFormat::SWAPCHAIN_DEPTH
+                || attachmentConfig.Format == Renderer::TextureFormat::D32_SFLOAT
+                || attachmentConfig.Format == Renderer::TextureFormat::D24_UNORM_S8_UINT)
             {
                 isDepthAttachment = true;
                 attachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
                 depthRef = {
-                    static_cast<uint32_t>(i),
-                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-                };
+                    static_cast<uint32_t>(i), VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
             }
-            else if (attachmentConfig.Name == "color" || attachmentConfig.Format ==
-                Renderer::TextureFormat::SWAPCHAIN_FORMAT)
+            else if (
+                attachmentConfig.Name == "color"
+                || attachmentConfig.Format == Renderer::TextureFormat::SWAPCHAIN_FORMAT)
             {
                 attachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
                 colorRefs.push_back(
@@ -235,20 +227,15 @@ namespace VoidArchitect::Platform
                 if (isDepthAttachment)
                 {
                     clearValue.depthStencil = {
-                        attachmentConfig.ClearDepth,
-                        attachmentConfig.ClearStencil
-                    };
+                        attachmentConfig.ClearDepth, attachmentConfig.ClearStencil};
                 }
                 else
                 {
                     clearValue.color = {
-                        {
-                            attachmentConfig.ClearColor.X(),
-                            attachmentConfig.ClearColor.Y(),
-                            attachmentConfig.ClearColor.Z(),
-                            attachmentConfig.ClearColor.W()
-                        }
-                    };
+                        {attachmentConfig.ClearColor.X(),
+                         attachmentConfig.ClearColor.Y(),
+                         attachmentConfig.ClearColor.Z(),
+                         attachmentConfig.ClearColor.W()}};
                 }
                 m_ClearValues.push_back(clearValue);
             }
@@ -269,8 +256,8 @@ namespace VoidArchitect::Platform
         dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         dependency.srcAccessMask = 0;
         dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
-            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        dependency.dstAccessMask =
+            VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
         dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
         // if (depthRef.has_value())
@@ -294,7 +281,8 @@ namespace VoidArchitect::Platform
             vkCreateRenderPass(m_Device, &renderPassInfo, m_Allocator, &m_Renderpass));
 
         VA_ENGINE_TRACE(
-            "[VulkanRenderpass] Renderpass '{}' created from config, with {} color attachments and {} depth attachment.",
+            "[VulkanRenderpass] Renderpass '{}' created from config, with {} color attachments and "
+            "{} depth attachment.",
             config.Name,
             colorRefs.size(),
             depthRef.has_value() ? 1 : 0);

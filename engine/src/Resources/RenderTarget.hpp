@@ -55,5 +55,5 @@ namespace VoidArchitect
         };
 
         using RenderTargetPtr = std::shared_ptr<IRenderTarget>;
-    }
-}
+    } // namespace Resources
+} // namespace VoidArchitect

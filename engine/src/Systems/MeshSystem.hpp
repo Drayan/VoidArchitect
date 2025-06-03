@@ -59,4 +59,4 @@ namespace VoidArchitect
     };
 
     inline std::unique_ptr<MeshSystem> g_MeshSystem;
-} // VoidArchitect
+} // namespace VoidArchitect

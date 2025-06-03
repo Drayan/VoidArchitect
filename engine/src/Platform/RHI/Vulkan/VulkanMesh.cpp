@@ -19,15 +19,9 @@ namespace VoidArchitect
               m_Allocator(allocator)
         {
             m_VertexBuffer = std::make_unique<VulkanVertexBuffer>(
-                rhi,
-                rhi.GetDeviceRef(),
-                m_Allocator,
-                vertices);
-            m_IndexBuffer = std::make_unique<VulkanIndexBuffer>(
-                rhi,
-                rhi.GetDeviceRef(),
-                m_Allocator,
-                indices);
+                rhi, rhi.GetDeviceRef(), m_Allocator, vertices);
+            m_IndexBuffer =
+                std::make_unique<VulkanIndexBuffer>(rhi, rhi.GetDeviceRef(), m_Allocator, indices);
         }
 
         void VulkanMesh::Bind(Platform::IRenderingHardware& rhi)
@@ -41,5 +35,5 @@ namespace VoidArchitect
             m_VertexBuffer = nullptr;
             m_IndexBuffer = nullptr;
         }
-    } // Platform
-} // VoidArchitect
+    } // namespace Platform
+} // namespace VoidArchitect

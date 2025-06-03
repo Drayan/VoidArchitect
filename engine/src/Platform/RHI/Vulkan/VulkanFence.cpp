@@ -59,10 +59,10 @@ namespace VoidArchitect::Platform
         switch (const auto result = vkWaitForFences(m_Device, 1, &m_Fence, VK_TRUE, timeout))
         {
             case VK_SUCCESS:
-                {
-                    m_Signaled = true;
-                    return true;
-                }
+            {
+                m_Signaled = true;
+                return true;
+            }
             case VK_TIMEOUT:
                 VA_ENGINE_WARN("[VulkanFence] Fence wait timed out.");
                 break;

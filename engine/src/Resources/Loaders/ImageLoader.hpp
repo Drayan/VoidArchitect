@@ -45,4 +45,4 @@ namespace VoidArchitect::Resources::Loaders
 
         std::shared_ptr<IResourceDefinition> Load(const std::string& name) override;
     };
-}
+} // namespace VoidArchitect::Resources::Loaders

@@ -4,8 +4,5 @@
 //
 namespace VoidArchitect::Resources::Loaders
 {
-    ILoader::ILoader(const std::string& baseAssetPath)
-        : m_BaseAssetPath(baseAssetPath)
-    {
-    }
-}
+    ILoader::ILoader(const std::string& baseAssetPath) : m_BaseAssetPath(baseAssetPath) {}
+} // namespace VoidArchitect::Resources::Loaders

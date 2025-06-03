@@ -33,8 +33,7 @@ namespace VoidArchitect
             [[nodiscard]] const std::string& GetName() const { return m_Name; }
 
             virtual void Begin(
-                Platform::IRenderingHardware& rhi,
-                const RenderTargetPtr& target) = 0;
+                Platform::IRenderingHardware& rhi, const RenderTargetPtr& target) = 0;
             virtual void End(Platform::IRenderingHardware& rhi) = 0;
 
             [[nodiscard]] virtual bool IsCompatibleWith(const RenderTargetPtr& target) const = 0;
@@ -49,5 +48,5 @@ namespace VoidArchitect
         };
 
         using RenderPassPtr = std::shared_ptr<IRenderPass>;
-    }
-}
+    } // namespace Resources
+} // namespace VoidArchitect

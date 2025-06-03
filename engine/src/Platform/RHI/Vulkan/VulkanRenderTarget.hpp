@@ -58,4 +58,4 @@ namespace VoidArchitect::Platform
         // For texture-based targets, we might own the image views.
         bool m_OwnsAttachments = false;
     };
-}
+} // namespace VoidArchitect::Platform

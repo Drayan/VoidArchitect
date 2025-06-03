@@ -46,10 +46,7 @@ namespace VoidArchitect::Platform
             attachments.size());
     }
 
-    VulkanRenderTarget::~VulkanRenderTarget()
-    {
-        Release();
-    }
+    VulkanRenderTarget::~VulkanRenderTarget() { Release(); }
 
     void VulkanRenderTarget::Resize(uint32_t width, uint32_t height)
     {
@@ -132,9 +129,8 @@ namespace VoidArchitect::Platform
         framebufferInfo.height = m_Height;
         framebufferInfo.layers = 1;
 
-        VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkCreateFramebuffer(m_Device, &framebufferInfo, m_Allocator, &m_Framebuffers[imageIndex]
-            ));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreateFramebuffer(
+            m_Device, &framebufferInfo, m_Allocator, &m_Framebuffers[imageIndex]));
 
         VA_ENGINE_TRACE(
             "[VulkanRenderTarget] Framebuffer created for '{}' image index {}.",
@@ -159,4 +155,4 @@ namespace VoidArchitect::Platform
 
         VA_ENGINE_TRACE("[VulkanRenderTarget] Target '{}' released.", m_Name);
     }
-}
+} // namespace VoidArchitect::Platform

@@ -5,13 +5,13 @@
 
 #include <stb_image.h>
 
-#include "ResourceSystem.hpp"
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Renderer/RenderCommand.hpp"
+#include "ResourceSystem.hpp"
+#include "Resources/Loaders/ImageLoader.hpp"
 #include "Resources/Material.hpp"
 #include "Resources/Texture.hpp"
-#include "Resources/Loaders/ImageLoader.hpp"
 
 namespace VoidArchitect
 {
@@ -49,8 +49,7 @@ namespace VoidArchitect
     }
 
     Resources::Texture2DPtr TextureSystem::LoadTexture2D(
-        const std::string& name,
-        const Resources::TextureUse use)
+        const std::string& name, const Resources::TextureUse use)
     {
         // Check if the texture is in the cache
         for (auto& [uuid, texture] : m_TextureCache)
@@ -70,9 +69,10 @@ namespace VoidArchitect
         }
 
         // If not found, load the texture from a file
-        const auto imageDefinition = g_ResourceSystem->LoadResource<
-            Resources::Loaders::ImageDataDefinition>(ResourceType::Image, name);
-        //const auto data = LoadRawData(name, width, height, channels, hasTransparency);
+        const auto imageDefinition =
+            g_ResourceSystem->LoadResource<Resources::Loaders::ImageDataDefinition>(
+                ResourceType::Image, name);
+        // const auto data = LoadRawData(name, width, height, channels, hasTransparency);
 
         Resources::Texture2D* texture = nullptr;
         switch (Renderer::RenderCommand::GetApiType())
@@ -106,9 +106,7 @@ namespace VoidArchitect
             m_TotalTexturesLoaded++;
 
             VA_ENGINE_TRACE(
-                "[TextureSystem] Created texture '{}' with handle {}.",
-                texture->m_Name,
-                handle);
+                "[TextureSystem] Created texture '{}' with handle {}.", texture->m_Name, handle);
             return texturePtr;
         }
 
@@ -130,12 +128,7 @@ namespace VoidArchitect
         {
             case Platform::RHI_API_TYPE::Vulkan:
                 texture = Renderer::RenderCommand::GetRHIRef().CreateTexture2D(
-                    name,
-                    width,
-                    height,
-                    channels,
-                    hasTransparency,
-                    data);
+                    name, width, height, channels, hasTransparency, data);
             default:
                 break;
         }
@@ -155,9 +148,7 @@ namespace VoidArchitect
             m_TotalTexturesLoaded++;
 
             VA_ENGINE_TRACE(
-                "[TextureSystem] Created texture '{}' with handle {}.",
-                texture->m_Name,
-                handle);
+                "[TextureSystem] Created texture '{}' with handle {}.", texture->m_Name, handle);
             return texturePtr;
         }
 

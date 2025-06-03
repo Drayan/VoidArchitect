@@ -4,8 +4,8 @@
 #pragma once
 #include <memory>
 
-#include "Resources/RenderState.hpp"
 #include "Resources/RenderPass.hpp"
+#include "Resources/RenderState.hpp"
 #include "Resources/Shader.hpp"
 
 namespace VoidArchitect
@@ -15,7 +15,7 @@ namespace VoidArchitect
         struct RenderPassConfig;
         enum class TextureFormat;
         enum class RenderPassType;
-    }
+    } // namespace Renderer
 
     enum class VertexFormat
     {
@@ -114,12 +114,11 @@ namespace VoidArchitect
         bool operator==(const RenderStateCacheKey& other) const;
         [[nodiscard]] size_t GetHash() const;
     };
-}
+} // namespace VoidArchitect
 
 namespace std
 {
-    template <>
-    struct hash<VoidArchitect::RenderStateSignature>
+    template <> struct hash<VoidArchitect::RenderStateSignature>
     {
         size_t operator()(const VoidArchitect::RenderStateSignature& signature) const noexcept
         {
@@ -127,15 +126,14 @@ namespace std
         }
     };
 
-    template <>
-    struct hash<VoidArchitect::RenderStateCacheKey>
+    template <> struct hash<VoidArchitect::RenderStateCacheKey>
     {
         size_t operator()(const VoidArchitect::RenderStateCacheKey& key) const noexcept
         {
             return key.GetHash();
         }
     };
-}
+} // namespace std
 
 namespace VoidArchitect
 {
@@ -155,14 +153,12 @@ namespace VoidArchitect
             const Renderer::RenderPassConfig& passConfig,
             const Resources::RenderPassPtr& renderPass);
         Resources::RenderStatePtr GetCachedRenderState(
-            const std::string& templateName,
-            const RenderStateSignature& signature);
+            const std::string& templateName, const RenderStateSignature& signature);
 
         void ClearCache();
 
         [[nodiscard]] bool IsRenderStateCompatibleWithPass(
-            const std::string& renderStateName,
-            Renderer::RenderPassType passType) const;
+            const std::string& renderStateName, Renderer::RenderPassType passType) const;
         [[nodiscard]] std::vector<std::string> GetCompatibleRenderStatesForPass(
             Renderer::RenderPassType passType) const;
 

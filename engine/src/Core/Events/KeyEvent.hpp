@@ -23,11 +23,16 @@ namespace VoidArchitect
     class VA_API KeyPressedEvent : public KeyEvent
     {
     public:
-        KeyPressedEvent(int keycode, int repeatCount) : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
+        KeyPressedEvent(int keycode, int repeatCount)
+            : KeyEvent(keycode),
+              m_RepeatCount(repeatCount)
+        {
+        }
 
         inline int GetRepeatCount() const { return m_RepeatCount; }
 
-        // NOTE This is purely for debugging purpose and thus performance isn't really critical here.
+        // NOTE This is purely for debugging purpose and thus performance isn't really critical
+        // here.
         std::string ToString() const override
         {
             std::stringstream ss;
@@ -45,7 +50,8 @@ namespace VoidArchitect
     public:
         KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
 
-        // NOTE This is purely for debugging purpose and thus performance isn't really critical here.
+        // NOTE This is purely for debugging purpose and thus performance isn't really critical
+        // here.
         std::string ToString() const override
         {
             std::stringstream ss;

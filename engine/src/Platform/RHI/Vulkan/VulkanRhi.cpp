@@ -32,8 +32,7 @@ namespace VoidArchitect::Platform
 #endif
 
     VulkanRHI::VulkanRHI(
-        std::unique_ptr<Window>& window,
-        const RenderStateInputLayout& sharedInputLayout)
+        std::unique_ptr<Window>& window, const RenderStateInputLayout& sharedInputLayout)
         : m_Window(window),
           m_Allocator(nullptr),
           m_Instance{},
@@ -53,13 +52,9 @@ namespace VoidArchitect::Platform
 
         // Create the DescriptorSetLayoutManager
         g_VkDescriptorSetLayoutManager = std::make_unique<VulkanDescriptorSetLayoutManager>(
-            m_Device,
-            m_Allocator,
-            sharedInputLayout);
-        g_VkMaterialBufferManager = std::make_unique<VulkanMaterialBufferManager>(
-            *this,
-            m_Device,
-            m_Allocator);
+            m_Device, m_Allocator, sharedInputLayout);
+        g_VkMaterialBufferManager =
+            std::make_unique<VulkanMaterialBufferManager>(*this, m_Device, m_Allocator);
 
         CreateGlobalUBO();
     }
@@ -81,9 +76,7 @@ namespace VoidArchitect::Platform
         if (m_GlobalDescriptorPool != VK_NULL_HANDLE)
         {
             vkDestroyDescriptorPool(
-                m_Device->GetLogicalDeviceHandle(),
-                m_GlobalDescriptorPool,
-                m_Allocator);
+                m_Device->GetLogicalDeviceHandle(), m_GlobalDescriptorPool, m_Allocator);
             m_GlobalDescriptorPool = VK_NULL_HANDLE;
             VA_ENGINE_TRACE("[VulkanRHI] Global descriptor pool destroyed.");
         }
@@ -121,10 +114,7 @@ namespace VoidArchitect::Platform
         InvalidateMainTargetsFramebuffers();
 
         VA_ENGINE_DEBUG(
-            "[VulkanRHI] Resizing to {}x{}, generation : {}",
-            width,
-            height,
-            m_ResizeGeneration);
+            "[VulkanRHI] Resizing to {}x{}, generation : {}", width, height, m_ResizeGeneration);
     }
 
     void VulkanRHI::WaitIdle(uint64_t timeout) { m_Device->WaitIdle(); }
@@ -163,10 +153,10 @@ namespace VoidArchitect::Platform
         }
 
         if (!m_Swapchain->AcquireNextImage(
-            std::numeric_limits<uint64_t>::max(),
-            m_ImageAvailableSemaphores[m_CurrentIndex],
-            nullptr,
-            m_ImageIndex))
+                std::numeric_limits<uint64_t>::max(),
+                m_ImageAvailableSemaphores[m_CurrentIndex],
+                nullptr,
+                m_ImageIndex))
         {
             return false;
         }
@@ -182,18 +172,14 @@ namespace VoidArchitect::Platform
             .width = static_cast<float>(m_CurrentWidth),
             .height = -static_cast<float>(m_CurrentHeight),
             .minDepth = 0.0f,
-            .maxDepth = 1.0f
-        };
+            .maxDepth = 1.0f};
 
-        const VkRect2D scissor = {
-            .offset = {0, 0},
-            .extent = {m_CurrentWidth, m_CurrentHeight}
-        };
+        const VkRect2D scissor = {.offset = {0, 0}, .extent = {m_CurrentWidth, m_CurrentHeight}};
 
         vkCmdSetViewport(cmdBuf.GetHandle(), 0, 1, &viewport);
         vkCmdSetScissor(cmdBuf.GetHandle(), 0, 1, &scissor);
 
-        //m_MainRenderpass->Begin(cmdBuf, m_Swapchain->GetFramebufferHandle(m_ImageIndex));
+        // m_MainRenderpass->Begin(cmdBuf, m_Swapchain->GetFramebufferHandle(m_ImageIndex));
 
         g_VkMaterialBufferManager->FlushUpdates();
 
@@ -204,7 +190,7 @@ namespace VoidArchitect::Platform
     {
         auto& cmdBuf = m_GraphicsCommandBuffers[m_ImageIndex];
 
-        //m_MainRenderpass->End(cmdBuf);
+        // m_MainRenderpass->End(cmdBuf);
 
         cmdBuf.End();
 
@@ -230,12 +216,10 @@ namespace VoidArchitect::Platform
         submitInfo.pWaitSemaphores = &m_ImageAvailableSemaphores[m_CurrentIndex];
 
         const std::vector flags = {
-            VkPipelineStageFlags{VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}
-        };
+            VkPipelineStageFlags{VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}};
         submitInfo.pWaitDstStageMask = flags.data();
 
-        if (VA_VULKAN_CHECK_RESULT(
-            vkQueueSubmit(
+        if (VA_VULKAN_CHECK_RESULT(vkQueueSubmit(
                 m_Device->GetGraphicsQueueHandle(),
                 1,
                 &submitInfo,
@@ -286,11 +270,7 @@ namespace VoidArchitect::Platform
         writeDescriptorSet.pBufferInfo = &bufferInfo;
 
         vkUpdateDescriptorSets(
-            m_Device->GetLogicalDeviceHandle(),
-            1,
-            &writeDescriptorSet,
-            0,
-            nullptr);
+            m_Device->GetLogicalDeviceHandle(), 1, &writeDescriptorSet, 0, nullptr);
 
         const auto& cmdBuf = GetCurrentCommandBuffer();
         const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(pipeline);
@@ -306,18 +286,12 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanRHI::DrawMesh(
-        const Resources::GeometryRenderData& data,
-        const Resources::RenderStatePtr& pipeline)
+        const Resources::GeometryRenderData& data, const Resources::RenderStatePtr& pipeline)
     {
         data.Material->SetModel(*this, data.Model, pipeline);
         data.Mesh->Bind(*this);
         vkCmdDrawIndexed(
-            GetCurrentCommandBuffer().GetHandle(),
-            data.Mesh->GetIndicesCount(),
-            1,
-            0,
-            0,
-            0);
+            GetCurrentCommandBuffer().GetHandle(), data.Mesh->GetIndicesCount(), 1, 0, 0, 0);
     }
 
     Resources::Texture2D* VulkanRHI::CreateTexture2D(
@@ -329,20 +303,11 @@ namespace VoidArchitect::Platform
         const std::vector<uint8_t>& data)
     {
         return new VulkanTexture2D(
-            *this,
-            m_Device,
-            m_Allocator,
-            name,
-            width,
-            height,
-            channels,
-            hasTransparency,
-            data);
+            *this, m_Device, m_Allocator, name, width, height, channels, hasTransparency, data);
     }
 
     Resources::IRenderState* VulkanRHI::CreatePipeline(
-        RenderStateConfig& config,
-        Resources::IRenderPass* renderPass)
+        RenderStateConfig& config, Resources::IRenderPass* renderPass)
     {
         auto* vkRenderPass = dynamic_cast<VulkanRenderPass*>(renderPass);
         if (!vkRenderPass)
@@ -360,9 +325,7 @@ namespace VoidArchitect::Platform
     }
 
     Resources::IShader* VulkanRHI::CreateShader(
-        const std::string& name,
-        const ShaderConfig& config,
-        const std::vector<uint8_t>& data)
+        const std::string& name, const ShaderConfig& config, const std::vector<uint8_t>& data)
     {
         return new VulkanShader(m_Device, m_Allocator, name, config, data);
     }
@@ -386,16 +349,13 @@ namespace VoidArchitect::Platform
             mainConfig.Height = m_CurrentHeight;
 
             // Create the main render target (no attachment yet - managed by swapchain)
-            const auto renderTarget = new VulkanRenderTarget(
-                mainConfig,
-                m_Device->GetLogicalDeviceHandle(),
-                m_Allocator);
+            const auto renderTarget =
+                new VulkanRenderTarget(mainConfig, m_Device->GetLogicalDeviceHandle(), m_Allocator);
 
             m_MainRenderTargets.push_back(renderTarget);
 
             VA_ENGINE_TRACE(
-                "[VulkanRHI] Main target '{}' created and added to registry.",
-                config.Name);
+                "[VulkanRHI] Main target '{}' created and added to registry.", config.Name);
 
             return renderTarget;
         }
@@ -420,10 +380,7 @@ namespace VoidArchitect::Platform
             }
 
             return new VulkanRenderTarget(
-                config,
-                m_Device->GetLogicalDeviceHandle(),
-                m_Allocator,
-                vulkanViews);
+                config, m_Device->GetLogicalDeviceHandle(), m_Allocator, vulkanViews);
         }
         else
         {
@@ -431,7 +388,8 @@ namespace VoidArchitect::Platform
             std::vector<VkImageView> vulkanViews;
 
             VA_ENGINE_WARN(
-                "[VulkanRHI] Auto texture creation not yet implented. Provide attachments explicitly for now.");
+                "[VulkanRHI] Auto texture creation not yet implented. Provide attachments "
+                "explicitly for now.");
             return nullptr;
         }
     }
@@ -441,17 +399,11 @@ namespace VoidArchitect::Platform
         const auto swapchainFormat = m_Swapchain->GetFormat();
         const auto depthFormat = m_Swapchain->GetDepthFormat();
 
-        return new VulkanRenderPass(
-            config,
-            m_Device,
-            m_Allocator,
-            swapchainFormat,
-            depthFormat);
+        return new VulkanRenderPass(config, m_Device, m_Allocator, swapchainFormat, depthFormat);
     }
 
     int32_t VulkanRHI::FindMemoryIndex(
-        const uint32_t typeFilter,
-        const uint32_t propertyFlags) const
+        const uint32_t typeFilter, const uint32_t propertyFlags) const
     {
         VkPhysicalDeviceMemoryProperties memProperties;
         vkGetPhysicalDeviceMemoryProperties(m_Device->GetPhysicalDeviceHandle(), &memProperties);
@@ -496,6 +448,8 @@ namespace VoidArchitect::Platform
         VA_ENGINE_DEBUG("[VulkanRHI] Validation layers enabled.");
 
         requiredValidationLayers.push_back("VK_LAYER_KHRONOS_validation");
+        // FIXME: In case of things going extremely wrong, enable this layer to see every call.
+        // requiredValidationLayers.push_back("VK_LAYER_LUNARG_api_dump");
 
         // Get a list of supported validation layers
         uint32_t layerCount;
@@ -522,8 +476,7 @@ namespace VoidArchitect::Platform
             if (!layerFound)
             {
                 VA_ENGINE_CRITICAL(
-                    "[VulkanRHI] Required validation layer {} is not supported.",
-                    layerName);
+                    "[VulkanRHI] Required validation layer {} is not supported.", layerName);
                 return;
             }
         }
@@ -554,8 +507,7 @@ namespace VoidArchitect::Platform
                 ss << extensions[i] << std::endl;
             }
             VA_ENGINE_CRITICAL(
-                "[VulkanRHI] Failed to initialize instance.\nRequired extensions:\n%{}",
-                ss.str());
+                "[VulkanRHI] Failed to initialize instance.\nRequired extensions:\n%{}", ss.str());
 
 #ifdef DEBUG
             CleaningDebugExtensionsArray(extensions, extensionCount);
@@ -602,13 +554,7 @@ namespace VoidArchitect::Platform
             "[VulkanRHI] Swapchain format, depth format, present mode and extent chosen.");
 
         m_Swapchain = std::make_unique<VulkanSwapchain>(
-            *this,
-            m_Device,
-            m_Allocator,
-            format,
-            mode,
-            extents,
-            depthFormat);
+            *this, m_Device, m_Allocator, format, mode, extents, depthFormat);
         VA_ENGINE_INFO("[VulkanRHI] Swapchain created.");
     }
 
@@ -628,10 +574,7 @@ namespace VoidArchitect::Platform
         {
             m_Formats.resize(formatCount);
             vkGetPhysicalDeviceSurfaceFormatsKHR(
-                physicalDevice,
-                surface,
-                &formatCount,
-                m_Formats.data());
+                physicalDevice, surface, &formatCount, m_Formats.data());
         }
         else
         {
@@ -640,16 +583,14 @@ namespace VoidArchitect::Platform
 
         // --- Present modes ---
         uint32_t presentModeCount;
-        VA_VULKAN_CHECK_RESULT_WARN(
-            vkGetPhysicalDeviceSurfacePresentModesKHR(
-                physicalDevice, surface, &presentModeCount, nullptr));
+        VA_VULKAN_CHECK_RESULT_WARN(vkGetPhysicalDeviceSurfacePresentModesKHR(
+            physicalDevice, surface, &presentModeCount, nullptr));
 
         if (presentModeCount != 0)
         {
             m_PresentModes.resize(presentModeCount);
-            VA_VULKAN_CHECK_RESULT_WARN(
-                vkGetPhysicalDeviceSurfacePresentModesKHR(
-                    physicalDevice, surface, &presentModeCount, m_PresentModes.data()));
+            VA_VULKAN_CHECK_RESULT_WARN(vkGetPhysicalDeviceSurfacePresentModesKHR(
+                physicalDevice, surface, &presentModeCount, m_PresentModes.data()));
         }
         else
         {
@@ -669,8 +610,8 @@ namespace VoidArchitect::Platform
         {
             for (const auto& prefFormat : prefFormats)
             {
-                if (availableFormat.format == prefFormat && availableFormat.colorSpace ==
-                    VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+                if (availableFormat.format == prefFormat
+                    && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
                 {
                     return availableFormat;
                 }
@@ -687,9 +628,7 @@ namespace VoidArchitect::Platform
         for (const auto& [format, colorSpace] : m_Formats)
         {
             VA_ENGINE_DEBUG(
-                "- {}/{}",
-                static_cast<uint32_t>(format),
-                static_cast<uint32_t>(colorSpace));
+                "- {}/{}", static_cast<uint32_t>(format), static_cast<uint32_t>(colorSpace));
         }
 #endif
 
@@ -738,10 +677,7 @@ namespace VoidArchitect::Platform
     VkFormat VulkanRHI::ChooseDepthFormat() const
     {
         const std::vector candidates = {
-            VK_FORMAT_D32_SFLOAT,
-            VK_FORMAT_D32_SFLOAT_S8_UINT,
-            VK_FORMAT_D24_UNORM_S8_UINT
-        };
+            VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT};
 
         constexpr uint32_t flags = VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
@@ -749,9 +685,7 @@ namespace VoidArchitect::Platform
         {
             VkFormatProperties props;
             vkGetPhysicalDeviceFormatProperties(
-                m_Device->GetPhysicalDeviceHandle(),
-                candidate,
-                &props);
+                m_Device->GetPhysicalDeviceHandle(), candidate, &props);
 
             if ((props.linearTilingFeatures & flags) == flags)
             {
@@ -793,16 +727,12 @@ namespace VoidArchitect::Platform
             auto semaphoreCreateInfo = VkSemaphoreCreateInfo{};
             semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
             VkSemaphore semaphore;
-            VA_VULKAN_CHECK_RESULT_WARN(
-                vkCreateSemaphore(
-                    m_Device->GetLogicalDeviceHandle(), &semaphoreCreateInfo, m_Allocator, &
-                    semaphore));
+            VA_VULKAN_CHECK_RESULT_WARN(vkCreateSemaphore(
+                m_Device->GetLogicalDeviceHandle(), &semaphoreCreateInfo, m_Allocator, &semaphore));
             m_ImageAvailableSemaphores.push_back(semaphore);
 
-            VA_VULKAN_CHECK_RESULT_WARN(
-                vkCreateSemaphore(
-                    m_Device->GetLogicalDeviceHandle(), &semaphoreCreateInfo, m_Allocator, &
-                    semaphore));
+            VA_VULKAN_CHECK_RESULT_WARN(vkCreateSemaphore(
+                m_Device->GetLogicalDeviceHandle(), &semaphoreCreateInfo, m_Allocator, &semaphore));
             m_QueueCompleteSemaphores.push_back(semaphore);
 
             m_InFlightFences.emplace_back(m_Device, m_Allocator, true);
@@ -830,12 +760,11 @@ namespace VoidArchitect::Platform
         globalPoolInfo.poolSizeCount = 1;
         globalPoolInfo.pPoolSizes = &globalPoolSize;
 
-        VA_VULKAN_CHECK_RESULT_WARN(
-            vkCreateDescriptorPool(
-                m_Device->GetLogicalDeviceHandle(),
-                &globalPoolInfo,
-                m_Allocator,
-                &m_GlobalDescriptorPool));
+        VA_VULKAN_CHECK_RESULT_WARN(vkCreateDescriptorPool(
+            m_Device->GetLogicalDeviceHandle(),
+            &globalPoolInfo,
+            m_Allocator,
+            &m_GlobalDescriptorPool));
 
         m_GlobalUniformBuffer = std::make_unique<VulkanBuffer>(
             *this,
@@ -847,10 +776,7 @@ namespace VoidArchitect::Platform
 
         const auto globalDescriptorSetLayout = g_VkDescriptorSetLayoutManager->GetGlobalLayout();
         const std::vector globalLayouts = {
-            globalDescriptorSetLayout,
-            globalDescriptorSetLayout,
-            globalDescriptorSetLayout
-        };
+            globalDescriptorSetLayout, globalDescriptorSetLayout, globalDescriptorSetLayout};
 
         m_GlobalDescriptorSets = new VkDescriptorSet[globalLayouts.size()];
 
@@ -859,9 +785,8 @@ namespace VoidArchitect::Platform
         allocInfo.descriptorPool = m_GlobalDescriptorPool;
         allocInfo.descriptorSetCount = static_cast<uint32_t>(globalLayouts.size());
         allocInfo.pSetLayouts = globalLayouts.data();
-        VA_VULKAN_CHECK_RESULT_WARN(
-            vkAllocateDescriptorSets(
-                m_Device->GetLogicalDeviceHandle(), &allocInfo, m_GlobalDescriptorSets));
+        VA_VULKAN_CHECK_RESULT_WARN(vkAllocateDescriptorSets(
+            m_Device->GetLogicalDeviceHandle(), &allocInfo, m_GlobalDescriptorSets));
     }
 
     void VulkanRHI::DestroySyncObjects()
@@ -917,10 +842,7 @@ namespace VoidArchitect::Platform
         QuerySwapchainCapabilities();
         const auto depthFormat = ChooseDepthFormat();
 
-        m_Swapchain->Recreate(
-            *this,
-            {m_PendingWidth, m_PendingHeight},
-            depthFormat);
+        m_Swapchain->Recreate(*this, {m_PendingWidth, m_PendingHeight}, depthFormat);
 
         // Sync
         m_CurrentWidth = m_PendingWidth;
@@ -975,8 +897,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanRHI::CleaningDebugExtensionsArray(
-        char const* const*& extensions,
-        const unsigned int extensionCount)
+        char const* const*& extensions, const unsigned int extensionCount)
     {
         for (unsigned int i = 0; i < extensionCount; i++)
             delete[] extensions[i];
@@ -988,13 +909,13 @@ namespace VoidArchitect::Platform
     void VulkanRHI::CreateDebugMessenger()
     {
         constexpr unsigned int logSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
-            | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
-            | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT
-            | VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT;
+                                             | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
+                                             | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT
+                                             | VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT;
 
         constexpr unsigned int messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
-            | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT
-            | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
+                                             | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT
+                                             | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
 
         constexpr auto debugCreateInfo = VkDebugUtilsMessengerCreateInfoEXT{
             .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
@@ -1003,17 +924,15 @@ namespace VoidArchitect::Platform
             .messageSeverity = logSeverity,
             .messageType = messageType,
             .pfnUserCallback = VulkanDebuggerCallback,
-            .pUserData = nullptr
-        };
+            .pUserData = nullptr};
         const auto vkCreateDebugUtilsMessengerEXT =
             reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
                 vkGetInstanceProcAddr(m_Instance, "vkCreateDebugUtilsMessengerEXT"));
         VA_ENGINE_ASSERT(
             vkCreateDebugUtilsMessengerEXT != nullptr,
             "[VulkanRHI] Failed to load debug messenger create function.")
-        VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkCreateDebugUtilsMessengerEXT(
-                m_Instance, &debugCreateInfo, m_Allocator, &m_DebugMessenger));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreateDebugUtilsMessengerEXT(
+            m_Instance, &debugCreateInfo, m_Allocator, &m_DebugMessenger));
 
         VA_ENGINE_INFO("[VulkanRHI] Debug messenger created.");
     }

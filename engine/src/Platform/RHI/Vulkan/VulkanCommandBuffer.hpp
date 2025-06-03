@@ -44,8 +44,8 @@ namespace VoidArchitect::Platform
             const std::unique_ptr<VulkanDevice>& device,
             VkCommandPool pool,
             VulkanCommandBuffer& cmdBuf);
-        static void
-        SingleUseBegin(VkDevice device, VkCommandPool pool, VulkanCommandBuffer& cmdBuf);
+        static void SingleUseBegin(
+            VkDevice device, VkCommandPool pool, VulkanCommandBuffer& cmdBuf);
         static void SingleUseEnd(VulkanCommandBuffer& cmdBuf, VkQueue queue, VkFence fence);
 
         void SetState(const CommandBufferState& state) { m_State = state; }

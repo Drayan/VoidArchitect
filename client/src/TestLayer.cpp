@@ -19,10 +19,7 @@ void TestLayer::OnAttach()
     camera.SetPosition({0.f, 0.f, 3.f});
 }
 
-void TestLayer::OnDetach()
-{
-    VA_APP_TRACE("[TestLayer] OnDetach.");
-}
+void TestLayer::OnDetach() { VA_APP_TRACE("[TestLayer] OnDetach."); }
 
 void TestLayer::OnFixedUpdate(const float fixedTimestep)
 {
@@ -35,7 +32,7 @@ void TestLayer::OnEvent(VoidArchitect::Event& e)
 
     auto dispatcher = VoidArchitect::EventDispatcher(e);
     dispatcher.Dispatch<VoidArchitect::KeyPressedEvent>(
-        [this](VoidArchitect::KeyPressedEvent& e)
+        [](VoidArchitect::KeyPressedEvent& e)
         {
             if (e.GetKeyCode() == SDLK_T)
             {
@@ -48,5 +45,3 @@ void TestLayer::OnEvent(VoidArchitect::Event& e)
             return false;
         });
 }
-
-

@@ -10,17 +10,15 @@
 
 namespace VoidArchitect
 {
-    MeshSystem::MeshSystem()
-    {
-        m_Meshes.reserve(1024);
-    }
+    MeshSystem::MeshSystem() { m_Meshes.reserve(1024); }
 
     MeshSystem::~MeshSystem()
     {
         if (!m_MeshCache.empty())
         {
             VA_ENGINE_WARN(
-                "[MeshSystem] Mesh cache is not empty during destruction. This may indicate a resource leak.");
+                "[MeshSystem] Mesh cache is not empty during destruction. This may indicate a "
+                "resource leak.");
 
             for (const auto& [uuid, mesh] : m_MeshCache)
             {
@@ -40,7 +38,7 @@ namespace VoidArchitect
 
     Resources::MeshPtr MeshSystem::LoadMesh(const std::string& name)
     {
-        //TODO Implement loading mesh from a file
+        // TODO Implement loading mesh from a file
         return nullptr;
     }
 
@@ -49,10 +47,8 @@ namespace VoidArchitect
         const std::vector<Resources::MeshVertex>& vertices,
         const std::vector<uint32_t>& indices)
     {
-        Resources::IMesh* mesh = Renderer::RenderCommand::GetRHIRef().CreateMesh(
-            name,
-            vertices,
-            indices);
+        Resources::IMesh* mesh =
+            Renderer::RenderCommand::GetRHIRef().CreateMesh(name, vertices, indices);
         if (!mesh)
         {
             VA_ENGINE_WARN("[MeshSystem] Failed to create mesh '{}'.", name);
@@ -67,8 +63,7 @@ namespace VoidArchitect
 
         m_Meshes[handle] = {
             mesh->m_UUID,
-            vertices.size() * sizeof(Resources::MeshVertex) + indices.size() * sizeof(uint32_t)
-        };
+            vertices.size() * sizeof(Resources::MeshVertex) + indices.size() * sizeof(uint32_t)};
 
         m_TotalMemoryUsed += m_Meshes[handle].dataSize;
         m_TotalMeshesLoaded++;
@@ -88,23 +83,21 @@ namespace VoidArchitect
 
         for (uint32_t lat = 0; lat <= latitudeBands; ++lat)
         {
-            const float theta = static_cast<float>(lat) * Math::PI / static_cast<float>(
-                latitudeBands);
+            const float theta =
+                static_cast<float>(lat) * Math::PI / static_cast<float>(latitudeBands);
             const float sinTheta = std::sin(theta);
             const float cosTheta = std::cos(theta);
 
             for (uint32_t lon = 0; lon <= longitudeBands; ++lon)
             {
-                const float phi = static_cast<float>(lon) * Math::PI * 2.0f / static_cast<float>(
-                    longitudeBands);
+                const float phi =
+                    static_cast<float>(lon) * Math::PI * 2.0f / static_cast<float>(longitudeBands);
                 const float sinPhi = std::sin(phi);
                 const float cosPhi = std::cos(phi);
 
                 // Position
                 const Math::Vec3 position(
-                    radius * sinTheta * cosPhi,
-                    radius * cosTheta,
-                    radius * sinTheta * sinPhi);
+                    radius * sinTheta * cosPhi, radius * cosTheta, radius * sinTheta * sinPhi);
 
                 // UV0
                 const Math::Vec2 uv0(
@@ -211,9 +204,9 @@ namespace VoidArchitect
         Math::Vec3 tangent, bitangent;
 
         auto reference = Math::Vec3::Up();
-        if (std::abs(Math::Vec3::Cross(n, reference).X()) < Math::EPSILON &&
-            std::abs(Math::Vec3::Cross(n, reference).Y()) < Math::EPSILON &&
-            std::abs(Math::Vec3::Cross(n, reference).Z()) < Math::EPSILON)
+        if (std::abs(Math::Vec3::Cross(n, reference).X()) < Math::EPSILON
+            && std::abs(Math::Vec3::Cross(n, reference).Y()) < Math::EPSILON
+            && std::abs(Math::Vec3::Cross(n, reference).Z()) < Math::EPSILON)
         {
             reference = Math::Vec3::Right();
         }
@@ -302,4 +295,4 @@ namespace VoidArchitect
         system->ReleaseMesh(mesh);
         delete mesh;
     }
-} // VoidArchitect
+} // namespace VoidArchitect

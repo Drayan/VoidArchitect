@@ -26,8 +26,8 @@ namespace VoidArchitect::Math
         static Mat4 Identity();
         static Mat4 Zero();
         static Mat4 Perspective(float fov, float aspect, float near, float far);
-        static Mat4
-        Orthographic(float left, float right, float bottom, float top, float near, float far);
+        static Mat4 Orthographic(
+            float left, float right, float bottom, float top, float near, float far);
         static Mat4 Translate(float x, float y, float z);
         static Mat4 Translate(const Vec3& translation);
         static Mat4 Rotate(float angle, float x, float y, float z);
