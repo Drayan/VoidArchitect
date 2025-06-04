@@ -78,6 +78,7 @@ namespace VoidArchitect
             // Convenience methods for common setups
             void SetupForwardRenderer(uint32_t width, uint32_t height);
 
+        private:
             struct RenderPassNode
             {
                 UUID instanceUUID;
@@ -86,11 +87,11 @@ namespace VoidArchitect
                 Resources::RenderPassPtr RenderPass;
                 std::vector<UUID> DependenciesUUIDs;
                 std::vector<UUID> OutputsUUIDs;
+
+                std::string RequiredStateTemplateName;
+                Resources::RenderStatePtr AssignedState;
             };
 
-            const RenderPassNode* FindRenderPassNode(const Resources::RenderPassPtr& pass) const;
-
-        private:
             struct RenderTargetNode
             {
                 UUID instanceUUID;
@@ -104,6 +105,7 @@ namespace VoidArchitect
             RenderTargetNode* FindRenderTargetNode(Resources::RenderTargetPtr& target);
             const RenderPassNode* FindRenderPassNode(const UUID& instanceUUID) const;
             const RenderTargetNode* FindRenderTargetNode(const UUID& instanceUUID) const;
+            const RenderPassNode* FindRenderPassNode(const Resources::RenderPassPtr& pass) const;
             const RenderTargetNode* FindRenderTargetNode(
                 const Resources::RenderTargetPtr& target) const;
 
@@ -119,6 +121,9 @@ namespace VoidArchitect
             bool CompileRenderPasses();
             bool CompileRenderTargets();
             bool CompileRenderStates();
+            void AssignRequiredStates();
+            void OptimizeExecutionOrder();
+            float CalculateStateSwitchCost() const;
 
             std::vector<UUID> ComputeExecutionOrder();
 
@@ -128,6 +133,9 @@ namespace VoidArchitect
                 const Resources::RenderTargetPtr& target,
                 const FrameData& frameData);
 
+            void BindRenderStateIfNeeded(const Resources::RenderStatePtr& newState);
+            void LogOptimizationMetrics() const;
+
             // Graph data
             std::unordered_map<UUID, RenderPassNode> m_RenderPassesNodes;
             std::unordered_map<UUID, RenderTargetNode> m_RenderTargetsNodes;
@@ -136,10 +144,12 @@ namespace VoidArchitect
 
             // State
             Platform::IRenderingHardware& m_RHI;
+            Resources::RenderStatePtr m_LastBoundState;
             bool m_IsCompiled = false;
             bool m_IsDestroying = false;
             uint32_t m_CurrentWidth = 0;
             uint32_t m_CurrentHeight = 0;
+            uint32_t m_StateChangeCount = 0;
         };
 
         inline std::unique_ptr<RenderGraph> g_RenderGraph;

@@ -15,44 +15,19 @@ namespace VoidArchitect::Renderer
 {
     const std::string ForwardOpaquePassRenderer::m_Name = "ForwardOpaquePassRenderer";
 
-    void ForwardOpaquePassRenderer::Execute(const RenderContext& context)
+    // =============================================================================================
+    // ForwardOpaquePassRenderer Implementation
+    // =============================================================================================
+
+    void ForwardOpaquePassRenderer::Execute(
+        const RenderContext& context)
     {
-        // Get the RenderState needed
-        // NOTE : We'll need to access the RenderGraph through the context or pass it differently
-        //        but for now, we'll get the RenderState information directly from the system.
-        const auto* passNode = g_RenderGraph->FindRenderPassNode(context.RenderPass);
-        if (!passNode)
-        {
-            VA_ENGINE_WARN("[ForwardOpaquePassRenderer] No pass node found.");
-            return;
-        }
-        const auto& config = g_RenderPassSystem->GetRenderPassTemplate(passNode->templateUUID);
-        if (config.CompatibleStates.empty())
-        {
-            VA_ENGINE_WARN("[ForwardOpaquePassRenderer] No compatible render state found.");
-            return;
-        }
-
-        const auto& renderStateName = config.CompatibleStates[0];
-        const auto signature = g_RenderStateSystem->CreateSignatureFromPass(config);
-        const auto renderState = g_RenderStateSystem->GetCachedRenderState(
-            renderStateName,
-            signature);
-
-        if (!renderState)
+        if (!context.RenderState)
         {
             VA_ENGINE_ERROR(
-                "[ForwardOpaquePassRenderer] Failed to get render state '{}'.",
-                renderStateName);
+                "[ForwardOpaquePassRenderer] No render state provided by the RenderGraph.");
             return;
         }
-
-        // Bind the state
-        renderState->Bind(context.Rhi);
-        context.Rhi.UpdateGlobalState(
-            renderState,
-            context.FrameData.Projection,
-            context.FrameData.View);
 
         // Render test geometry
         const auto& defaultMat = RenderCommand::s_TestMaterial
@@ -70,8 +45,13 @@ namespace VoidArchitect::Renderer
             defaultMat,
             RenderCommand::s_TestMesh);
 
-        defaultMat->Bind(context.Rhi, renderState);
-        context.Rhi.DrawMesh(geometry, renderState);
+        defaultMat->Bind(context.Rhi, context.RenderState);
+        context.Rhi.DrawMesh(geometry, context.RenderState);
+    }
+
+    std::string ForwardOpaquePassRenderer::GetCompatibleRenderState() const
+    {
+        return "Default";
     }
 
     bool ForwardOpaquePassRenderer::IsCompatibleWith(const RenderPassType passType) const

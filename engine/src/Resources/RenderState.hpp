@@ -25,9 +25,13 @@ namespace VoidArchitect::Resources
         virtual ~IRenderState() = default;
 
         virtual void Bind(Platform::IRenderingHardware& rhi) = 0;
+        [[nodiscard]] std::string GetName() const { return m_Name; };
 
-    private:
+    protected:
+        explicit IRenderState(const std::string& name);
+
         UUID m_UUID;
+        std::string m_Name;
     };
 
     using RenderStatePtr = std::shared_ptr<IRenderState>;

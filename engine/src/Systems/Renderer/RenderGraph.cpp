@@ -7,8 +7,6 @@
 
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
-#include "RenderCommand.hpp"
-#include "Resources/Material.hpp"
 #include "Resources/RenderTarget.hpp"
 #include "Systems/MaterialSystem.hpp"
 #include "Systems/RenderStateSystem.hpp"
@@ -365,7 +363,13 @@ namespace VoidArchitect::Renderer
             return false;
         }
 
-        // Step 4 : Compute execution order
+        // Step 4: Assign required states from renderers
+        AssignRequiredStates();
+
+        // Step 5: Optimize execution to minimize state changes
+        OptimizeExecutionOrder();
+
+        // Step 6: Compute final execution order
         m_ExecutionOrder = ComputeExecutionOrder();
         if (m_ExecutionOrder.empty())
         {
@@ -376,25 +380,7 @@ namespace VoidArchitect::Renderer
         // Mark as compiled
         m_IsCompiled = true;
 
-        VA_ENGINE_INFO("[RenderGraph] Graph compiled successfully. Execution order:");
-        for (size_t i = 0; i < m_ExecutionOrder.size(); ++i)
-        {
-            if (const auto* passNode = FindRenderPassNode(m_ExecutionOrder[i]))
-            {
-                VA_ENGINE_INFO(
-                    "[RenderGraph]   {}: '{}'",
-                    i,
-                    passNode->instanceName);
-            }
-            else
-            {
-                VA_ENGINE_INFO(
-                    "[RenderGraph]   {}: '{}'",
-                    i,
-                    static_cast<uint64_t>(m_ExecutionOrder[i]));
-            }
-        }
-
+        LogOptimizationMetrics();
         return true;
     }
 
@@ -508,6 +494,128 @@ namespace VoidArchitect::Renderer
         return true;
     }
 
+    void RenderGraph::AssignRequiredStates()
+    {
+        VA_ENGINE_DEBUG("[RenderGraph] Assigning required states from renderers...");
+
+        for (auto& passNode : m_RenderPassesNodes | std::views::values)
+        {
+            const auto& passConfig = g_RenderPassSystem->GetRenderPassTemplate(
+                passNode.templateUUID);
+            const auto* renderer = g_RenderPassSystem->GetPassRenderer(passConfig.Type);
+            if (!renderer)
+            {
+                VA_ENGINE_ERROR(
+                    "[RenderGraph] No renderer found for pass '{}' (Type: {}), skipping.",
+                    passNode.instanceName,
+                    RenderPassTypeToString(passConfig.Type));
+                continue;
+            }
+
+            // Get the required state from the renderer
+            passNode.RequiredStateTemplateName = renderer->GetCompatibleRenderState();
+
+            if (passNode.RequiredStateTemplateName.empty())
+            {
+                VA_ENGINE_ERROR(
+                    "[RenderGraph] No required RenderState for pass '{}', skipping.",
+                    passNode.instanceName);
+                continue;
+            }
+
+            // Verify the template exists
+            if (!g_RenderStateSystem->HasRenderStateTemplate(passNode.RequiredStateTemplateName))
+            {
+                VA_ENGINE_ERROR(
+                    "[RenderGraph] Required RenderState template '{}' not found for pass '{}', skipping.",
+                    passNode.RequiredStateTemplateName,
+                    passConfig.Name);
+                continue;
+            }
+
+            // Create signature from the associated RenderPass
+            const auto signature = g_RenderStateSystem->CreateSignatureFromPass(passConfig);
+
+            // Get the required render state
+            passNode.AssignedState = g_RenderStateSystem->GetCachedRenderState(
+                passNode.RequiredStateTemplateName,
+                signature);
+            if (!passNode.AssignedState)
+            {
+                VA_ENGINE_ERROR(
+                    "[RenderGraph] Failed to get RenderState for pass '{}', skipping.",
+                    passNode.instanceName);
+                continue;
+            }
+
+            VA_ENGINE_TRACE(
+                "[RenderGraph] RenderState '{}' assigned to pass '{}'.",
+                passNode.RequiredStateTemplateName,
+                passConfig.Name);
+        }
+    }
+
+    void RenderGraph::OptimizeExecutionOrder()
+    {
+        VA_ENGINE_DEBUG("[RenderGraph] Optimizing execution order...");
+
+        // NOTE: For now, we will just do a simple optimization
+        //      Grouping passes by required state when dependencies allow it
+        //      This is a placeholder for now - we'll implement more sophisticated optimizations later
+        //      when we have multiple RenderStates.
+        std::unordered_map<Resources::RenderStatePtr, std::vector<std::string>> stateGroups;
+
+        for (const auto& passNode : m_RenderPassesNodes | std::views::values)
+        {
+            if (passNode.AssignedState)
+            {
+                stateGroups[passNode.AssignedState].push_back(passNode.instanceName);
+            }
+        }
+
+        VA_ENGINE_DEBUG("[RenderGraph] Found {} unique render states:", stateGroups.size());
+        for (const auto& [state, pass] : stateGroups)
+        {
+            VA_ENGINE_DEBUG(
+                "[RenderGraph]   - State '{}' used by {} passes",
+                state->GetName(),
+                pass.size());
+            for (const auto& passName : pass)
+            {
+                VA_ENGINE_TRACE(
+                    "[RenderGraph]     - {}",
+                    passName);
+            }
+        }
+    }
+
+    float RenderGraph::CalculateStateSwitchCost() const
+    {
+        if (m_ExecutionOrder.empty()) return 0.0f;
+
+        uint32_t stateChanges = 0;
+        Resources::RenderStatePtr lastState = nullptr;
+
+        for (const auto& passUUID : m_ExecutionOrder)
+        {
+            const auto* passNode = FindRenderPassNode(passUUID);
+            if (!passNode || !passNode->RenderPass)
+            {
+                VA_ENGINE_ERROR(
+                    "[RenderGraph] Invalid pass in execution order, skipping pass.");
+                continue;
+            }
+
+            if (lastState && lastState != passNode->AssignedState)
+            {
+                stateChanges++;
+            }
+            lastState = passNode->AssignedState;
+        }
+
+        return static_cast<float>(stateChanges) / static_cast<float>(m_ExecutionOrder.size());
+    }
+
     std::vector<UUID> RenderGraph::ComputeExecutionOrder()
     {
         std::vector<UUID> executionOrder;
@@ -575,6 +683,35 @@ namespace VoidArchitect::Renderer
         return executionOrder;
     }
 
+    void RenderGraph::LogOptimizationMetrics() const
+    {
+        const float stateSwitchRatio = CalculateStateSwitchCost();
+
+        VA_ENGINE_INFO(
+            "[RenderGraph] Compilation complete. {} passes, {:.1f}% potential state switch ratio.",
+            m_ExecutionOrder.size(),
+            stateSwitchRatio * 100.0f);
+
+        // Log execution order with state information
+        VA_ENGINE_INFO("[RenderGraph] Execution order:");
+        Resources::RenderStatePtr lastState = nullptr;
+        for (const auto& passUUID : m_ExecutionOrder)
+        {
+            if (const auto* passNode = FindRenderPassNode(passUUID))
+            {
+                const bool stateChange = (lastState != passNode->AssignedState);
+                VA_ENGINE_INFO(
+                    "[RenderGraph]   - {} ({}): {} -> {}",
+                    passNode->instanceName,
+                    stateChange ? "State change" : "No state change",
+                    passNode->AssignedState ? passNode->AssignedState->GetName() : "None",
+                    passNode->RequiredStateTemplateName.empty()? passNode->RequiredStateTemplateName
+                    : "None");
+                lastState = passNode->AssignedState;
+            }
+        }
+    }
+
     void RenderGraph::Execute(const FrameData& frameData)
     {
         if (!m_IsCompiled)
@@ -619,6 +756,30 @@ namespace VoidArchitect::Renderer
             renderPass->Begin(m_RHI, renderTarget);
             RenderPassContent(renderPass, renderTarget, frameData);
             renderPass->End(m_RHI);
+        }
+
+        m_LastBoundState = nullptr;
+        m_StateChangeCount = 0;
+    }
+
+    void RenderGraph::BindRenderStateIfNeeded(const Resources::RenderStatePtr& newState)
+    {
+        if (!newState)
+        {
+            VA_ENGINE_WARN("[RenderGraph] Attempting to bind a null RenderState.");
+            return;
+        }
+
+        if (m_LastBoundState != newState)
+        {
+            newState->Bind(m_RHI);
+            m_LastBoundState = newState;
+            m_StateChangeCount++;
+
+            // VA_ENGINE_TRACE(
+            //     "[RenderGraph] RenderState '{}' bound, total changes: {}.",
+            //     newState->GetName(),
+            //     m_StateChangeCount);
         }
     }
 
@@ -804,12 +965,25 @@ namespace VoidArchitect::Renderer
             return;
         }
 
-        //TODO: Call RenderPass Execute() here.
+        if (passNode->AssignedState)
+        {
+            BindRenderStateIfNeeded(passNode->AssignedState);
+
+            // Update global state
+            m_RHI.UpdateGlobalState(passNode->AssignedState, frameData.Projection, frameData.View);
+        }
+        else
+        {
+            VA_ENGINE_ERROR("[RenderGraph] No RenderState assigned to pass '{}'.", pass->GetName());
+            return;
+        }
+
         const RenderContext context{
             .Rhi = m_RHI,
             .FrameData = frameData,
             .RenderPass = pass,
-            .RenderTarget = target
+            .RenderTarget = target,
+            .RenderState = passNode->AssignedState
         };
 
         passRenderer->Execute(context);

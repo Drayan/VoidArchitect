@@ -15,8 +15,10 @@ namespace VoidArchitect
     {
         class IRenderPass;
         class IRenderTarget;
+        class IRenderState;
         using RenderPassPtr = std::shared_ptr<IRenderPass>;
         using RenderTargetPtr = std::shared_ptr<IRenderTarget>;
+        using RenderStatePtr = std::shared_ptr<IRenderState>;
     }
 
     namespace Renderer
@@ -30,6 +32,7 @@ namespace VoidArchitect
             const FrameData& FrameData;
             const Resources::RenderPassPtr& RenderPass;
             const Resources::RenderTargetPtr& RenderTarget;
+            const Resources::RenderStatePtr& RenderState;
 
             std::unordered_map<std::string, std::any> passData;
         };
@@ -39,7 +42,9 @@ namespace VoidArchitect
         public:
             virtual ~IPassRenderer() = default;
 
-            virtual void Execute(const RenderContext& context) = 0;
+            virtual void Execute(
+                const RenderContext& context) = 0;
+            virtual std::string GetCompatibleRenderState() const = 0;
 
             virtual bool IsCompatibleWith(RenderPassType passType) const = 0;
 
@@ -53,7 +58,10 @@ namespace VoidArchitect
         public:
             ForwardOpaquePassRenderer() = default;
 
-            void Execute(const RenderContext& context) override;
+            void Execute(
+                const RenderContext& context) override;
+            [[nodiscard]] std::string GetCompatibleRenderState() const override;
+
             bool IsCompatibleWith(RenderPassType passType) const override;
             const std::string& GetName() const override { return m_Name; }
 
@@ -66,7 +74,9 @@ namespace VoidArchitect
         public:
             ForwardTransparentPassRenderer() = default;
 
-            void Execute(const RenderContext& context) override;
+            void Execute(
+                const RenderContext& context) override;
+            std::string GetCompatibleRenderState() const override;
             bool IsCompatibleWith(RenderPassType passType) const override;
             const std::string& GetName() const override { return m_Name; }
 
@@ -79,7 +89,9 @@ namespace VoidArchitect
         public:
             ShadowPassRenderer() = default;
 
-            void Execute(const RenderContext& context) override;
+            void Execute(
+                const RenderContext& context) override;
+            std::string GetCompatibleRenderState() const override;
             bool IsCompatibleWith(RenderPassType passType) const override;
             const std::string& GetName() const override { return m_Name; }
 
@@ -92,7 +104,9 @@ namespace VoidArchitect
         public:
             DepthPrepassPassRenderer() = default;
 
-            void Execute(const RenderContext& context) override;
+            void Execute(
+                const RenderContext& context) override;
+            std::string GetCompatibleRenderState() const override;
             bool IsCompatibleWith(RenderPassType passType) const override;
             const std::string& GetName() const override { return m_Name; }
 
@@ -105,7 +119,9 @@ namespace VoidArchitect
         public:
             PostProcessPassRenderer() = default;
 
-            void Execute(const RenderContext& context) override;
+            void Execute(
+                const RenderContext& context) override;
+            std::string GetCompatibleRenderState() const override;
             bool IsCompatibleWith(RenderPassType passType) const override;
             const std::string& GetName() const override { return m_Name; }
 
@@ -118,7 +134,9 @@ namespace VoidArchitect
         public:
             UIPassRenderer() = default;
 
-            void Execute(const RenderContext& context) override;
+            void Execute(
+                const RenderContext& context) override;
+            std::string GetCompatibleRenderState() const override;
             bool IsCompatibleWith(RenderPassType passType) const override;
             const std::string& GetName() const override { return m_Name; }
 

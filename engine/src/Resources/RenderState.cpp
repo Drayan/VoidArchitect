@@ -5,4 +5,8 @@
 
 namespace VoidArchitect::Resources
 {
+    IRenderState::IRenderState(const std::string& name)
+        : m_Name(name)
+    {
+    }
 } // namespace VoidArchitect::Resources

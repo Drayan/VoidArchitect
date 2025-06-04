@@ -92,7 +92,6 @@ namespace VoidArchitect
         RenderStateInputLayout inputLayout;
 
         // TODO RenderState -> Allow configuration options like culling, depth testing, etc.
-        // TODO RenderPass
     };
 
     struct RenderStateSignature
