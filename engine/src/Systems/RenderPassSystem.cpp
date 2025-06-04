@@ -8,12 +8,14 @@
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Renderer/RenderCommand.hpp"
 #include "Renderer/RenderGraph.hpp"
+#include "Renderer/PassRenderers.hpp"
 
 namespace VoidArchitect
 {
     RenderPassSystem::RenderPassSystem()
     {
         GenerateDefaultRenderPasses();
+        RegisterDefaultRenderers();
     }
 
     UUID RenderPassSystem::RegisterRenderPassTemplate(
@@ -77,6 +79,54 @@ namespace VoidArchitect
         }
 
         return m_TemplatesNameToUUIDMap.at(name);
+    }
+
+    void RenderPassSystem::RegisterPassRenderer(Renderer::PassRendererPtr& renderer)
+    {
+        if (!renderer)
+        {
+            VA_ENGINE_WARN("[RenderPassSystem] Attempted to register a null pass renderer.");
+            return;
+        }
+
+        // Find comaptible pass types
+        for (uint32_t i = 0; i < static_cast<uint32_t>(Renderer::RenderPassType::Unknown); i++)
+        {
+            if (const auto passType = static_cast<Renderer::RenderPassType>(i); renderer->
+                IsCompatibleWith(passType))
+            {
+                if (m_PassRenderers.contains(passType))
+                {
+                    VA_ENGINE_WARN(
+                        "[RenderPassSystem] Pass renderer '{}' is already registered for pass type '{}'.",
+                        renderer->GetName(),
+                        Renderer::RenderPassTypeToString(passType));
+                }
+
+                VA_ENGINE_TRACE(
+                    "[RenderPassSystem] Registering pass renderer '{}' for pass type '{}'.",
+                    renderer->GetName(),
+                    Renderer::RenderPassTypeToString(passType));
+
+                m_AvailableRenderersNames.push_back(renderer->GetName());
+                m_PassRenderers[passType] = std::move(renderer);
+                break;
+            }
+        }
+    }
+
+    Renderer::IPassRenderer* RenderPassSystem::GetPassRenderer(
+        const Renderer::RenderPassType type) const
+    {
+        if (const auto it = m_PassRenderers.find(type); it != m_PassRenderers.end())
+        {
+            return it->second.get();
+        }
+
+        VA_ENGINE_WARN(
+            "[RenderPassSystem] No pass renderer found for pass type '{}'.",
+            Renderer::RenderPassTypeToString(type));
+        return nullptr;
     }
 
     Resources::RenderPassPtr RenderPassSystem::CreateRenderPass(const UUID& templateUUID)
@@ -196,6 +246,14 @@ namespace VoidArchitect
         // TODO: Add other passes template
 
         VA_ENGINE_INFO("[RenderPassSystem] Default RenderPass templates registered.");
+    }
+
+    void RenderPassSystem::RegisterDefaultRenderers()
+    {
+        // Forward Opaque Pass Renderer
+        auto forwardOpaque = Renderer::PassRendererPtr(
+            std::make_shared<Renderer::ForwardOpaquePassRenderer>());
+        RegisterPassRenderer(forwardOpaque);
     }
 
     size_t RenderPassSignature::GetHash() const

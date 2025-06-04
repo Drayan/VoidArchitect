@@ -54,7 +54,12 @@ namespace VoidArchitect
 
             static Camera& CreatePerspectiveCamera(float fov, float near, float far);
             static Camera& CreateOrthographicCamera(
-                float left, float right, float bottom, float top, float near, float far);
+                float left,
+                float right,
+                float bottom,
+                float top,
+                float near,
+                float far);
 
             static Platform::RHI_API_TYPE GetApiType() { return m_ApiType; }
             static Camera& GetMainCamera() { return m_Cameras[0]; }
@@ -69,8 +74,6 @@ namespace VoidArchitect
             static Resources::MeshPtr s_TestMesh;
 
         private:
-            static std::unique_ptr<RenderGraph> s_RenderGraph;
-
             static Platform::RHI_API_TYPE m_ApiType;
             static Platform::IRenderingHardware* m_RenderingHardware;
 

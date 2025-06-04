@@ -78,7 +78,6 @@ namespace VoidArchitect
             // Convenience methods for common setups
             void SetupForwardRenderer(uint32_t width, uint32_t height);
 
-        private:
             struct RenderPassNode
             {
                 UUID instanceUUID;
@@ -89,6 +88,9 @@ namespace VoidArchitect
                 std::vector<UUID> OutputsUUIDs;
             };
 
+            const RenderPassNode* FindRenderPassNode(const Resources::RenderPassPtr& pass) const;
+
+        private:
             struct RenderTargetNode
             {
                 UUID instanceUUID;
@@ -102,7 +104,6 @@ namespace VoidArchitect
             RenderTargetNode* FindRenderTargetNode(Resources::RenderTargetPtr& target);
             const RenderPassNode* FindRenderPassNode(const UUID& instanceUUID) const;
             const RenderTargetNode* FindRenderTargetNode(const UUID& instanceUUID) const;
-            const RenderPassNode* FindRenderPassNode(const Resources::RenderPassPtr& pass) const;
             const RenderTargetNode* FindRenderTargetNode(
                 const Resources::RenderTargetPtr& target) const;
 

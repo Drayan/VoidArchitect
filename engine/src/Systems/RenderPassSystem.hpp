@@ -5,7 +5,7 @@
 
 #include "Core/Uuid.hpp"
 #include "Core/Math/Vec4.hpp"
-#include "Resources/RenderPass.hpp"
+#include "Renderer/PassRenderers.hpp"
 
 namespace VoidArchitect
 {
@@ -129,6 +129,15 @@ namespace VoidArchitect
         const RenderPassConfig& GetRenderPassTemplate(const UUID& uuid) const;
         UUID GetRenderPassTemplateUUID(const std::string& name) const;
 
+        // Pass Renderer Management
+        void RegisterPassRenderer(Renderer::PassRendererPtr& renderer);
+        Renderer::IPassRenderer* GetPassRenderer(Renderer::RenderPassType type) const;
+
+        const std::vector<std::string>& GetAvailableRenderers() const
+        {
+            return m_AvailableRenderersNames;
+        }
+
         // Creation with caching
         Resources::RenderPassPtr CreateRenderPass(
             const UUID& templateUUID);
@@ -143,6 +152,7 @@ namespace VoidArchitect
 
     private:
         void GenerateDefaultRenderPasses();
+        void RegisterDefaultRenderers();
 
         struct RenderPassTemplate
         {
@@ -157,6 +167,10 @@ namespace VoidArchitect
 
         // Cache based on signature
         std::unordered_map<RenderPassCacheKey, Resources::RenderPassPtr> m_RenderPassCache;
+
+        // Pass renderers
+        std::unordered_map<Renderer::RenderPassType, Renderer::PassRendererPtr> m_PassRenderers;
+        std::vector<std::string> m_AvailableRenderersNames;
     };
 
     inline std::unique_ptr<RenderPassSystem> g_RenderPassSystem;

@@ -795,36 +795,24 @@ namespace VoidArchitect::Renderer
         }
 
         const auto& passConfig = g_RenderPassSystem->GetRenderPassTemplate(passNode->templateUUID);
-
-        if (passConfig.CompatibleStates.empty())
-        {
-            VA_ENGINE_WARN(
-                "[RenderGraph] RenderPass '{}' has no compatible pipelines.",
-                pass->GetName());
-            return;
-        }
-
-        // For now, we will just take the first compatible pipeline
-        // Later, we will select the best one based on some parameters.
-        const auto& renderStateName = passConfig.CompatibleStates[0];
-
-        const auto signature = g_RenderStateSystem->CreateSignatureFromPass(passConfig);
-        auto pipeline = g_RenderStateSystem->GetCachedRenderState(renderStateName, signature);
-
-        if (!pipeline)
+        auto* passRenderer = g_RenderPassSystem->GetPassRenderer(passConfig.Type);
+        if (!passRenderer)
         {
             VA_ENGINE_ERROR(
-                "[RenderGraph] No compiled RenderState '{}' found for pass '{}'.",
-                renderStateName,
-                pass->GetName());
+                "[RenderGraph] Failed to get pass renderer for pass '{}'.",
+                RenderPassTypeToString(passConfig.Type));
             return;
         }
 
-        pipeline->Bind(m_RHI);
-
-        m_RHI.UpdateGlobalState(pipeline, frameData.Projection, frameData.View);
-
         //TODO: Call RenderPass Execute() here.
+        const RenderContext context{
+            .Rhi = m_RHI,
+            .FrameData = frameData,
+            .RenderPass = pass,
+            .RenderTarget = target
+        };
+
+        passRenderer->Execute(context);
     }
 
     void RenderGraph::SetupForwardRenderer(uint32_t width, uint32_t height)

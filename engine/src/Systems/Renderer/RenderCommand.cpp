@@ -22,8 +22,6 @@ namespace VoidArchitect::Renderer
     Resources::MaterialPtr RenderCommand::s_TestMaterial;
     Resources::MeshPtr RenderCommand::s_TestMesh;
 
-    std::unique_ptr<RenderGraph> RenderCommand::s_RenderGraph;
-
     Platform::RHI_API_TYPE RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
     Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
     uint32_t RenderCommand::m_Width = 0;
@@ -88,16 +86,16 @@ namespace VoidArchitect::Renderer
         g_MaterialSystem = std::make_unique<MaterialSystem>();
         g_MeshSystem = std::make_unique<MeshSystem>();
 
-        s_RenderGraph = std::make_unique<RenderGraph>(*m_RenderingHardware);
-        s_RenderGraph->SetupForwardRenderer(m_Width, m_Height);
+        g_RenderGraph = std::make_unique<RenderGraph>(*m_RenderingHardware);
+        g_RenderGraph->SetupForwardRenderer(m_Width, m_Height);
 
-        if (!s_RenderGraph->Compile())
+        if (!g_RenderGraph->Compile())
         {
             VA_ENGINE_CRITICAL("[RenderCommand] Failed to compile render graph.");
             return;
         }
 
-        if (!s_RenderGraph)
+        if (!g_RenderGraph)
         {
             VA_ENGINE_CRITICAL("[RenderCommand] Failed to setup render graph.");
             return;
@@ -119,7 +117,7 @@ namespace VoidArchitect::Renderer
         // Wait that any pending operation is completed before beginning the shutdown procedure.
         m_RenderingHardware->WaitIdle(0);
 
-        s_RenderGraph = nullptr;
+        g_RenderGraph = nullptr;
 
         s_TestMesh = nullptr;
         s_TestMaterial = nullptr;
@@ -145,8 +143,8 @@ namespace VoidArchitect::Renderer
         for (auto& camera : m_Cameras)
             camera.SetAspectRatio(width / static_cast<float>(height));
 
-        s_RenderGraph->OnResize(width, height);
-        s_RenderGraph->Compile();
+        g_RenderGraph->OnResize(width, height);
+        g_RenderGraph->Compile();
     }
 
     bool RenderCommand::BeginFrame(const float deltaTime)
@@ -160,7 +158,7 @@ namespace VoidArchitect::Renderer
         if (!m_RenderingHardware->BeginFrame(deltaTime))
             return false;
 
-        if (s_RenderGraph)
+        if (g_RenderGraph)
         {
             camera.RecalculateView();
 
@@ -169,7 +167,7 @@ namespace VoidArchitect::Renderer
             frameData.Projection = camera.GetProjection();
             frameData.View = camera.GetView();
 
-            s_RenderGraph->Execute(frameData);
+            g_RenderGraph->Execute(frameData);
         }
         else
         {
