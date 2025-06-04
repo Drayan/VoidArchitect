@@ -4,8 +4,8 @@
 #include "VulkanRenderTarget.hpp"
 
 #include "Core/Logger.hpp"
-#include "VulkanRenderPass.hpp"
 #include "VulkanUtils.hpp"
+#include "Systems/Renderer/RenderGraph.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -129,8 +129,9 @@ namespace VoidArchitect::Platform
         framebufferInfo.height = m_Height;
         framebufferInfo.layers = 1;
 
-        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreateFramebuffer(
-            m_Device, &framebufferInfo, m_Allocator, &m_Framebuffers[imageIndex]));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreateFramebuffer(
+                m_Device, &framebufferInfo, m_Allocator, &m_Framebuffers[imageIndex]));
 
         VA_ENGINE_TRACE(
             "[VulkanRenderTarget] Framebuffer created for '{}' image index {}.",

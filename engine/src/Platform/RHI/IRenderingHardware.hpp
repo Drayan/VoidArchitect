@@ -7,12 +7,12 @@
 
 namespace VoidArchitect
 {
+    struct RenderPassConfig;
     struct ShaderConfig;
     struct RenderStateConfig;
 
     namespace Renderer
     {
-        struct RenderPassConfig;
         struct RenderTargetConfig;
     } // namespace Renderer
 } // namespace VoidArchitect
@@ -40,7 +40,7 @@ namespace VoidArchitect::Platform
     enum class RHI_API_TYPE
     {
         None = 0, // Headless application, e.g., for the server.
-        Vulkan,   // Vulkan implementation of RHI.
+        Vulkan, // Vulkan implementation of RHI.
     };
 
     class IRenderingHardware
@@ -75,7 +75,8 @@ namespace VoidArchitect::Platform
             bool hasTransparency,
             const std::vector<uint8_t>& data) = 0;
         virtual Resources::IRenderState* CreatePipeline(
-            RenderStateConfig& config, Resources::IRenderPass* renderPass) = 0;
+            RenderStateConfig& config,
+            Resources::IRenderPass* renderPass) = 0;
         virtual Resources::IMaterial* CreateMaterial(const std::string& name) = 0;
         virtual Resources::IShader* CreateShader(
             const std::string& name,
@@ -92,6 +93,6 @@ namespace VoidArchitect::Platform
         virtual Resources::IRenderTarget* CreateRenderTarget(
             const Renderer::RenderTargetConfig& config) = 0;
         virtual Resources::IRenderPass* CreateRenderPass(
-            const Renderer::RenderPassConfig& config) = 0;
+            const RenderPassConfig& config) = 0;
     };
 } // namespace VoidArchitect::Platform

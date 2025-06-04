@@ -5,8 +5,8 @@
 #include <vulkan/vulkan.h>
 
 #include "Resources/RenderPass.hpp"
-#include "Systems/Renderer/RenderGraph.hpp"
 #include "VulkanCommandBuffer.hpp"
+#include "Systems/RenderPassSystem.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -28,7 +28,7 @@ namespace VoidArchitect::Platform
     public:
         // New constructor using RenderPassConfig (preferred)
         VulkanRenderPass(
-            const Renderer::RenderPassConfig& config,
+            const RenderPassConfig& config,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
             VkFormat swapchainFormat,
@@ -67,7 +67,7 @@ namespace VoidArchitect::Platform
 
     private:
         void CreateRenderPassFromConfig(
-            const Renderer::RenderPassConfig& config,
+            const RenderPassConfig& config,
             VkFormat swapchainFormat,
             VkFormat depthFormat);
 
@@ -82,7 +82,7 @@ namespace VoidArchitect::Platform
         std::vector<VkClearValue> m_ClearValues;
 
         // Store config for compatibility checks
-        Renderer::RenderPassConfig m_Config;
+        RenderPassConfig m_Config;
         bool m_IsLegacy = false;
 
         Resources::RenderTargetPtr m_CurrentTarget;

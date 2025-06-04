@@ -38,7 +38,8 @@ namespace VoidArchitect::Renderer
         }
     }
 
-    RenderGraph::RenderGraph(Platform::IRenderingHardware& rhi) : m_RHI(rhi)
+    RenderGraph::RenderGraph(Platform::IRenderingHardware& rhi)
+        : m_RHI(rhi)
     {
         m_RenderPassesNodes.reserve(16);
         m_RenderTargetsNodes.reserve(8);
@@ -57,101 +58,79 @@ namespace VoidArchitect::Renderer
         VA_ENGINE_TRACE("[RenderGraph] RenderGraph destroyed.");
     }
 
-    Resources::RenderPassPtr RenderGraph::AddRenderPass(const RenderPassConfig& config)
+    UUID RenderGraph::AddRenderPass(const UUID& templateUUID, const std::string& instanceName)
     {
-        // Create the render pass
-        Resources::IRenderPass* rawPass = m_RHI.CreateRenderPass(config);
-        if (!rawPass)
+        if (!g_RenderPassSystem->HasRenderPassTemplate(templateUUID))
         {
-            VA_ENGINE_ERROR("[RenderGraph] Failed to create RenderPass '{}'.", config.Name);
-            return nullptr;
+            VA_ENGINE_ERROR(
+                "[RenderGraph] RenderPass template UUID '{}' not found.",
+                static_cast<uint64_t>(templateUUID));
+            return InvalidUUID;
         }
 
-        // Wrap in smart pointer with custom deleter
-        const auto renderPass = Resources::RenderPassPtr(
-            rawPass,
-            [this](Resources::IRenderPass* rawPass)
-            {
-                this->ReleaseRenderPass(rawPass);
-                delete rawPass;
-            });
+        const UUID instanceUUID;
+        RenderPassNode node{
+            .instanceUUID = instanceUUID,
+            .templateUUID = templateUUID,
+            .instanceName = instanceName.empty()
+                                ? ("Pass_" + std::to_string(static_cast<uint64_t>(instanceUUID)))
+                                : instanceName,
+            .RenderPass = nullptr
+        };
 
-        // Create and store node
-        RenderPassNode node;
-        node.Config = config;
-        node.RenderPass = renderPass;
-
-        const auto passUUID = rawPass->GetUUID();
-        m_RenderPassesNodes[passUUID] = std::move(node);
-
+        m_RenderPassesNodes[instanceUUID] = std::move(node);
         m_IsCompiled = false;
 
-        VA_ENGINE_TRACE("[RenderGraph] RenderPass '{}' added.", config.Name);
-        return renderPass;
+        VA_ENGINE_TRACE(
+            "[RenderGraph] RenderPass '{}' added with UUID {}.",
+            node.instanceName,
+            static_cast<uint64_t>(instanceUUID));
+
+        return instanceUUID;
     }
 
-    Resources::RenderTargetPtr RenderGraph::AddRenderTarget(const RenderTargetConfig& config)
+    UUID RenderGraph::AddRenderTarget(const RenderTargetConfig& config)
     {
-        // Create the render target
-        Resources::IRenderTarget* rawTarget = m_RHI.CreateRenderTarget(config);
-        if (!rawTarget)
-        {
-            VA_ENGINE_ERROR("[RenderGraph] Failed to create RenderTarget '{}'.", config.Name);
-            return nullptr;
-        }
-
-        // Wrap in a smart pointer with custom deleter
-        const auto renderTarget = Resources::RenderTargetPtr(
-            rawTarget,
-            [this](Resources::IRenderTarget* rawTarget)
-            {
-                this->ReleaseRenderTarget(rawTarget);
-                delete rawTarget;
-            });
-
         // Create and store node
-        RenderTargetNode node;
-        node.Config = config;
-        node.RenderTarget = renderTarget;
+        const UUID instanceUUID;
+        RenderTargetNode node{
+            .instanceUUID = instanceUUID,
+            .Config = config,
+            .RenderTarget = nullptr
+        };
 
-        auto targetUUID = rawTarget->GetUUID();
-        m_RenderTargetsNodes[targetUUID] = std::move(node);
-
+        m_RenderTargetsNodes[instanceUUID] = std::move(node);
         m_IsCompiled = false;
 
-        VA_ENGINE_TRACE("[RenderGraph] RenderTarget '{}' added.", config.Name);
-        return renderTarget;
+        VA_ENGINE_TRACE(
+            "[RenderGraph] RenderTarget '{}' added with UUID {}.",
+            config.Name,
+            static_cast<uint64_t>(instanceUUID));
+
+        return instanceUUID;
     }
 
-    void RenderGraph::AddDependency(Resources::RenderPassPtr from, Resources::RenderPassPtr to)
+    void RenderGraph::AddDependency(const UUID& fromUUID, const UUID& toUUID)
     {
-        if (!from || !to)
-        {
-            VA_ENGINE_ERROR("[RenderGraph] Cannot add dependency between invalid RenderPass.");
-            return;
-        }
-
-        const auto fromUUID = from->GetUUID();
-        const auto toUUID = to->GetUUID();
-
         // Find the 'from' node
         auto* fromNode = FindRenderPassNode(fromUUID);
         if (!fromNode)
         {
             VA_ENGINE_ERROR(
-                "[RenderGraph] Cannot find RenderPass node for '{}' for dependency source.",
-                from->GetName());
+                "[RenderGraph] Cannot find RenderPass node for UUID '{}' for dependency source.",
+                static_cast<uint64_t>(fromUUID));
             return;
         }
 
-        // Check if dependency already exists
+        // Check if a dependency already exists
         auto& dependencies = fromNode->DependenciesUUIDs;
+        auto* toNode = FindRenderPassNode(toUUID);
         if (std::ranges::find(dependencies, toUUID) != dependencies.end())
         {
             VA_ENGINE_WARN(
                 "[RenderGraph] Dependency already exists between RenderPass '{}' -> '{}'.",
-                from->GetName(),
-                to->GetName());
+                fromNode->instanceName,
+                toNode->instanceName);
             return;
         }
 
@@ -159,51 +138,32 @@ namespace VoidArchitect::Renderer
 
         VA_ENGINE_TRACE(
             "[RenderGraph] Dependency added between RenderPass '{}' -> '{}'.",
-            from->GetName(),
-            to->GetName());
+            fromNode->instanceName,
+            toNode->instanceName);
     }
 
     void RenderGraph::ConnectPassToTarget(
-        const Resources::RenderPassPtr& pass, const Resources::RenderTargetPtr& target)
+        const UUID& passUUID,
+        const UUID& targetUUID)
     {
-        if (!pass || !target)
-        {
-            VA_ENGINE_ERROR(
-                "[RenderGraph] Cannot connect RenderPass to RenderTarget, at least one of them is "
-                "invalid.");
-            return;
-        }
-
-        const auto passUUID = pass->GetUUID();
-        const auto targetUUID = target->GetUUID();
-
         auto* passNode = FindRenderPassNode(passUUID);
         if (!passNode)
         {
             VA_ENGINE_ERROR(
-                "[RenderGraph] Cannot find RenderPass node for '{}' for target connection.",
-                pass->GetName());
-            return;
-        }
-
-        // Validate compatibility
-        if (!pass->IsCompatibleWith(target))
-        {
-            VA_ENGINE_ERROR(
-                "[RenderGraph] RenderPass '{}' is not compatible with RenderTarget '{}'.",
-                pass->GetName(),
-                target->GetName());
+                "[RenderGraph] Cannot find RenderPass node for UUID '{}' for target connection.",
+                static_cast<uint64_t>(passUUID));
             return;
         }
 
         // Check if target already connected
         auto& outputs = passNode->OutputsUUIDs;
+        auto* targetNode = FindRenderTargetNode(targetUUID);
         if (std::ranges::find(outputs, targetUUID) != outputs.end())
         {
             VA_ENGINE_WARN(
                 "[RenderGraph] RenderPass '{}' already connected to RenderTarget '{}'.",
-                pass->GetName(),
-                target->GetName());
+                passNode->instanceName,
+                targetNode->Config.Name);
             return;
         }
 
@@ -213,8 +173,8 @@ namespace VoidArchitect::Renderer
 
         VA_ENGINE_TRACE(
             "[RenderGraph] RenderPass '{}' connected to RenderTarget '{}'.",
-            pass->GetName(),
-            target->GetName());
+            passNode->instanceName,
+            targetNode->Config.Name);
     }
 
     bool RenderGraph::Validate()
@@ -231,29 +191,145 @@ namespace VoidArchitect::Renderer
             return false;
         }
 
-        // Validate that all passes have outputs
-        for (const auto& passNode : m_RenderPassesNodes | std::views::values)
+        if (!ValidateConnections())
         {
-            if (passNode.OutputsUUIDs.empty())
-            {
-                VA_ENGINE_ERROR(
-                    "[RenderGraph] RenderPass '{}' has no output.", passNode.Config.Name);
-                return false;
-            }
+            VA_ENGINE_ERROR("[RenderGraph] Cannot find a valid connection between passes.");
+            return false;
         }
 
-        if (!ValidatePassPipelineCompatibility())
+        if (!ValidateNoCycles())
+        {
+            VA_ENGINE_ERROR("[RenderGraph] Cannot find a valid execution order.");
+            return false;
+        }
+
+        if (!ValidatePassRenderStateCompatibility())
         {
             VA_ENGINE_ERROR("[RenderGraph] Cannot find a compatible pipeline for passes.");
             return false;
         }
 
-        // TODO: Add more validation as needed
-        //   - ValidateNoCycles()
-        //   - ValidateReferences()
-        //   - Validate attachement compatibility
-
         VA_ENGINE_TRACE("[RenderGraph] Graph validated.");
+        return true;
+    }
+
+    bool RenderGraph::ValidateConnections()
+    {
+        for (const auto& passNode : m_RenderPassesNodes | std::views::values)
+        {
+            // Validate that all passes have outputs
+            if (passNode.OutputsUUIDs.empty())
+            {
+                VA_ENGINE_ERROR(
+                    "[RenderGraph] RenderPass '{}' has no output.",
+                    passNode.instanceName);
+                return false;
+            }
+
+            // Validate that output targets are registered in the graph
+            for (const auto& outputUUID : passNode.OutputsUUIDs)
+            {
+                if (!FindRenderTargetNode(outputUUID))
+                {
+                    VA_ENGINE_ERROR(
+                        "[RenderGraph] RenderPass '{}' has invalid output target '{}'.",
+                        passNode.instanceName,
+                        static_cast<uint64_t>(outputUUID)
+                    );
+                    return false;
+                }
+            }
+
+            // Validate that all dependencies are registered in the graph
+            for (const auto& dependencyUUID : passNode.DependenciesUUIDs)
+            {
+                if (!FindRenderPassNode(dependencyUUID))
+                {
+                    VA_ENGINE_ERROR(
+                        "[RenderGraph] RenderPass '{}' has invalid dependency '{}'.",
+                        passNode.instanceName,
+                        static_cast<uint64_t>(dependencyUUID)
+                    );
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    bool RenderGraph::ValidateNoCycles()
+    {
+        std::unordered_set<UUID> visited;
+        std::unordered_set<UUID> visiting;
+
+        std::function<bool(const UUID&)> hasCycle = [&](const UUID& passUUID) -> bool
+        {
+            if (visiting.contains(passUUID))
+            {
+                auto* node = FindRenderPassNode(passUUID);
+                VA_ENGINE_ERROR(
+                    "[RenderGraph] Cycle detected involving pass '{}'.",
+                    node ? node->instanceName : "Unknown");
+                return false;
+            }
+
+            if (visited.contains(passUUID))
+                return false;
+
+            visiting.insert(passUUID);
+
+            if (const auto* node = FindRenderPassNode(passUUID))
+            {
+                for (const auto& depUUID : node->DependenciesUUIDs)
+                {
+                    if (hasCycle(depUUID))
+                        return true;
+                }
+            }
+
+            visiting.erase(passUUID);
+            visited.insert(passUUID);
+            return false;
+        };
+
+        return std::ranges::none_of(m_RenderPassesNodes | std::views::keys, hasCycle);
+    }
+
+    bool RenderGraph::ValidatePassRenderStateCompatibility()
+    {
+        for (const auto& passNode : m_RenderPassesNodes | std::views::values)
+        {
+            const auto& passConfig = g_RenderPassSystem->GetRenderPassTemplate(
+                passNode.templateUUID);
+
+            if (passConfig.Type == RenderPassType::Unknown)
+            {
+                VA_ENGINE_WARN("[RenderGraph] RenderPass '{}' has unknown type.", passConfig.Name);
+                return false;
+            }
+
+            // Check that all RenderStates exist and are compatible
+            for (const auto& renderStateName : passConfig.CompatibleStates)
+            {
+                // For now, just log declared compatibility
+                // Later, we will check with the PipelineSystem
+                VA_ENGINE_DEBUG(
+                    "[RenderGraph]   - RenderState '{}' is compatible with '{}'.",
+                    renderStateName,
+                    passConfig.Name);
+            }
+
+            // Check that we have at least one compatible pipeline
+            if (passConfig.CompatibleStates.empty())
+            {
+                VA_ENGINE_ERROR(
+                    "[RenderGraph] RenderPass '{}' has no compatible pipeline.",
+                    passConfig.Name);
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -268,24 +344,32 @@ namespace VoidArchitect::Renderer
             return false;
         }
 
-        // Compute execution order
-        m_ExecutionOrder = GetExecutionOrder();
-
-        if (m_ExecutionOrder.empty())
+        // Step 1: Create RenderTargets (RenderPasses might need them for compatibility checking)
+        if (!CompileRenderTargets())
         {
-            VA_ENGINE_ERROR("[RenderGraph] Failed to compute execution order.");
+            VA_ENGINE_ERROR("[RenderGraph] Failed to compile RenderTargets.");
             return false;
         }
 
+        // Step 2: Create RenderPasses from templates
         if (!CompileRenderPasses())
         {
             VA_ENGINE_ERROR("[RenderGraph] Failed to compile RenderPasses.");
             return false;
         }
 
-        if (!CompilePipelines())
+        // Step 3: Create RenderStates from templates
+        if (!CompileRenderStates())
         {
-            VA_ENGINE_ERROR("[RenderGraph] Failed to compile Pipelines.");
+            VA_ENGINE_ERROR("[RenderGraph] Failed to compile RenderStates.");
+            return false;
+        }
+
+        // Step 4 : Compute execution order
+        m_ExecutionOrder = ComputeExecutionOrder();
+        if (m_ExecutionOrder.empty())
+        {
+            VA_ENGINE_ERROR("[RenderGraph] Failed to compute execution order.");
             return false;
         }
 
@@ -295,21 +379,200 @@ namespace VoidArchitect::Renderer
         VA_ENGINE_INFO("[RenderGraph] Graph compiled successfully. Execution order:");
         for (size_t i = 0; i < m_ExecutionOrder.size(); ++i)
         {
-            if (const auto* passNode = FindRenderPassNode(m_ExecutionOrder[i]->GetUUID()))
+            if (const auto* passNode = FindRenderPassNode(m_ExecutionOrder[i]))
             {
                 VA_ENGINE_INFO(
-                    "[RenderGraph]   {}: '{}' (Type: {})",
+                    "[RenderGraph]   {}: '{}'",
                     i,
-                    m_ExecutionOrder[i]->GetName(),
-                    RenderPassTypeToString(passNode->Config.Type));
+                    passNode->instanceName);
             }
             else
             {
-                VA_ENGINE_INFO("[RenderGraph]   {}: '{}'", i, m_ExecutionOrder[i]->GetName());
+                VA_ENGINE_INFO(
+                    "[RenderGraph]   {}: '{}'",
+                    i,
+                    static_cast<uint64_t>(m_ExecutionOrder[i]));
             }
         }
 
         return true;
+    }
+
+    bool RenderGraph::CompileRenderTargets()
+    {
+        VA_ENGINE_DEBUG("[RenderGraph] Compiling RenderTargets...");
+
+        for (auto& targetNode : m_RenderTargetsNodes | std::views::values)
+        {
+            if (!targetNode.RenderTarget)
+            {
+                // Create RenderTarget
+                const auto rawTarget = m_RHI.CreateRenderTarget(targetNode.Config);
+                if (!rawTarget)
+                {
+                    VA_ENGINE_ERROR(
+                        "[RenderGraph] Failed to create RenderTarget '{}'.",
+                        targetNode.Config.Name);
+                    return false;
+                }
+
+                targetNode.RenderTarget = Resources::RenderTargetPtr(
+                    rawTarget,
+                    [this](const Resources::IRenderTarget* target)
+                    {
+                        this->ReleaseRenderTarget(target);
+                        delete target;
+                    });
+
+                VA_ENGINE_TRACE(
+                    "[RenderGraph] RenderTarget '{}' compiled.",
+                    targetNode.Config.Name);
+            }
+        }
+
+        VA_ENGINE_DEBUG("[RenderGraph] RenderTargets compiled successfully.");
+        return true;
+    }
+
+    bool RenderGraph::CompileRenderPasses()
+    {
+        VA_ENGINE_DEBUG("[RenderGraph] Compiling RenderPasses...");
+
+        // This step makes the real RHI RenderPass objects.
+        for (auto& passNode : m_RenderPassesNodes | std::views::values)
+        {
+            if (!passNode.RenderPass)
+            {
+                passNode.RenderPass = g_RenderPassSystem->CreateRenderPass(passNode.templateUUID);
+
+                if (!passNode.RenderPass)
+                {
+                    VA_ENGINE_ERROR(
+                        "[RenderGraph] Failed to create RenderPass from template UUID {}.",
+                        static_cast<uint64_t>(passNode.templateUUID));
+                    return false;
+                }
+
+                VA_ENGINE_TRACE(
+                    "[RenderGraph] RenderPass '{}' compiled.",
+                    passNode.RenderPass->GetName());
+            }
+        }
+
+        VA_ENGINE_DEBUG("[RenderGraph] RenderPasses compiled successfully.");
+        return true;
+    }
+
+    bool RenderGraph::CompileRenderStates()
+    {
+        VA_ENGINE_DEBUG("[RenderGraph] Compiling RenderStates...");
+
+        for (const auto& passNode : m_RenderPassesNodes | std::views::values)
+        {
+            const auto& passConfig = g_RenderPassSystem->GetRenderPassTemplate(
+                passNode.templateUUID);
+            const auto& renderPass = passNode.RenderPass;
+
+            // For each compatible render state with this pass
+            for (const auto& renderStateName : passConfig.CompatibleStates)
+            {
+                // Check that the template exists
+                if (!g_RenderStateSystem->HasRenderStateTemplate(renderStateName))
+                {
+                    VA_ENGINE_ERROR(
+                        "[RenderGraph] RenderState template '{}' not found for pass '{}'.",
+                        renderStateName,
+                        passConfig.Name);
+                    return false;
+                }
+
+                // Create the renderState for this pass
+                const auto renderState =
+                    g_RenderStateSystem->CreateRenderState(renderStateName, passConfig, renderPass);
+                if (!renderState)
+                {
+                    VA_ENGINE_ERROR(
+                        "[RenderGraph] Failed to create RenderState for pass '{}'.",
+                        passConfig.Name);
+                    return false;
+                }
+
+                VA_ENGINE_TRACE(
+                    "[RenderGraph] RenderState '{}' compiled for pass '{}'.",
+                    renderStateName,
+                    passConfig.Name);
+            }
+        }
+
+        VA_ENGINE_DEBUG("[RenderGraph] RenderStates compiled successfully.");
+        return true;
+    }
+
+    std::vector<UUID> RenderGraph::ComputeExecutionOrder()
+    {
+        std::vector<UUID> executionOrder;
+        std::unordered_set<UUID> visited;
+        std::unordered_set<UUID> visiting; // For cycle detection
+
+        // Simple topological sort based on dependencies
+        std::function<bool(const UUID&)> visit = [&](const UUID& passUUID) -> bool
+        {
+            if (visiting.contains(passUUID))
+            {
+                auto* node = FindRenderPassNode(passUUID);
+                VA_ENGINE_ERROR(
+                    "[RenderGraph] Cycle detected involving pass '{}'.",
+                    node ? node->instanceName : "Unknown");
+                return false;
+            }
+
+            if (visited.contains(passUUID))
+            {
+                return true; // Already visited, skip
+            }
+
+            visiting.insert(passUUID);
+
+            // Find the node for this pass
+            if (const auto* node = FindRenderPassNode(passUUID))
+            {
+                // Visit all dependencies first
+                for (const auto& dependencyUUID : node->DependenciesUUIDs)
+                {
+                    if (!visit(dependencyUUID))
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                VA_ENGINE_ERROR(
+                    "[RenderGraph] Failed to find RenderPass UUID {}.",
+                    static_cast<uint64_t>(passUUID));
+            }
+
+            visiting.erase(passUUID);
+            visited.insert(passUUID);
+            executionOrder.push_back(passUUID);
+
+            return true;
+        };
+
+        // Visit all passes
+        for (const auto& uuid : m_RenderPassesNodes | std::views::keys)
+        {
+            if (!visit(uuid))
+            {
+                VA_ENGINE_ERROR("[RenderGraph] Failed to compute execution order.");
+                return {};
+            }
+        }
+
+        // Reverse the order since we built it backwards (dependencies first)
+        std::ranges::reverse(executionOrder);
+
+        return executionOrder;
     }
 
     void RenderGraph::Execute(const FrameData& frameData)
@@ -320,116 +583,43 @@ namespace VoidArchitect::Renderer
             return;
         }
 
-        // VA_ENGINE_TRACE(
-        //     "[RenderGraph] Executing render graph with {} passes.",
-        //     m_ExecutionOrder.size());
-
         // Execute passes in order (using cached execution order for performance)
-        for (auto& pass : m_ExecutionOrder)
+        for (const auto& passUUID : m_ExecutionOrder)
         {
-            auto* passNode = FindRenderPassNode(pass->GetUUID());
-            if (!passNode)
+            auto* passNode = FindRenderPassNode(passUUID);
+            if (!passNode || !passNode->RenderPass)
             {
                 VA_ENGINE_ERROR(
-                    "[RenderGraph] Failed to find RenderPass node for pass '{}'.", pass->GetName());
+                    "[RenderGraph] Invalid pass in execution order, skipping pass.");
                 continue;
             }
 
             if (passNode->OutputsUUIDs.empty())
             {
-                VA_ENGINE_ERROR("[RenderGraph] RenderPass '{}' has no output.", pass->GetName());
+                VA_ENGINE_ERROR(
+                    "[RenderGraph] RenderPass '{}' has no output, skipping pass.",
+                    passNode->instanceName);
                 continue;
             }
 
-            // For now, assume single output per pass
-            auto& targetUUID = passNode->OutputsUUIDs[0];
-            auto* targetNode = FindRenderTargetNode(targetUUID);
-            if (!targetNode)
+            // Get first target (assume single output for now)
+            auto targetUUID = passNode->OutputsUUIDs[0];
+            const auto* targetNode = FindRenderTargetNode(targetUUID);
+            if (!targetNode || !targetNode->RenderTarget)
             {
                 VA_ENGINE_ERROR(
-                    "[RenderGraph] Failed to find RenderTarget node for pass '{}'.",
-                    pass->GetName());
+                    "[RenderGraph] Invalid target for pass '{}', skipping pass.",
+                    passNode->instanceName);
                 continue;
             }
 
+            // Execute the pass
+            const auto& renderPass = passNode->RenderPass;
             auto& renderTarget = targetNode->RenderTarget;
-
-            // VA_ENGINE_TRACE(
-            //     "[RenderGraph] Executing pass '{}' -> target '{}'.",
-            //     pass->GetName(),
-            //     renderTarget->GetName());
-
-            pass->Begin(m_RHI, renderTarget);
-            RenderPassContent(pass, renderTarget, frameData);
-            pass->End(m_RHI);
+            renderPass->Begin(m_RHI, renderTarget);
+            RenderPassContent(renderPass, renderTarget, frameData);
+            renderPass->End(m_RHI);
         }
-
-        // VA_ENGINE_TRACE("[RenderGraph] Render graph executed successfully.");
-    }
-
-    bool RenderGraph::CompileRenderPasses()
-    {
-        VA_ENGINE_DEBUG("[RenderGraph] Compiling RenderPasses...");
-
-        // This step makes the real RHI RenderPass objects.
-        for (const auto& passNode : m_RenderPassesNodes | std::views::values)
-        {
-            if (!passNode.RenderPass)
-            {
-                VA_ENGINE_ERROR(
-                    "[RenderGraph] RenderPass '{}' is null during compilation.",
-                    passNode.Config.Name);
-                return false;
-            }
-
-            VA_ENGINE_TRACE("[RenderGraph] RenderPass '{}' compiled.", passNode.Config.Name);
-        }
-
-        VA_ENGINE_DEBUG("[RenderGraph] RenderPasses compiled successfully.");
-        return true;
-    }
-
-    bool RenderGraph::CompilePipelines()
-    {
-        VA_ENGINE_DEBUG("[RenderGraph] Compiling Pipelines...");
-
-        for (const auto& passNode : m_RenderPassesNodes | std::views::values)
-        {
-            const auto& passConfig = passNode.Config;
-            const auto& renderPass = passNode.RenderPass;
-
-            // For each compatible pipeline with this pass
-            for (const auto& pipelineName : passConfig.CompatiblePipelines)
-            {
-                // Check that the template exists
-                if (!g_RenderStateSystem->HasRenderStateTemplate(pipelineName))
-                {
-                    VA_ENGINE_ERROR(
-                        "[RenderGraph] Pipeline template '{}' not found for pass '{}'.",
-                        pipelineName,
-                        passConfig.Name);
-                    return false;
-                }
-
-                // Create the pipeline for this pass
-                const auto pipeline =
-                    g_RenderStateSystem->CreateRenderState(pipelineName, passConfig, renderPass);
-                if (!pipeline)
-                {
-                    VA_ENGINE_ERROR(
-                        "[RenderGraph] Failed to create pipeline for pass '{}'.", passConfig.Name);
-                    return false;
-                }
-
-                VA_ENGINE_TRACE(
-                    "[RenderGraph] Pipeline '{}' compiled for pass '{}'.",
-                    pipelineName,
-                    passConfig.Name);
-            }
-        }
-
-        VA_ENGINE_DEBUG("[RenderGraph] Pipelines compiled successfully.");
-        return true;
     }
 
     void RenderGraph::OnResize(uint32_t width, uint32_t height)
@@ -454,11 +644,14 @@ namespace VoidArchitect::Renderer
         {
             if (node.RenderTarget->IsMainTarget())
             {
-                node.RenderTarget->Resize(width, height);
-
                 // Update config for consistency
                 node.Config.Width = width;
                 node.Config.Height = height;
+
+                if (node.RenderTarget)
+                {
+                    node.RenderTarget->Resize(width, height);
+                }
 
                 VA_ENGINE_TRACE("[RenderGraph] Resized main RenderTarget '{}'.", node.Config.Name);
             }
@@ -467,133 +660,81 @@ namespace VoidArchitect::Renderer
         m_IsCompiled = false;
     }
 
-    void RenderGraph::SetupForwardRenderer(uint32_t width, uint32_t height)
+    RenderGraph::RenderPassNode* RenderGraph::FindRenderPassNode(const UUID& instanceUUID)
     {
-        VA_ENGINE_INFO("[RenderGraph] Setting up Forward Renderer ({}x{}).", width, height);
-
-        // Store current dimensions
-        m_CurrentWidth = width;
-        m_CurrentHeight = height;
-
-        // === 1. Create Main Render Target (swapchain) ===
-        RenderTargetConfig mainTargetConfig;
-        mainTargetConfig.Name = "MainTarget";
-        mainTargetConfig.Width = width;
-        mainTargetConfig.Height = height;
-        mainTargetConfig.Format = TextureFormat::SWAPCHAIN_FORMAT;
-        mainTargetConfig.IsMain = true;
-
-        auto mainTarget = AddRenderTarget(mainTargetConfig);
-        if (!mainTarget)
-        {
-            VA_ENGINE_CRITICAL("[RenderGraph] Failed to create Main RenderTarget.");
-            return;
-        }
-
-        // === 2. Create Forward Render Pass ===
-        RenderPassConfig forwardPassConfig;
-        forwardPassConfig.Name = "ForwardPass";
-        forwardPassConfig.Type = RenderPassType::ForwardOpaque;
-        forwardPassConfig.CompatiblePipelines = {"Default"};
-
-        // Color attachment (swapchain)
-        RenderPassConfig::AttachmentConfig colorAttachment;
-        colorAttachment.Name = "color";
-        colorAttachment.Format = TextureFormat::SWAPCHAIN_FORMAT;
-        colorAttachment.LoadOp = LoadOp::Clear;
-        colorAttachment.StoreOp = StoreOp::Store;
-        colorAttachment.ClearColor = Math::Vec4(0.2f, 0.2f, 0.2f, 1.0f);
-
-        // Depth attachment
-        RenderPassConfig::AttachmentConfig depthAttachment;
-        depthAttachment.Name = "depth";
-        depthAttachment.Format = TextureFormat::SWAPCHAIN_DEPTH;
-        depthAttachment.LoadOp = LoadOp::Clear;
-        depthAttachment.StoreOp = StoreOp::DontCare;
-        depthAttachment.ClearDepth = 1.0f;
-        depthAttachment.ClearStencil = 0;
-
-        forwardPassConfig.Attachments = {colorAttachment, depthAttachment};
-
-        auto forwardPass = AddRenderPass(forwardPassConfig);
-        if (!forwardPass)
-        {
-            VA_ENGINE_CRITICAL("[RenderGraph] Failed to create Forward RenderPass.");
-            return;
-        }
-
-        // === 3. Connect Pass to Target ===
-        ConnectPassToTarget(forwardPass, mainTarget);
-
-        VA_ENGINE_INFO("[RenderGraph] Forward Renderer setup complete.");
-        VA_ENGINE_INFO(
-            "[RenderGraph]   - Main Target: '{}' ({}x{})", mainTarget->GetName(), width, height);
-        VA_ENGINE_INFO(
-            "[RenderGraph]   - Forward Pass: '{}' (Type: {}) with {} attachments and {} compatible "
-            "pipelines.",
-            forwardPass->GetName(),
-            RenderPassTypeToString(forwardPassConfig.Type),
-            forwardPassConfig.Attachments.size(),
-            forwardPassConfig.CompatiblePipelines.size());
-    }
-
-    RenderGraph::RenderPassNode* RenderGraph::FindRenderPassNode(const UUID& passUUID)
-    {
-        const auto it = m_RenderPassesNodes.find(passUUID);
+        const auto it = m_RenderPassesNodes.find(instanceUUID);
         return (it != m_RenderPassesNodes.end()) ? &it->second : nullptr;
     }
 
-    RenderGraph::RenderPassNode* RenderGraph::FindRenderPassNode(Resources::RenderPassPtr pass)
+    const RenderGraph::RenderPassNode* RenderGraph::FindRenderPassNode(
+        const UUID& instanceUUID) const
     {
-        return pass ? FindRenderPassNode(pass->GetUUID()) : nullptr;
+        const auto it = m_RenderPassesNodes.find(instanceUUID);
+        return (it != m_RenderPassesNodes.end()) ? &it->second : nullptr;
     }
 
-    RenderGraph::RenderTargetNode* RenderGraph::FindRenderTargetNode(const UUID& targetUUID)
+    RenderGraph::RenderTargetNode* RenderGraph::FindRenderTargetNode(const UUID& instanceUUID)
     {
-        auto it = m_RenderTargetsNodes.find(targetUUID);
+        const auto it = m_RenderTargetsNodes.find(instanceUUID);
         return (it != m_RenderTargetsNodes.end()) ? &it->second : nullptr;
     }
 
-    RenderGraph::RenderTargetNode* RenderGraph::FindRenderTargetNode(
-        Resources::RenderTargetPtr target)
+    const RenderGraph::RenderTargetNode* RenderGraph::FindRenderTargetNode(
+        const UUID& instanceUUID) const
     {
-        return target ? FindRenderTargetNode(target->GetUUID()) : nullptr;
+        const auto it = m_RenderTargetsNodes.find(instanceUUID);
+        return (it != m_RenderTargetsNodes.end()) ? &it->second : nullptr;
     }
 
-    const std::string& RenderGraph::GetRenderPassName(Resources::RenderPassPtr pass) const
+    RenderGraph::RenderPassNode* RenderGraph::FindRenderPassNode(Resources::RenderPassPtr& pass)
     {
         if (!pass)
-        {
-            static const std::string nullName = "NullPass";
-            return nullName;
-        }
+            return nullptr;
 
-        auto it = m_RenderPassesNodes.find(pass->GetUUID());
-        if (it != m_RenderPassesNodes.end())
-        {
-            return it->second.Config.Name;
-        }
+        for (auto& node : m_RenderPassesNodes | std::views::values)
+            if (node.RenderPass == pass)
+                return &node;
 
-        static const std::string unknown = "Unknown";
-        return unknown;
+        return nullptr;
     }
 
-    const std::string& RenderGraph::GetRenderTargetName(Resources::RenderTargetPtr target) const
+    RenderGraph::RenderTargetNode* RenderGraph::FindRenderTargetNode(
+        Resources::RenderTargetPtr& target)
     {
         if (!target)
-        {
-            static const std::string nullName = "NullTarget";
-            return nullName;
-        }
+            return nullptr;
 
-        auto it = m_RenderTargetsNodes.find(target->GetUUID());
-        if (it != m_RenderTargetsNodes.end())
-        {
-            return it->second.Config.Name;
-        }
+        for (auto& node : m_RenderTargetsNodes | std::views::values)
+            if (node.RenderTarget == target)
+                return &node;
 
-        static const std::string unknown = "Unknown";
-        return unknown;
+        return nullptr;
+    }
+
+    const RenderGraph::RenderPassNode* RenderGraph::FindRenderPassNode(
+        const Resources::RenderPassPtr& pass) const
+    {
+        if (!pass)
+            return nullptr;
+
+        for (const auto& node : m_RenderPassesNodes | std::views::values)
+            if (node.RenderPass == pass)
+                return &node;
+
+        return nullptr;
+    }
+
+    const RenderGraph::RenderTargetNode* RenderGraph::FindRenderTargetNode(
+        const Resources::RenderTargetPtr& target) const
+    {
+        if (!target)
+            return nullptr;
+
+        for (const auto& node : m_RenderTargetsNodes | std::views::values)
+            if (node.RenderTarget == target)
+                return &node;
+
+        return nullptr;
     }
 
     void RenderGraph::ReleaseRenderPass(const Resources::IRenderPass* pass)
@@ -601,7 +742,7 @@ namespace VoidArchitect::Renderer
         if (!pass || m_IsDestroying)
             return;
 
-        auto passUUID = pass->GetUUID();
+        const auto passUUID = pass->GetUUID();
 
         m_RenderPassesNodes.erase(passUUID);
 
@@ -621,9 +762,9 @@ namespace VoidArchitect::Renderer
         if (!target || m_IsDestroying)
             return;
 
-        auto targetUUID = target->GetUUID();
+        const auto targetUUID = target->GetUUID();
 
-        if (auto it = m_RenderTargetsNodes.find(targetUUID); it != m_RenderTargetsNodes.end())
+        if (const auto it = m_RenderTargetsNodes.find(targetUUID); it != m_RenderTargetsNodes.end())
         {
             it->second.RenderTarget = nullptr;
             m_RenderTargetsNodes.erase(it);
@@ -639,142 +780,42 @@ namespace VoidArchitect::Renderer
         m_IsCompiled = false;
     }
 
-    bool RenderGraph::ValidatePassPipelineCompatibility()
-    {
-        for (const auto& [uuid, passNode] : m_RenderPassesNodes)
-        {
-            const auto& passConfig = passNode.Config;
-
-            if (passConfig.Type == RenderPassType::Unknown)
-            {
-                VA_ENGINE_WARN("[RenderGraph] RenderPass '{}' has unknown type.", passConfig.Name);
-                return false;
-            }
-
-            // Check that all pipelines exist and are compatible
-            for (const auto& pipelineName : passConfig.CompatiblePipelines)
-            {
-                // For now, just log declared compatibility
-                // Later, we will check with the PipelineSystem
-                VA_ENGINE_DEBUG(
-                    "[RenderGraph]   - Pipeline '{}' is compatible with '{}'.",
-                    pipelineName,
-                    passConfig.Name);
-            }
-
-            // Check that we have at least one compatible pipeline
-            if (passConfig.CompatiblePipelines.empty())
-            {
-                VA_ENGINE_ERROR(
-                    "[RenderGraph] RenderPass '{}' has no compatible pipeline.", passConfig.Name);
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    std::vector<Resources::RenderPassPtr> RenderGraph::GetExecutionOrder()
-    {
-        std::vector<Resources::RenderPassPtr> executionOrder;
-        std::unordered_set<UUID> visited;
-        std::unordered_set<UUID> visiting; // For cycle detection
-
-        // Simple topological sort based on dependencies
-        std::function<bool(const UUID&)> visit = [&](const UUID& passUUID) -> bool
-        {
-            if (visiting.contains(passUUID))
-            {
-                auto* node = FindRenderPassNode(passUUID);
-                VA_ENGINE_ERROR(
-                    "[RenderGraph] Cycle detected involving pass '{}'.",
-                    node ? node->Config.Name : "Unknown");
-                return false;
-            }
-
-            if (visited.contains(passUUID))
-            {
-                return true;
-            }
-
-            visiting.insert(passUUID);
-
-            // Find the node for this pass
-            auto* node = FindRenderPassNode(passUUID);
-            if (!node)
-            {
-                VA_ENGINE_ERROR(
-                    "[RenderGraph] Failed to find RenderPass node f.",
-                    static_cast<uint64_t>(passUUID));
-                return false;
-            }
-
-            // Visit all dependencies first
-            for (const auto& dependencyUUID : node->DependenciesUUIDs)
-            {
-                if (!visit(dependencyUUID))
-                {
-                    return false;
-                }
-            }
-
-            visiting.erase(passUUID);
-            visited.insert(passUUID);
-            executionOrder.push_back(node->RenderPass);
-
-            return true;
-        };
-
-        // Visit all passes
-        for (const auto& uuid : m_RenderPassesNodes | std::views::keys)
-        {
-            if (!visit(uuid))
-            {
-                VA_ENGINE_ERROR("[RenderGraph] Failed to compute execution order.");
-                return {};
-            }
-        }
-
-        // Reverse the order since we built it backwards (dependencies first)
-        std::ranges::reverse(executionOrder);
-
-        return executionOrder;
-    }
-
     void RenderGraph::RenderPassContent(
-        Resources::RenderPassPtr pass,
-        Resources::RenderTargetPtr target,
+        const Resources::RenderPassPtr& pass,
+        const Resources::RenderTargetPtr& target,
         const FrameData& frameData)
     {
-        auto* passNode = FindRenderPassNode(pass->GetUUID());
+        const auto* passNode = FindRenderPassNode(pass);
         if (!passNode)
         {
             VA_ENGINE_ERROR(
-                "[RenderGraph] Failed to find RenderPass node for pass '{}'.", pass->GetName());
+                "[RenderGraph] Failed to find RenderPass node for pass '{}'.",
+                pass->GetName());
             return;
         }
 
-        const auto& passConfig = passNode->Config;
+        const auto& passConfig = g_RenderPassSystem->GetRenderPassTemplate(passNode->templateUUID);
 
-        if (passConfig.CompatiblePipelines.empty())
+        if (passConfig.CompatibleStates.empty())
         {
             VA_ENGINE_WARN(
-                "[RenderGraph] RenderPass '{}' has no compatible pipelines.", pass->GetName());
+                "[RenderGraph] RenderPass '{}' has no compatible pipelines.",
+                pass->GetName());
             return;
         }
 
         // For now, we will just take the first compatible pipeline
         // Later, we will select the best one based on some parameters.
-        const auto& pipelineName = passConfig.CompatiblePipelines[0];
+        const auto& renderStateName = passConfig.CompatibleStates[0];
 
-        auto signature = g_RenderStateSystem->CreateSignatureFromPass(passConfig);
-        auto pipeline = g_RenderStateSystem->GetCachedRenderState(pipelineName, signature);
+        const auto signature = g_RenderStateSystem->CreateSignatureFromPass(passConfig);
+        auto pipeline = g_RenderStateSystem->GetCachedRenderState(renderStateName, signature);
 
         if (!pipeline)
         {
             VA_ENGINE_ERROR(
-                "[RenderGraph] No compiled pipeline '{}' found for pass '{}'.",
-                pipelineName,
+                "[RenderGraph] No compiled RenderState '{}' found for pass '{}'.",
+                renderStateName,
                 pass->GetName());
             return;
         }
@@ -783,89 +824,36 @@ namespace VoidArchitect::Renderer
 
         m_RHI.UpdateGlobalState(pipeline, frameData.Projection, frameData.View);
 
-        switch (passConfig.Type)
-        {
-            case RenderPassType::ForwardOpaque:
-            case RenderPassType::ForwardTransparent:
-                RenderForwardPass(passConfig, pipeline, frameData);
-                break;
-
-            case RenderPassType::Shadow:
-                RenderShadowPass(passConfig, pipeline, frameData);
-                break;
-
-            case RenderPassType::DepthPrepass:
-                RenderDepthPrepassPass(passConfig, pipeline, frameData);
-                break;
-
-            case RenderPassType::PostProcess:
-                RenderPostProcessPass(passConfig, pipeline, frameData);
-                break;
-
-            case RenderPassType::UI:
-                RenderUIPass(passConfig, pipeline, frameData);
-                break;
-
-            default:
-                VA_ENGINE_WARN("[RenderGraph] Unknown RenderPass type for '{}'.", pass->GetName());
-                break;
-        }
+        //TODO: Call RenderPass Execute() here.
     }
 
-    void RenderGraph::RenderForwardPass(
-        const RenderPassConfig& passConfig,
-        const Resources::RenderStatePtr& pipeline,
-        const FrameData& frameData)
+    void RenderGraph::SetupForwardRenderer(uint32_t width, uint32_t height)
     {
-        // For now, just a simple test with a material
-        // Later, we will use a real scene manager with ECS
-        const auto& defaultMat = RenderCommand::s_TestMaterial
-                                     ? RenderCommand::s_TestMaterial
-                                     : g_MaterialSystem->GetDefaultMaterial();
+        VA_ENGINE_INFO("[RenderGraph] Setting up Forward Renderer ({}x{}).", width, height);
 
-        if (!defaultMat)
-        {
-            VA_ENGINE_ERROR("[RenderGraph] Failed to get default material.");
-            return;
-        }
+        // Store current dimensions
+        m_CurrentWidth = width;
+        m_CurrentHeight = height;
 
-        const auto geometry = Resources::GeometryRenderData(
-            Math::Mat4::Identity(), defaultMat, RenderCommand::s_TestMesh);
+        // === 1. Create Main Render Target (swapchain) ===
+        RenderTargetConfig mainTargetConfig;
+        mainTargetConfig.Name = "MainTarget";
+        mainTargetConfig.Width = width;
+        mainTargetConfig.Height = height;
+        mainTargetConfig.Format = TextureFormat::SWAPCHAIN_FORMAT;
+        mainTargetConfig.IsMain = true;
 
-        defaultMat->Bind(m_RHI, pipeline);
-        m_RHI.DrawMesh(geometry, pipeline);
-    }
+        const auto mainTargetUUID = AddRenderTarget(mainTargetConfig);
 
-    void RenderGraph::RenderShadowPass(
-        const RenderPassConfig& passConfig,
-        const Resources::RenderStatePtr& pipeline,
-        const FrameData& frameData)
-    {
-        // TODO: Implement shadow mapping
-    }
+        // === 2. Register Forward Render Pass ===
+        const auto forwardPassTemplateUUID = g_RenderPassSystem->
+            GetRenderPassTemplateUUID("ForwardOpaque");
+        const auto forwardPassUUID = AddRenderPass(forwardPassTemplateUUID);
 
-    void RenderGraph::RenderDepthPrepassPass(
-        const RenderPassConfig& passConfig,
-        const Resources::RenderStatePtr& pipeline,
-        const FrameData& frameData)
-    {
-        // TODO: Implement depth prepass
-    }
+        // === 3. Connect Pass to Target ===
+        ConnectPassToTarget(forwardPassUUID, mainTargetUUID);
 
-    void RenderGraph::RenderPostProcessPass(
-        const RenderPassConfig& passConfig,
-        const Resources::RenderStatePtr& pipeline,
-        const FrameData& frameData)
-    {
-        // TODO: Implement post process
-    }
-
-    void RenderGraph::RenderUIPass(
-        const RenderPassConfig& passConfig,
-        const Resources::RenderStatePtr& pipeline,
-        const FrameData& frameData)
-    {
-        // TODO: Implement UI rendering
+        VA_ENGINE_INFO("[RenderGraph] Forward Renderer setup complete, ready for compilation.");
     }
 } // namespace VoidArchitect::Renderer
 // VoidArchitect

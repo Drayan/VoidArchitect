@@ -2,8 +2,7 @@
 // Created by Michael Desmedt on 27/05/2025.
 //
 #pragma once
-#include <memory>
-
+#include "RenderPassSystem.hpp"
 #include "Resources/RenderPass.hpp"
 #include "Resources/RenderState.hpp"
 #include "Resources/Shader.hpp"
@@ -12,7 +11,6 @@ namespace VoidArchitect
 {
     namespace Renderer
     {
-        struct RenderPassConfig;
         enum class TextureFormat;
         enum class RenderPassType;
     } // namespace Renderer
@@ -118,7 +116,8 @@ namespace VoidArchitect
 
 namespace std
 {
-    template <> struct hash<VoidArchitect::RenderStateSignature>
+    template <>
+    struct hash<VoidArchitect::RenderStateSignature>
     {
         size_t operator()(const VoidArchitect::RenderStateSignature& signature) const noexcept
         {
@@ -126,7 +125,8 @@ namespace std
         }
     };
 
-    template <> struct hash<VoidArchitect::RenderStateCacheKey>
+    template <>
+    struct hash<VoidArchitect::RenderStateCacheKey>
     {
         size_t operator()(const VoidArchitect::RenderStateCacheKey& key) const noexcept
         {
@@ -150,30 +150,24 @@ namespace VoidArchitect
 
         Resources::RenderStatePtr CreateRenderState(
             const std::string& templateName,
-            const Renderer::RenderPassConfig& passConfig,
+            const RenderPassConfig& passConfig,
             const Resources::RenderPassPtr& renderPass);
         Resources::RenderStatePtr GetCachedRenderState(
-            const std::string& templateName, const RenderStateSignature& signature);
+            const std::string& templateName,
+            const RenderStateSignature& signature);
 
         void ClearCache();
 
         [[nodiscard]] bool IsRenderStateCompatibleWithPass(
-            const std::string& renderStateName, Renderer::RenderPassType passType) const;
+            const std::string& renderStateName,
+            Renderer::RenderPassType passType) const;
         [[nodiscard]] std::vector<std::string> GetCompatibleRenderStatesForPass(
             Renderer::RenderPassType passType) const;
 
-        RenderStateSignature CreateSignatureFromPass(const Renderer::RenderPassConfig& passConfig);
+        RenderStateSignature CreateSignatureFromPass(const RenderPassConfig& passConfig);
 
     private:
         void GenerateDefaultRenderStates();
-        uint32_t GetFreeRenderStateHandle();
-        void ReleaseRenderState(const Resources::IRenderState* pipeline);
-
-        struct RenderStateDeleter
-        {
-            RenderStateSystem* system;
-            void operator()(const Resources::IRenderState* renderState) const;
-        };
 
         std::unordered_map<std::string, RenderStateConfig> m_RenderStateTemplates;
         std::unordered_map<RenderStateCacheKey, Resources::RenderStatePtr> m_RenderStateCache;

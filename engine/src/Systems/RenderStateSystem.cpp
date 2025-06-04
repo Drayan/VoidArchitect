@@ -3,6 +3,7 @@
 //
 #include "RenderStateSystem.hpp"
 
+#include "RenderPassSystem.hpp"
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Renderer/RenderCommand.hpp"
@@ -11,52 +12,22 @@
 
 namespace VoidArchitect
 {
-    size_t RenderStateSignature::GetHash() const
-    {
-        size_t hash = 0;
-        for (const auto& format : colorFormats)
-        {
-            hash ^=
-                std::hash<int>{}(static_cast<int>(format) + 0x9e3779b9 + (hash << 6) + (hash >> 2));
-        }
-
-        if (depthFormat.has_value())
-        {
-            hash ^= std::hash<int>{}(
-                static_cast<int>(depthFormat.value()) + 0x9e3779b9 + (hash << 6) + (hash >> 2));
-        }
-
-        return hash;
-    }
-
-    size_t RenderStateCacheKey::GetHash() const
-    {
-        return std::hash<std::string>{}(templateName) ^ signature.GetHash();
-    }
-
-    bool RenderStateCacheKey::operator==(const RenderStateCacheKey& other) const
-    {
-        return templateName == other.templateName && signature == other.signature;
-    }
-
-    bool RenderStateSignature::operator==(const RenderStateSignature& other) const
-    {
-        return colorFormats == other.colorFormats && depthFormat == other.depthFormat;
-    }
-
     RenderStateSystem::RenderStateSystem() { GenerateDefaultRenderStates(); }
 
     void RenderStateSystem::RegisterRenderStateTemplate(
-        const std::string& name, const RenderStateConfig& config)
+        const std::string& name,
+        const RenderStateConfig& config)
     {
         m_RenderStateTemplates[name] = config;
 
         VA_ENGINE_TRACE(
-            "[RenderStateSystem] Pipeline template '{}' registered with compatibility", name);
+            "[RenderStateSystem] Pipeline template '{}' registered with compatibility",
+            name);
         for (const auto& passType : config.compatiblePassTypes)
         {
             VA_ENGINE_TRACE(
-                "[RenderStateSystem] - Pass Type: {}", Renderer::RenderPassTypeToString(passType));
+                "[RenderStateSystem] - Pass Type: {}",
+                Renderer::RenderPassTypeToString(passType));
         }
         for (const auto& passName : config.compatiblePassNames)
         {
@@ -85,7 +56,7 @@ namespace VoidArchitect
 
     Resources::RenderStatePtr RenderStateSystem::CreateRenderState(
         const std::string& templateName,
-        const Renderer::RenderPassConfig& passConfig,
+        const RenderPassConfig& passConfig,
         const Resources::RenderPassPtr& renderPass)
     {
         // Check if the render state template exists
@@ -193,7 +164,7 @@ namespace VoidArchitect
         }
 
         // Store the render state in the cache
-        auto renderStatePtr = Resources::RenderStatePtr(renderState, RenderStateDeleter{this});
+        auto renderStatePtr = Resources::RenderStatePtr(renderState);
 
         m_RenderStateCache[cacheKey] = renderStatePtr;
 
@@ -207,7 +178,8 @@ namespace VoidArchitect
     }
 
     Resources::RenderStatePtr RenderStateSystem::GetCachedRenderState(
-        const std::string& templateName, const RenderStateSignature& signature)
+        const std::string& templateName,
+        const RenderStateSignature& signature)
     {
         const RenderStateCacheKey cacheKey(templateName, signature);
         if (const auto it = m_RenderStateCache.find(cacheKey); it != m_RenderStateCache.end())
@@ -218,7 +190,8 @@ namespace VoidArchitect
             }
 
             VA_ENGINE_WARN(
-                "[RenderStateSystem] Cached render state '{}' is expired.", templateName);
+                "[RenderStateSystem] Cached render state '{}' is expired.",
+                templateName);
             m_RenderStateCache.erase(it);
         }
 
@@ -232,20 +205,22 @@ namespace VoidArchitect
     }
 
     bool RenderStateSystem::IsRenderStateCompatibleWithPass(
-        const std::string& renderStateName, Renderer::RenderPassType passType) const
+        const std::string& renderStateName,
+        Renderer::RenderPassType passType) const
     {
         auto it = m_RenderStateTemplates.find(renderStateName);
         if (it == m_RenderStateTemplates.end())
         {
             VA_ENGINE_WARN(
-                "[RenderStateSystem] Pipeline '{}' not found in the cache.", renderStateName);
+                "[RenderStateSystem] Pipeline '{}' not found in the cache.",
+                renderStateName);
             return false;
         }
 
         const auto& config = it->second;
 
         return std::ranges::find(config.compatiblePassTypes, passType)
-               != config.compatiblePassTypes.end();
+            != config.compatiblePassTypes.end();
     }
 
     std::vector<std::string> RenderStateSystem::GetCompatibleRenderStatesForPass(
@@ -266,17 +241,17 @@ namespace VoidArchitect
     }
 
     RenderStateSignature RenderStateSystem::CreateSignatureFromPass(
-        const Renderer::RenderPassConfig& passConfig)
+        const RenderPassConfig& passConfig)
     {
         RenderStateSignature signature;
 
         for (const auto& attachment : passConfig.Attachments)
         {
             const bool isDepthAttachment =
-                (attachment.Name == "depth"
-                 || attachment.Format == Renderer::TextureFormat::SWAPCHAIN_DEPTH
-                 || attachment.Format == Renderer::TextureFormat::D24_UNORM_S8_UINT
-                 || attachment.Format == Renderer::TextureFormat::D32_SFLOAT);
+            (attachment.Name == "depth"
+                || attachment.Format == Renderer::TextureFormat::SWAPCHAIN_DEPTH
+                || attachment.Format == Renderer::TextureFormat::D24_UNORM_S8_UINT
+                || attachment.Format == Renderer::TextureFormat::D32_SFLOAT);
 
             if (isDepthAttachment)
             {
@@ -297,7 +272,9 @@ namespace VoidArchitect
         renderStateConfig.name = "Default";
 
         renderStateConfig.compatiblePassTypes = {
-            Renderer::RenderPassType::ForwardOpaque, Renderer::RenderPassType::DepthPrepass};
+            Renderer::RenderPassType::ForwardOpaque,
+            Renderer::RenderPassType::DepthPrepass
+        };
         renderStateConfig.compatiblePassNames = {"ForwardPass"};
 
         // Try to load the default shaders into the render state.
@@ -315,15 +292,36 @@ namespace VoidArchitect
         VA_ENGINE_INFO("[RenderStateSystem] Default render state template registered.");
     }
 
-    void RenderStateSystem::ReleaseRenderState(const Resources::IRenderState* renderState)
+    size_t RenderStateSignature::GetHash() const
     {
-        // Remove from the cache
+        size_t hash = 0;
+        for (const auto& format : colorFormats)
+        {
+            hash ^=
+                std::hash<int>{}(static_cast<int>(format) + 0x9e3779b9 + (hash << 6) + (hash >> 2));
+        }
+
+        if (depthFormat.has_value())
+        {
+            hash ^= std::hash<int>{}(
+                static_cast<int>(depthFormat.value()) + 0x9e3779b9 + (hash << 6) + (hash >> 2));
+        }
+
+        return hash;
     }
 
-    void RenderStateSystem::RenderStateDeleter::operator()(
-        const Resources::IRenderState* renderState) const
+    size_t RenderStateCacheKey::GetHash() const
     {
-        system->ReleaseRenderState(renderState);
-        delete renderState;
+        return std::hash<std::string>{}(templateName) ^ signature.GetHash();
+    }
+
+    bool RenderStateCacheKey::operator==(const RenderStateCacheKey& other) const
+    {
+        return templateName == other.templateName && signature == other.signature;
+    }
+
+    bool RenderStateSignature::operator==(const RenderStateSignature& other) const
+    {
+        return colorFormats == other.colorFormats && depthFormat == other.depthFormat;
     }
 } // namespace VoidArchitect

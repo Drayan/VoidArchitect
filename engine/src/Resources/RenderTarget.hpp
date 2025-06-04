@@ -4,12 +4,12 @@
 #pragma once
 
 #include "Core/Uuid.hpp"
-#include "Systems/Renderer/RenderGraph.hpp"
 
 namespace VoidArchitect
 {
     namespace Renderer
     {
+        enum class TextureFormat;
         class RenderGraph;
     }
 

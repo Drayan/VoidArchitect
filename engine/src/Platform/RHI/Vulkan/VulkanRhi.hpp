@@ -39,7 +39,8 @@ namespace VoidArchitect::Platform
     {
     public:
         explicit VulkanRHI(
-            std::unique_ptr<Window>& window, const RenderStateInputLayout& sharedInputLayout);
+            std::unique_ptr<Window>& window,
+            const RenderStateInputLayout& sharedInputLayout);
         ~VulkanRHI() override;
 
         void Resize(uint32_t width, uint32_t height) override;
@@ -68,7 +69,8 @@ namespace VoidArchitect::Platform
             bool hasTransparency,
             const std::vector<uint8_t>& data) override;
         Resources::IRenderState* CreatePipeline(
-            RenderStateConfig& config, Resources::IRenderPass* renderPass) override;
+            RenderStateConfig& config,
+            Resources::IRenderPass* renderPass) override;
         Resources::IMaterial* CreateMaterial(const std::string& name) override;
         Resources::IShader* CreateShader(
             const std::string& name,
@@ -84,7 +86,7 @@ namespace VoidArchitect::Platform
         ///////////////////////////////////////////////////////////////////////
         Resources::IRenderTarget* CreateRenderTarget(
             const Renderer::RenderTargetConfig& config) override;
-        Resources::IRenderPass* CreateRenderPass(const Renderer::RenderPassConfig& config) override;
+        Resources::IRenderPass* CreateRenderPass(const RenderPassConfig& config) override;
 
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
         {
@@ -132,9 +134,11 @@ namespace VoidArchitect::Platform
         void CreateDebugMessenger();
         void DestroyDebugMessenger() const;
         static void AddDebugExtensions(
-            char const* const*& extensions, unsigned int& extensionCount);
+            char const* const*& extensions,
+            unsigned int& extensionCount);
         static void CleaningDebugExtensionsArray(
-            char const* const*& extensions, unsigned int extensionCount);
+            char const* const*& extensions,
+            unsigned int extensionCount);
 
         VkDebugUtilsMessengerEXT m_DebugMessenger;
 #endif

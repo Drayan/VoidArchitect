@@ -5,10 +5,16 @@
 #include <vulkan/vulkan_core.h>
 
 #include "Core/Logger.hpp"
-#include "Systems/Renderer/RenderGraph.hpp"
 
 namespace VoidArchitect
 {
+    namespace Renderer
+    {
+        enum class StoreOp;
+        enum class LoadOp;
+        enum class TextureFormat;
+    }
+
     namespace Resources
     {
         enum class ShaderStage;

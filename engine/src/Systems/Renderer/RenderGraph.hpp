@@ -2,12 +2,10 @@
 // Created by Michael Desmedt on 02/06/2025.
 //
 #pragma once
-#include <memory>
-
 #include "Core/Math/Mat4.hpp"
-#include "Core/Math/Vec4.hpp"
 #include "Resources/RenderPass.hpp"
 #include "Resources/RenderState.hpp"
+#include "Systems/RenderPassSystem.hpp"
 
 namespace VoidArchitect
 {
@@ -24,6 +22,9 @@ namespace VoidArchitect
 
     namespace Renderer
     {
+        enum class TextureFormat;
+        enum class RenderPassType;
+
         struct FrameData
         {
             float deltaTime;
@@ -31,70 +32,7 @@ namespace VoidArchitect
             Math::Mat4 Projection;
         };
 
-        enum class LoadOp
-        {
-            Load,
-            Clear,
-            DontCare
-        };
-
-        enum class StoreOp
-        {
-            Store,
-            DontCare
-        };
-
-        // TODO : Add support for more formats
-        enum class TextureFormat
-        {
-            RGBA8_UNORM,
-            BGRA8_UNORM,
-            RGBA8_SRGB,
-            BGRA8_SRGB,
-
-            D32_SFLOAT,
-            D24_UNORM_S8_UINT,
-
-            SWAPCHAIN_FORMAT,
-            SWAPCHAIN_DEPTH
-        };
-
-        enum class RenderPassType
-        {
-            ForwardOpaque,
-            ForwardTransparent,
-            Shadow,
-            DepthPrepass,
-            PostProcess,
-            UI,
-            Unknown
-        };
-
         const char* RenderPassTypeToString(RenderPassType type);
-
-        struct RenderPassConfig
-        {
-            std::string Name;
-            RenderPassType Type = RenderPassType::Unknown;
-
-            std::vector<std::string> CompatiblePipelines;
-
-            struct AttachmentConfig
-            {
-                std::string Name;
-
-                TextureFormat Format;
-                LoadOp LoadOp = LoadOp::Clear;
-                StoreOp StoreOp = StoreOp::Store;
-
-                // Clear values (used if LoadOp is Clear)
-                Math::Vec4 ClearColor = Math::Vec4(0.0f, 0.0f, 0.0f, 1.0f);
-                float ClearDepth = 1.0f;
-                uint32_t ClearStencil = 0;
-            };
-
-            std::vector<AttachmentConfig> Attachments;
-        };
 
         struct RenderTargetConfig
         {
@@ -117,22 +55,22 @@ namespace VoidArchitect
             ~RenderGraph();
 
             // Graph construction
-            Resources::RenderPassPtr AddRenderPass(const RenderPassConfig& config);
-            Resources::RenderTargetPtr AddRenderTarget(const RenderTargetConfig& config);
-            void AddDependency(Resources::RenderPassPtr from, Resources::RenderPassPtr to);
+            UUID AddRenderPass(const UUID& templateUUID, const std::string& instanceName = "");
+            UUID AddRenderTarget(const RenderTargetConfig& config);
+            void AddDependency(const UUID& fromUUID, const UUID& toUUID);
 
             // Connect passes to targets
-            void ConnectPassToTarget(
-                const Resources::RenderPassPtr& pass, const Resources::RenderTargetPtr& target);
+            void ConnectPassToTarget(const UUID& passUUID, const UUID& targetUUID);
 
             // Graph lifecycle
             bool Validate();
             bool Compile();
             void Execute(const FrameData& frameData);
 
-            // Compilation process
-            bool CompileRenderPasses();
-            bool CompilePipelines();
+            // Compiled resources accessors
+            Resources::RenderPassPtr GetRenderPass(const UUID& passUUID) const;
+            Resources::RenderTargetPtr GetRenderTarget(const UUID& targetUUID) const;
+            bool IsCompiled() const { return m_IsCompiled; }
 
             // Resize handling
             void OnResize(uint32_t width, uint32_t height);
@@ -140,14 +78,12 @@ namespace VoidArchitect
             // Convenience methods for common setups
             void SetupForwardRenderer(uint32_t width, uint32_t height);
 
-            // Debug/introspection
-            const std::string& GetRenderPassName(Resources::RenderPassPtr pass) const;
-            const std::string& GetRenderTargetName(Resources::RenderTargetPtr target) const;
-
         private:
             struct RenderPassNode
             {
-                RenderPassConfig Config;
+                UUID instanceUUID;
+                UUID templateUUID;
+                std::string instanceName;
                 Resources::RenderPassPtr RenderPass;
                 std::vector<UUID> DependenciesUUIDs;
                 std::vector<UUID> OutputsUUIDs;
@@ -155,62 +91,50 @@ namespace VoidArchitect
 
             struct RenderTargetNode
             {
+                UUID instanceUUID;
                 RenderTargetConfig Config;
                 Resources::RenderTargetPtr RenderTarget;
             };
 
-            RenderPassNode* FindRenderPassNode(const UUID& passUUID);
-            RenderPassNode* FindRenderPassNode(Resources::RenderPassPtr pass);
-            RenderTargetNode* FindRenderTargetNode(const UUID& targetUUID);
-            RenderTargetNode* FindRenderTargetNode(Resources::RenderTargetPtr target);
+            RenderPassNode* FindRenderPassNode(const UUID& instanceUUID);
+            RenderTargetNode* FindRenderTargetNode(const UUID& instanceUUID);
+            RenderPassNode* FindRenderPassNode(Resources::RenderPassPtr& pass);
+            RenderTargetNode* FindRenderTargetNode(Resources::RenderTargetPtr& target);
+            const RenderPassNode* FindRenderPassNode(const UUID& instanceUUID) const;
+            const RenderTargetNode* FindRenderTargetNode(const UUID& instanceUUID) const;
+            const RenderPassNode* FindRenderPassNode(const Resources::RenderPassPtr& pass) const;
+            const RenderTargetNode* FindRenderTargetNode(
+                const Resources::RenderTargetPtr& target) const;
 
             void ReleaseRenderPass(const Resources::IRenderPass* pass);
             void ReleaseRenderTarget(const Resources::IRenderTarget* target);
 
-            // Internal methods
+            // Graph validation
             bool ValidateNoCycles();
-            bool ValidateReferences();
-            bool ValidatePassPipelineCompatibility();
+            bool ValidateConnections();
+            bool ValidatePassRenderStateCompatibility();
 
-            std::vector<Resources::RenderPassPtr> GetExecutionOrder();
-            void CreateRHIResources();
+            // Graph compilation
+            bool CompileRenderPasses();
+            bool CompileRenderTargets();
+            bool CompileRenderStates();
+
+            std::vector<UUID> ComputeExecutionOrder();
 
             // Pass execution
             void RenderPassContent(
-                Resources::RenderPassPtr pass,
-                Resources::RenderTargetPtr target,
+                const Resources::RenderPassPtr& pass,
+                const Resources::RenderTargetPtr& target,
                 const FrameData& frameData);
-
-            void RenderForwardPass(
-                const RenderPassConfig& passConfig,
-                const Resources::RenderStatePtr& pipeline,
-                const FrameData& frameData);
-            void RenderShadowPass(
-                const RenderPassConfig& passConfig,
-                const Resources::RenderStatePtr& pipeline,
-                const FrameData& frameData);
-            void RenderDepthPrepassPass(
-                const RenderPassConfig& passConfig,
-                const Resources::RenderStatePtr& pipeline,
-                const FrameData& frameData);
-            void RenderPostProcessPass(
-                const RenderPassConfig& passConfig,
-                const Resources::RenderStatePtr& pipeline,
-                const FrameData& frameData);
-            void RenderUIPass(
-                const RenderPassConfig& passConfig,
-                const Resources::RenderStatePtr& pipeline,
-                const FrameData& frameData);
-
-            Platform::IRenderingHardware& m_RHI;
 
             // Graph data
             std::unordered_map<UUID, RenderPassNode> m_RenderPassesNodes;
             std::unordered_map<UUID, RenderTargetNode> m_RenderTargetsNodes;
 
-            std::vector<Resources::RenderPassPtr> m_ExecutionOrder;
+            std::vector<UUID> m_ExecutionOrder;
 
             // State
+            Platform::IRenderingHardware& m_RHI;
             bool m_IsCompiled = false;
             bool m_IsDestroying = false;
             uint32_t m_CurrentWidth = 0;

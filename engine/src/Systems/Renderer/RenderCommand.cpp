@@ -31,7 +31,8 @@ namespace VoidArchitect::Renderer
     std::vector<Camera> RenderCommand::m_Cameras;
 
     void RenderCommand::Initialize(
-        const Platform::RHI_API_TYPE apiType, std::unique_ptr<Window>& window)
+        const Platform::RHI_API_TYPE apiType,
+        std::unique_ptr<Window>& window)
     {
         m_ApiType = apiType;
 
@@ -40,19 +41,35 @@ namespace VoidArchitect::Renderer
 
         // Retrieve Pipeline's shared resources setup.
         // TODO This should be managed by the pipeline system.
-        const RenderStateInputLayout sharedInputLayout{std::vector{
-            SpaceLayout{
-                0,
-                std::vector{ResourceBinding{
-                    ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::Vertex}},
-            },
-            SpaceLayout{
-                1,
-                std::vector{
-                    ResourceBinding{
-                        ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::Pixel},
-                    ResourceBinding{
-                        ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel}}}}};
+        const RenderStateInputLayout sharedInputLayout{
+            std::vector{
+                SpaceLayout{
+                    0,
+                    std::vector{
+                        ResourceBinding{
+                            ResourceBindingType::ConstantBuffer,
+                            0,
+                            Resources::ShaderStage::Vertex
+                        }
+                    },
+                },
+                SpaceLayout{
+                    1,
+                    std::vector{
+                        ResourceBinding{
+                            ResourceBindingType::ConstantBuffer,
+                            0,
+                            Resources::ShaderStage::Pixel
+                        },
+                        ResourceBinding{
+                            ResourceBindingType::Texture2D,
+                            1,
+                            Resources::ShaderStage::Pixel
+                        }
+                    }
+                }
+            }
+        };
 
         switch (apiType)
         {
@@ -66,6 +83,7 @@ namespace VoidArchitect::Renderer
         // Initialize subsystems
         g_ShaderSystem = std::make_unique<ShaderSystem>();
         g_TextureSystem = std::make_unique<TextureSystem>();
+        g_RenderPassSystem = std::make_unique<RenderPassSystem>();
         g_RenderStateSystem = std::make_unique<RenderStateSystem>();
         g_MaterialSystem = std::make_unique<MaterialSystem>();
         g_MeshSystem = std::make_unique<MeshSystem>();
@@ -111,6 +129,7 @@ namespace VoidArchitect::Renderer
         g_MeshSystem = nullptr;
         g_MaterialSystem = nullptr;
         g_RenderStateSystem = nullptr;
+        g_RenderPassSystem = nullptr;
         g_TextureSystem = nullptr;
         g_ShaderSystem = nullptr;
 
@@ -175,7 +194,12 @@ namespace VoidArchitect::Renderer
     }
 
     Camera& RenderCommand::CreateOrthographicCamera(
-        float left, float right, float bottom, float top, float near, float far)
+        float left,
+        float right,
+        float bottom,
+        float top,
+        float near,
+        float far)
     {
         return m_Cameras.emplace_back(top, bottom, left, right, near, far);
     }
@@ -194,7 +218,8 @@ namespace VoidArchitect::Renderer
             "wall3_shga",
             "wall4_color",
             "wall4_n",
-            "wall4_shga"};
+            "wall4_shga"
+        };
         static size_t index = std::size(textures) - 1;
         index = (index + 1) % std::size(textures);
 
