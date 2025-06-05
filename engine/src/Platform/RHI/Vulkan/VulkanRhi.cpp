@@ -253,7 +253,6 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanRHI::UpdateGlobalState(
-        const Resources::RenderStatePtr& pipeline,
         const Math::Mat4& projection,
         const Math::Mat4& view)
     {
@@ -266,7 +265,7 @@ namespace VoidArchitect::Platform
         auto data = std::vector{globalUniformObject, globalUniformObject, globalUniformObject};
         m_GlobalUniformBuffer->LoadData(data);
 
-        // Update the descriptor set
+        // Update the descriptor set for current frame
         VkDescriptorBufferInfo bufferInfo{};
         bufferInfo.buffer = m_GlobalUniformBuffer->GetHandle();
         bufferInfo.offset = sizeof(Resources::GlobalUniformObject) * m_ImageIndex;
@@ -287,9 +286,13 @@ namespace VoidArchitect::Platform
             &writeDescriptorSet,
             0,
             nullptr);
+    }
 
+    void VulkanRHI::BindGlobalState(const Resources::RenderStatePtr& pipeline)
+    {
         const auto& cmdBuf = GetCurrentCommandBuffer();
         const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(pipeline);
+
         vkCmdBindDescriptorSets(
             cmdBuf.GetHandle(),
             VK_PIPELINE_BIND_POINT_GRAPHICS,

@@ -288,8 +288,27 @@ namespace VoidArchitect
         renderStateConfig.inputLayout = RenderStateInputLayout{}; // Use default configuration
 
         RegisterRenderStateTemplate("Default", renderStateConfig);
-
         VA_ENGINE_INFO("[RenderStateSystem] Default render state template registered.");
+
+        // UI RenderState
+        auto uiRenderStateConfig = RenderStateConfig{};
+        renderStateConfig.name = "UI";
+
+        renderStateConfig.compatiblePassTypes = {Renderer::RenderPassType::UI};
+        renderStateConfig.compatiblePassNames = {"UI"};
+
+        // Try to load the default UI shaders into the render state.
+        auto uiVertexShader = g_ShaderSystem->LoadShader("UI.vert");
+        auto uiPixelShader = g_ShaderSystem->LoadShader("UI.pixl");
+
+        uiRenderStateConfig.shaders.emplace_back(uiVertexShader);
+        uiRenderStateConfig.shaders.emplace_back(uiPixelShader);
+
+        uiRenderStateConfig.vertexFormat = VertexFormat::PositionUV;
+        uiRenderStateConfig.inputLayout = RenderStateInputLayout{}; // Use default configuration
+
+        RegisterRenderStateTemplate("UI", uiRenderStateConfig);
+        VA_ENGINE_INFO("[RenderStateSystem] UI render state template registered.");
     }
 
     size_t RenderStateSignature::GetHash() const

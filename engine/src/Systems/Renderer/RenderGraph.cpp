@@ -969,8 +969,8 @@ namespace VoidArchitect::Renderer
         {
             BindRenderStateIfNeeded(passNode->AssignedState);
 
-            // Update global state
-            m_RHI.UpdateGlobalState(passNode->AssignedState, frameData.Projection, frameData.View);
+            //Bind the global state to this RenderState
+            m_RHI.BindGlobalState(passNode->AssignedState);
         }
         else
         {
@@ -1012,8 +1012,17 @@ namespace VoidArchitect::Renderer
             GetRenderPassTemplateUUID("ForwardOpaque");
         const auto forwardPassUUID = AddRenderPass(forwardPassTemplateUUID);
 
-        // === 3. Connect Pass to Target ===
+        // === 3. Register UI Render Pass ===
+        const auto uiPassTemplateUUID = g_RenderPassSystem->GetRenderPassTemplateUUID("UI");
+        const auto uiPassUUID = AddRenderPass(uiPassTemplateUUID);
+
+        // === 4. Link Render Passes ===
+        // Forward pass -> UI pass
+        AddDependency(forwardPassUUID, uiPassUUID);
+
+        // === 5. Connect Pass to Target ===
         ConnectPassToTarget(forwardPassUUID, mainTargetUUID);
+        ConnectPassToTarget(uiPassUUID, mainTargetUUID);
 
         VA_ENGINE_INFO("[RenderGraph] Forward Renderer setup complete, ready for compilation.");
     }

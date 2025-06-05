@@ -6,9 +6,9 @@
 
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
+#include "Renderer/PassRenderers.hpp"
 #include "Renderer/RenderCommand.hpp"
 #include "Renderer/RenderGraph.hpp"
-#include "Renderer/PassRenderers.hpp"
 
 namespace VoidArchitect
 {
@@ -22,11 +22,7 @@ namespace VoidArchitect
         const std::string& name,
         const RenderPassConfig& config)
     {
-        const RenderPassTemplate passTemplate{
-            UUID(),
-            name,
-            config
-        };
+        const RenderPassTemplate passTemplate{UUID(), name, config};
 
         m_RenderPassTemplates[passTemplate.UUID] = passTemplate;
         m_TemplatesNameToUUIDMap[passTemplate.Name] = passTemplate.UUID;
@@ -92,13 +88,14 @@ namespace VoidArchitect
         // Find comaptible pass types
         for (uint32_t i = 0; i < static_cast<uint32_t>(Renderer::RenderPassType::Unknown); i++)
         {
-            if (const auto passType = static_cast<Renderer::RenderPassType>(i); renderer->
-                IsCompatibleWith(passType))
+            if (const auto passType = static_cast<Renderer::RenderPassType>(i);
+                renderer->IsCompatibleWith(passType))
             {
                 if (m_PassRenderers.contains(passType))
                 {
                     VA_ENGINE_WARN(
-                        "[RenderPassSystem] Pass renderer '{}' is already registered for pass type '{}'.",
+                        "[RenderPassSystem] Pass renderer '{}' is already registered for pass type "
+                        "'{}'.",
                         renderer->GetName(),
                         Renderer::RenderPassTypeToString(passType));
                 }
@@ -243,6 +240,28 @@ namespace VoidArchitect
 
         RegisterRenderPassTemplate("ForwardOpaque", forwardPassConfig);
 
+        RenderPassConfig uiPassConfig{
+            .Name = "UI",
+            .Type = Renderer::RenderPassType::UI,
+            .CompatibleStates = {"UI"},
+            .Attachments = {
+                RenderPassConfig::AttachmentConfig{
+                    .Name = "color",
+                    .Format = Renderer::TextureFormat::SWAPCHAIN_FORMAT,
+                    .LoadOp = Renderer::LoadOp::Load,
+                    .StoreOp = Renderer::StoreOp::Store,
+                },
+                RenderPassConfig::AttachmentConfig{
+                    .Name = "depth",
+                    .Format = Renderer::TextureFormat::SWAPCHAIN_DEPTH,
+                    .LoadOp = Renderer::LoadOp::Load,
+                    .StoreOp = Renderer::StoreOp::DontCare,
+                }
+            }
+        };
+
+        RegisterRenderPassTemplate("UI", uiPassConfig);
+
         // TODO: Add other passes template
 
         VA_ENGINE_INFO("[RenderPassSystem] Default RenderPass templates registered.");
@@ -251,9 +270,12 @@ namespace VoidArchitect
     void RenderPassSystem::RegisterDefaultRenderers()
     {
         // Forward Opaque Pass Renderer
-        auto forwardOpaque = Renderer::PassRendererPtr(
-            std::make_shared<Renderer::ForwardOpaquePassRenderer>());
+        auto forwardOpaque =
+            Renderer::PassRendererPtr(std::make_shared<Renderer::ForwardOpaquePassRenderer>());
         RegisterPassRenderer(forwardOpaque);
+
+        auto ui = Renderer::PassRendererPtr(std::make_shared<Renderer::UIPassRenderer>());
+        RegisterPassRenderer(ui);
     }
 
     size_t RenderPassSignature::GetHash() const
@@ -261,8 +283,8 @@ namespace VoidArchitect
         size_t hash = 0;
         for (const auto& format : AttachmentFormats)
         {
-            hash ^= std::hash<int>{}(static_cast<int>(format)) + 0x9e3779b9
-                + (hash << 6) + (hash >> 2);
+            hash ^=
+                std::hash<int>{}(static_cast<int>(format)) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
         }
         return hash;
     }
@@ -281,4 +303,4 @@ namespace VoidArchitect
     {
         return AttachmentFormats == rhs.AttachmentFormats;
     }
-}
+} // namespace VoidArchitect

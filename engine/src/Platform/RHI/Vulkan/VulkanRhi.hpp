@@ -50,9 +50,9 @@ namespace VoidArchitect::Platform
         bool EndFrame(float deltaTime) override;
 
         void UpdateGlobalState(
-            const Resources::RenderStatePtr& pipeline,
             const Math::Mat4& projection,
             const Math::Mat4& view) override;
+        void BindGlobalState(const Resources::RenderStatePtr& pipeline) override;
 
         void DrawMesh(
             const Resources::GeometryRenderData& data,

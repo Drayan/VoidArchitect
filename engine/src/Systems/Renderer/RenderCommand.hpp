@@ -41,6 +41,7 @@ namespace VoidArchitect
         class RenderCommand
         {
         public:
+            static Resources::MeshPtr s_UIMesh;
             static void Initialize(Platform::RHI_API_TYPE apiType, std::unique_ptr<Window>& window);
             static void Shutdown();
 

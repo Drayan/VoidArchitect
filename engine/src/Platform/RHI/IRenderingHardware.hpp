@@ -56,9 +56,9 @@ namespace VoidArchitect::Platform
         virtual bool EndFrame(float deltaTime) = 0;
 
         virtual void UpdateGlobalState(
-            const Resources::RenderStatePtr& pipeline,
             const Math::Mat4& projection,
             const Math::Mat4& view) = 0;
+        virtual void BindGlobalState(const Resources::RenderStatePtr& pipeline) = 0;
 
         virtual void DrawMesh(
             const Resources::GeometryRenderData& data,

@@ -21,6 +21,7 @@ namespace VoidArchitect::Renderer
     Resources::Texture2DPtr RenderCommand::s_TestTexture;
     Resources::MaterialPtr RenderCommand::s_TestMaterial;
     Resources::MeshPtr RenderCommand::s_TestMesh;
+    Resources::MeshPtr RenderCommand::s_UIMesh;
 
     Platform::RHI_API_TYPE RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
     Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
@@ -106,6 +107,7 @@ namespace VoidArchitect::Renderer
 
         // TEMP Create a test mesh.
         s_TestMesh = g_MeshSystem->CreateCube("TestMesh");
+        s_UIMesh = g_MeshSystem->CreatePlane("UIMesh", 1.0f, 1.0f, Math::Vec3::Forward());
 
         CreatePerspectiveCamera(45.0f, 0.1f, 100.0f);
 
@@ -119,6 +121,7 @@ namespace VoidArchitect::Renderer
 
         g_RenderGraph = nullptr;
 
+        s_UIMesh = nullptr;
         s_TestMesh = nullptr;
         s_TestMaterial = nullptr;
         s_TestTexture = nullptr;
@@ -166,6 +169,9 @@ namespace VoidArchitect::Renderer
             frameData.deltaTime = deltaTime;
             frameData.Projection = camera.GetProjection();
             frameData.View = camera.GetView();
+
+            // Update global state, might be moved elsewhere
+            m_RenderingHardware->UpdateGlobalState(frameData.Projection, frameData.View);
 
             g_RenderGraph->Execute(frameData);
         }

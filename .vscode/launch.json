@@ -12,6 +12,7 @@
             "args": [],
             "cwd": "${workspaceRoot}/build/debug/output/bin/Darwin",
             "debugAdapterExecutable": "/opt/local/libexec/llvm-20/bin/lldb-dap",
+            "internalConsoleOptions": "openOnSessionStart"
         },
     ]
 }
