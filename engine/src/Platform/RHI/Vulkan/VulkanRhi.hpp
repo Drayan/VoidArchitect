@@ -2,17 +2,16 @@
 // Created by Michael Desmedt on 14/05/2025.
 //
 #pragma once
-#include "Platform/RHI/IRenderingHardware.hpp"
+#include <vulkan/vulkan.h>
 
-#include "Resources/Pipeline.hpp"
+#include "Platform/RHI/IRenderingHardware.hpp"
 #include "VulkanCommandBuffer.hpp"
 #include "VulkanDevice.hpp"
-
-#include <vulkan/vulkan.h>
+#include "VulkanRenderTarget.hpp"
 
 namespace VoidArchitect
 {
-    struct PipelineInputLayout;
+    struct RenderStateInputLayout;
     class Window;
     struct GeometryRenderData;
 
@@ -20,14 +19,15 @@ namespace VoidArchitect
     {
         class Texture2D;
         class IMaterial;
-        class IPipeline;
+        class IRenderState;
+        struct GlobalUniformObject;
     } // namespace Resources
 } // namespace VoidArchitect
 
 namespace VoidArchitect::Platform
 {
     class VulkanSwapchain;
-    class VulkanRenderpass;
+    class VulkanRenderPass;
     class VulkanPipeline;
     class VulkanFence;
     class VulkanShader;
@@ -36,14 +36,12 @@ namespace VoidArchitect::Platform
     class VulkanBuffer;
     class VulkanMaterial;
 
-    // TEMP This should not stay here.
-
     class VulkanRHI final : public IRenderingHardware
     {
     public:
         explicit VulkanRHI(
             std::unique_ptr<Window>& window,
-            const PipelineInputLayout& sharedInputLayout);
+            const RenderStateInputLayout& sharedInputLayout);
         ~VulkanRHI() override;
 
         void Resize(uint32_t width, uint32_t height) override;
@@ -52,12 +50,12 @@ namespace VoidArchitect::Platform
         bool BeginFrame(float deltaTime) override;
         bool EndFrame(float deltaTime) override;
 
-        void UpdateGlobalState(
-            const Resources::PipelinePtr& pipeline,
-            const Math::Mat4& projection,
-            const Math::Mat4& view) override;
+        void UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) override;
+        void BindGlobalState(const Resources::RenderStatePtr& pipeline) override;
 
-        void DrawMesh(const Resources::GeometryRenderData& data) override;
+        void DrawMesh(
+            const Resources::GeometryRenderData& data,
+            const Resources::RenderStatePtr& pipeline) override;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
@@ -68,19 +66,28 @@ namespace VoidArchitect::Platform
             uint32_t height,
             uint8_t channels,
             bool hasTransparency,
-            const std::vector<uint8_t>& data) override;
-        Resources::IPipeline* CreatePipeline(PipelineConfig& config) override;
-        Resources::IMaterial* CreateMaterial(
-            const std::string& name,
-            const Resources::PipelinePtr& pipeline) override;
+            const VAArray<uint8_t>& data) override;
+        Resources::IRenderState* CreatePipeline(
+            RenderStateConfig& config,
+            Resources::IRenderPass* renderPass) override;
+        Resources::IMaterial* CreateMaterial(const std::string& name) override;
         Resources::IShader* CreateShader(
             const std::string& name,
             const ShaderConfig& config,
-            const std::vector<uint8_t>& data) override;
+            const VAArray<uint8_t>& data) override;
         Resources::IMesh* CreateMesh(
             const std::string& name,
-            const std::vector<Resources::MeshVertex>& vertices,
-            const std::vector<uint32_t>& indices) override;
+            const VAArray<Resources::MeshVertex>& vertices,
+            const VAArray<uint32_t>& indices) override;
+
+        ///////////////////////////////////////////////////////////////////////
+        //// RenderGraph Resources ////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+        Resources::IRenderTarget* CreateRenderTarget(
+            const Renderer::RenderTargetConfig& config) override;
+        Resources::IRenderPass* CreateRenderPass(
+            const RenderPassConfig& config,
+            const Renderer::PassPosition passPosition) override;
 
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
         {
@@ -97,7 +104,6 @@ namespace VoidArchitect::Platform
 
         std::unique_ptr<VulkanDevice>& GetDeviceRef() { return m_Device; }
         std::unique_ptr<VulkanSwapchain>& GetSwapchainRef() { return m_Swapchain; }
-        std::unique_ptr<VulkanRenderpass>& GetMainRenderpassRef() { return m_MainRenderpass; }
         [[nodiscard]] uint32_t GetImageIndex() const { return m_ImageIndex; }
 
         [[nodiscard]] int32_t FindMemoryIndex(uint32_t typeFilter, uint32_t propertyFlags) const;
@@ -114,7 +120,6 @@ namespace VoidArchitect::Platform
         [[nodiscard]] VkExtent2D ChooseSwapchainExtent() const;
         [[nodiscard]] VkFormat ChooseDepthFormat() const;
 
-        void CreateRenderpass();
         void CreateCommandBuffers();
         void CreateSyncObjects();
 
@@ -123,6 +128,7 @@ namespace VoidArchitect::Platform
 
         void DestroySyncObjects();
 
+        void InvalidateMainTargetsFramebuffers() const;
         bool RecreateSwapchain();
 
 #ifdef DEBUG
@@ -146,21 +152,21 @@ namespace VoidArchitect::Platform
         std::unique_ptr<VulkanDevice> m_Device;
 
         VkSurfaceCapabilitiesKHR m_Capabilities;
-        std::vector<VkSurfaceFormatKHR> m_Formats;
-        std::vector<VkPresentModeKHR> m_PresentModes;
+        VAArray<VkSurfaceFormatKHR> m_Formats;
+        VAArray<VkPresentModeKHR> m_PresentModes;
 
         uint32_t m_ImageIndex;
         uint32_t m_CurrentIndex;
         bool m_RecreatingSwapchain = false;
         std::unique_ptr<VulkanSwapchain> m_Swapchain;
-        std::unique_ptr<VulkanRenderpass> m_MainRenderpass;
-        std::vector<VulkanCommandBuffer> m_GraphicsCommandBuffers;
+        VAArray<VulkanRenderTarget*> m_MainRenderTargets;
+        VAArray<VulkanCommandBuffer> m_GraphicsCommandBuffers;
 
-        std::vector<VkSemaphore> m_ImageAvailableSemaphores;
-        std::vector<VkSemaphore> m_QueueCompleteSemaphores;
+        VAArray<VkSemaphore> m_ImageAvailableSemaphores;
+        VAArray<VkSemaphore> m_QueueCompleteSemaphores;
 
-        std::vector<VulkanFence> m_InFlightFences;
-        std::vector<VulkanFence*> m_ImagesInFlight;
+        VAArray<VulkanFence> m_InFlightFences;
+        VAArray<VulkanFence*> m_ImagesInFlight;
 
         // TEMP Temporary test code
         VkDescriptorPool m_GlobalDescriptorPool;
@@ -168,11 +174,11 @@ namespace VoidArchitect::Platform
 
         std::unique_ptr<VulkanBuffer> m_GlobalUniformBuffer;
 
-        uint32_t m_FramebufferWidth;
-        uint32_t m_FramebufferHeight;
-        uint32_t m_CachedFramebufferWidth;
-        uint32_t m_CachedFramebufferHeight;
-        uint64_t m_FramebufferSizeGeneration;
-        uint64_t m_FramebufferSizeLastGeneration;
+        uint32_t m_CurrentWidth;
+        uint32_t m_CurrentHeight;
+        uint32_t m_PendingWidth;
+        uint32_t m_PendingHeight;
+        uint64_t m_ResizeGeneration;
+        uint64_t m_ResizeLastGeneration;
     };
 } // namespace VoidArchitect::Platform

@@ -8,10 +8,11 @@
 #include "Core/Window.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Platform/RHI/Vulkan/VulkanRhi.hpp"
+#include "RenderGraph.hpp"
 #include "Resources/Material.hpp"
 #include "Systems/MaterialSystem.hpp"
 #include "Systems/MeshSystem.hpp"
-#include "Systems/PipelineSystem.hpp"
+#include "Systems/RenderStateSystem.hpp"
 #include "Systems/ShaderSystem.hpp"
 #include "Systems/TextureSystem.hpp"
 
@@ -19,13 +20,17 @@ namespace VoidArchitect::Renderer
 {
     Resources::Texture2DPtr RenderCommand::s_TestTexture;
     Resources::MaterialPtr RenderCommand::s_TestMaterial;
+    Resources::MaterialPtr RenderCommand::s_UIMaterial;
     Resources::MeshPtr RenderCommand::s_TestMesh;
+    Resources::MeshPtr RenderCommand::s_UIMesh;
+
+    Math::Mat4 RenderCommand::s_UIProjectionMatrix = Math::Mat4::Identity();
 
     Platform::RHI_API_TYPE RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
     Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
     uint32_t RenderCommand::m_Width = 0;
     uint32_t RenderCommand::m_Height = 0;
-    std::vector<Camera> RenderCommand::m_Cameras;
+    VAArray<Camera> RenderCommand::m_Cameras;
 
     void RenderCommand::Initialize(
         const Platform::RHI_API_TYPE apiType,
@@ -38,11 +43,11 @@ namespace VoidArchitect::Renderer
 
         // Retrieve Pipeline's shared resources setup.
         // TODO This should be managed by the pipeline system.
-        const PipelineInputLayout sharedInputLayout{
-            std::vector{
+        const RenderStateInputLayout sharedInputLayout{
+            VAArray{
                 SpaceLayout{
                     0,
-                    std::vector{
+                    VAArray{
                         ResourceBinding{
                             ResourceBindingType::ConstantBuffer,
                             0,
@@ -52,7 +57,7 @@ namespace VoidArchitect::Renderer
                 },
                 SpaceLayout{
                     1,
-                    std::vector{
+                    VAArray{
                         ResourceBinding{
                             ResourceBindingType::ConstantBuffer,
                             0,
@@ -80,15 +85,42 @@ namespace VoidArchitect::Renderer
         // Initialize subsystems
         g_ShaderSystem = std::make_unique<ShaderSystem>();
         g_TextureSystem = std::make_unique<TextureSystem>();
-        g_PipelineSystem = std::make_unique<PipelineSystem>();
+        g_RenderPassSystem = std::make_unique<RenderPassSystem>();
+        g_RenderStateSystem = std::make_unique<RenderStateSystem>();
         g_MaterialSystem = std::make_unique<MaterialSystem>();
         g_MeshSystem = std::make_unique<MeshSystem>();
 
+        g_RenderGraph = std::make_unique<RenderGraph>(*m_RenderingHardware);
+        g_RenderGraph->SetupForwardRenderer(m_Width, m_Height);
+
+        if (!g_RenderGraph->Compile())
+        {
+            VA_ENGINE_CRITICAL("[RenderCommand] Failed to compile render graph.");
+            return;
+        }
+
+        if (!g_RenderGraph)
+        {
+            VA_ENGINE_CRITICAL("[RenderCommand] Failed to setup render graph.");
+            return;
+        }
+
         // TEMP Try to load a test material.
         s_TestMaterial = g_MaterialSystem->LoadMaterial("TestMaterial");
+        s_UIMaterial = g_MaterialSystem->LoadMaterial("DefaultUI");
+
+        const float aspectRatio = static_cast<float>(m_Width) / static_cast<float>(m_Height);
+        s_UIProjectionMatrix = Math::Mat4::Orthographic(
+            0.f,
+            1.0f,
+            1.0f / aspectRatio,
+            0.f,
+            -1.0f,
+            1.0f);
 
         // TEMP Create a test mesh.
         s_TestMesh = g_MeshSystem->CreateCube("TestMesh");
+        s_UIMesh = g_MeshSystem->CreatePlane("UIMesh", 0.15f, 0.15f, Math::Vec3::Back());
 
         CreatePerspectiveCamera(45.0f, 0.1f, 100.0f);
 
@@ -100,14 +132,19 @@ namespace VoidArchitect::Renderer
         // Wait that any pending operation is completed before beginning the shutdown procedure.
         m_RenderingHardware->WaitIdle(0);
 
+        g_RenderGraph = nullptr;
+
+        s_UIMesh = nullptr;
         s_TestMesh = nullptr;
+        s_UIMaterial = nullptr;
         s_TestMaterial = nullptr;
         s_TestTexture = nullptr;
 
         // Shutdown subsystems
         g_MeshSystem = nullptr;
         g_MaterialSystem = nullptr;
-        g_PipelineSystem = nullptr;
+        g_RenderStateSystem = nullptr;
+        g_RenderPassSystem = nullptr;
         g_TextureSystem = nullptr;
         g_ShaderSystem = nullptr;
 
@@ -120,10 +157,20 @@ namespace VoidArchitect::Renderer
         m_Height = height;
 
         // Update all camera's aspect ratio
+        float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
         for (auto& camera : m_Cameras)
-            camera.SetAspectRatio(width / static_cast<float>(height));
+            camera.SetAspectRatio(aspectRatio);
 
-        m_RenderingHardware->Resize(width, height);
+        s_UIProjectionMatrix = Math::Mat4::Orthographic(
+            0.f,
+            1.0f,
+            1.0f / aspectRatio,
+            0.f,
+            -1.0f,
+            1.0f);
+
+        g_RenderGraph->OnResize(width, height);
+        g_RenderGraph->Compile();
     }
 
     bool RenderCommand::BeginFrame(const float deltaTime)
@@ -137,38 +184,38 @@ namespace VoidArchitect::Renderer
         if (!m_RenderingHardware->BeginFrame(deltaTime))
             return false;
 
-        // TEMP Use the test pipeline.
-        g_PipelineSystem->GetDefaultPipeline()->Bind(*m_RenderingHardware);
+        if (g_RenderGraph)
+        {
+            camera.RecalculateView();
 
-        // Update the camera state and send it to the GPU.
-        camera.RecalculateView();
-        m_RenderingHardware->UpdateGlobalState(
-            g_PipelineSystem->GetDefaultPipeline(),
-            camera.GetProjection(),
-            camera.GetView());
+            FrameData frameData;
+            frameData.deltaTime = deltaTime;
+            frameData.Projection = camera.GetProjection();
+            frameData.View = camera.GetView();
 
-        // TEMP Testing to draw a single 'object' with the default material.
-        const auto& defaultMat =
-            s_TestMaterial != nullptr ? s_TestMaterial : g_MaterialSystem->GetDefaultMaterial();
-        const auto geometry = Resources::GeometryRenderData(
-            Math::Mat4::Identity(),
-            defaultMat,
-            s_TestMesh);
+            const Resources::GlobalUniformObject gUBO{
+                .View = frameData.View,
+                .Projection = frameData.Projection,
+                .UIProjection = s_UIProjectionMatrix,
+            };
 
-        defaultMat->Bind(*m_RenderingHardware);
-        m_RenderingHardware->DrawMesh(geometry);
+            // Update global state, might be moved elsewhere
+            m_RenderingHardware->UpdateGlobalState(gUBO);
+
+            g_RenderGraph->Execute(frameData);
+        }
+        else
+        {
+            VA_ENGINE_CRITICAL("[RenderCommand] Render graph is not initialized.");
+            return false;
+        }
+
         return true;
     }
 
     bool RenderCommand::EndFrame(const float deltaTime)
     {
         return m_RenderingHardware->EndFrame(deltaTime);
-    }
-
-    void RenderCommand::DrawPacket(const RenderPacket& packet)
-    {
-        packet.data.Material->Bind(*m_RenderingHardware);
-        m_RenderingHardware->DrawMesh(packet.data);
     }
 
     Camera& RenderCommand::CreatePerspectiveCamera(float fov, float near, float far)

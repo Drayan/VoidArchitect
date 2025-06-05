@@ -3,7 +3,10 @@
 //
 #pragma once
 
+#include <memory>
+
 #include "Mesh.hpp"
+#include "RenderState.hpp"
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec4.hpp"
 #include "Core/Uuid.hpp"
@@ -26,13 +29,12 @@ namespace VoidArchitect
 
         using MaterialPtr = std::shared_ptr<IMaterial>;
 
-        // NOTE Vulkan give us a max of 256 bytes on G_UBO
         struct GlobalUniformObject
         {
             Math::Mat4 Projection;
             Math::Mat4 View;
+            Math::Mat4 UIProjection;
             Math::Mat4 Reserved0;
-            Math::Mat4 Reserved1;
         };
 
         struct MaterialUniformObject
@@ -63,8 +65,13 @@ namespace VoidArchitect
         public:
             virtual ~IMaterial() = default;
 
-            virtual void SetModel(Platform::IRenderingHardware& rhi, const Math::Mat4& model) = 0;
-            virtual void Bind(Platform::IRenderingHardware& rhi) = 0;
+            virtual void SetModel(
+                Platform::IRenderingHardware& rhi,
+                const Math::Mat4& model,
+                const RenderStatePtr& pipeline) = 0;
+            virtual void Bind(
+                Platform::IRenderingHardware& rhi,
+                const RenderStatePtr& pipeline) = 0;
 
             static void SetDefaultDiffuseTexture(const Resources::Texture2DPtr& defaultTexture)
             {

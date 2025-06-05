@@ -7,7 +7,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "Systems/PipelineSystem.hpp"
+#include "Systems/RenderStateSystem.hpp"
 
 namespace VoidArchitect::Resources::Loaders
 {
@@ -16,10 +16,7 @@ namespace VoidArchitect::Resources::Loaders
     {
     }
 
-    MaterialLoader::MaterialLoader(const std::string& baseAssetPath)
-        : ILoader(baseAssetPath)
-    {
-    }
+    MaterialLoader::MaterialLoader(const std::string& baseAssetPath) : ILoader(baseAssetPath) {}
 
     std::shared_ptr<IResourceDefinition> MaterialLoader::Load(const std::string& name)
     {
@@ -64,7 +61,7 @@ namespace VoidArchitect::Resources::Loaders
                 }
                 else
                 {
-                    config.pipeline = g_PipelineSystem->GetDefaultPipeline();
+                    config.pipeline = nullptr;
                 }
 
                 // Properties (required)
@@ -85,7 +82,7 @@ namespace VoidArchitect::Resources::Loaders
                         }
                         else
                         {
-                            std::vector<float> values;
+                            VAArray<float> values;
                             for (auto val : propertiesNode["diffuse_color"])
                                 values.push_back(val.as<float>());
                             config.diffuseColor =
@@ -114,8 +111,7 @@ namespace VoidArchitect::Resources::Loaders
                 else
                 {
                     VA_ENGINE_ERROR(
-                        "[MaterialSystem] Material file '{}' is missing properties.",
-                        name);
+                        "[MaterialSystem] Material file '{}' is missing properties.", name);
                     return nullptr;
                 }
             }
@@ -127,10 +123,8 @@ namespace VoidArchitect::Resources::Loaders
         catch (YAML::Exception& ex)
         {
             VA_ENGINE_ERROR(
-                "[MaterialSystem] Failed to parse material file '{}': {}",
-                materialPath,
-                ex.what());
+                "[MaterialSystem] Failed to parse material file '{}': {}", materialPath, ex.what());
         }
         return nullptr;
     }
-}
+} // namespace VoidArchitect::Resources::Loaders

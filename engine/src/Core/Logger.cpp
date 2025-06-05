@@ -23,11 +23,13 @@ namespace VoidArchitect
         fileSink->set_level(spdlog::level::trace);
 
         s_EngineLogger = std::make_shared<spdlog::logger>(
-            "ENGINE", spdlog::sinks_init_list{consoleSink, fileSink});
+            "ENGINE",
+            spdlog::sinks_init_list{consoleSink, fileSink});
         s_EngineLogger->set_level(spdlog::level::trace);
 
         s_ApplicationLogger = std::make_shared<spdlog::logger>(
-            "APPLICATION", spdlog::sinks_init_list{consoleSink, fileSink});
+            "APPLICATION",
+            spdlog::sinks_init_list{consoleSink, fileSink});
         s_ApplicationLogger->set_level(spdlog::level::trace);
     }
 

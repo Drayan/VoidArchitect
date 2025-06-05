@@ -1,13 +1,13 @@
 #include "MaterialSystem.hpp"
 
 #include "Core/Logger.hpp"
-#include "PipelineSystem.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
+#include "RenderStateSystem.hpp"
 #include "Renderer/RenderCommand.hpp"
-#include "Resources/Material.hpp"
-#include "TextureSystem.hpp"
 #include "ResourceSystem.hpp"
 #include "Resources/Loaders/MaterialLoader.hpp"
+#include "Resources/Material.hpp"
+#include "TextureSystem.hpp"
 
 namespace VoidArchitect
 {
@@ -18,9 +18,7 @@ namespace VoidArchitect
         GenerateDefaultMaterials();
     }
 
-    MaterialSystem::~MaterialSystem()
-    {
-    }
+    MaterialSystem::~MaterialSystem() {}
 
     Resources::MaterialPtr MaterialSystem::LoadMaterial(const std::string& name)
     {
@@ -41,8 +39,9 @@ namespace VoidArchitect
             }
         }
 
-        const auto materialData = g_ResourceSystem->LoadResource<
-            Resources::Loaders::MaterialDataDefinition>(ResourceType::Material, name);
+        const auto materialData =
+            g_ResourceSystem->LoadResource<Resources::Loaders::MaterialDataDefinition>(
+                ResourceType::Material, name);
         // If we reach this point, something went wrong.
         return CreateMaterial(materialData->GetConfig());
     }
@@ -55,9 +54,7 @@ namespace VoidArchitect
         {
             case Platform::RHI_API_TYPE::Vulkan:
             {
-                material = Renderer::RenderCommand::GetRHIRef().CreateMaterial(
-                    config.name,
-                    config.pipeline);
+                material = Renderer::RenderCommand::GetRHIRef().CreateMaterial(config.name);
             }
             default:
                 break;
@@ -79,8 +76,7 @@ namespace VoidArchitect
         if (!config.diffuseTexture.name.empty())
         {
             material->m_DiffuseTexture = g_TextureSystem->LoadTexture2D(
-                config.diffuseTexture.name,
-                config.diffuseTexture.use);
+                config.diffuseTexture.name, config.diffuseTexture.use);
             if (material->m_DiffuseTexture == nullptr)
             {
                 VA_ENGINE_WARN(
@@ -119,9 +115,7 @@ namespace VoidArchitect
         {
             case Platform::RHI_API_TYPE::Vulkan:
             {
-                material = Renderer::RenderCommand::GetRHIRef().CreateMaterial(
-                    name,
-                    g_PipelineSystem->GetDefaultPipeline());
+                material = Renderer::RenderCommand::GetRHIRef().CreateMaterial(name);
             }
             default:
                 break;
@@ -166,9 +160,7 @@ namespace VoidArchitect
         return m_NextFreeMaterialHandle++;
     }
 
-    void MaterialSystem::ReleaseMaterial(const Resources::IMaterial* material)
-    {
-    }
+    void MaterialSystem::ReleaseMaterial(const Resources::IMaterial* material) {}
 
     void MaterialSystem::MaterialDeleter::operator()(const Resources::IMaterial* material) const
     {

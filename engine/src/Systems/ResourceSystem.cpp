@@ -13,7 +13,7 @@ namespace VoidArchitect
 {
     ResourceSystem::ResourceSystem()
     {
-        //TODO : Make theses paths configurable
+        // TODO : Make theses paths configurable
         const std::string BASE_ASSET_DIR = "../../../../../assets/";
         const std::string IMAGE_PATH = BASE_ASSET_DIR + "textures/";
         const std::string MATERIAL_PATH = BASE_ASSET_DIR + "materials/";
@@ -22,11 +22,8 @@ namespace VoidArchitect
         // Initialize default loaders
         RegisterLoader(ResourceType::Image, new Resources::Loaders::ImageLoader(IMAGE_PATH));
         RegisterLoader(
-            ResourceType::Material,
-            new Resources::Loaders::MaterialLoader(MATERIAL_PATH));
-        RegisterLoader(
-            ResourceType::Shader,
-            new Resources::Loaders::ShaderLoader(SHADER_PATH));
+            ResourceType::Material, new Resources::Loaders::MaterialLoader(MATERIAL_PATH));
+        RegisterLoader(ResourceType::Shader, new Resources::Loaders::ShaderLoader(SHADER_PATH));
     }
 
     void ResourceSystem::RegisterLoader(ResourceType type, Resources::Loaders::ILoader* loader)
@@ -44,14 +41,10 @@ namespace VoidArchitect
 
         m_Loaders[type] = std::unique_ptr<Resources::Loaders::ILoader>(loader);
         VA_ENGINE_DEBUG(
-            "[ResourceSystem] Registered loader for type: {}.",
-            ResourceTypeToString(type));
+            "[ResourceSystem] Registered loader for type: {}.", ResourceTypeToString(type));
     }
 
-    void ResourceSystem::UnregisterLoader(const ResourceType type)
-    {
-        m_Loaders.erase(type);
-    }
+    void ResourceSystem::UnregisterLoader(const ResourceType type) { m_Loaders.erase(type); }
 
     std::string ResourceSystem::ResourceTypeToString(const ResourceType type)
     {
@@ -73,8 +66,7 @@ namespace VoidArchitect
 
     template <typename T>
     std::shared_ptr<T> ResourceSystem::LoadResource(
-        const ResourceType type,
-        const std::string& path)
+        const ResourceType type, const std::string& path)
     {
         if (m_Loaders.contains(type))
         {
@@ -82,28 +74,22 @@ namespace VoidArchitect
         }
 
         VA_ENGINE_WARN(
-            "[ResourceSystem] No loader registered for type: {}.",
-            ResourceTypeToString(type));
+            "[ResourceSystem] No loader registered for type: {}.", ResourceTypeToString(type));
         return nullptr;
     }
 
     // === Templates ===
     // NOTE : These templates allow to load a specified resources type. If we define a new resource
     //          we must not forget to add a template specialization for it.
-    //          This allow us to enforce the proper use of the LoadResource method. I.E. Not allowing
-    //          to load a resource type that doesn't exist.
+    //          This allow us to enforce the proper use of the LoadResource method. I.E. Not
+    //          allowing to load a resource type that doesn't exist.
     template Resources::Loaders::ImageDataDefinitionPtr ResourceSystem::LoadResource<
-        Resources::Loaders::ImageDataDefinition>(
-        const ResourceType type,
-        const std::string& name);
+        Resources::Loaders::ImageDataDefinition>(const ResourceType type, const std::string& name);
 
     template Resources::Loaders::MaterialDataDefinitionPtr ResourceSystem::LoadResource<
         Resources::Loaders::MaterialDataDefinition>(
-        const ResourceType type,
-        const std::string& name);
+        const ResourceType type, const std::string& name);
 
     template Resources::Loaders::ShaderDataDefinitionPtr ResourceSystem::LoadResource<
-        Resources::Loaders::ShaderDataDefinition>(
-        const ResourceType type,
-        const std::string& name);
-} // VoidArchitect
+        Resources::Loaders::ShaderDataDefinition>(const ResourceType type, const std::string& name);
+} // namespace VoidArchitect

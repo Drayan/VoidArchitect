@@ -31,7 +31,18 @@ namespace VoidArchitect
                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
             m_MaterialSlots.resize(MAX_MATERIALS);
+            for (auto& slot : m_MaterialSlots)
+            {
+                slot.isActive = false;
+                slot.materialUUID = InvalidUUID;
+                slot.generation = 0;
+                slot.needsUpdate = false;
+            }
             m_StagingData.resize(MAX_MATERIALS);
+            for (auto& data : m_StagingData)
+            {
+                data = {};
+            }
 
             VA_ENGINE_INFO(
                 "[VulkanMaterialBufferManager] Initialized with {} slots.",
@@ -116,6 +127,17 @@ namespace VoidArchitect
                     "[VulkanMaterialBufferManager] Attempting to get binding info for an invalid "
                     "slot index {}.",
                     slotIndex);
+
+                return {VK_NULL_HANDLE, 0, 0};
+            }
+
+            if (!m_MaterialUniformBuffer)
+            {
+                VA_ENGINE_WARN(
+                    "[VulkanMaterialBufferManager] Attempting to get binding info for an invalid "
+                    "slot index {}.",
+                    slotIndex);
+                return {VK_NULL_HANDLE, 0, 0};
             }
 
             return {

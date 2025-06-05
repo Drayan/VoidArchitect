@@ -125,7 +125,7 @@ namespace VoidArchitect::Renderer
             case SDLK_SPACE:
                 m_MoveUp = true;
                 break;
-            default: ;
+            default:;
         }
 
         return false;
@@ -153,7 +153,7 @@ namespace VoidArchitect::Renderer
             case SDLK_SPACE:
                 m_MoveUp = false;
                 break;
-            default: ;
+            default:;
         }
 
         return false;
@@ -166,7 +166,7 @@ namespace VoidArchitect::Renderer
             case SDL_BUTTON_RIGHT:
                 m_MouseDrag = true;
                 break;
-            default: ;
+            default:;
         }
 
         return false;
@@ -179,7 +179,7 @@ namespace VoidArchitect::Renderer
             case SDL_BUTTON_RIGHT:
                 m_MouseDrag = false;
                 break;
-            default: ;
+            default:;
         }
 
         return false;

@@ -1,0 +1,146 @@
+# Roadmap
+## Engine
+### Client
+#### General
+- Multiplaform for Windows/Linux/Mac
+    - Currently not tested on Windows and Linux
+- Mobile runtime support iOS / Android ?
+    - The editor should not run on these platform
+- Platform Layer
+    - Filesystem abstraction
+    - VFS
+    - Better Input system (polling, other device)
+- Input system
+    - Keybindings
+    - Keysets => Specific keybinding for a certain context (in a menu, in game, ...)
+- Configurable global settings (kvars)
+- Engine configuration
+- Console system
+- Memory management
+    - Allocators
+        - Linear allocator
+        - Dynamic allocator
+        - Pool allocator
+    - Leaks detection
+- Containers
+    - Array
+    - List
+    - Stack
+    - Queue
+    - Ring
+    - Pool
+    - BST
+    - Quadtree
+    - Octree
+    - Graph (DAG)
+- Engine system interface
+    - System dependencies
+    - Auto initialize ordering and shutdown ordering
+    - Thread-safe access ?
+- Math
+    - Add more type as needed    
+    - Random generator
+    - Various noises
+- Multithreading
+    - Jobs/Tasks system with scheduler 
+- Resource system
+    - Loaders : Image, Material, Shaders
+        - TODO: Fonts, Models, Scene
+    - Async loading
+    - Hot reload
+- Network system
+- Unified inputs
+    - From IA
+    - From Network
+    - From physical inputs
+- Event system
+- ECS
+- Scene
+    - File format / load / save
+    - Prefabs / Entity template
+- Editor
+- Raycasting
+- Object picking
+- Gizmos
+- Audio system
+- Physics system
+- Procedural Generation System
+- Game/editor dynamic lib hot-reload
+- Timeline system
+- Proper timestep with state interpolation
+- Animation system
+    - Skeletal animation
+- Celestial bodies system
+    - Galaxy
+    - Star
+    - Planets
+    - Moons
+    - Asteroids
+    - Nebulae
+    - Blackholes
+- Spherical terrain system
+- Skybox/Skysphere
+- Atmosphere scattering
+- Water
+- Underwater
+- Profiling
+
+- Documentation
+    - Internal documentation aswell
+- Tests
+
+#### Renderer
+- RenderGraph with auto calculation of resources lifetime, ordering of RenderPass, culling, ...
+- RenderPass
+    - Forward
+    - ForwardPlus (clustered)
+    - UI
+    - PostProcess
+- RenderState
+- Renderer scaffolding
+- Vulkan RHI
+- DX12 RHI
+- OpenGL RHI
+- Metal RHI
+- Textures
+- Geometry
+- Material
+- RenderTargets
+    - Swapchain
+    - Textures
+- Geometry generation
+    - 2D : plane, circle, ...
+    - 3D : cube, sphere, ...
+- Phong lighting
+- Specular mapping
+- Normal mapping
+- PBR
+- Multithreading rendering (Vulkan/DX12/Metal)
+- Batch rendering
+
+#### UI
+- UI system
+- Layers
+- UI file format / load / save
+- UI Editor
+- Docking
+- Control focus (tab ordering)
+- Drag and drop support
+- Controls
+    - Panel
+    - Button
+    - Image box
+    - Viewports
+    - Text
+    - Rich text
+    - Checkbox
+    - Radio
+    - Tabs
+    - Windows
+    - Modal
+    - Flow graph
+    - Resizable multi-panels
+    - Scrollbar
+    - Scroll container
+    - Textbox
+    - Textarea

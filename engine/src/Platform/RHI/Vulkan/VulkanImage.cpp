@@ -157,8 +157,8 @@ namespace VoidArchitect::Platform
             &barrier);
     }
 
-    void
-    VulkanImage::CopyFromBuffer(const VulkanCommandBuffer& cmdBuf, const VulkanBuffer& buffer) const
+    void VulkanImage::CopyFromBuffer(
+        const VulkanCommandBuffer& cmdBuf, const VulkanBuffer& buffer) const
     {
         auto region = VkBufferImageCopy{};
         region.bufferOffset = 0;

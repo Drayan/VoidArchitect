@@ -72,7 +72,7 @@ namespace VoidArchitect::Platform
             vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr));
 
         // Now, querying for device information.
-        std::vector<VkPhysicalDevice> devices(deviceCount);
+        VAArray<VkPhysicalDevice> devices(deviceCount);
         VA_VULKAN_CHECK_RESULT_CRITICAL(
             vkEnumeratePhysicalDevices(m_Instance, &deviceCount, devices.data()));
 
@@ -124,7 +124,7 @@ namespace VoidArchitect::Platform
         uint32_t extensionCount = 0;
         VA_VULKAN_CHECK_RESULT_CRITICAL(
             vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr));
-        std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+        VAArray<VkExtensionProperties> availableExtensions(extensionCount);
         if (VA_VULKAN_CHECK_RESULT(vkEnumerateDeviceExtensionProperties(
                 device, nullptr, &extensionCount, availableExtensions.data())))
         {
@@ -230,7 +230,7 @@ namespace VoidArchitect::Platform
         uint32_t queueFamilyCount = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(m_PhysicalDevice, &queueFamilyCount, nullptr);
 
-        std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+        VAArray<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
         vkGetPhysicalDeviceQueueFamilyProperties(
             m_PhysicalDevice, &queueFamilyCount, queueFamilies.data());
 

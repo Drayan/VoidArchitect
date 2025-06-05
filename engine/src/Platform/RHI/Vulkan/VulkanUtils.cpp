@@ -3,7 +3,7 @@
 //
 #include "VulkanUtils.hpp"
 
-#include "Systems/PipelineSystem.hpp"
+#include "Systems/RenderStateSystem.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -44,6 +44,112 @@ namespace VoidArchitect::Platform
             default:
                 VA_ENGINE_WARN("[VulkanPipeline] Unknown shader stage, defaulting to all.");
                 return VK_SHADER_STAGE_ALL_GRAPHICS;
+        }
+    }
+
+    VkFormat TranslateEngineTextureFormatToVulkan(const Renderer::TextureFormat format)
+    {
+        switch (format)
+        {
+            case Renderer::TextureFormat::RGBA8_UNORM:
+                return VK_FORMAT_R8G8B8A8_UNORM;
+            case Renderer::TextureFormat::RGBA8_SRGB:
+                return VK_FORMAT_R8G8B8A8_SRGB;
+            case Renderer::TextureFormat::BGRA8_SRGB:
+                return VK_FORMAT_B8G8R8A8_SRGB;
+            case Renderer::TextureFormat::BGRA8_UNORM:
+                return VK_FORMAT_B8G8R8A8_UNORM;
+
+            case Renderer::TextureFormat::D32_SFLOAT:
+                return VK_FORMAT_D32_SFLOAT;
+            case Renderer::TextureFormat::D24_UNORM_S8_UINT:
+                return VK_FORMAT_D24_UNORM_S8_UINT;
+
+            default:
+                VA_ENGINE_WARN("[VulkanUtils] Unknown texture format, defaulting to RGBA8_UNORM.");
+                return VK_FORMAT_R8G8B8A8_UNORM;
+        }
+    }
+
+    VkAttachmentLoadOp TranslateEngineLoadOpToVulkan(const Renderer::LoadOp op)
+    {
+        switch (op)
+        {
+            case Renderer::LoadOp::Load:
+                return VK_ATTACHMENT_LOAD_OP_LOAD;
+            case Renderer::LoadOp::Clear:
+                return VK_ATTACHMENT_LOAD_OP_CLEAR;
+            case Renderer::LoadOp::DontCare:
+                return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+            default:
+                VA_ENGINE_WARN("[VulkanUtils] Unknown load op, defaulting to CLEAR.");
+                return VK_ATTACHMENT_LOAD_OP_CLEAR;
+        }
+    }
+
+    VkAttachmentStoreOp TranslateEngineStoreOpToVulkan(const Renderer::StoreOp op)
+    {
+        switch (op)
+        {
+            case Renderer::StoreOp::Store:
+                return VK_ATTACHMENT_STORE_OP_STORE;
+            case Renderer::StoreOp::DontCare:
+                return VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            default:
+                VA_ENGINE_WARN("[VulkanUtils] Unknown store op, defaulting to STORE.");
+                return VK_ATTACHMENT_STORE_OP_STORE;
+        }
+    }
+
+    Renderer::TextureFormat TranslateVulkanTextureFormatToEngine(const VkFormat format)
+    {
+        switch (format)
+        {
+            case VK_FORMAT_R8G8B8A8_UNORM:
+                return Renderer::TextureFormat::RGBA8_UNORM;
+            case VK_FORMAT_R8G8B8A8_SRGB:
+                return Renderer::TextureFormat::RGBA8_SRGB;
+            case VK_FORMAT_B8G8R8A8_SRGB:
+                return Renderer::TextureFormat::BGRA8_SRGB;
+            case VK_FORMAT_B8G8R8A8_UNORM:
+                return Renderer::TextureFormat::BGRA8_UNORM;
+            case VK_FORMAT_D32_SFLOAT:
+                return Renderer::TextureFormat::D32_SFLOAT;
+            case VK_FORMAT_D24_UNORM_S8_UINT:
+                return Renderer::TextureFormat::D24_UNORM_S8_UINT;
+            default:
+                VA_ENGINE_WARN("[VulkanUtils] Unknown texture format, defaulting to RGBA8_UNORM.");
+                return Renderer::TextureFormat::RGBA8_UNORM;
+        }
+    }
+
+    Renderer::LoadOp TranslateVulkanLoadOpToEngine(const VkAttachmentLoadOp op)
+    {
+        switch (op)
+        {
+            case VK_ATTACHMENT_LOAD_OP_LOAD:
+                return Renderer::LoadOp::Load;
+            case VK_ATTACHMENT_LOAD_OP_CLEAR:
+                return Renderer::LoadOp::Clear;
+            case VK_ATTACHMENT_LOAD_OP_DONT_CARE:
+                return Renderer::LoadOp::DontCare;
+            default:
+                VA_ENGINE_WARN("[VulkanUtils] Unknown load op, defaulting to CLEAR.");
+                return Renderer::LoadOp::Clear;
+        }
+    }
+
+    Renderer::StoreOp TranslateVulkanStoreOpToEngine(const VkAttachmentStoreOp op)
+    {
+        switch (op)
+        {
+            case VK_ATTACHMENT_STORE_OP_STORE:
+                return Renderer::StoreOp::Store;
+            case VK_ATTACHMENT_STORE_OP_DONT_CARE:
+                return Renderer::StoreOp::DontCare;
+            default:
+                VA_ENGINE_WARN("[VulkanUtils] Unknown store op, defaulting to STORE.");
+                return Renderer::StoreOp::Store;
         }
     }
 

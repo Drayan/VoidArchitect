@@ -23,7 +23,7 @@ namespace VoidArchitect::Platform
             VkAllocationCallbacks* allocator,
             const std::string& name,
             const ShaderConfig& config,
-            const std::vector<uint8_t>& shaderCode);
+            const VAArray<uint8_t>& shaderCode);
         VulkanShader(VulkanShader&& other) noexcept;
         VulkanShader(const VulkanShader& other) = delete;
         ~VulkanShader() override;

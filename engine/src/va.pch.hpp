@@ -13,9 +13,13 @@
 #include <set>
 #include <sstream>
 #include <string>
-#include <unordered_map>
 #include <unordered_set>
-#include <vector>
+
+#include "Core/Collections/Array.hpp"
+#include "Core/Collections/HashMap.hpp"
+#include "Core/Collections/HashSet.hpp"
+
+using namespace VoidArchitect::Collections;
 
 #ifdef VOID_ARCH_PLATFORM_WINDOWS
 #include <Windows.h>

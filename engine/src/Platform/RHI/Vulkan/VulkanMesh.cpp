@@ -13,21 +13,15 @@ namespace VoidArchitect
             VulkanRHI& rhi,
             VkAllocationCallbacks* allocator,
             const std::string& name,
-            const std::vector<Resources::MeshVertex>& vertices,
-            const std::vector<uint32_t>& indices)
+            const VAArray<Resources::MeshVertex>& vertices,
+            const VAArray<uint32_t>& indices)
             : IMesh(name),
               m_Allocator(allocator)
         {
             m_VertexBuffer = std::make_unique<VulkanVertexBuffer>(
-                rhi,
-                rhi.GetDeviceRef(),
-                m_Allocator,
-                vertices);
-            m_IndexBuffer = std::make_unique<VulkanIndexBuffer>(
-                rhi,
-                rhi.GetDeviceRef(),
-                m_Allocator,
-                indices);
+                rhi, rhi.GetDeviceRef(), m_Allocator, vertices);
+            m_IndexBuffer =
+                std::make_unique<VulkanIndexBuffer>(rhi, rhi.GetDeviceRef(), m_Allocator, indices);
         }
 
         void VulkanMesh::Bind(Platform::IRenderingHardware& rhi)
@@ -41,5 +35,5 @@ namespace VoidArchitect
             m_VertexBuffer = nullptr;
             m_IndexBuffer = nullptr;
         }
-    } // Platform
-} // VoidArchitect
+    } // namespace Platform
+} // namespace VoidArchitect

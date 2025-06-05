@@ -24,6 +24,8 @@ namespace VoidArchitect
 
     namespace Renderer
     {
+        class RenderGraph;
+
         struct RenderPacket
         {
             float deltaTime;
@@ -39,6 +41,7 @@ namespace VoidArchitect
         class RenderCommand
         {
         public:
+            static Resources::MeshPtr s_UIMesh;
             static void Initialize(Platform::RHI_API_TYPE apiType, std::unique_ptr<Window>& window);
             static void Shutdown();
 
@@ -67,17 +70,20 @@ namespace VoidArchitect
             static void SwapColor();
             static Platform::IRenderingHardware& GetRHIRef() { return *m_RenderingHardware; };
 
-        private:
             static Resources::Texture2DPtr s_TestTexture;
             static Resources::MaterialPtr s_TestMaterial;
+            static Resources::MaterialPtr s_UIMaterial;
             static Resources::MeshPtr s_TestMesh;
 
+            static Math::Mat4 s_UIProjectionMatrix;
+
+        private:
             static Platform::RHI_API_TYPE m_ApiType;
             static Platform::IRenderingHardware* m_RenderingHardware;
 
             static uint32_t m_Width, m_Height;
 
-            static std::vector<Camera> m_Cameras;
+            static VAArray<Camera> m_Cameras;
         };
     } // namespace Renderer
 } // namespace VoidArchitect

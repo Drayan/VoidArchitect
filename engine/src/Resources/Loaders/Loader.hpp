@@ -18,4 +18,4 @@ namespace VoidArchitect::Resources::Loaders
     protected:
         std::string m_BaseAssetPath;
     };
-}
+} // namespace VoidArchitect::Resources::Loaders

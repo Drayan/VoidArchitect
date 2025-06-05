@@ -16,7 +16,7 @@ namespace VoidArchitect::Platform
         const uint32_t height,
         const uint8_t channels,
         const bool hasTransparency,
-        const std::vector<uint8_t>& data)
+        const VAArray<uint8_t>& data)
         : Texture2D(name, width, height, channels, hasTransparency),
           m_Generation(0),
           m_Image{},

@@ -1,0 +1,5 @@
+material:
+  name: "DefaultUI"
+  properties:
+    diffuse_color: [ 1.0, 1.0, 1.0, 1.0 ]
+    diffuse_map: "512X512"

@@ -11,7 +11,7 @@
 namespace VoidArchitect::Resources::Loaders
 {
     ImageDataDefinition::ImageDataDefinition(
-        std::vector<uint8_t> data,
+        VAArray<uint8_t> data,
         const int32_t width,
         const int32_t height,
         const int32_t bpp,
@@ -25,10 +25,7 @@ namespace VoidArchitect::Resources::Loaders
     {
     }
 
-    ImageLoader::ImageLoader(const std::string& baseAssetPath)
-        : ILoader(baseAssetPath)
-    {
-    }
+    ImageLoader::ImageLoader(const std::string& baseAssetPath) : ILoader(baseAssetPath) {}
 
     std::shared_ptr<IResourceDefinition> ImageLoader::Load(const std::string& name)
     {
@@ -46,7 +43,7 @@ namespace VoidArchitect::Resources::Loaders
                 stbi_failure_reason());
             return {};
         }
-        auto data = std::vector<uint8_t>(width * height * 4);
+        auto data = VAArray<uint8_t>(width * height * 4);
         memcpy(data.data(), rawData, data.size());
         stbi_image_free(rawData);
 
@@ -61,12 +58,8 @@ namespace VoidArchitect::Resources::Loaders
             }
         }
 
-        auto imageDefinition = new ImageDataDefinition(
-            std::move(data),
-            width,
-            height,
-            4,
-            hasTransparency);
+        auto imageDefinition =
+            new ImageDataDefinition(std::move(data), width, height, 4, hasTransparency);
         return ImageDataDefinitionPtr(imageDefinition);
     }
-}
+} // namespace VoidArchitect::Resources::Loaders

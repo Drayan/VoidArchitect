@@ -58,11 +58,11 @@ namespace VoidArchitect
 
             std::unique_ptr<VulkanBuffer> m_MaterialUniformBuffer;
 
-            std::vector<MaterialSlot> m_MaterialSlots;
+            VAArray<MaterialSlot> m_MaterialSlots;
             std::queue<uint32_t> m_FreeSlots;
             uint32_t m_NextFreeSlot = 0;
 
-            std::vector<Resources::MaterialUniformObject> m_StagingData;
+            VAArray<Resources::MaterialUniformObject> m_StagingData;
             bool m_NeedsUpdate = false;
         };
 

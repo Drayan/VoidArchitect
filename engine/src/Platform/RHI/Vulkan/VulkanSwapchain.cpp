@@ -5,6 +5,7 @@
 
 #include "Core/Logger.hpp"
 #include "VulkanImage.hpp"
+#include "VulkanRenderPass.hpp"
 #include "VulkanRhi.hpp"
 #include "VulkanUtils.hpp"
 
@@ -65,7 +66,7 @@ namespace VoidArchitect::Platform
         // Retrieve the images from the swapchain...
         VA_VULKAN_CHECK_RESULT_WARN(vkGetSwapchainImagesKHR(
             m_Device->GetLogicalDeviceHandle(), m_Swapchain, &imageCount, nullptr));
-        auto images = std::vector<VkImage>(imageCount);
+        auto images = VAArray<VkImage>(imageCount);
         VA_VULKAN_CHECK_RESULT_CRITICAL(vkGetSwapchainImagesKHR(
             m_Device->GetLogicalDeviceHandle(), m_Swapchain, &imageCount, images.data()));
 
@@ -103,26 +104,38 @@ namespace VoidArchitect::Platform
         }
     }
 
-    void VulkanSwapchain::RegenerateFramebuffers(
-        const std::unique_ptr<VulkanRenderpass>& renderpass, uint32_t width, uint32_t height)
-    {
-        m_Framebuffers.clear();
-        m_Framebuffers.reserve(m_SwapchainImages.size());
-        for (size_t i = 0; i < m_SwapchainImages.size(); i++)
-        {
-            std::vector attachments = {m_SwapchainImages[i].GetView(), m_DepthImage.GetView()};
-            m_Framebuffers.emplace_back(
-                m_Device->GetLogicalDeviceHandle(),
-                m_Allocator,
-                renderpass,
-                width,
-                height,
-                attachments);
-        }
-
-        VA_ENGINE_DEBUG(
-            "[VulkanSwapchain] All {} framebuffers regenerated.", m_Framebuffers.size());
-    }
+    // void VulkanSwapchain::RegenerateFramebuffers(
+    //     const std::unique_ptr<VulkanRenderPass>& renderpass,
+    //     uint32_t width,
+    //     uint32_t height)
+    // {
+    //     m_RenderTargets.clear();
+    //     m_RenderTargets.reserve(m_SwapchainImages.size());
+    //     for (size_t i = 0; i < m_SwapchainImages.size(); i++)
+    //     {
+    //         auto config = Renderer::RenderTargetConfig{
+    //             .Name = "SwapchainTarget_" + std::to_string(i),
+    //             .Width = width,
+    //             .Height = height,
+    //             .Format = TranslateVulkanTextureFormatToEngine(m_Format.format),
+    //             .IsMain = true
+    //         };
+    //
+    //         VAArray attachments = {m_SwapchainImages[i].GetView(), m_DepthImage.GetView()};
+    //         auto renderTarget = std::make_shared<VulkanRenderTarget>(
+    //             config,
+    //             m_Device->GetLogicalDeviceHandle(),
+    //             m_Allocator);
+    //
+    //         renderTarget->CreateFramebuffer(renderpass, attachments);
+    //
+    //         m_RenderTargets.push_back(std::move(renderTarget));
+    //     }
+    //
+    //     VA_ENGINE_DEBUG(
+    //         "[VulkanSwapchain] All {} framebuffers regenerated.",
+    //         m_RenderTargets.size());
+    // }
 
     bool VulkanSwapchain::AcquireNextImage(
         const uint64_t timeout,
@@ -177,8 +190,8 @@ namespace VoidArchitect::Platform
         }
     }
 
-    void
-    VulkanSwapchain::Recreate(VulkanRHI& rhi, const VkExtent2D extents, const VkFormat depthFormat)
+    void VulkanSwapchain::Recreate(
+        VulkanRHI& rhi, const VkExtent2D extents, const VkFormat depthFormat)
     {
         VA_ENGINE_TRACE("[VulkanSwapchain] Recreating swapchain.");
         this->~VulkanSwapchain();

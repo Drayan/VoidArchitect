@@ -16,7 +16,7 @@ namespace VoidArchitect::Resources::Loaders
     public:
         ~ImageDataDefinition() override = default;
 
-        const std::vector<uint8_t>& GetData() const { return m_Data; }
+        const VAArray<uint8_t>& GetData() const { return m_Data; }
         int GetWidth() const { return m_Width; }
         int GetHeight() const { return m_Height; }
         int GetBPP() const { return m_BPP; }
@@ -24,13 +24,13 @@ namespace VoidArchitect::Resources::Loaders
 
     private:
         ImageDataDefinition(
-            std::vector<uint8_t> data,
+            VAArray<uint8_t> data,
             int32_t width,
             int32_t height,
             int32_t bpp,
             bool hasTransparency);
 
-        std::vector<uint8_t> m_Data;
+        VAArray<uint8_t> m_Data;
         int m_Width, m_Height, m_BPP;
         bool m_HasTransparency;
     };
@@ -45,4 +45,4 @@ namespace VoidArchitect::Resources::Loaders
 
         std::shared_ptr<IResourceDefinition> Load(const std::string& name) override;
     };
-}
+} // namespace VoidArchitect::Resources::Loaders

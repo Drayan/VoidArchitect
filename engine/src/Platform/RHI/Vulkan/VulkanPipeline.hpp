@@ -4,31 +4,31 @@
 #pragma once
 #include <vulkan/vulkan.h>
 
-#include "Resources/Pipeline.hpp"
+#include "Resources/RenderState.hpp"
 
-#include "Systems/PipelineSystem.hpp"
+#include "Systems/RenderStateSystem.hpp"
 #include "VulkanCommandBuffer.hpp"
 
 namespace VoidArchitect
 {
-    struct PipelineConfig;
+    struct RenderStateConfig;
 }
 
 namespace VoidArchitect::Platform
 {
     class VulkanDevice;
-    class VulkanRenderpass;
+    class VulkanRenderPass;
     class VulkanCommandBuffer;
     class VulkanShader;
 
-    class VulkanPipeline : public Resources::IPipeline
+    class VulkanPipeline : public Resources::IRenderState
     {
     public:
         VulkanPipeline(
-            const PipelineConfig& config,
+            const RenderStateConfig& config,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
-            const std::unique_ptr<VulkanRenderpass>& renderPass);
+            VulkanRenderPass* renderPass);
         ~VulkanPipeline() override;
 
         // void Bind(const VulkanCommandBuffer& cmdBuf, VkPipelineBindPoint bindPoint) const;
@@ -59,11 +59,11 @@ namespace VoidArchitect::Platform
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;
 
-        std::vector<Resources::ShaderPtr> m_Shaders;
+        VAArray<Resources::ShaderPtr> m_Shaders;
 
         VkPipeline m_Pipeline;
 
         VkPipelineLayout m_PipelineLayout;
-        std::vector<VkDescriptorSetLayout> m_DescriptorSetLayouts;
+        VAArray<VkDescriptorSetLayout> m_DescriptorSetLayouts;
     };
 } // namespace VoidArchitect::Platform

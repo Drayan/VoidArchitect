@@ -37,6 +37,6 @@ namespace VoidArchitect
 
                 std::shared_ptr<IResourceDefinition> Load(const std::string& name) override;
             };
-        } // Loaders
-    } // Resources
-} // VoidArchitect
+        } // namespace Loaders
+    } // namespace Resources
+} // namespace VoidArchitect

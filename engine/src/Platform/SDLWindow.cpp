@@ -64,67 +64,67 @@ namespace VoidArchitect
                 switch (e.type)
                 {
                     case SDL_EVENT_QUIT:
-                        {
-                            auto closeEvent = WindowCloseEvent();
-                            m_EventCallback(closeEvent);
-                            break;
-                        }
+                    {
+                        auto closeEvent = WindowCloseEvent();
+                        m_EventCallback(closeEvent);
+                        break;
+                    }
 
                     // --- Window events ---
                     case SDL_EVENT_WINDOW_RESIZED:
-                        {
-                            auto resizeEvent = WindowResizedEvent(e.window.data1, e.window.data2);
-                            m_EventCallback(resizeEvent);
-                            break;
-                        }
+                    {
+                        auto resizeEvent = WindowResizedEvent(e.window.data1, e.window.data2);
+                        m_EventCallback(resizeEvent);
+                        break;
+                    }
 
                     // --- Keyboard events ---
                     // TODO Translate SDL_Keycode to Engine's keycode.
                     case SDL_EVENT_KEY_DOWN:
-                        {
-                            auto keyEvent = KeyPressedEvent(e.key.key, e.key.repeat);
-                            m_EventCallback(keyEvent);
-                            break;
-                        }
+                    {
+                        auto keyEvent = KeyPressedEvent(e.key.key, e.key.repeat);
+                        m_EventCallback(keyEvent);
+                        break;
+                    }
 
                     case SDL_EVENT_KEY_UP:
-                        {
-                            auto keyEvent = KeyReleasedEvent(e.key.key);
-                            m_EventCallback(keyEvent);
-                            break;
-                        }
+                    {
+                        auto keyEvent = KeyReleasedEvent(e.key.key);
+                        m_EventCallback(keyEvent);
+                        break;
+                    }
 
                     // --- Mouse events ---
                     case SDL_EVENT_MOUSE_MOTION:
-                        {
-                            auto mouseEvent = MouseMovedEvent(e.motion.x, e.motion.y);
-                            m_EventCallback(mouseEvent);
-                            break;
-                        }
+                    {
+                        auto mouseEvent = MouseMovedEvent(e.motion.x, e.motion.y);
+                        m_EventCallback(mouseEvent);
+                        break;
+                    }
 
                     case SDL_EVENT_MOUSE_BUTTON_DOWN:
-                        {
-                            auto mouseEvent =
-                                MouseButtonPressedEvent(e.button.x, e.button.y, e.button.button);
-                            m_EventCallback(mouseEvent);
-                            break;
-                        }
+                    {
+                        auto mouseEvent =
+                            MouseButtonPressedEvent(e.button.x, e.button.y, e.button.button);
+                        m_EventCallback(mouseEvent);
+                        break;
+                    }
 
                     case SDL_EVENT_MOUSE_BUTTON_UP:
-                        {
-                            auto mouseEvent =
-                                MouseButtonReleasedEvent(e.button.x, e.button.y, e.button.button);
-                            m_EventCallback(mouseEvent);
-                            break;
-                        }
+                    {
+                        auto mouseEvent =
+                            MouseButtonReleasedEvent(e.button.x, e.button.y, e.button.button);
+                        m_EventCallback(mouseEvent);
+                        break;
+                    }
 
                     case SDL_EVENT_MOUSE_WHEEL:
-                        {
-                            auto mouseEvent = MouseScrolledEvent(
-                                e.wheel.mouse_x, e.wheel.mouse_y, e.wheel.x, e.wheel.y);
-                            m_EventCallback(mouseEvent);
-                            break;
-                        }
+                    {
+                        auto mouseEvent = MouseScrolledEvent(
+                            e.wheel.mouse_x, e.wheel.mouse_y, e.wheel.x, e.wheel.y);
+                        m_EventCallback(mouseEvent);
+                        break;
+                    }
                     default:
                         break;
                 }

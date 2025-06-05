@@ -40,8 +40,8 @@ namespace VoidArchitect
         std::queue<uint32_t> m_FreeShaderHandles;
         uint32_t m_NextShaderHandle = 0;
 
-        std::vector<ShaderData> m_Shaders;
-        std::unordered_map<UUID, std::weak_ptr<Resources::IShader>> m_ShaderCache;
+        VAArray<ShaderData> m_Shaders;
+        VAHashMap<UUID, std::weak_ptr<Resources::IShader>> m_ShaderCache;
     };
 
     inline std::unique_ptr<ShaderSystem> g_ShaderSystem;

@@ -2,8 +2,8 @@
 // Created by Michael Desmedt on 31/05/2025.
 //
 #pragma once
-#include "VulkanBuffer.hpp"
 #include "Resources/Mesh.hpp"
+#include "VulkanBuffer.hpp"
 
 namespace VoidArchitect
 {
@@ -16,8 +16,8 @@ namespace VoidArchitect
                 VulkanRHI& rhi,
                 VkAllocationCallbacks* allocator,
                 const std::string& name,
-                const std::vector<Resources::MeshVertex>& vertices,
-                const std::vector<uint32_t>& indices);
+                const VAArray<Resources::MeshVertex>& vertices,
+                const VAArray<uint32_t>& indices);
             ~VulkanMesh() override = default;
 
             void Bind(Platform::IRenderingHardware& rhi) override;
@@ -31,5 +31,5 @@ namespace VoidArchitect
             std::unique_ptr<VulkanBuffer> m_VertexBuffer;
             std::unique_ptr<VulkanBuffer> m_IndexBuffer;
         };
-    } // Platform
-} // VoidArchitect
+    } // namespace Platform
+} // namespace VoidArchitect

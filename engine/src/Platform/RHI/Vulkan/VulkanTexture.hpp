@@ -25,7 +25,7 @@ namespace VoidArchitect::Platform
             uint32_t height,
             uint8_t channels,
             bool hasTransparency,
-            const std::vector<uint8_t>& data);
+            const VAArray<uint8_t>& data);
         ~VulkanTexture2D() override;
 
         VkImageView GetImageView() const { return m_Image.GetView(); }

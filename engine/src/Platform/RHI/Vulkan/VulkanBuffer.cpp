@@ -220,7 +220,7 @@ namespace VoidArchitect::Platform
         const VulkanRHI& rhi,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
-        const std::vector<Resources::MeshVertex>& data,
+        const VAArray<Resources::MeshVertex>& data,
         const bool bindOnCreate)
         : VulkanBuffer(
             rhi,
@@ -266,7 +266,7 @@ namespace VoidArchitect::Platform
         const VulkanRHI& rhi,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
-        const std::vector<uint32_t>& data,
+        const VAArray<uint32_t>& data,
         bool bindOnCreate)
         : VulkanBuffer(
             rhi,

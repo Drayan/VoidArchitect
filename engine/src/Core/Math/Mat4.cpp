@@ -8,9 +8,15 @@
 
 namespace VoidArchitect::Math
 {
-    Mat4::Mat4() : m_Matrix() {}
+    Mat4::Mat4()
+        : m_Matrix()
+    {
+    }
 
-    Mat4::Mat4(const impl::glm::mat4& matrix) : m_Matrix(matrix) {}
+    Mat4::Mat4(const impl::glm::mat4& matrix)
+        : m_Matrix(matrix)
+    {
+    }
 
     Mat4 Mat4::Identity() { return Mat4(impl::glm::mat4(1.0f)); }
 
@@ -30,7 +36,7 @@ namespace VoidArchitect::Math
         const float near,
         const float far)
     {
-        return Mat4(impl::glm::ortho(left, right, bottom, top, near, far));
+        return Mat4(impl::glm::orthoRH_ZO(left, right, bottom, top, near, far));
     }
 
     Mat4 Mat4::Translate(const float x, const float y, const float z)

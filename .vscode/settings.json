@@ -27,4 +27,16 @@
             "color": "#343944",
         }
     ],
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.files.exclude": {
+        "**/.idea": true,
+        "**/.xcode": true,
+        "**/.vscode": true,
+        "**/node_modules": true,
+        "**/_deps": true,
+        "**/build": true,
+        "**/.vs": true
+    },
+    "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
+    "C_Cpp.codeAnalysis.clangTidy.path": "clang-tidy-mp-20",
 }

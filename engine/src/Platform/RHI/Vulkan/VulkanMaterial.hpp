@@ -4,7 +4,7 @@
 #pragma once
 
 #include "Resources/Material.hpp"
-#include "Resources/Pipeline.hpp"
+#include "Resources/RenderState.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -14,7 +14,7 @@ namespace VoidArchitect::Platform
     class VulkanShader;
     class VulkanDevice;
     class VulkanSwapchain;
-    class VulkanRenderpass;
+    class VulkanRenderPass;
     class VulkanPipeline;
     class VulkanBuffer;
 
@@ -24,14 +24,16 @@ namespace VoidArchitect::Platform
         VulkanMaterial(
             const std::string& name,
             const std::unique_ptr<VulkanDevice>& device,
-            VkAllocationCallbacks* allocator,
-            Resources::PipelinePtr pipeline);
+            VkAllocationCallbacks* allocator);
         ~VulkanMaterial() override;
 
         void InitializeResources(IRenderingHardware& rhi) override;
 
-        void Bind(IRenderingHardware& rhi) override;
-        void SetModel(IRenderingHardware& rhi, const Math::Mat4& model) override;
+        void Bind(IRenderingHardware& rhi, const Resources::RenderStatePtr& pipeline) override;
+        void SetModel(
+            IRenderingHardware& rhi,
+            const Math::Mat4& model,
+            const Resources::RenderStatePtr& pipeline) override;
 
     private:
         void ReleaseResources() override;
@@ -39,7 +41,6 @@ namespace VoidArchitect::Platform
 
         VkAllocationCallbacks* m_Allocator;
         VkDevice m_Device;
-        Resources::PipelinePtr m_Pipeline;
 
         uint32_t m_BufferSlot = std::numeric_limits<uint32_t>::max();
 

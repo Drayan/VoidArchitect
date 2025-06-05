@@ -15,11 +15,12 @@
 #include "VulkanMaterialBufferManager.hpp"
 #include "VulkanMesh.hpp"
 #include "VulkanPipeline.hpp"
-#include "VulkanRenderpass.hpp"
+#include "VulkanRenderPass.hpp"
 #include "VulkanShader.hpp"
 #include "VulkanSwapchain.hpp"
 #include "VulkanTexture.hpp"
 #include "VulkanUtils.hpp"
+#include "Systems/Renderer/RenderGraph.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -33,13 +34,15 @@ namespace VoidArchitect::Platform
 
     VulkanRHI::VulkanRHI(
         std::unique_ptr<Window>& window,
-        const PipelineInputLayout& sharedInputLayout)
+        const RenderStateInputLayout& sharedInputLayout)
         : m_Window(window),
           m_Allocator(nullptr),
           m_Instance{},
           m_Capabilities{},
-          m_FramebufferWidth(window->GetWidth()),
-          m_FramebufferHeight(window->GetHeight())
+          m_ImageIndex(0),
+          m_CurrentIndex(0),
+          m_CurrentWidth(window->GetWidth()),
+          m_CurrentHeight(window->GetHeight())
     {
         // NOTE Currently we don't provide an allocator, but we might want to do it in the future
         //  that's why there's m_Allocator already.
@@ -48,13 +51,6 @@ namespace VoidArchitect::Platform
         CreateInstance();
         CreateDevice(window);
         CreateSwapchain();
-        CreateRenderpass();
-
-        m_Swapchain->RegenerateFramebuffers(
-            m_MainRenderpass,
-            m_FramebufferWidth,
-            m_FramebufferHeight);
-
         CreateCommandBuffers();
         CreateSyncObjects();
 
@@ -63,10 +59,8 @@ namespace VoidArchitect::Platform
             m_Device,
             m_Allocator,
             sharedInputLayout);
-        g_VkMaterialBufferManager = std::make_unique<VulkanMaterialBufferManager>(
-            *this,
-            m_Device,
-            m_Allocator);
+        g_VkMaterialBufferManager =
+            std::make_unique<VulkanMaterialBufferManager>(*this, m_Device, m_Allocator);
 
         CreateGlobalUBO();
     }
@@ -105,9 +99,6 @@ namespace VoidArchitect::Platform
         m_GraphicsCommandBuffers.clear();
         VA_ENGINE_INFO("[VulkanRHI] Command buffers destroyed.");
 
-        m_MainRenderpass.reset();
-        VA_ENGINE_INFO("[VulkanRHI] Main renderpass destroyed.");
-
         m_Swapchain.reset();
         VA_ENGINE_INFO("[VulkanRHI] Swapchain destroyed.");
 
@@ -124,14 +115,17 @@ namespace VoidArchitect::Platform
 
     void VulkanRHI::Resize(uint32_t width, uint32_t height)
     {
-        m_CachedFramebufferWidth = width;
-        m_CachedFramebufferHeight = height;
-        m_FramebufferSizeGeneration++;
+        m_PendingWidth = width;
+        m_PendingHeight = height;
+        m_ResizeGeneration++;
+
+        InvalidateMainTargetsFramebuffers();
+
         VA_ENGINE_DEBUG(
             "[VulkanRHI] Resizing to {}x{}, generation : {}",
             width,
             height,
-            m_FramebufferSizeGeneration);
+            m_ResizeGeneration);
     }
 
     void VulkanRHI::WaitIdle(uint64_t timeout) { m_Device->WaitIdle(); }
@@ -151,7 +145,7 @@ namespace VoidArchitect::Platform
         }
 
         // Check if the framebuffer has been resized. If so, a new swapchain must be created.
-        if (m_FramebufferSizeGeneration != m_FramebufferSizeLastGeneration)
+        if (m_ResizeGeneration != m_ResizeLastGeneration)
         {
             m_Device->WaitIdle();
 
@@ -185,22 +179,19 @@ namespace VoidArchitect::Platform
 
         const VkViewport viewport = {
             .x = 0.0f,
-            .y = static_cast<float>(m_FramebufferHeight),
-            .width = static_cast<float>(m_FramebufferWidth),
-            .height = -static_cast<float>(m_FramebufferHeight),
+            .y = static_cast<float>(m_CurrentHeight),
+            .width = static_cast<float>(m_CurrentWidth),
+            .height = -static_cast<float>(m_CurrentHeight),
             .minDepth = 0.0f,
             .maxDepth = 1.0f
         };
 
-        const VkRect2D scissor = {
-            .offset = {0, 0},
-            .extent = {m_FramebufferWidth, m_FramebufferHeight}
-        };
+        const VkRect2D scissor = {.offset = {0, 0}, .extent = {m_CurrentWidth, m_CurrentHeight}};
 
         vkCmdSetViewport(cmdBuf.GetHandle(), 0, 1, &viewport);
         vkCmdSetScissor(cmdBuf.GetHandle(), 0, 1, &scissor);
 
-        m_MainRenderpass->Begin(cmdBuf, m_Swapchain->GetFramebufferHandle(m_ImageIndex));
+        // m_MainRenderpass->Begin(cmdBuf, m_Swapchain->GetFramebufferHandle(m_ImageIndex));
 
         g_VkMaterialBufferManager->FlushUpdates();
 
@@ -211,7 +202,7 @@ namespace VoidArchitect::Platform
     {
         auto& cmdBuf = m_GraphicsCommandBuffers[m_ImageIndex];
 
-        m_MainRenderpass->End(cmdBuf);
+        // m_MainRenderpass->End(cmdBuf);
 
         cmdBuf.End();
 
@@ -236,7 +227,7 @@ namespace VoidArchitect::Platform
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = &m_ImageAvailableSemaphores[m_CurrentIndex];
 
-        const std::vector flags = {
+        const VAArray flags = {
             VkPipelineStageFlags{VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}
         };
         submitInfo.pWaitDstStageMask = flags.data();
@@ -263,21 +254,12 @@ namespace VoidArchitect::Platform
         return true;
     }
 
-    void VulkanRHI::UpdateGlobalState(
-        const Resources::PipelinePtr& pipeline,
-        const Math::Mat4& projection,
-        const Math::Mat4& view)
+    void VulkanRHI::UpdateGlobalState(const Resources::GlobalUniformObject& gUBO)
     {
-        const auto globalUniformObject = Resources::GlobalUniformObject{
-            .Projection = projection,
-            .View = view,
-            .Reserved0 = Math::Mat4::Identity(),
-            .Reserved1 = Math::Mat4::Identity(),
-        };
-        auto data = std::vector{globalUniformObject, globalUniformObject, globalUniformObject};
+        auto data = VAArray{gUBO, gUBO, gUBO};
         m_GlobalUniformBuffer->LoadData(data);
 
-        // Update the descriptor set
+        // Update the descriptor set for current frame
         VkDescriptorBufferInfo bufferInfo{};
         bufferInfo.buffer = m_GlobalUniformBuffer->GetHandle();
         bufferInfo.offset = sizeof(Resources::GlobalUniformObject) * m_ImageIndex;
@@ -298,9 +280,13 @@ namespace VoidArchitect::Platform
             &writeDescriptorSet,
             0,
             nullptr);
+    }
 
+    void VulkanRHI::BindGlobalState(const Resources::RenderStatePtr& pipeline)
+    {
         const auto& cmdBuf = GetCurrentCommandBuffer();
         const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(pipeline);
+
         vkCmdBindDescriptorSets(
             cmdBuf.GetHandle(),
             VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -312,9 +298,11 @@ namespace VoidArchitect::Platform
             nullptr);
     }
 
-    void VulkanRHI::DrawMesh(const Resources::GeometryRenderData& data)
+    void VulkanRHI::DrawMesh(
+        const Resources::GeometryRenderData& data,
+        const Resources::RenderStatePtr& pipeline)
     {
-        data.Material->SetModel(*this, data.Model);
+        data.Material->SetModel(*this, data.Model, pipeline);
         data.Mesh->Bind(*this);
         vkCmdDrawIndexed(
             GetCurrentCommandBuffer().GetHandle(),
@@ -331,7 +319,7 @@ namespace VoidArchitect::Platform
         const uint32_t height,
         const uint8_t channels,
         const bool hasTransparency,
-        const std::vector<uint8_t>& data)
+        const VAArray<uint8_t>& data)
     {
         return new VulkanTexture2D(
             *this,
@@ -345,39 +333,115 @@ namespace VoidArchitect::Platform
             data);
     }
 
-    Resources::IPipeline* VulkanRHI::CreatePipeline(PipelineConfig& config)
+    Resources::IRenderState* VulkanRHI::CreatePipeline(
+        RenderStateConfig& config,
+        Resources::IRenderPass* renderPass)
     {
-        // NOTE By convention, the rendering engine define space0 to be a global uniform buffer
-        //  containing the projection and view matrices. It state that the data into this buffer
-        //  will be updated at most once per frame.
-        //  Thus we will delete the space0 definition from the pipeline config. As it is managed
-        //  by the RHI, we don't need to create it in the pipeline.
+        auto* vkRenderPass = dynamic_cast<VulkanRenderPass*>(renderPass);
+        if (!vkRenderPass)
+        {
+            VA_ENGINE_ERROR("[VulkanRHI] Invalid render pass type.");
+            return nullptr;
+        }
 
-        // Create the requested pipeline with a base descriptor set layout.
-        return new VulkanPipeline(config, m_Device, m_Allocator, m_MainRenderpass);
+        return new VulkanPipeline(config, m_Device, m_Allocator, vkRenderPass);
     }
 
-    Resources::IMaterial* VulkanRHI::CreateMaterial(
-        const std::string& name,
-        const Resources::PipelinePtr& pipeline)
+    Resources::IMaterial* VulkanRHI::CreateMaterial(const std::string& name)
     {
-        return new VulkanMaterial(name, m_Device, m_Allocator, pipeline);
+        return new VulkanMaterial(name, m_Device, m_Allocator);
     }
 
     Resources::IShader* VulkanRHI::CreateShader(
         const std::string& name,
         const ShaderConfig& config,
-        const std::vector<uint8_t>& data)
+        const VAArray<uint8_t>& data)
     {
         return new VulkanShader(m_Device, m_Allocator, name, config, data);
     }
 
     Resources::IMesh* VulkanRHI::CreateMesh(
         const std::string& name,
-        const std::vector<Resources::MeshVertex>& vertices,
-        const std::vector<uint32_t>& indices)
+        const VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
     {
         return new VulkanMesh(*this, m_Allocator, name, vertices, indices);
+    }
+
+    Resources::IRenderTarget* VulkanRHI::CreateRenderTarget(
+        const Renderer::RenderTargetConfig& config)
+    {
+        if (config.IsMain)
+        {
+            // Main target: Use swapchain dimensions and format
+            auto mainConfig = config;
+            mainConfig.Width = m_CurrentWidth;
+            mainConfig.Height = m_CurrentHeight;
+
+            // Create the main render target (no attachment yet - managed by swapchain)
+            const auto renderTarget =
+                new VulkanRenderTarget(mainConfig, m_Device->GetLogicalDeviceHandle(), m_Allocator);
+
+            m_MainRenderTargets.push_back(renderTarget);
+
+            VA_ENGINE_TRACE(
+                "[VulkanRHI] Main target '{}' created and added to registry.",
+                config.Name);
+
+            return renderTarget;
+        }
+        else if (!config.Attachments.empty())
+        {
+            // External textures provided
+            VAArray<VkImageView> vulkanViews;
+            vulkanViews.reserve(config.Attachments.size());
+
+            for (const auto& texture : config.Attachments)
+            {
+                if (auto vulkanTexture = std::dynamic_pointer_cast<VulkanTexture2D>(texture))
+                {
+                    vulkanViews.push_back(vulkanTexture->GetImageView());
+                }
+                else
+                {
+                    VA_ENGINE_ERROR(
+                        "[VulkanRHI] Invalid texture type for RenderTarget attachment.");
+                    return nullptr;
+                }
+            }
+
+            return new VulkanRenderTarget(
+                config,
+                m_Device->GetLogicalDeviceHandle(),
+                m_Allocator,
+                vulkanViews);
+        }
+        else
+        {
+            // Auto-create textures based on config
+            VAArray<VkImageView> vulkanViews;
+
+            VA_ENGINE_WARN(
+                "[VulkanRHI] Auto texture creation not yet implented. Provide attachments "
+                "explicitly for now.");
+            return nullptr;
+        }
+    }
+
+    Resources::IRenderPass* VulkanRHI::CreateRenderPass(
+        const RenderPassConfig& config,
+        const Renderer::PassPosition passPosition)
+    {
+        const auto swapchainFormat = m_Swapchain->GetFormat();
+        const auto depthFormat = m_Swapchain->GetDepthFormat();
+
+        return new VulkanRenderPass(
+            config,
+            m_Device,
+            m_Allocator,
+            passPosition,
+            swapchainFormat,
+            depthFormat);
     }
 
     int32_t VulkanRHI::FindMemoryIndex(
@@ -422,16 +486,18 @@ namespace VoidArchitect::Platform
 #endif
 
         // Validation layers
-        std::vector<const char*> requiredValidationLayers;
-#ifdef DEBUG
+        VAArray<const char*> requiredValidationLayers;
+#if defined(DEBUG) || defined(FORCE_VALIDATION)
         VA_ENGINE_DEBUG("[VulkanRHI] Validation layers enabled.");
 
         requiredValidationLayers.push_back("VK_LAYER_KHRONOS_validation");
+        // FIXME: In case of things going extremely wrong, enable this layer to see every call.
+        // requiredValidationLayers.push_back("VK_LAYER_LUNARG_api_dump");
 
         // Get a list of supported validation layers
         uint32_t layerCount;
         VA_VULKAN_CHECK_RESULT_CRITICAL(vkEnumerateInstanceLayerProperties(&layerCount, nullptr));
-        std::vector<VkLayerProperties> availableLayers(layerCount);
+        VAArray<VkLayerProperties> availableLayers(layerCount);
         VA_VULKAN_CHECK_RESULT_CRITICAL(
             vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data()));
 
@@ -590,14 +656,39 @@ namespace VoidArchitect::Platform
 
     VkSurfaceFormatKHR VulkanRHI::ChooseSwapchainFormat() const
     {
+        constexpr VkFormat prefFormats[] = {
+            VK_FORMAT_R8G8B8A8_SRGB,
+            VK_FORMAT_B8G8R8A8_SRGB,
+            VK_FORMAT_R8G8B8A8_UNORM,
+            VK_FORMAT_B8G8R8A8_UNORM,
+        };
         for (const auto& availableFormat : m_Formats)
         {
-            if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB
-                && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+            for (const auto& prefFormat : prefFormats)
             {
-                return availableFormat;
+                if (availableFormat.format == prefFormat
+                    && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+                {
+                    return availableFormat;
+                }
             }
         }
+
+        VA_ENGINE_WARN(
+            "[VulkanRHI] No suitable swapchain format found, choosing a default one : {}.",
+            static_cast<uint32_t>(m_Formats[0].format));
+
+#ifdef DEBUG
+        // In debug build, print the list of available formats.
+        VA_ENGINE_DEBUG("[VulkanRHI] Available formats:");
+        for (const auto& [format, colorSpace] : m_Formats)
+        {
+            VA_ENGINE_DEBUG(
+                "- {}/{}",
+                static_cast<uint32_t>(format),
+                static_cast<uint32_t>(colorSpace));
+        }
+#endif
 
         return m_Formats[0]; // If a required format is not found, we will use the first one.
     }
@@ -643,7 +734,7 @@ namespace VoidArchitect::Platform
 
     VkFormat VulkanRHI::ChooseDepthFormat() const
     {
-        const std::vector candidates = {
+        const VAArray candidates = {
             VK_FORMAT_D32_SFLOAT,
             VK_FORMAT_D32_SFLOAT_S8_UINT,
             VK_FORMAT_D24_UNORM_S8_UINT
@@ -671,24 +762,6 @@ namespace VoidArchitect::Platform
 
         VA_ENGINE_WARN("[VulkanRHI] Unable to find a suitable depth format.");
         return VK_FORMAT_UNDEFINED;
-    }
-
-    void VulkanRHI::CreateRenderpass()
-    {
-        m_MainRenderpass = std::make_unique<VulkanRenderpass>(
-            m_Device,
-            m_Swapchain,
-            m_Allocator,
-            0,
-            0,
-            m_FramebufferWidth,
-            m_FramebufferHeight,
-            0.02f,
-            0.02f,
-            0.02f,
-            1.0f,
-            1.0f,
-            0);
     }
 
     void VulkanRHI::CreateCommandBuffers()
@@ -770,7 +843,7 @@ namespace VoidArchitect::Platform
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
         const auto globalDescriptorSetLayout = g_VkDescriptorSetLayoutManager->GetGlobalLayout();
-        const std::vector globalLayouts = {
+        const VAArray globalLayouts = {
             globalDescriptorSetLayout,
             globalDescriptorSetLayout,
             globalDescriptorSetLayout
@@ -804,6 +877,17 @@ namespace VoidArchitect::Platform
         m_ImagesInFlight.clear();
     }
 
+    void VulkanRHI::InvalidateMainTargetsFramebuffers() const
+    {
+        m_Device->WaitIdle();
+        for (const auto& target : m_MainRenderTargets)
+        {
+            target->InvalidateFramebuffers();
+        }
+
+        VA_ENGINE_DEBUG("[VulkanRHI] Invalidated all main render target framebuffers.");
+    }
+
     bool VulkanRHI::RecreateSwapchain()
     {
         if (m_RecreatingSwapchain)
@@ -812,7 +896,7 @@ namespace VoidArchitect::Platform
             return false;
         }
 
-        if (m_FramebufferWidth == 0 || m_FramebufferHeight == 0)
+        if (m_CurrentWidth == 0 || m_CurrentHeight == 0)
         {
             VA_ENGINE_DEBUG(
                 "[VulkanRHI] RecreateSwapchain called when window is < 1 in a dimension.");
@@ -830,37 +914,20 @@ namespace VoidArchitect::Platform
         QuerySwapchainCapabilities();
         const auto depthFormat = ChooseDepthFormat();
 
-        m_Swapchain->Recreate(
-            *this,
-            {m_CachedFramebufferWidth, m_CachedFramebufferHeight},
-            depthFormat);
+        m_Swapchain->Recreate(*this, {m_PendingWidth, m_PendingHeight}, depthFormat);
 
         // Sync
-        m_FramebufferWidth = m_CachedFramebufferWidth;
-        m_FramebufferHeight = m_CachedFramebufferHeight;
-        m_MainRenderpass->SetWidth(m_FramebufferWidth);
-        m_MainRenderpass->SetHeight(m_FramebufferHeight);
-        m_CachedFramebufferWidth = 0;
-        m_CachedFramebufferHeight = 0;
+        m_CurrentWidth = m_PendingWidth;
+        m_CurrentHeight = m_PendingHeight;
+        m_PendingWidth = 0;
+        m_PendingHeight = 0;
 
         // Update framebuffer size generation.
-        m_FramebufferSizeLastGeneration = m_FramebufferSizeGeneration;
+        m_ResizeLastGeneration = m_ResizeGeneration;
 
         m_GraphicsCommandBuffers.clear();
-        m_MainRenderpass->SetX(0);
-        m_MainRenderpass->SetY(0);
-        m_MainRenderpass->SetWidth(m_FramebufferWidth);
-        m_MainRenderpass->SetHeight(m_FramebufferHeight);
 
-        m_Swapchain->RegenerateFramebuffers(
-            m_MainRenderpass,
-            m_FramebufferWidth,
-            m_FramebufferHeight);
         CreateCommandBuffers();
-
-        // TODO We should update the global state.
-        // for (uint32_t i = 0; i < m_Swapchain->GetImageCount(); i++)
-        //     m_GlobalStateIsUpdated[i] = false;
 
         m_RecreatingSwapchain = false;
         VA_ENGINE_TRACE("[VulkanRHI] RecreateSwapchain finished.");
