@@ -14,6 +14,7 @@ namespace VoidArchitect
     namespace Renderer
     {
         struct RenderTargetConfig;
+        enum class PassPosition;
     } // namespace Renderer
 } // namespace VoidArchitect
 
@@ -31,6 +32,7 @@ namespace VoidArchitect::Resources
     class IRenderState;
     class IRenderTarget;
     class IRenderPass;
+    class GlobalUniformObject;
 
     using RenderStatePtr = std::shared_ptr<IRenderState>;
 } // namespace VoidArchitect::Resources
@@ -55,9 +57,7 @@ namespace VoidArchitect::Platform
         virtual bool BeginFrame(float deltaTime) = 0;
         virtual bool EndFrame(float deltaTime) = 0;
 
-        virtual void UpdateGlobalState(
-            const Math::Mat4& projection,
-            const Math::Mat4& view) = 0;
+        virtual void UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) = 0;
         virtual void BindGlobalState(const Resources::RenderStatePtr& pipeline) = 0;
 
         virtual void DrawMesh(
@@ -93,6 +93,7 @@ namespace VoidArchitect::Platform
         virtual Resources::IRenderTarget* CreateRenderTarget(
             const Renderer::RenderTargetConfig& config) = 0;
         virtual Resources::IRenderPass* CreateRenderPass(
-            const RenderPassConfig& config) = 0;
+            const RenderPassConfig& config,
+            Renderer::PassPosition passPosition) = 0;
     };
 } // namespace VoidArchitect::Platform

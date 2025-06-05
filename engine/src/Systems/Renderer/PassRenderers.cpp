@@ -82,7 +82,9 @@ namespace VoidArchitect::Renderer
         }
 
         // Use default material for now
-        auto uiMaterial = g_MaterialSystem->GetDefaultMaterial();
+        auto uiMaterial = RenderCommand::s_UIMaterial
+                              ? RenderCommand::s_UIMaterial
+                              : g_MaterialSystem->GetDefaultMaterial();
         if (!uiMaterial)
         {
             VA_ENGINE_ERROR("[UIPassRenderer] Failed to get default material.");
@@ -91,7 +93,7 @@ namespace VoidArchitect::Renderer
 
         // Create geometry render data
         const auto uiGeometry = Resources::GeometryRenderData(
-            Math::Mat4::Identity(),
+            Math::Mat4::Translate(0.15f * 0.5f, 0.15f * 0.5f, 0.f),
             uiMaterial,
             uiMesh);
 

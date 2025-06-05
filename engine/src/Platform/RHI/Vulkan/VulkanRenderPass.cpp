@@ -14,6 +14,7 @@ namespace VoidArchitect::Platform
         const RenderPassConfig& config,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
+        Renderer::PassPosition passPosition,
         VkFormat swapchainFormat,
         VkFormat depthFormat)
         : IRenderPass(config.Name),
@@ -26,7 +27,7 @@ namespace VoidArchitect::Platform
           m_h(0)
 
     {
-        CreateRenderPassFromConfig(config, swapchainFormat, depthFormat);
+        CreateRenderPassFromConfig(config, passPosition, swapchainFormat, depthFormat);
     }
 
     VulkanRenderPass::~VulkanRenderPass() { Release(); }
@@ -158,6 +159,7 @@ namespace VoidArchitect::Platform
 
     void VulkanRenderPass::CreateRenderPassFromConfig(
         const RenderPassConfig& config,
+        Renderer::PassPosition passPosition,
         VkFormat swapchainFormat,
         VkFormat depthFormat)
     {
@@ -192,8 +194,6 @@ namespace VoidArchitect::Platform
             attachment.storeOp = TranslateEngineStoreOpToVulkan(attachmentConfig.StoreOp);
             attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
             attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-            attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-
             bool isDepthAttachment = false;
 
             if (attachmentConfig.Name == "depth"
@@ -202,19 +202,49 @@ namespace VoidArchitect::Platform
                 || attachmentConfig.Format == Renderer::TextureFormat::D24_UNORM_S8_UINT)
             {
                 isDepthAttachment = true;
-                attachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
                 depthRef = {
                     static_cast<uint32_t>(i),
                     VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
                 };
+                switch (passPosition)
+                {
+                    case Renderer::PassPosition::First:
+                    case Renderer::PassPosition::Standalone:
+                        attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                        attachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+                        break;
+                    case Renderer::PassPosition::Last:
+                    case Renderer::PassPosition::Middle:
+                        attachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+                        attachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+                        break;
+                }
             }
             else if (
                 attachmentConfig.Name == "color"
                 || attachmentConfig.Format == Renderer::TextureFormat::SWAPCHAIN_FORMAT)
             {
-                attachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
                 colorRefs.push_back(
                     {static_cast<uint32_t>(i), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL});
+                switch (passPosition)
+                {
+                    case Renderer::PassPosition::Standalone:
+                        attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                        attachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+                        break;
+                    case Renderer::PassPosition::First:
+                        attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                        attachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+                        break;
+                    case Renderer::PassPosition::Middle:
+                        attachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+                        attachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+                        break;
+                    case Renderer::PassPosition::Last:
+                        attachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+                        attachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+                        break;
+                }
             }
             else
             {

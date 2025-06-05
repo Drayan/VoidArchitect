@@ -72,7 +72,10 @@ namespace VoidArchitect
 
             static Resources::Texture2DPtr s_TestTexture;
             static Resources::MaterialPtr s_TestMaterial;
+            static Resources::MaterialPtr s_UIMaterial;
             static Resources::MeshPtr s_TestMesh;
+
+            static Math::Mat4 s_UIProjectionMatrix;
 
         private:
             static Platform::RHI_API_TYPE m_ApiType;

@@ -342,40 +342,40 @@ namespace VoidArchitect::Renderer
             return false;
         }
 
-        // Step 1: Create RenderTargets (RenderPasses might need them for compatibility checking)
-        if (!CompileRenderTargets())
-        {
-            VA_ENGINE_ERROR("[RenderGraph] Failed to compile RenderTargets.");
-            return false;
-        }
-
-        // Step 2: Create RenderPasses from templates
-        if (!CompileRenderPasses())
-        {
-            VA_ENGINE_ERROR("[RenderGraph] Failed to compile RenderPasses.");
-            return false;
-        }
-
-        // Step 3: Create RenderStates from templates
-        if (!CompileRenderStates())
-        {
-            VA_ENGINE_ERROR("[RenderGraph] Failed to compile RenderStates.");
-            return false;
-        }
-
-        // Step 4: Assign required states from renderers
-        AssignRequiredStates();
-
-        // Step 5: Optimize execution to minimize state changes
-        OptimizeExecutionOrder();
-
-        // Step 6: Compute final execution order
+        // Step 1: Compute final execution order
         m_ExecutionOrder = ComputeExecutionOrder();
         if (m_ExecutionOrder.empty())
         {
             VA_ENGINE_ERROR("[RenderGraph] Failed to compute execution order.");
             return false;
         }
+
+        // Step 2: Create RenderTargets (RenderPasses might need them for compatibility checking)
+        if (!CompileRenderTargets())
+        {
+            VA_ENGINE_ERROR("[RenderGraph] Failed to compile RenderTargets.");
+            return false;
+        }
+
+        // Step 3: Create RenderPasses from templates
+        if (!CompileRenderPasses())
+        {
+            VA_ENGINE_ERROR("[RenderGraph] Failed to compile RenderPasses.");
+            return false;
+        }
+
+        // Step 4: Create RenderStates from templates
+        if (!CompileRenderStates())
+        {
+            VA_ENGINE_ERROR("[RenderGraph] Failed to compile RenderStates.");
+            return false;
+        }
+
+        // Step 5: Assign required states from renderers
+        AssignRequiredStates();
+
+        // Step 6: Optimize execution to minimize state changes
+        OptimizeExecutionOrder();
 
         // Mark as compiled
         m_IsCompiled = true;
@@ -422,6 +422,30 @@ namespace VoidArchitect::Renderer
 
     bool RenderGraph::CompileRenderPasses()
     {
+        // Analyse execution order to determine pass positions
+        for (size_t i = 0; i < m_ExecutionOrder.size(); i++)
+        {
+            auto* passNode = FindRenderPassNode(m_ExecutionOrder[i]);
+            if (!passNode)
+            {
+                VA_ENGINE_ERROR(
+                    "[RenderGraph] Invalid pass in execution order, skipping pass.");
+                continue;
+            }
+
+            PassPosition position;
+            if (m_ExecutionOrder.size() == 1)
+                position = PassPosition::Standalone;
+            else if (i == 0)
+                position = PassPosition::First;
+            else if (i == m_ExecutionOrder.size() - 1)
+                position = PassPosition::Last;
+            else
+                position = PassPosition::Middle;
+
+            passNode->ComputedPosition = position;
+        }
+
         VA_ENGINE_DEBUG("[RenderGraph] Compiling RenderPasses...");
 
         // This step makes the real RHI RenderPass objects.
@@ -429,7 +453,9 @@ namespace VoidArchitect::Renderer
         {
             if (!passNode.RenderPass)
             {
-                passNode.RenderPass = g_RenderPassSystem->CreateRenderPass(passNode.templateUUID);
+                passNode.RenderPass = g_RenderPassSystem->CreateRenderPass(
+                    passNode.templateUUID,
+                    passNode.ComputedPosition);
 
                 if (!passNode.RenderPass)
                 {

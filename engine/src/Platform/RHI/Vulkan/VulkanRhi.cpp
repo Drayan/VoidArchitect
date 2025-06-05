@@ -252,17 +252,9 @@ namespace VoidArchitect::Platform
         return true;
     }
 
-    void VulkanRHI::UpdateGlobalState(
-        const Math::Mat4& projection,
-        const Math::Mat4& view)
+    void VulkanRHI::UpdateGlobalState(const Resources::GlobalUniformObject& gUBO)
     {
-        const auto globalUniformObject = Resources::GlobalUniformObject{
-            .Projection = projection,
-            .View = view,
-            .Reserved0 = Math::Mat4::Identity(),
-            .Reserved1 = Math::Mat4::Identity(),
-        };
-        auto data = std::vector{globalUniformObject, globalUniformObject, globalUniformObject};
+        auto data = std::vector{gUBO, gUBO, gUBO};
         m_GlobalUniformBuffer->LoadData(data);
 
         // Update the descriptor set for current frame
@@ -434,12 +426,20 @@ namespace VoidArchitect::Platform
         }
     }
 
-    Resources::IRenderPass* VulkanRHI::CreateRenderPass(const RenderPassConfig& config)
+    Resources::IRenderPass* VulkanRHI::CreateRenderPass(
+        const RenderPassConfig& config,
+        const Renderer::PassPosition passPosition)
     {
         const auto swapchainFormat = m_Swapchain->GetFormat();
         const auto depthFormat = m_Swapchain->GetDepthFormat();
 
-        return new VulkanRenderPass(config, m_Device, m_Allocator, swapchainFormat, depthFormat);
+        return new VulkanRenderPass(
+            config,
+            m_Device,
+            m_Allocator,
+            passPosition,
+            swapchainFormat,
+            depthFormat);
     }
 
     int32_t VulkanRHI::FindMemoryIndex(

@@ -126,7 +126,9 @@ namespace VoidArchitect
         return nullptr;
     }
 
-    Resources::RenderPassPtr RenderPassSystem::CreateRenderPass(const UUID& templateUUID)
+    Resources::RenderPassPtr RenderPassSystem::CreateRenderPass(
+        const UUID& templateUUID,
+        const Renderer::PassPosition passPosition)
     {
         // Check if the render pass template exists
         if (!HasRenderPassTemplate(templateUUID))
@@ -138,7 +140,7 @@ namespace VoidArchitect
         }
 
         // Create the signature
-        const auto& passTemplate = GetRenderPassTemplate(templateUUID);
+        auto& passTemplate = GetRenderPassTemplate(templateUUID);
         const auto signature = CreateSignature(passTemplate);
 
         // Check if the render state isn't already in the cache
@@ -150,7 +152,9 @@ namespace VoidArchitect
         }
 
         // Create a new RenderPass resource
-        const auto rawPass = Renderer::RenderCommand::GetRHIRef().CreateRenderPass(passTemplate);
+        const auto rawPass = Renderer::RenderCommand::GetRHIRef().CreateRenderPass(
+            passTemplate,
+            passPosition);
         if (!rawPass)
         {
             VA_ENGINE_WARN(

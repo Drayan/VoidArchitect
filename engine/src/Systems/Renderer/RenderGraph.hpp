@@ -88,6 +88,8 @@ namespace VoidArchitect
                 std::vector<UUID> DependenciesUUIDs;
                 std::vector<UUID> OutputsUUIDs;
 
+                PassPosition ComputedPosition;
+
                 std::string RequiredStateTemplateName;
                 Resources::RenderStatePtr AssignedState;
             };

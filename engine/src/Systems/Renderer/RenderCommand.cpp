@@ -20,8 +20,11 @@ namespace VoidArchitect::Renderer
 {
     Resources::Texture2DPtr RenderCommand::s_TestTexture;
     Resources::MaterialPtr RenderCommand::s_TestMaterial;
+    Resources::MaterialPtr RenderCommand::s_UIMaterial;
     Resources::MeshPtr RenderCommand::s_TestMesh;
     Resources::MeshPtr RenderCommand::s_UIMesh;
+
+    Math::Mat4 RenderCommand::s_UIProjectionMatrix = Math::Mat4::Identity();
 
     Platform::RHI_API_TYPE RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
     Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
@@ -104,10 +107,20 @@ namespace VoidArchitect::Renderer
 
         // TEMP Try to load a test material.
         s_TestMaterial = g_MaterialSystem->LoadMaterial("TestMaterial");
+        s_UIMaterial = g_MaterialSystem->LoadMaterial("DefaultUI");
+
+        const float aspectRatio = static_cast<float>(m_Width) / static_cast<float>(m_Height);
+        s_UIProjectionMatrix = Math::Mat4::Orthographic(
+            0.f,
+            1.0f,
+            1.0f / aspectRatio,
+            0.f,
+            -1.0f,
+            1.0f);
 
         // TEMP Create a test mesh.
         s_TestMesh = g_MeshSystem->CreateCube("TestMesh");
-        s_UIMesh = g_MeshSystem->CreatePlane("UIMesh", 1.0f, 1.0f, Math::Vec3::Forward());
+        s_UIMesh = g_MeshSystem->CreatePlane("UIMesh", 0.15f, 0.15f, Math::Vec3::Back());
 
         CreatePerspectiveCamera(45.0f, 0.1f, 100.0f);
 
@@ -123,6 +136,7 @@ namespace VoidArchitect::Renderer
 
         s_UIMesh = nullptr;
         s_TestMesh = nullptr;
+        s_UIMaterial = nullptr;
         s_TestMaterial = nullptr;
         s_TestTexture = nullptr;
 
@@ -143,8 +157,17 @@ namespace VoidArchitect::Renderer
         m_Height = height;
 
         // Update all camera's aspect ratio
+        float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
         for (auto& camera : m_Cameras)
-            camera.SetAspectRatio(width / static_cast<float>(height));
+            camera.SetAspectRatio(aspectRatio);
+
+        s_UIProjectionMatrix = Math::Mat4::Orthographic(
+            0.f,
+            1.0f,
+            1.0f / aspectRatio,
+            0.f,
+            -1.0f,
+            1.0f);
 
         g_RenderGraph->OnResize(width, height);
         g_RenderGraph->Compile();
@@ -170,8 +193,14 @@ namespace VoidArchitect::Renderer
             frameData.Projection = camera.GetProjection();
             frameData.View = camera.GetView();
 
+            const Resources::GlobalUniformObject gUBO{
+                .View = frameData.View,
+                .Projection = frameData.Projection,
+                .UIProjection = s_UIProjectionMatrix,
+            };
+
             // Update global state, might be moved elsewhere
-            m_RenderingHardware->UpdateGlobalState(frameData.Projection, frameData.View);
+            m_RenderingHardware->UpdateGlobalState(gUBO);
 
             g_RenderGraph->Execute(frameData);
         }

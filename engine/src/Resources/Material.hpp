@@ -29,11 +29,11 @@ namespace VoidArchitect
 
         using MaterialPtr = std::shared_ptr<IMaterial>;
 
-        // NOTE Vulkan give us a max of 256 bytes on G_UBO
         struct GlobalUniformObject
         {
             Math::Mat4 Projection;
             Math::Mat4 View;
+            Math::Mat4 UIProjection;
             Math::Mat4 Reserved0;
             Math::Mat4 Reserved1;
         };

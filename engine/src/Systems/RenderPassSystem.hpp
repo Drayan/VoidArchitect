@@ -49,6 +49,14 @@ namespace VoidArchitect
             UI,
             Unknown
         };
+
+        enum class PassPosition
+        {
+            First, // UNDEFINED -> COLOR_ATTACHMENT
+            Middle, // COLOR_ATTACHMENT -> COLOR_ATTACHMENT
+            Last, // COLOR_ATTACHMENT -> PRESENT
+            Standalone // UNDEFINED -> PRESENT
+        };
     } // namespace Renderer
 
     struct RenderPassConfig
@@ -57,6 +65,7 @@ namespace VoidArchitect
         Renderer::RenderPassType Type = Renderer::RenderPassType::Unknown;
 
         std::vector<std::string> CompatibleStates;
+        Renderer::PassPosition Position = Renderer::PassPosition::Standalone;
 
         struct AttachmentConfig
         {
@@ -140,7 +149,8 @@ namespace VoidArchitect
 
         // Creation with caching
         Resources::RenderPassPtr CreateRenderPass(
-            const UUID& templateUUID);
+            const UUID& templateUUID,
+            Renderer::PassPosition passPosition);
 
         Resources::RenderPassPtr GetCachedRenderPass(
             const UUID& templateUUID,

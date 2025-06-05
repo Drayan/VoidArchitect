@@ -31,6 +31,7 @@ namespace VoidArchitect::Platform
             const RenderPassConfig& config,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
+            Renderer::PassPosition passPosition,
             VkFormat swapchainFormat,
             VkFormat depthFormat);
         ~VulkanRenderPass() override;
@@ -68,6 +69,7 @@ namespace VoidArchitect::Platform
     private:
         void CreateRenderPassFromConfig(
             const RenderPassConfig& config,
+            Renderer::PassPosition passPosition,
             VkFormat swapchainFormat,
             VkFormat depthFormat);
 

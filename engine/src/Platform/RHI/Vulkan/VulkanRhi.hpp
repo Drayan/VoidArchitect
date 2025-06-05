@@ -20,6 +20,7 @@ namespace VoidArchitect
         class Texture2D;
         class IMaterial;
         class IRenderState;
+        struct GlobalUniformObject;
     } // namespace Resources
 } // namespace VoidArchitect
 
@@ -49,9 +50,7 @@ namespace VoidArchitect::Platform
         bool BeginFrame(float deltaTime) override;
         bool EndFrame(float deltaTime) override;
 
-        void UpdateGlobalState(
-            const Math::Mat4& projection,
-            const Math::Mat4& view) override;
+        void UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) override;
         void BindGlobalState(const Resources::RenderStatePtr& pipeline) override;
 
         void DrawMesh(
@@ -86,7 +85,9 @@ namespace VoidArchitect::Platform
         ///////////////////////////////////////////////////////////////////////
         Resources::IRenderTarget* CreateRenderTarget(
             const Renderer::RenderTargetConfig& config) override;
-        Resources::IRenderPass* CreateRenderPass(const RenderPassConfig& config) override;
+        Resources::IRenderPass* CreateRenderPass(
+            const RenderPassConfig& config,
+            const Renderer::PassPosition passPosition) override;
 
         [[nodiscard]] VkSurfaceCapabilitiesKHR GetSwapchainCapabilities() const
         {
