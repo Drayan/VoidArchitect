@@ -51,7 +51,7 @@ namespace VoidArchitect::Renderer
                         ResourceBinding{
                             ResourceBindingType::ConstantBuffer,
                             0,
-                            Resources::ShaderStage::Vertex
+                            Resources::ShaderStage::All
                         }
                     },
                 },
@@ -197,6 +197,8 @@ namespace VoidArchitect::Renderer
                 .View = frameData.View,
                 .Projection = frameData.Projection,
                 .UIProjection = s_UIProjectionMatrix,
+                .LightDirection = Math::Vec4::Zero() - Math::Vec4(0.f, 1.f, 1.f, 0.f),
+                .LightColor = Math::Vec4::One()
             };
 
             // Update global state, might be moved elsewhere

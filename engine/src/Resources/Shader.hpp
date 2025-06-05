@@ -18,6 +18,7 @@ namespace VoidArchitect
             Geometry,
             TessellationControl,
             TessellationEvaluation,
+            All
         };
 
         class IShader
@@ -40,5 +41,4 @@ namespace VoidArchitect
 
         using ShaderPtr = std::shared_ptr<IShader>;
     } // namespace Resources
-
 } // namespace VoidArchitect

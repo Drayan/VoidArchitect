@@ -6,7 +6,7 @@ shader:
 */
 struct PS_INPUT
 {
-    [[vk::location(1)]]
+    [[vk::location(2)]]
     float2 UV0 : TEXCOORD0;
 };
 

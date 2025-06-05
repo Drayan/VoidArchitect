@@ -8,9 +8,7 @@
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Systems/MaterialSystem.hpp"
-#include "Systems/MeshSystem.hpp"
 #include "Systems/RenderPassSystem.hpp"
-#include "Systems/RenderStateSystem.hpp"
 
 namespace VoidArchitect::Renderer
 {
@@ -42,8 +40,10 @@ namespace VoidArchitect::Renderer
             return;
         }
 
+        static float angle = 0.f;
+        angle += (1.f * context.FrameData.deltaTime);
         const auto geometry = Resources::GeometryRenderData(
-            Math::Mat4::Identity(),
+            Math::Mat4::Rotate(angle, Math::Vec3::Up()),
             defaultMat,
             RenderCommand::s_TestMesh);
 

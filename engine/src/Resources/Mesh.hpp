@@ -20,6 +20,7 @@ namespace VoidArchitect
         struct MeshVertex
         {
             Math::Vec3 Position;
+            Math::Vec3 Normal;
             Math::Vec2 UV0;
         };
 

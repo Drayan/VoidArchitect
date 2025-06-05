@@ -2,4 +2,4 @@ material:
   name: "TestMaterial"
   properties:
     diffuse_color: [ 1.0, 0.0, 0.0, 1.0 ]
-    diffuse_map: "wall2_n"
+    diffuse_map: "512X512"

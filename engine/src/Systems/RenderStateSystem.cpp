@@ -284,7 +284,7 @@ namespace VoidArchitect
         renderStateConfig.shaders.emplace_back(vertexShader);
         renderStateConfig.shaders.emplace_back(pixelShader);
 
-        renderStateConfig.vertexFormat = VertexFormat::PositionUV;
+        renderStateConfig.vertexFormat = VertexFormat::PositionNormalUV;
         renderStateConfig.inputLayout = RenderStateInputLayout{}; // Use default configuration
 
         RegisterRenderStateTemplate("Default", renderStateConfig);
@@ -304,7 +304,7 @@ namespace VoidArchitect
         uiRenderStateConfig.shaders.emplace_back(uiVertexShader);
         uiRenderStateConfig.shaders.emplace_back(uiPixelShader);
 
-        uiRenderStateConfig.vertexFormat = VertexFormat::PositionUV;
+        uiRenderStateConfig.vertexFormat = VertexFormat::PositionNormalUV;
         uiRenderStateConfig.inputLayout = RenderStateInputLayout{}; // Use default configuration
 
         RegisterRenderStateTemplate("UI", uiRenderStateConfig);

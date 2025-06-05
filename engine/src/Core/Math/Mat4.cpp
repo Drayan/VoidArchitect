@@ -49,6 +49,11 @@ namespace VoidArchitect::Math
         return Mat4(impl::glm::translate(impl::glm::mat4(1.0f), translation.m_Vector));
     }
 
+    Mat4 Mat4::Rotate(const float angle, const Vec3& axis)
+    {
+        return Mat4(impl::glm::rotate(impl::glm::mat4(1.0f), angle, axis.m_Vector));
+    }
+
     Mat4 Mat4::Rotate(const float angle, const float x, const float y, const float z)
     {
         return Mat4(impl::glm::rotate(impl::glm::mat4(1.0f), angle, impl::glm::vec3(x, y, z)));
