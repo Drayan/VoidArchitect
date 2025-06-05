@@ -250,3 +250,4 @@ assets/*
 assets/shaders/*.shader
 assets/shaders/*.yaml
 !assets/materials
+*.log

@@ -35,7 +35,6 @@ namespace VoidArchitect
             Math::Mat4 View;
             Math::Mat4 UIProjection;
             Math::Mat4 Reserved0;
-            Math::Mat4 Reserved1;
         };
 
         struct MaterialUniformObject

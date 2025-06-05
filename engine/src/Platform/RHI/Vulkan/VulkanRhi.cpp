@@ -39,6 +39,8 @@ namespace VoidArchitect::Platform
           m_Allocator(nullptr),
           m_Instance{},
           m_Capabilities{},
+          m_ImageIndex(0),
+          m_CurrentIndex(0),
           m_CurrentWidth(window->GetWidth()),
           m_CurrentHeight(window->GetHeight())
     {
@@ -485,7 +487,7 @@ namespace VoidArchitect::Platform
 
         // Validation layers
         std::vector<const char*> requiredValidationLayers;
-#ifdef DEBUG
+#if defined(DEBUG) || defined(FORCE_VALIDATION)
         VA_ENGINE_DEBUG("[VulkanRHI] Validation layers enabled.");
 
         requiredValidationLayers.push_back("VK_LAYER_KHRONOS_validation");

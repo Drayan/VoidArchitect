@@ -48,6 +48,7 @@ else ()
 endif ()
 
 # Release-specific settings
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DFORCE_VALIDATION")
 option(BUILD_SHARED_LIBS "Build libraries as shared libraries" ON)
 option(VOID_ARCHITECT_BUILD_TESTS "Build test executables" OFF)
 

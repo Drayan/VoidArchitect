@@ -31,10 +31,22 @@ namespace VoidArchitect
                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
             m_MaterialSlots.resize(MAX_MATERIALS);
+            for (auto& slot : m_MaterialSlots)
+            {
+                slot.isActive = false;
+                slot.materialUUID = InvalidUUID;
+                slot.generation = 0;
+                slot.needsUpdate = false;
+            }
             m_StagingData.resize(MAX_MATERIALS);
+            for (auto& data : m_StagingData)
+            {
+                data = {};
+            }
 
             VA_ENGINE_INFO(
-                "[VulkanMaterialBufferManager] Initialized with {} slots.", MAX_MATERIALS);
+                "[VulkanMaterialBufferManager] Initialized with {} slots.",
+                MAX_MATERIALS);
         }
 
         uint32_t VulkanMaterialBufferManager::AllocateSlot(const UUID& materialUUID)
@@ -90,7 +102,8 @@ namespace VoidArchitect
         }
 
         void VulkanMaterialBufferManager::UpdateMaterial(
-            uint32_t slotIndex, const Resources::MaterialUniformObject& data)
+            uint32_t slotIndex,
+            const Resources::MaterialUniformObject& data)
         {
             if (slotIndex >= MAX_MATERIALS || !m_MaterialSlots[slotIndex].isActive)
             {
@@ -114,12 +127,24 @@ namespace VoidArchitect
                     "[VulkanMaterialBufferManager] Attempting to get binding info for an invalid "
                     "slot index {}.",
                     slotIndex);
+
+                return {VK_NULL_HANDLE, 0, 0};
+            }
+
+            if (!m_MaterialUniformBuffer)
+            {
+                VA_ENGINE_WARN(
+                    "[VulkanMaterialBufferManager] Attempting to get binding info for an invalid "
+                    "slot index {}.",
+                    slotIndex);
+                return {VK_NULL_HANDLE, 0, 0};
             }
 
             return {
                 m_MaterialUniformBuffer->GetHandle(),
                 slotIndex * static_cast<uint32_t>(sizeof(Resources::MaterialUniformObject)),
-                sizeof(Resources::MaterialUniformObject)};
+                sizeof(Resources::MaterialUniformObject)
+            };
         }
 
         void VulkanMaterialBufferManager::FlushUpdates()

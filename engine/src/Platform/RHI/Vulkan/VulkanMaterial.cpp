@@ -38,7 +38,19 @@ namespace VoidArchitect::Platform
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
         auto& device = vulkanRhi.GetDeviceRef();
 
+        if (!g_VkMaterialBufferManager)
+        {
+            VA_ENGINE_CRITICAL("[VulkanMaterial] Material buffer manager not initialized.");
+            return;
+        }
+
         m_BufferSlot = g_VkMaterialBufferManager->AllocateSlot(m_UUID);
+
+        if (m_BufferSlot == std::numeric_limits<uint32_t>::max())
+        {
+            VA_ENGINE_ERROR("[VulkanMaterial] Failed to allocate material buffer slot.");
+            return;
+        }
 
         // --- Local Descriptors ---
         // TODO Maybe we should retrieve the pipeline configuration and use that to determine the
@@ -47,7 +59,8 @@ namespace VoidArchitect::Platform
             // Binding 0 - Uniform buffer
             {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 3},
             // Binding 1 - Diffuse sampler layout.
-            {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 3}};
+            {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 3}
+        };
 
         VkDescriptorPoolCreateInfo poolInfo{};
         poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -75,7 +88,9 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanMaterial::SetModel(
-        IRenderingHardware& rhi, const Math::Mat4& model, const Resources::RenderStatePtr& pipeline)
+        IRenderingHardware& rhi,
+        const Math::Mat4& model,
+        const Resources::RenderStatePtr& pipeline)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
         const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
@@ -146,6 +161,7 @@ namespace VoidArchitect::Platform
         const uint32_t frameIndex = rhi.GetImageIndex();
         auto& descriptorState = m_MaterialDescriptorStates[frameIndex];
 
+        VkDescriptorBufferInfo bufferInfo{};
         std::vector<VkWriteDescriptorSet> writes{};
 
         // 1. If we need, we update the material descriptor set for uniform buffer.
@@ -153,7 +169,6 @@ namespace VoidArchitect::Platform
         {
             auto bindingInfo = g_VkMaterialBufferManager->GetBindingInfo(m_BufferSlot);
 
-            VkDescriptorBufferInfo bufferInfo{};
             bufferInfo.buffer = bindingInfo.buffer;
             bufferInfo.offset = bindingInfo.offset;
             bufferInfo.range = bindingInfo.range;
@@ -179,12 +194,15 @@ namespace VoidArchitect::Platform
             texture = std::dynamic_pointer_cast<VulkanTexture2D>(s_DefaultDiffuseTexture);
         }
 
+        VkDescriptorImageInfo imageInfo{};
         if (texture
             && (descriptorState.texUUID != texture->GetUUID()
                 || descriptorState.texGeneration != texture->GetGeneration()
                 || descriptorState.matGeneration != m_Generation))
         {
-            VkDescriptorImageInfo imageInfo{};
+            //FIXME: This could be optimized out by the compiler because we only use a pointer to it
+            //      therefore this is destroyed as soon as we leave the scope.
+            //      We probably should maintain a copy of imageInfo outside the scope.
             imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
             imageInfo.imageView = texture->GetImageView();
             imageInfo.sampler = texture->GetSampler();
@@ -207,7 +225,11 @@ namespace VoidArchitect::Platform
         if (!writes.empty())
         {
             vkUpdateDescriptorSets(
-                m_Device, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
+                m_Device,
+                static_cast<uint32_t>(writes.size()),
+                writes.data(),
+                0,
+                nullptr);
         }
     }
 } // namespace VoidArchitect::Platform
