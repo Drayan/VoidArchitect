@@ -25,7 +25,7 @@ namespace VoidArchitect
                 const RenderStateInputLayout& sharedInputLayout);
             ~VulkanDescriptorSetLayoutManager();
 
-            static std::vector<VkDescriptorSetLayoutBinding>
+            static VAArray<VkDescriptorSetLayoutBinding>
             CreateDescriptorSetLayoutBindingsFromSpace(const SpaceLayout& spaceLayout);
 
             [[nodiscard]] VkDescriptorSetLayout GetGlobalLayout() const { return m_GlobalLayout; }

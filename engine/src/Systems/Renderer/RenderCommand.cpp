@@ -30,7 +30,7 @@ namespace VoidArchitect::Renderer
     Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
     uint32_t RenderCommand::m_Width = 0;
     uint32_t RenderCommand::m_Height = 0;
-    std::vector<Camera> RenderCommand::m_Cameras;
+    VAArray<Camera> RenderCommand::m_Cameras;
 
     void RenderCommand::Initialize(
         const Platform::RHI_API_TYPE apiType,
@@ -44,10 +44,10 @@ namespace VoidArchitect::Renderer
         // Retrieve Pipeline's shared resources setup.
         // TODO This should be managed by the pipeline system.
         const RenderStateInputLayout sharedInputLayout{
-            std::vector{
+            VAArray{
                 SpaceLayout{
                     0,
-                    std::vector{
+                    VAArray{
                         ResourceBinding{
                             ResourceBindingType::ConstantBuffer,
                             0,
@@ -57,7 +57,7 @@ namespace VoidArchitect::Renderer
                 },
                 SpaceLayout{
                     1,
-                    std::vector{
+                    VAArray{
                         ResourceBinding{
                             ResourceBindingType::ConstantBuffer,
                             0,

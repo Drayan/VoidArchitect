@@ -227,7 +227,7 @@ namespace VoidArchitect::Platform
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = &m_ImageAvailableSemaphores[m_CurrentIndex];
 
-        const std::vector flags = {
+        const VAArray flags = {
             VkPipelineStageFlags{VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}
         };
         submitInfo.pWaitDstStageMask = flags.data();
@@ -256,7 +256,7 @@ namespace VoidArchitect::Platform
 
     void VulkanRHI::UpdateGlobalState(const Resources::GlobalUniformObject& gUBO)
     {
-        auto data = std::vector{gUBO, gUBO, gUBO};
+        auto data = VAArray{gUBO, gUBO, gUBO};
         m_GlobalUniformBuffer->LoadData(data);
 
         // Update the descriptor set for current frame
@@ -319,7 +319,7 @@ namespace VoidArchitect::Platform
         const uint32_t height,
         const uint8_t channels,
         const bool hasTransparency,
-        const std::vector<uint8_t>& data)
+        const VAArray<uint8_t>& data)
     {
         return new VulkanTexture2D(
             *this,
@@ -355,15 +355,15 @@ namespace VoidArchitect::Platform
     Resources::IShader* VulkanRHI::CreateShader(
         const std::string& name,
         const ShaderConfig& config,
-        const std::vector<uint8_t>& data)
+        const VAArray<uint8_t>& data)
     {
         return new VulkanShader(m_Device, m_Allocator, name, config, data);
     }
 
     Resources::IMesh* VulkanRHI::CreateMesh(
         const std::string& name,
-        const std::vector<Resources::MeshVertex>& vertices,
-        const std::vector<uint32_t>& indices)
+        const VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
     {
         return new VulkanMesh(*this, m_Allocator, name, vertices, indices);
     }
@@ -393,7 +393,7 @@ namespace VoidArchitect::Platform
         else if (!config.Attachments.empty())
         {
             // External textures provided
-            std::vector<VkImageView> vulkanViews;
+            VAArray<VkImageView> vulkanViews;
             vulkanViews.reserve(config.Attachments.size());
 
             for (const auto& texture : config.Attachments)
@@ -419,7 +419,7 @@ namespace VoidArchitect::Platform
         else
         {
             // Auto-create textures based on config
-            std::vector<VkImageView> vulkanViews;
+            VAArray<VkImageView> vulkanViews;
 
             VA_ENGINE_WARN(
                 "[VulkanRHI] Auto texture creation not yet implented. Provide attachments "
@@ -486,7 +486,7 @@ namespace VoidArchitect::Platform
 #endif
 
         // Validation layers
-        std::vector<const char*> requiredValidationLayers;
+        VAArray<const char*> requiredValidationLayers;
 #if defined(DEBUG) || defined(FORCE_VALIDATION)
         VA_ENGINE_DEBUG("[VulkanRHI] Validation layers enabled.");
 
@@ -497,7 +497,7 @@ namespace VoidArchitect::Platform
         // Get a list of supported validation layers
         uint32_t layerCount;
         VA_VULKAN_CHECK_RESULT_CRITICAL(vkEnumerateInstanceLayerProperties(&layerCount, nullptr));
-        std::vector<VkLayerProperties> availableLayers(layerCount);
+        VAArray<VkLayerProperties> availableLayers(layerCount);
         VA_VULKAN_CHECK_RESULT_CRITICAL(
             vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data()));
 
@@ -734,7 +734,7 @@ namespace VoidArchitect::Platform
 
     VkFormat VulkanRHI::ChooseDepthFormat() const
     {
-        const std::vector candidates = {
+        const VAArray candidates = {
             VK_FORMAT_D32_SFLOAT,
             VK_FORMAT_D32_SFLOAT_S8_UINT,
             VK_FORMAT_D24_UNORM_S8_UINT
@@ -843,7 +843,7 @@ namespace VoidArchitect::Platform
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
         const auto globalDescriptorSetLayout = g_VkDescriptorSetLayoutManager->GetGlobalLayout();
-        const std::vector globalLayouts = {
+        const VAArray globalLayouts = {
             globalDescriptorSetLayout,
             globalDescriptorSetLayout,
             globalDescriptorSetLayout

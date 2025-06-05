@@ -66,7 +66,7 @@ namespace VoidArchitect::Platform
         // Retrieve the images from the swapchain...
         VA_VULKAN_CHECK_RESULT_WARN(vkGetSwapchainImagesKHR(
             m_Device->GetLogicalDeviceHandle(), m_Swapchain, &imageCount, nullptr));
-        auto images = std::vector<VkImage>(imageCount);
+        auto images = VAArray<VkImage>(imageCount);
         VA_VULKAN_CHECK_RESULT_CRITICAL(vkGetSwapchainImagesKHR(
             m_Device->GetLogicalDeviceHandle(), m_Swapchain, &imageCount, images.data()));
 
@@ -121,7 +121,7 @@ namespace VoidArchitect::Platform
     //             .IsMain = true
     //         };
     //
-    //         std::vector attachments = {m_SwapchainImages[i].GetView(), m_DepthImage.GetView()};
+    //         VAArray attachments = {m_SwapchainImages[i].GetView(), m_DepthImage.GetView()};
     //         auto renderTarget = std::make_shared<VulkanRenderTarget>(
     //             config,
     //             m_Device->GetLogicalDeviceHandle(),

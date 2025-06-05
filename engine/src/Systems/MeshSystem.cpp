@@ -44,8 +44,8 @@ namespace VoidArchitect
 
     Resources::MeshPtr MeshSystem::CreateMesh(
         const std::string& name,
-        const std::vector<Resources::MeshVertex>& vertices,
-        const std::vector<uint32_t>& indices)
+        const VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
     {
         Resources::IMesh* mesh =
             Renderer::RenderCommand::GetRHIRef().CreateMesh(name, vertices, indices);
@@ -78,8 +78,8 @@ namespace VoidArchitect
         const uint32_t latitudeBands,
         const uint32_t longitudeBands)
     {
-        std::vector<Resources::MeshVertex> vertices;
-        std::vector<uint32_t> indices;
+        VAArray<Resources::MeshVertex> vertices;
+        VAArray<uint32_t> indices;
 
         for (uint32_t lat = 0; lat <= latitudeBands; ++lat)
         {
@@ -132,8 +132,8 @@ namespace VoidArchitect
     {
         const float halfSize = size * 0.5f;
 
-        std::vector<Resources::MeshVertex> vertices;
-        std::vector<uint32_t> indices;
+        VAArray<Resources::MeshVertex> vertices;
+        VAArray<uint32_t> indices;
 
         // Front face
         vertices.push_back({Math::Vec3(-halfSize, -halfSize, halfSize), Math::Vec2(0.0f, 0.0f)});
@@ -195,8 +195,8 @@ namespace VoidArchitect
         uint32_t widthSegments,
         uint32_t heightSegments)
     {
-        std::vector<Resources::MeshVertex> vertices;
-        std::vector<uint32_t> indices;
+        VAArray<Resources::MeshVertex> vertices;
+        VAArray<uint32_t> indices;
 
         auto n = normal;
         n.Normalize();

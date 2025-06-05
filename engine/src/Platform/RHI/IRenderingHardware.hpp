@@ -73,7 +73,7 @@ namespace VoidArchitect::Platform
             uint32_t height,
             uint8_t channels,
             bool hasTransparency,
-            const std::vector<uint8_t>& data) = 0;
+            const VAArray<uint8_t>& data) = 0;
         virtual Resources::IRenderState* CreatePipeline(
             RenderStateConfig& config,
             Resources::IRenderPass* renderPass) = 0;
@@ -81,11 +81,11 @@ namespace VoidArchitect::Platform
         virtual Resources::IShader* CreateShader(
             const std::string& name,
             const ShaderConfig& config,
-            const std::vector<uint8_t>& data) = 0;
+            const VAArray<uint8_t>& data) = 0;
         virtual Resources::IMesh* CreateMesh(
             const std::string& name,
-            const std::vector<Resources::MeshVertex>& vertices,
-            const std::vector<uint32_t>& indices) = 0;
+            const VAArray<Resources::MeshVertex>& vertices,
+            const VAArray<uint32_t>& indices) = 0;
 
         ///////////////////////////////////////////////////////////////////////
         //// RenderGraph Resources ////////////////////////////////////////////

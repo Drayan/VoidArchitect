@@ -66,7 +66,7 @@ namespace VoidArchitect::Platform
             uint32_t height,
             uint8_t channels,
             bool hasTransparency,
-            const std::vector<uint8_t>& data) override;
+            const VAArray<uint8_t>& data) override;
         Resources::IRenderState* CreatePipeline(
             RenderStateConfig& config,
             Resources::IRenderPass* renderPass) override;
@@ -74,11 +74,11 @@ namespace VoidArchitect::Platform
         Resources::IShader* CreateShader(
             const std::string& name,
             const ShaderConfig& config,
-            const std::vector<uint8_t>& data) override;
+            const VAArray<uint8_t>& data) override;
         Resources::IMesh* CreateMesh(
             const std::string& name,
-            const std::vector<Resources::MeshVertex>& vertices,
-            const std::vector<uint32_t>& indices) override;
+            const VAArray<Resources::MeshVertex>& vertices,
+            const VAArray<uint32_t>& indices) override;
 
         ///////////////////////////////////////////////////////////////////////
         //// RenderGraph Resources ////////////////////////////////////////////
@@ -152,21 +152,21 @@ namespace VoidArchitect::Platform
         std::unique_ptr<VulkanDevice> m_Device;
 
         VkSurfaceCapabilitiesKHR m_Capabilities;
-        std::vector<VkSurfaceFormatKHR> m_Formats;
-        std::vector<VkPresentModeKHR> m_PresentModes;
+        VAArray<VkSurfaceFormatKHR> m_Formats;
+        VAArray<VkPresentModeKHR> m_PresentModes;
 
         uint32_t m_ImageIndex;
         uint32_t m_CurrentIndex;
         bool m_RecreatingSwapchain = false;
         std::unique_ptr<VulkanSwapchain> m_Swapchain;
-        std::vector<VulkanRenderTarget*> m_MainRenderTargets;
-        std::vector<VulkanCommandBuffer> m_GraphicsCommandBuffers;
+        VAArray<VulkanRenderTarget*> m_MainRenderTargets;
+        VAArray<VulkanCommandBuffer> m_GraphicsCommandBuffers;
 
-        std::vector<VkSemaphore> m_ImageAvailableSemaphores;
-        std::vector<VkSemaphore> m_QueueCompleteSemaphores;
+        VAArray<VkSemaphore> m_ImageAvailableSemaphores;
+        VAArray<VkSemaphore> m_QueueCompleteSemaphores;
 
-        std::vector<VulkanFence> m_InFlightFences;
-        std::vector<VulkanFence*> m_ImagesInFlight;
+        VAArray<VulkanFence> m_InFlightFences;
+        VAArray<VulkanFence*> m_ImagesInFlight;
 
         // TEMP Temporary test code
         VkDescriptorPool m_GlobalDescriptorPool;

@@ -83,7 +83,7 @@ namespace VoidArchitect
 
             static uint32_t m_Width, m_Height;
 
-            static std::vector<Camera> m_Cameras;
+            static VAArray<Camera> m_Cameras;
         };
     } // namespace Renderer
 } // namespace VoidArchitect

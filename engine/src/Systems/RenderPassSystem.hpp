@@ -64,7 +64,7 @@ namespace VoidArchitect
         std::string Name;
         Renderer::RenderPassType Type = Renderer::RenderPassType::Unknown;
 
-        std::vector<std::string> CompatibleStates;
+        VAArray<std::string> CompatibleStates;
         Renderer::PassPosition Position = Renderer::PassPosition::Standalone;
 
         struct AttachmentConfig
@@ -81,12 +81,12 @@ namespace VoidArchitect
             uint32_t ClearStencil = 0;
         };
 
-        std::vector<AttachmentConfig> Attachments;
+        VAArray<AttachmentConfig> Attachments;
     };
 
     struct RenderPassSignature
     {
-        std::vector<Renderer::TextureFormat> AttachmentFormats;
+        VAArray<Renderer::TextureFormat> AttachmentFormats;
 
         bool operator==(const RenderPassSignature& rhs) const;
         size_t GetHash() const;
@@ -142,7 +142,7 @@ namespace VoidArchitect
         void RegisterPassRenderer(Renderer::PassRendererPtr& renderer);
         Renderer::IPassRenderer* GetPassRenderer(Renderer::RenderPassType type) const;
 
-        const std::vector<std::string>& GetAvailableRenderers() const
+        const VAArray<std::string>& GetAvailableRenderers() const
         {
             return m_AvailableRenderersNames;
         }
@@ -172,15 +172,15 @@ namespace VoidArchitect
         };
 
         // Templates storage
-        std::unordered_map<UUID, RenderPassTemplate> m_RenderPassTemplates;
-        std::unordered_map<std::string, UUID> m_TemplatesNameToUUIDMap;
+        VAHashMap<UUID, RenderPassTemplate> m_RenderPassTemplates;
+        VAHashMap<std::string, UUID> m_TemplatesNameToUUIDMap;
 
         // Cache based on signature
-        std::unordered_map<RenderPassCacheKey, Resources::RenderPassPtr> m_RenderPassCache;
+        VAHashMap<RenderPassCacheKey, Resources::RenderPassPtr> m_RenderPassCache;
 
         // Pass renderers
-        std::unordered_map<Renderer::RenderPassType, Renderer::PassRendererPtr> m_PassRenderers;
-        std::vector<std::string> m_AvailableRenderersNames;
+        VAHashMap<Renderer::RenderPassType, Renderer::PassRendererPtr> m_PassRenderers;
+        VAArray<std::string> m_AvailableRenderersNames;
     };
 
     inline std::unique_ptr<RenderPassSystem> g_RenderPassSystem;

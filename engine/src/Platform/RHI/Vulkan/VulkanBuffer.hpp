@@ -39,7 +39,7 @@ namespace VoidArchitect::Platform
 
         void Unbind() override {}
 
-        template <typename T> void LoadData(std::vector<T>& data)
+        template <typename T> void LoadData(VAArray<T>& data)
         {
             const auto bufData = LockMemory(0, m_Size, 0);
             memcpy(bufData, data.data(), m_Size);
@@ -88,7 +88,7 @@ namespace VoidArchitect::Platform
             const VulkanRHI& rhi,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
-            const std::vector<T>& data,
+            const VAArray<T>& data,
             bool bindOnCreate = true)
             : VulkanBuffer(
                   rhi,
@@ -115,7 +115,7 @@ namespace VoidArchitect::Platform
             const VulkanRHI& rhi,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
-            const std::vector<Resources::MeshVertex>& data,
+            const VAArray<Resources::MeshVertex>& data,
             bool bindOnCreate = true);
 
         void Bind(IRenderingHardware& rhi) override;
@@ -129,7 +129,7 @@ namespace VoidArchitect::Platform
             const VulkanRHI& rhi,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
-            const std::vector<uint32_t>& data,
+            const VAArray<uint32_t>& data,
             bool bindOnCreate = true);
 
         void Bind(IRenderingHardware& rhi) override;

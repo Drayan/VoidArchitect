@@ -11,7 +11,7 @@
 namespace VoidArchitect::Resources::Loaders
 {
     ImageDataDefinition::ImageDataDefinition(
-        std::vector<uint8_t> data,
+        VAArray<uint8_t> data,
         const int32_t width,
         const int32_t height,
         const int32_t bpp,
@@ -43,7 +43,7 @@ namespace VoidArchitect::Resources::Loaders
                 stbi_failure_reason());
             return {};
         }
-        auto data = std::vector<uint8_t>(width * height * 4);
+        auto data = VAArray<uint8_t>(width * height * 4);
         memcpy(data.data(), rawData, data.size());
         stbi_image_free(rawData);
 

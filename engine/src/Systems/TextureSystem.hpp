@@ -22,7 +22,7 @@ namespace VoidArchitect
             uint32_t height,
             uint8_t channels,
             bool hasTransparency,
-            const std::vector<uint8_t>& data);
+            const VAArray<uint8_t>& data);
 
         void ReloadTexture(const UUID& uuid);
         void ReloadTexture(uint32_t textureHandle);
@@ -56,8 +56,8 @@ namespace VoidArchitect
         std::queue<uint32_t> m_FreeTextureHandles;
         uint32_t m_NextTextureHandle = 0;
 
-        std::vector<TextureData> m_Textures;
-        std::unordered_map<UUID, std::weak_ptr<Resources::ITexture>> m_TextureCache;
+        VAArray<TextureData> m_Textures;
+        VAHashMap<UUID, std::weak_ptr<Resources::ITexture>> m_TextureCache;
 
         size_t m_TotalMemoryUsed = 0;
         size_t m_TotalTexturesLoaded = 0;

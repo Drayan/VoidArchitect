@@ -30,7 +30,7 @@ namespace VoidArchitect::Platform
         const Renderer::RenderTargetConfig& config,
         VkDevice device,
         VkAllocationCallbacks* allocator,
-        const std::vector<VkImageView>& attachments)
+        const VAArray<VkImageView>& attachments)
         : IRenderTarget(config.Name, config.Width, config.Height, config.Format, config.IsMain),
           m_Device(device),
           m_Allocator(allocator),
@@ -104,7 +104,7 @@ namespace VoidArchitect::Platform
 
     void VulkanRenderTarget::CreateFramebufferForImage(
         const VkRenderPass renderpass,
-        const std::vector<VkImageView>& attachments,
+        const VAArray<VkImageView>& attachments,
         uint32_t imageIndex)
     {
         // Ensure the vector has the right size

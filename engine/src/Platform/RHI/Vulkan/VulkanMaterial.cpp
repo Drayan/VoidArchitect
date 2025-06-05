@@ -55,7 +55,7 @@ namespace VoidArchitect::Platform
         // --- Local Descriptors ---
         // TODO Maybe we should retrieve the pipeline configuration and use that to determine the
         //  resources bindings.
-        std::vector<VkDescriptorPoolSize> poolSizes = {
+        VAArray<VkDescriptorPoolSize> poolSizes = {
             // Binding 0 - Uniform buffer
             {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 3},
             // Binding 1 - Diffuse sampler layout.
@@ -162,7 +162,7 @@ namespace VoidArchitect::Platform
         auto& descriptorState = m_MaterialDescriptorStates[frameIndex];
 
         VkDescriptorBufferInfo bufferInfo{};
-        std::vector<VkWriteDescriptorSet> writes{};
+        VAArray<VkWriteDescriptorSet> writes{};
 
         // 1. If we need, we update the material descriptor set for uniform buffer.
         if (descriptorState.matGeneration != m_Generation)

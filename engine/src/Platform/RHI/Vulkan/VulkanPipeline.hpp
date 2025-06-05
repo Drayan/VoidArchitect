@@ -59,11 +59,11 @@ namespace VoidArchitect::Platform
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;
 
-        std::vector<Resources::ShaderPtr> m_Shaders;
+        VAArray<Resources::ShaderPtr> m_Shaders;
 
         VkPipeline m_Pipeline;
 
         VkPipelineLayout m_PipelineLayout;
-        std::vector<VkDescriptorSetLayout> m_DescriptorSetLayouts;
+        VAArray<VkDescriptorSetLayout> m_DescriptorSetLayouts;
     };
 } // namespace VoidArchitect::Platform

@@ -223,10 +223,10 @@ namespace VoidArchitect
             != config.compatiblePassTypes.end();
     }
 
-    std::vector<std::string> RenderStateSystem::GetCompatibleRenderStatesForPass(
+    VAArray<std::string> RenderStateSystem::GetCompatibleRenderStatesForPass(
         Renderer::RenderPassType passType) const
     {
-        std::vector<std::string> compatiblePipelines;
+        VAArray<std::string> compatiblePipelines;
 
         for (const auto& [renderStateName, config] : m_RenderStateTemplates)
         {

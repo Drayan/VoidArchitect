@@ -34,7 +34,7 @@ namespace VoidArchitect
             const Resources::RenderTargetPtr& RenderTarget;
             const Resources::RenderStatePtr& RenderState;
 
-            std::unordered_map<std::string, std::any> passData;
+            VAHashMap<std::string, std::any> passData;
         };
 
         class IPassRenderer

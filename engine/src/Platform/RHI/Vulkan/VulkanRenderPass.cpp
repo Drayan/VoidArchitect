@@ -71,7 +71,7 @@ namespace VoidArchitect::Platform
 
             for (uint32_t i = 0; i < imageCount; i++)
             {
-                const std::vector attachments = {
+                const VAArray attachments = {
                     swapchain->GetSwapchainImage(i).GetView(),
                     swapchain->GetDepthImage().GetView()
                 };
@@ -163,8 +163,8 @@ namespace VoidArchitect::Platform
         VkFormat swapchainFormat,
         VkFormat depthFormat)
     {
-        std::vector<VkAttachmentDescription> attachments;
-        std::vector<VkAttachmentReference> colorRefs;
+        VAArray<VkAttachmentDescription> attachments;
+        VAArray<VkAttachmentReference> colorRefs;
         std::optional<VkAttachmentReference> depthRef;
 
         // Create attachments from config

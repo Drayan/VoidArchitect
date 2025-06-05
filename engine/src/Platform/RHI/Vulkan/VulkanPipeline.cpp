@@ -29,7 +29,7 @@ namespace VoidArchitect::Platform
         // NOTE We enable dynamic state for viewport and scissor, requiring to provide them in
         //  every frame. Therefore we just have to tell Vulkan that we use one viewport and one
         //  scissor.
-        const std::vector dynamicState = {
+        const VAArray dynamicState = {
             VK_DYNAMIC_STATE_VIEWPORT,
             VK_DYNAMIC_STATE_SCISSOR,
             VK_DYNAMIC_STATE_LINE_WIDTH,
@@ -46,7 +46,7 @@ namespace VoidArchitect::Platform
 
         // --- Attributes ---
         uint32_t offset = 0;
-        std::vector<VkVertexInputAttributeDescription> attributes;
+        VAArray<VkVertexInputAttributeDescription> attributes;
         for (uint32_t i = 0; i < config.vertexAttributes.size(); i++)
         {
             const auto& [type, format] = config.vertexAttributes[i];
@@ -130,11 +130,11 @@ namespace VoidArchitect::Platform
         // --- Descriptor sets ---
         m_DescriptorSetLayouts.resize(config.inputLayout.spaces.size());
 
-        std::vector<VkDescriptorSetLayoutCreateInfo> descriptorSetLayoutsInfos;
+        VAArray<VkDescriptorSetLayoutCreateInfo> descriptorSetLayoutsInfos;
         for (uint32_t i = 0; i < config.inputLayout.spaces.size(); i++)
         {
             const auto& space = config.inputLayout.spaces[i];
-            std::vector<VkDescriptorSetLayoutBinding> bindings;
+            VAArray<VkDescriptorSetLayoutBinding> bindings;
             for (uint32_t j = 0; j < space.bindings.size(); j++)
             {
                 const auto& [type, binding, stage] = space.bindings[j];
@@ -167,7 +167,7 @@ namespace VoidArchitect::Platform
         }
 
         // --- Pipeline layout ---
-        auto descriptorSetLayouts = std::vector<VkDescriptorSetLayout>{};
+        auto descriptorSetLayouts = VAArray<VkDescriptorSetLayout>{};
         descriptorSetLayouts.reserve(m_DescriptorSetLayouts.size() + 2);
         // Insert the global descriptor set layout
         descriptorSetLayouts.push_back(g_VkDescriptorSetLayoutManager->GetGlobalLayout());
@@ -200,7 +200,7 @@ namespace VoidArchitect::Platform
         VA_ENGINE_TRACE("[VulkanPipeline] Pipeline layout created.");
 
         // --- Pipeline ---
-        std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+        VAArray<VkPipelineShaderStageCreateInfo> shaderStages;
         shaderStages.reserve(config.shaders.size());
         for (const auto& ishader : config.shaders)
         {

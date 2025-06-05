@@ -14,7 +14,7 @@ namespace VoidArchitect::Platform
     struct DeviceRequirements
     {
         bool DedicatedGPU = false;
-        std::vector<const char*> Extensions;
+        VAArray<const char*> Extensions;
     };
 
     class VulkanDevice
@@ -65,7 +65,8 @@ namespace VoidArchitect::Platform
     private:
         void SelectPhysicalDevice(const DeviceRequirements& requirements);
         bool IsDeviceMeetRequirements(
-            const VkPhysicalDevice& device, const DeviceRequirements& requirements);
+            const VkPhysicalDevice& device,
+            const DeviceRequirements& requirements);
 
         void CreateLogicalDevice(const DeviceRequirements& requirements);
         void DestroyLogicalDevice();

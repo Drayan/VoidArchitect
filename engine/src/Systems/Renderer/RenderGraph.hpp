@@ -45,7 +45,7 @@ namespace VoidArchitect
             bool IsMain = false;
 
             // If provided, use these instead of creating new ones
-            std::vector<Resources::Texture2DPtr> Attachments;
+            VAArray<Resources::Texture2DPtr> Attachments;
         };
 
         class RenderGraph
@@ -85,8 +85,8 @@ namespace VoidArchitect
                 UUID templateUUID;
                 std::string instanceName;
                 Resources::RenderPassPtr RenderPass;
-                std::vector<UUID> DependenciesUUIDs;
-                std::vector<UUID> OutputsUUIDs;
+                VAArray<UUID> DependenciesUUIDs;
+                VAArray<UUID> OutputsUUIDs;
 
                 PassPosition ComputedPosition;
 
@@ -127,7 +127,7 @@ namespace VoidArchitect
             void OptimizeExecutionOrder();
             float CalculateStateSwitchCost() const;
 
-            std::vector<UUID> ComputeExecutionOrder();
+            VAArray<UUID> ComputeExecutionOrder();
 
             // Pass execution
             void RenderPassContent(
@@ -139,10 +139,10 @@ namespace VoidArchitect
             void LogOptimizationMetrics() const;
 
             // Graph data
-            std::unordered_map<UUID, RenderPassNode> m_RenderPassesNodes;
-            std::unordered_map<UUID, RenderTargetNode> m_RenderTargetsNodes;
+            VAHashMap<UUID, RenderPassNode> m_RenderPassesNodes;
+            VAHashMap<UUID, RenderTargetNode> m_RenderTargetsNodes;
 
-            std::vector<UUID> m_ExecutionOrder;
+            VAArray<UUID> m_ExecutionOrder;
 
             // State
             Platform::IRenderingHardware& m_RHI;

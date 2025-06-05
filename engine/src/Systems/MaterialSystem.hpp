@@ -52,8 +52,8 @@ namespace VoidArchitect
         std::queue<uint32_t> m_FreeMaterialHandles;
         uint32_t m_NextFreeMaterialHandle = 0;
 
-        std::vector<MaterialData> m_Materials;
-        std::unordered_map<UUID, std::weak_ptr<Resources::IMaterial>> m_MaterialCache;
+        VAArray<MaterialData> m_Materials;
+        VAHashMap<UUID, std::weak_ptr<Resources::IMaterial>> m_MaterialCache;
 
         Resources::MaterialPtr m_DefaultMaterial;
     };

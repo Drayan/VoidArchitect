@@ -13,8 +13,8 @@ namespace VoidArchitect
             VulkanRHI& rhi,
             VkAllocationCallbacks* allocator,
             const std::string& name,
-            const std::vector<Resources::MeshVertex>& vertices,
-            const std::vector<uint32_t>& indices)
+            const VAArray<Resources::MeshVertex>& vertices,
+            const VAArray<uint32_t>& indices)
             : IMesh(name),
               m_Allocator(allocator)
         {

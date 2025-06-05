@@ -30,7 +30,7 @@ namespace VoidArchitect::Platform
             const Renderer::RenderTargetConfig& config,
             VkDevice device,
             VkAllocationCallbacks* allocator,
-            const std::vector<VkImageView>& attachments);
+            const VAArray<VkImageView>& attachments);
         ~VulkanRenderTarget() override;
 
         void Resize(uint32_t width, uint32_t height) override;
@@ -40,7 +40,7 @@ namespace VoidArchitect::Platform
         void InvalidateFramebuffers();
         void CreateFramebufferForImage(
             VkRenderPass renderpass,
-            const std::vector<VkImageView>& attachments,
+            const VAArray<VkImageView>& attachments,
             uint32_t imageIndex);
 
         [[nodiscard]] VkFramebuffer GetFramebuffer(uint32_t imageIndex) const;
@@ -52,8 +52,8 @@ namespace VoidArchitect::Platform
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;
 
-        std::vector<VkFramebuffer> m_Framebuffers;
-        std::vector<VkImageView> m_Attachments;
+        VAArray<VkFramebuffer> m_Framebuffers;
+        VAArray<VkImageView> m_Attachments;
 
         // For texture-based targets, we might own the image views.
         bool m_OwnsAttachments = false;

@@ -10,7 +10,7 @@
 namespace VoidArchitect::Resources::Loaders
 {
     ShaderDataDefinition::ShaderDataDefinition(
-        const ShaderConfig& config, std::vector<uint8_t> code)
+        const ShaderConfig& config, VAArray<uint8_t> code)
         : m_ShaderConfig(config),
           m_Code(std::move(code))
     {
@@ -31,7 +31,7 @@ namespace VoidArchitect::Resources::Loaders
 
         // Read the shader file into a buffer
         const std::streamsize fileSize = shaderFile.tellg();
-        std::vector<uint8_t> buffer(fileSize);
+        VAArray<uint8_t> buffer(fileSize);
         shaderFile.seekg(0);
         shaderFile.read(reinterpret_cast<std::istream::char_type*>(buffer.data()), fileSize);
         shaderFile.close();

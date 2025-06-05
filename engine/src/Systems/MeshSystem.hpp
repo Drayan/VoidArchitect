@@ -16,8 +16,8 @@ namespace VoidArchitect
         Resources::MeshPtr LoadMesh(const std::string& name);
         Resources::MeshPtr CreateMesh(
             const std::string& name,
-            const std::vector<Resources::MeshVertex>& vertices,
-            const std::vector<uint32_t>& indices);
+            const VAArray<Resources::MeshVertex>& vertices,
+            const VAArray<uint32_t>& indices);
         Resources::MeshPtr CreateSphere(
             const std::string& name,
             float radius = 0.5f,
@@ -51,8 +51,8 @@ namespace VoidArchitect
         std::queue<uint32_t> m_FreeMeshHandles;
         uint32_t m_NextMeshHandle = 0;
 
-        std::vector<MeshData> m_Meshes;
-        std::unordered_map<UUID, std::weak_ptr<Resources::IMesh>> m_MeshCache;
+        VAArray<MeshData> m_Meshes;
+        VAHashMap<UUID, std::weak_ptr<Resources::IMesh>> m_MeshCache;
 
         size_t m_TotalMemoryUsed = 0;
         size_t m_TotalMeshesLoaded = 0;

@@ -16,7 +16,7 @@ namespace VoidArchitect::Platform
         VkAllocationCallbacks* allocator,
         const std::string& name,
         const ShaderConfig& config,
-        const std::vector<uint8_t>& shaderCode)
+        const VAArray<uint8_t>& shaderCode)
         : IShader(name, config.stage, config.entry),
           m_Device(device->GetLogicalDeviceHandle()),
           m_Allocator(allocator),

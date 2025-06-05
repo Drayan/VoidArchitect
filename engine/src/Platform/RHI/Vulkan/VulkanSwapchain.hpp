@@ -62,7 +62,7 @@ namespace VoidArchitect::Platform
         VkExtent2D m_Extent;
         VkFormat m_DepthFormat;
 
-        std::vector<VulkanImage> m_SwapchainImages;
+        VAArray<VulkanImage> m_SwapchainImages;
         VulkanImage m_DepthImage;
         uint32_t m_MaxFrameInFlight = 2; // Support triple-buffering by default
     };

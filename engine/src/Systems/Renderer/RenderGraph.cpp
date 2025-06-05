@@ -258,8 +258,8 @@ namespace VoidArchitect::Renderer
 
     bool RenderGraph::ValidateNoCycles()
     {
-        std::unordered_set<UUID> visited;
-        std::unordered_set<UUID> visiting;
+        VAHashSet<UUID> visited;
+        VAHashSet<UUID> visiting;
 
         std::function<bool(const UUID&)> hasCycle = [&](const UUID& passUUID) -> bool
         {
@@ -589,7 +589,7 @@ namespace VoidArchitect::Renderer
         //      Grouping passes by required state when dependencies allow it
         //      This is a placeholder for now - we'll implement more sophisticated optimizations later
         //      when we have multiple RenderStates.
-        std::unordered_map<Resources::RenderStatePtr, std::vector<std::string>> stateGroups;
+        VAHashMap<Resources::RenderStatePtr, VAArray<std::string>> stateGroups;
 
         for (const auto& passNode : m_RenderPassesNodes | std::views::values)
         {
@@ -642,11 +642,11 @@ namespace VoidArchitect::Renderer
         return static_cast<float>(stateChanges) / static_cast<float>(m_ExecutionOrder.size());
     }
 
-    std::vector<UUID> RenderGraph::ComputeExecutionOrder()
+    VAArray<UUID> RenderGraph::ComputeExecutionOrder()
     {
-        std::vector<UUID> executionOrder;
-        std::unordered_set<UUID> visited;
-        std::unordered_set<UUID> visiting; // For cycle detection
+        VAArray<UUID> executionOrder;
+        VAHashSet<UUID> visited;
+        VAHashSet<UUID> visiting; // For cycle detection
 
         // Simple topological sort based on dependencies
         std::function<bool(const UUID&)> visit = [&](const UUID& passUUID) -> bool

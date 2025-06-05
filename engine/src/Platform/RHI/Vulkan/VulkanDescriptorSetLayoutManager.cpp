@@ -74,10 +74,10 @@ namespace VoidArchitect
             }
         }
 
-        std::vector<VkDescriptorSetLayoutBinding> VulkanDescriptorSetLayoutManager::
+        VAArray<VkDescriptorSetLayoutBinding> VulkanDescriptorSetLayoutManager::
             CreateDescriptorSetLayoutBindingsFromSpace(const SpaceLayout& spaceLayout)
         {
-            std::vector<VkDescriptorSetLayoutBinding> bindings;
+            VAArray<VkDescriptorSetLayoutBinding> bindings;
             for (uint32_t i = 0; i < spaceLayout.bindings.size(); ++i)
             {
                 const auto& [type, binding, stage] = spaceLayout.bindings[i];

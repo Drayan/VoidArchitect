@@ -29,7 +29,7 @@ namespace VoidArchitect
     private:
         static std::string ResourceTypeToString(ResourceType type);
 
-        std::unordered_map<ResourceType, std::unique_ptr<Resources::Loaders::ILoader>> m_Loaders;
+        VAHashMap<ResourceType, std::unique_ptr<Resources::Loaders::ILoader>> m_Loaders;
     };
 
     inline std::unique_ptr<ResourceSystem> g_ResourceSystem;

@@ -6,7 +6,6 @@
 
 namespace VoidArchitect
 {
-
     class LayerStack
     {
     public:
@@ -18,12 +17,11 @@ namespace VoidArchitect
         void PopLayer(Layer* layer);
         void PopOverlay(Layer* layer);
 
-        std::vector<Layer*>::iterator begin() { return m_Layers.begin(); }
-        std::vector<Layer*>::iterator end() { return m_Layers.end(); }
+        VAArray<Layer*>::iterator begin() { return m_Layers.begin(); }
+        VAArray<Layer*>::iterator end() { return m_Layers.end(); }
 
     private:
-        std::vector<Layer*> m_Layers;
-        std::vector<Layer*>::iterator m_LayerInsert;
+        VAArray<Layer*> m_Layers;
+        VAArray<Layer*>::iterator m_LayerInsert;
     };
-
 } // namespace VoidArchitect

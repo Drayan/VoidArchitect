@@ -121,7 +121,7 @@ namespace VoidArchitect
         const uint32_t height,
         const uint8_t channels,
         const bool hasTransparency,
-        const std::vector<uint8_t>& data)
+        const VAArray<uint8_t>& data)
     {
         Resources::Texture2D* texture = nullptr;
         switch (Renderer::RenderCommand::GetApiType())
@@ -161,7 +161,7 @@ namespace VoidArchitect
         constexpr uint32_t texSize = 256;
         constexpr uint32_t texChannels = 4;
 
-        std::vector<uint8_t> texData(texSize * texSize * texChannels);
+        VAArray<uint8_t> texData(texSize * texSize * texChannels);
         for (uint32_t y = 0; y < texSize; ++y)
         {
             for (uint32_t x = 0; x < texSize; ++x)

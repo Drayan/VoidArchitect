@@ -81,7 +81,7 @@ namespace VoidArchitect::Platform
 
         int32_t m_x, m_y;
         uint32_t m_w, m_h;
-        std::vector<VkClearValue> m_ClearValues;
+        VAArray<VkClearValue> m_ClearValues;
 
         // Store config for compatibility checks
         RenderPassConfig m_Config;

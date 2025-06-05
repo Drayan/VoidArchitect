@@ -68,25 +68,25 @@ namespace VoidArchitect
     struct SpaceLayout
     {
         uint32_t space;
-        std::vector<ResourceBinding> bindings;
+        VAArray<ResourceBinding> bindings;
     };
 
     struct RenderStateInputLayout
     {
-        std::vector<SpaceLayout> spaces;
+        VAArray<SpaceLayout> spaces;
     };
 
     struct RenderStateConfig
     {
         std::string name;
-        std::vector<Resources::ShaderPtr> shaders;
+        VAArray<Resources::ShaderPtr> shaders;
 
-        std::vector<Renderer::RenderPassType> compatiblePassTypes;
-        std::vector<std::string> compatiblePassNames;
+        VAArray<Renderer::RenderPassType> compatiblePassTypes;
+        VAArray<std::string> compatiblePassNames;
 
         // TODO VertexFormat -> How vertex data is structured?
         VertexFormat vertexFormat = VertexFormat::Position;
-        std::vector<VertexAttribute> vertexAttributes;
+        VAArray<VertexAttribute> vertexAttributes;
 
         // TODO InputLayout; -> Which data bindings are used?
         RenderStateInputLayout inputLayout;
@@ -96,7 +96,7 @@ namespace VoidArchitect
 
     struct RenderStateSignature
     {
-        std::vector<Renderer::TextureFormat> colorFormats;
+        VAArray<Renderer::TextureFormat> colorFormats;
         std::optional<Renderer::TextureFormat> depthFormat;
 
         bool operator==(const RenderStateSignature& other) const;
@@ -160,7 +160,7 @@ namespace VoidArchitect
         [[nodiscard]] bool IsRenderStateCompatibleWithPass(
             const std::string& renderStateName,
             Renderer::RenderPassType passType) const;
-        [[nodiscard]] std::vector<std::string> GetCompatibleRenderStatesForPass(
+        [[nodiscard]] VAArray<std::string> GetCompatibleRenderStatesForPass(
             Renderer::RenderPassType passType) const;
 
         RenderStateSignature CreateSignatureFromPass(const RenderPassConfig& passConfig);
@@ -168,8 +168,8 @@ namespace VoidArchitect
     private:
         void GenerateDefaultRenderStates();
 
-        std::unordered_map<std::string, RenderStateConfig> m_RenderStateTemplates;
-        std::unordered_map<RenderStateCacheKey, Resources::RenderStatePtr> m_RenderStateCache;
+        VAHashMap<std::string, RenderStateConfig> m_RenderStateTemplates;
+        VAHashMap<RenderStateCacheKey, Resources::RenderStatePtr> m_RenderStateCache;
 
         Resources::RenderStatePtr m_DefaultState;
     };

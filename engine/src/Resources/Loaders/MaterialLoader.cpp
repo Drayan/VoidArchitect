@@ -82,7 +82,7 @@ namespace VoidArchitect::Resources::Loaders
                         }
                         else
                         {
-                            std::vector<float> values;
+                            VAArray<float> values;
                             for (auto val : propertiesNode["diffuse_color"])
                                 values.push_back(val.as<float>());
                             config.diffuseColor =

@@ -7,11 +7,20 @@
 
 namespace VoidArchitect::Math
 {
-    Vec4::Vec4() : m_Vector() {}
+    Vec4::Vec4()
+        : m_Vector()
+    {
+    }
 
-    Vec4::Vec4(const impl::glm::vec4& vector) : m_Vector(vector) {}
+    Vec4::Vec4(const impl::glm::vec4& vector)
+        : m_Vector(vector)
+    {
+    }
 
-    Vec4::Vec4(const float x, const float y, const float z, const float w) : m_Vector(x, y, z, w) {}
+    Vec4::Vec4(const float x, const float y, const float z, const float w)
+        : m_Vector(x, y, z, w)
+    {
+    }
 
     Vec4 Vec4::operator+(const Vec4& other) const { return Vec4(m_Vector + other.m_Vector); }
 
@@ -58,7 +67,7 @@ namespace VoidArchitect::Math
         cleanStr = cleanStr.substr(1, cleanStr.size() - 2);
 
         // Split by comma
-        std::vector<float> values;
+        VAArray<float> values;
         std::stringstream ss(cleanStr);
         std::string token;
 
