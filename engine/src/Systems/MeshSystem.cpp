@@ -293,6 +293,26 @@ namespace VoidArchitect
         return CreateMesh(name, vertices, indices);
     }
 
+    Resources::MeshPtr MeshSystem::CreateQuad(
+        const std::string& name,
+        const float width,
+        const float height)
+    {
+        const float halfWidth = width * 0.5f;
+        const float halfHeight = height * 0.5f;
+
+        const VAArray<Resources::MeshVertex> vertices
+        {
+            {Math::Vec3(-halfWidth, -halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(0.0f, 0.0f)},
+            {Math::Vec3(halfWidth, -halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(1.0f, 0.0f)},
+            {Math::Vec3(halfWidth, halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(1.0f, 1.0f)},
+            {Math::Vec3(-halfWidth, halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(0.0f, 1.0f)}
+        };
+        const VAArray<uint32_t> indices{0, 1, 2, 2, 3, 0};
+
+        return CreateMesh(name, vertices, indices);
+    }
+
     Resources::MeshPtr MeshSystem::CreatePlane(
         const std::string& name,
         float width,

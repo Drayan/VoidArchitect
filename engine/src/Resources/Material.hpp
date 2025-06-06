@@ -64,6 +64,8 @@ namespace VoidArchitect
             friend class VoidArchitect::MaterialSystem;
 
         public:
+            static constexpr size_t MAX_TEXTURES = 4;
+
             virtual ~IMaterial() = default;
 
             virtual void SetModel(
@@ -81,9 +83,9 @@ namespace VoidArchitect
 
             [[nodiscard]] UUID GetUUID() const { return m_UUID; }
 
-            [[nodiscard]] const TexturePtr& GetTexture(size_t index = 0) const
+            [[nodiscard]] const TexturePtr& GetTexture(const size_t index = 0) const
             {
-                return m_DiffuseTexture;
+                return m_Textures[index];
             }
 
             Math::Vec4 GetDiffuseColor() const { return m_DiffuseColor; };
@@ -95,12 +97,17 @@ namespace VoidArchitect
                 m_Generation++;
             }
 
-            void SetTexture(size_t index, const TexturePtr& texture) { m_DiffuseTexture = texture; }
+            void SetTexture(const size_t index, const TexturePtr& texture)
+            {
+                m_Textures[index] = texture;
+            }
 
         protected:
             explicit IMaterial(const std::string& name);
 
-            virtual void InitializeResources(Platform::IRenderingHardware& rhi) = 0;
+            virtual void InitializeResources(
+                Platform::IRenderingHardware& rhi,
+                const Resources::RenderStatePtr& renderState) = 0;
             virtual void ReleaseResources() = 0;
 
             static Texture2DPtr s_DefaultDiffuseTexture;
@@ -112,7 +119,7 @@ namespace VoidArchitect
 
             Math::Vec4 m_DiffuseColor = Math::Vec4::One();
 
-            TexturePtr m_DiffuseTexture;
+            TexturePtr m_Textures[MAX_TEXTURES];
         };
     } // namespace Resources
 } // namespace VoidArchitect

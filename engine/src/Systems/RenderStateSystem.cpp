@@ -91,53 +91,53 @@ namespace VoidArchitect
             case VertexFormat::Position:
             {
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
             }
             break;
             case VertexFormat::PositionColor:
             {
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec4, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec4, AttributeFormat::Float32});
             }
             break;
             case VertexFormat::PositionNormal:
             {
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
             }
             break;
             case VertexFormat::PositionNormalUV:
             {
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec2, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec2, AttributeFormat::Float32});
             }
             break;
             case VertexFormat::PositionNormalUVTangent:
             {
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec2, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec2, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
             }
             break;
             case VertexFormat::PositionUV:
             {
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec2, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec2, AttributeFormat::Float32});
             }
             break;
 

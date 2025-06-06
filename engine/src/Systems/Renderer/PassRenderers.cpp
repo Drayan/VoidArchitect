@@ -30,9 +30,10 @@ namespace VoidArchitect::Renderer
         }
 
         // Render test geometry
-        const auto& defaultMat = RenderCommand::s_TestMaterial
-                                     ? RenderCommand::s_TestMaterial
-                                     : g_MaterialSystem->GetDefaultMaterial();
+        auto defaultMat = g_MaterialSystem->GetCachedMaterial(
+            "TestMaterial",
+            RenderPassType::ForwardOpaque,
+            context.RenderState->GetUUID());
 
         if (!defaultMat)
         {
@@ -82,9 +83,10 @@ namespace VoidArchitect::Renderer
         }
 
         // Use default material for now
-        auto uiMaterial = RenderCommand::s_UIMaterial
-                              ? RenderCommand::s_UIMaterial
-                              : g_MaterialSystem->GetDefaultMaterial();
+        auto uiMaterial = g_MaterialSystem->GetCachedMaterial(
+            "DefaultUI",
+            RenderPassType::UI,
+            context.RenderState->GetUUID());
         if (!uiMaterial)
         {
             VA_ENGINE_ERROR("[UIPassRenderer] Failed to get default material.");

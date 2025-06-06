@@ -3,6 +3,7 @@
 //
 #pragma once
 #include "Core/Math/Mat4.hpp"
+#include "Resources/Material.hpp"
 #include "Resources/RenderPass.hpp"
 #include "Resources/RenderState.hpp"
 #include "Systems/RenderPassSystem.hpp"
@@ -67,9 +68,22 @@ namespace VoidArchitect
             bool Compile();
             void Execute(const FrameData& frameData);
 
+            // Resources requests
+            void RegisterPassMapping(
+                RenderPassType passType,
+                const std::string& renderPassName,
+                const RenderStateSignature& signature);
+            void RequestMaterialForPassType(
+                const std::string& identifier,
+                const std::string& templateName,
+                const std::string& renderStateTemplate,
+                RenderPassType passType);
+
             // Compiled resources accessors
             Resources::RenderPassPtr GetRenderPass(const UUID& passUUID) const;
             Resources::RenderTargetPtr GetRenderTarget(const UUID& targetUUID) const;
+            Resources::MaterialPtr GetMaterial(const std::string& identifier) const;
+
             bool IsCompiled() const { return m_IsCompiled; }
 
             // Resize handling
@@ -101,6 +115,21 @@ namespace VoidArchitect
                 Resources::RenderTargetPtr RenderTarget;
             };
 
+            struct PassMapping
+            {
+                RenderPassType passType;
+                std::string renderPassName;
+                RenderStateSignature signature;
+            };
+
+            struct MaterialRequest
+            {
+                std::string templateName;
+                std::string renderStateTemplate;
+                std::string identifier;
+                RenderPassType passType;
+            };
+
             RenderPassNode* FindRenderPassNode(const UUID& instanceUUID);
             RenderTargetNode* FindRenderTargetNode(const UUID& instanceUUID);
             RenderPassNode* FindRenderPassNode(Resources::RenderPassPtr& pass);
@@ -123,6 +152,7 @@ namespace VoidArchitect
             bool CompileRenderPasses();
             bool CompileRenderTargets();
             bool CompileRenderStates();
+            bool CompileMaterials();
             void AssignRequiredStates();
             void OptimizeExecutionOrder();
             float CalculateStateSwitchCost() const;
@@ -143,6 +173,11 @@ namespace VoidArchitect
             VAHashMap<UUID, RenderTargetNode> m_RenderTargetsNodes;
 
             VAArray<UUID> m_ExecutionOrder;
+
+            // Material resources
+            VAArray<PassMapping> m_PassMappings;
+            VAArray<MaterialRequest> m_MaterialRequests;
+            VAHashMap<std::string, Resources::MaterialPtr> m_CompiledMaterials;
 
             // State
             Platform::IRenderingHardware& m_RHI;

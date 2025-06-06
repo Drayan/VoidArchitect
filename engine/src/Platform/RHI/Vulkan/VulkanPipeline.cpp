@@ -21,7 +21,7 @@ namespace VoidArchitect::Platform
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
         VulkanRenderPass* renderPass)
-        : IRenderState(config.name),
+        : IRenderState(config.name, g_VkDescriptorSetLayoutManager->GetSharedInputLayout()),
           m_Device(device->GetLogicalDeviceHandle()),
           m_Allocator(allocator)
     {
@@ -137,7 +137,7 @@ namespace VoidArchitect::Platform
             VAArray<VkDescriptorSetLayoutBinding> bindings;
             for (uint32_t j = 0; j < space.bindings.size(); j++)
             {
-                const auto& [type, binding, stage] = space.bindings[j];
+                const auto& [type, binding, stage, buf] = space.bindings[j];
 
                 VkDescriptorSetLayoutBinding descriptorSetLayoutBinding{};
                 descriptorSetLayoutBinding.binding = binding;
@@ -270,13 +270,13 @@ namespace VoidArchitect::Platform
     }
 
     VkFormat VulkanPipeline::TranslateEngineAttributeFormatToVulkanFormat(
-        const VertexAttributeType type,
+        const AttributeType type,
         const AttributeFormat format)
     {
         auto vulkanFormat = VK_FORMAT_UNDEFINED;
         switch (type)
         {
-            case VertexAttributeType::Float:
+            case AttributeType::Float:
             {
                 switch (format)
                 {
@@ -287,7 +287,7 @@ namespace VoidArchitect::Platform
             }
             break;
 
-            case VertexAttributeType::Vec2:
+            case AttributeType::Vec2:
             {
                 switch (format)
                 {
@@ -298,7 +298,7 @@ namespace VoidArchitect::Platform
             }
             break;
 
-            case VertexAttributeType::Vec3:
+            case AttributeType::Vec3:
             {
                 switch (format)
                 {
@@ -309,7 +309,7 @@ namespace VoidArchitect::Platform
             }
             break;
 
-            case VertexAttributeType::Vec4:
+            case AttributeType::Vec4:
             {
                 switch (format)
                 {
@@ -328,7 +328,7 @@ namespace VoidArchitect::Platform
     }
 
     uint32_t VulkanPipeline::GetEngineAttributeSize(
-        const VertexAttributeType type,
+        const AttributeType type,
         const AttributeFormat format)
     {
         auto size = 0;
@@ -344,19 +344,19 @@ namespace VoidArchitect::Platform
 
         switch (type)
         {
-            case VertexAttributeType::Float:
+            case AttributeType::Float:
                 size *= 1;
                 break;
-            case VertexAttributeType::Vec2:
+            case AttributeType::Vec2:
                 size *= 2;
                 break;
-            case VertexAttributeType::Vec3:
+            case AttributeType::Vec3:
                 size *= 3;
                 break;
-            case VertexAttributeType::Vec4:
+            case AttributeType::Vec4:
                 size *= 4;
                 break;
-            case VertexAttributeType::Mat4:
+            case AttributeType::Mat4:
                 size *= 16;
                 break;
         }

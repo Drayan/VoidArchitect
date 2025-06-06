@@ -32,7 +32,7 @@ namespace VoidArchitect::Resources
     class IRenderState;
     class IRenderTarget;
     class IRenderPass;
-    class GlobalUniformObject;
+    struct GlobalUniformObject;
 
     using RenderStatePtr = std::shared_ptr<IRenderState>;
 } // namespace VoidArchitect::Resources

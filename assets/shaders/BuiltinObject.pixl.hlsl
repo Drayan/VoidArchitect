@@ -20,5 +20,5 @@ float4 main(PSInput input) : SV_Target
 
     float4 diffuseColor = float4(g_ubo.LightColor.rgb * lightIntensity, diffuseTexture.a);
     float4 ambientColor = float4(float3(0.1, 0.1, 0.1) * diffuseTexture.rgb, diffuseTexture.a); // Ambient light color
-    return (diffuseColor * diffuseTexture * l_ubo.DiffuseColor) + ambientColor;
+    return (diffuseColor * diffuseTexture * l_ubo.DiffuseColor) + ambientColor * l_ubo.DiffuseColor;
 }

@@ -25,7 +25,11 @@ namespace VoidArchitect::Resources::Loaders
     {
     }
 
-    ImageLoader::ImageLoader(const std::string& baseAssetPath) : ILoader(baseAssetPath) {}
+    ImageLoader::ImageLoader(const std::string& baseAssetPath)
+        : ILoader(baseAssetPath)
+    {
+        stbi_set_flip_vertically_on_load(1); // Flip the image vertically
+    }
 
     std::shared_ptr<IResourceDefinition> ImageLoader::Load(const std::string& name)
     {

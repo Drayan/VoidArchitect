@@ -7,10 +7,11 @@
 
 #include <vulkan/vulkan.h>
 
+#include "Systems/RenderStateSystem.hpp"
+
 namespace VoidArchitect
 {
     struct SpaceLayout;
-    struct RenderStateInputLayout;
 
     namespace Platform
     {
@@ -25,8 +26,8 @@ namespace VoidArchitect
                 const RenderStateInputLayout& sharedInputLayout);
             ~VulkanDescriptorSetLayoutManager();
 
-            static VAArray<VkDescriptorSetLayoutBinding>
-            CreateDescriptorSetLayoutBindingsFromSpace(const SpaceLayout& spaceLayout);
+            static VAArray<VkDescriptorSetLayoutBinding> CreateDescriptorSetLayoutBindingsFromSpace(
+                const SpaceLayout& spaceLayout);
 
             [[nodiscard]] VkDescriptorSetLayout GetGlobalLayout() const { return m_GlobalLayout; }
 
@@ -40,7 +41,14 @@ namespace VoidArchitect
                 return m_PerObjectLayout;
             }
 
+            [[nodiscard]] const RenderStateInputLayout& GetSharedInputLayout() const
+            {
+                return m_SharedInputLayout;
+            }
+
         private:
+            RenderStateInputLayout m_SharedInputLayout;
+
             VkDevice m_Device;
             VkAllocationCallbacks* m_Allocator;
 

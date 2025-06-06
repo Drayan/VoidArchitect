@@ -29,6 +29,8 @@ namespace VoidArchitect
                 throw std::runtime_error("Invalid shared pipeline input resources layout.");
             }
 
+            m_SharedInputLayout = sharedInputLayout;
+
             // NOTE By convention, space 0 is used for global resources, shared between, every
             //  graphics pipeline
             auto bindings = CreateDescriptorSetLayoutBindingsFromSpace(sharedInputLayout.spaces[0]);
@@ -38,8 +40,9 @@ namespace VoidArchitect
             layoutCreateInfo.bindingCount = static_cast<uint32_t>(bindings.size());
             layoutCreateInfo.pBindings = bindings.data();
 
-            VA_VULKAN_CHECK_RESULT_WARN(vkCreateDescriptorSetLayout(
-                m_Device, &layoutCreateInfo, m_Allocator, &m_GlobalLayout));
+            VA_VULKAN_CHECK_RESULT_WARN(
+                vkCreateDescriptorSetLayout(
+                    m_Device, &layoutCreateInfo, m_Allocator, &m_GlobalLayout));
             VA_ENGINE_TRACE("[VulkanDescriptorSetLayoutManager] Global layout created.");
 
             // NOTE By convention, space 1 is used for per-material resources, shared between, every
@@ -51,8 +54,9 @@ namespace VoidArchitect
             layoutCreateInfo.bindingCount = static_cast<uint32_t>(bindings.size());
             layoutCreateInfo.pBindings = bindings.data();
 
-            VA_VULKAN_CHECK_RESULT_WARN(vkCreateDescriptorSetLayout(
-                m_Device, &layoutCreateInfo, m_Allocator, &m_PerMaterialLayout));
+            VA_VULKAN_CHECK_RESULT_WARN(
+                vkCreateDescriptorSetLayout(
+                    m_Device, &layoutCreateInfo, m_Allocator, &m_PerMaterialLayout));
             VA_ENGINE_TRACE("[VulkanDescriptorSetLayoutManager] Per-material layout created.");
 
             // TODO Implement space 2 for per-object resources
@@ -75,13 +79,11 @@ namespace VoidArchitect
         }
 
         VAArray<VkDescriptorSetLayoutBinding> VulkanDescriptorSetLayoutManager::
-            CreateDescriptorSetLayoutBindingsFromSpace(const SpaceLayout& spaceLayout)
+        CreateDescriptorSetLayoutBindingsFromSpace(const SpaceLayout& spaceLayout)
         {
             VAArray<VkDescriptorSetLayoutBinding> bindings;
-            for (uint32_t i = 0; i < spaceLayout.bindings.size(); ++i)
+            for (const auto& [type, binding, stage, buf] : spaceLayout.bindings)
             {
-                const auto& [type, binding, stage] = spaceLayout.bindings[i];
-
                 VkDescriptorSetLayoutBinding layoutBinding{};
                 layoutBinding.binding = binding;
                 layoutBinding.descriptorType = TranslateEngineResourceTypeToVulkan(type);

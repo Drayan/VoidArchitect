@@ -16,7 +16,10 @@ namespace VoidArchitect::Resources::Loaders
     {
     }
 
-    MaterialLoader::MaterialLoader(const std::string& baseAssetPath) : ILoader(baseAssetPath) {}
+    MaterialLoader::MaterialLoader(const std::string& baseAssetPath)
+        : ILoader(baseAssetPath)
+    {
+    }
 
     std::shared_ptr<IResourceDefinition> MaterialLoader::Load(const std::string& name)
     {
@@ -55,13 +58,9 @@ namespace VoidArchitect::Resources::Loaders
                 // Pipeline (optional)
                 if (materialNode["pipeline"])
                 {
-                    auto pipeline = materialNode["pipeline"].as<std::string>();
+                    auto renderState = materialNode["pipeline"].as<std::string>();
                     // TODO Retrieve the pipeline from the pipeline system
-                    // config.pipeline = pipeline;
-                }
-                else
-                {
-                    config.pipeline = nullptr;
+                    config.renderStateTemplate = renderState;
                 }
 
                 // Properties (required)
@@ -101,9 +100,13 @@ namespace VoidArchitect::Resources::Loaders
                         config.diffuseTexture.name = diffuseMapName;
                         config.diffuseTexture.use = Resources::TextureUse::Diffuse;
                     }
-                    else
+
+                    // Specular map (optional)
+                    if (propertiesNode["specular_map"])
                     {
-                        config.diffuseTexture.name = "";
+                        auto specularMapName = propertiesNode["specular_map"].as<std::string>();
+                        config.specularTexture.name = specularMapName;
+                        config.specularTexture.use = Resources::TextureUse::Specular;
                     }
 
                     // TODO Parse other properties
@@ -111,7 +114,8 @@ namespace VoidArchitect::Resources::Loaders
                 else
                 {
                     VA_ENGINE_ERROR(
-                        "[MaterialSystem] Material file '{}' is missing properties.", name);
+                        "[MaterialSystem] Material file '{}' is missing properties.",
+                        name);
                     return nullptr;
                 }
             }
@@ -123,7 +127,9 @@ namespace VoidArchitect::Resources::Loaders
         catch (YAML::Exception& ex)
         {
             VA_ENGINE_ERROR(
-                "[MaterialSystem] Failed to parse material file '{}': {}", materialPath, ex.what());
+                "[MaterialSystem] Failed to parse material file '{}': {}",
+                materialPath,
+                ex.what());
         }
         return nullptr;
     }

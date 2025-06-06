@@ -4,7 +4,6 @@
 #pragma once
 #include "RenderPassSystem.hpp"
 #include "Resources/RenderPass.hpp"
-#include "Resources/RenderState.hpp"
 #include "Resources/Shader.hpp"
 
 namespace VoidArchitect
@@ -31,7 +30,7 @@ namespace VoidArchitect
         Float32,
     };
 
-    enum class VertexAttributeType
+    enum class AttributeType
     {
         Float,
         Vec2,
@@ -42,7 +41,7 @@ namespace VoidArchitect
 
     struct VertexAttribute
     {
-        VertexAttributeType type;
+        AttributeType type;
         AttributeFormat format;
     };
 
@@ -58,11 +57,20 @@ namespace VoidArchitect
         StorageTexture
     };
 
+    struct BufferBinding
+    {
+        uint32_t binding;
+        AttributeType type;
+        AttributeFormat format;
+    };
+
     struct ResourceBinding
     {
         ResourceBindingType type;
         uint32_t binding;
         Resources::ShaderStage stage;
+
+        std::optional<std::vector<BufferBinding>> bufferBindings;
     };
 
     struct SpaceLayout

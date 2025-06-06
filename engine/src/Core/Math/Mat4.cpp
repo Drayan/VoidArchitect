@@ -36,7 +36,8 @@ namespace VoidArchitect::Math
         const float near,
         const float far)
     {
-        return Mat4(impl::glm::orthoRH_ZO(left, right, bottom, top, near, far));
+        auto mat = Mat4(impl::glm::orthoRH_ZO(left, right, bottom, top, near, far));
+        return mat;
     }
 
     Mat4 Mat4::Translate(const float x, const float y, const float z)
