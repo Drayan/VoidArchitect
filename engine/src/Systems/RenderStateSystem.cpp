@@ -91,53 +91,53 @@ namespace VoidArchitect
             case VertexFormat::Position:
             {
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
             }
             break;
             case VertexFormat::PositionColor:
             {
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec4, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec4, AttributeFormat::Float32});
             }
             break;
             case VertexFormat::PositionNormal:
             {
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
             }
             break;
             case VertexFormat::PositionNormalUV:
             {
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec2, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec2, AttributeFormat::Float32});
             }
             break;
             case VertexFormat::PositionNormalUVTangent:
             {
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec2, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec2, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
             }
             break;
             case VertexFormat::PositionUV:
             {
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec3, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
                 config.vertexAttributes.push_back(
-                    VertexAttribute{VertexAttributeType::Vec2, AttributeFormat::Float32});
+                    VertexAttribute{AttributeType::Vec2, AttributeFormat::Float32});
             }
             break;
 
@@ -284,7 +284,7 @@ namespace VoidArchitect
         renderStateConfig.shaders.emplace_back(vertexShader);
         renderStateConfig.shaders.emplace_back(pixelShader);
 
-        renderStateConfig.vertexFormat = VertexFormat::PositionUV;
+        renderStateConfig.vertexFormat = VertexFormat::PositionNormalUV;
         renderStateConfig.inputLayout = RenderStateInputLayout{}; // Use default configuration
 
         RegisterRenderStateTemplate("Default", renderStateConfig);
@@ -304,7 +304,7 @@ namespace VoidArchitect
         uiRenderStateConfig.shaders.emplace_back(uiVertexShader);
         uiRenderStateConfig.shaders.emplace_back(uiPixelShader);
 
-        uiRenderStateConfig.vertexFormat = VertexFormat::PositionUV;
+        uiRenderStateConfig.vertexFormat = VertexFormat::PositionNormalUV;
         uiRenderStateConfig.inputLayout = RenderStateInputLayout{}; // Use default configuration
 
         RegisterRenderStateTemplate("UI", uiRenderStateConfig);

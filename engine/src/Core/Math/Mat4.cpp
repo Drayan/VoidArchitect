@@ -36,7 +36,8 @@ namespace VoidArchitect::Math
         const float near,
         const float far)
     {
-        return Mat4(impl::glm::orthoRH_ZO(left, right, bottom, top, near, far));
+        auto mat = Mat4(impl::glm::orthoRH_ZO(left, right, bottom, top, near, far));
+        return mat;
     }
 
     Mat4 Mat4::Translate(const float x, const float y, const float z)
@@ -47,6 +48,11 @@ namespace VoidArchitect::Math
     Mat4 Mat4::Translate(const Vec3& translation)
     {
         return Mat4(impl::glm::translate(impl::glm::mat4(1.0f), translation.m_Vector));
+    }
+
+    Mat4 Mat4::Rotate(const float angle, const Vec3& axis)
+    {
+        return Mat4(impl::glm::rotate(impl::glm::mat4(1.0f), angle, axis.m_Vector));
     }
 
     Mat4 Mat4::Rotate(const float angle, const float x, const float y, const float z)

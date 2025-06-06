@@ -30,6 +30,7 @@ namespace VoidArchitect::Math
             float left, float right, float bottom, float top, float near, float far);
         static Mat4 Translate(float x, float y, float z);
         static Mat4 Translate(const Vec3& translation);
+        static Mat4 Rotate(float angle, const Vec3& axis);
         static Mat4 Rotate(float angle, float x, float y, float z);
         static Mat4 FromQuaternion(const Quat& quat);
         static Mat4 Scale(float x, float y, float z);

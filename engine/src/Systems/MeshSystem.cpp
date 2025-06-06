@@ -63,7 +63,8 @@ namespace VoidArchitect
 
         m_Meshes[handle] = {
             mesh->m_UUID,
-            vertices.size() * sizeof(Resources::MeshVertex) + indices.size() * sizeof(uint32_t)};
+            vertices.size() * sizeof(Resources::MeshVertex) + indices.size() * sizeof(uint32_t)
+        };
 
         m_TotalMemoryUsed += m_Meshes[handle].dataSize;
         m_TotalMeshesLoaded++;
@@ -97,14 +98,19 @@ namespace VoidArchitect
 
                 // Position
                 const Math::Vec3 position(
-                    radius * sinTheta * cosPhi, radius * cosTheta, radius * sinTheta * sinPhi);
+                    radius * sinTheta * cosPhi,
+                    radius * cosTheta,
+                    radius * sinTheta * sinPhi);
+
+                Math::Vec3 normal = position;
+                normal.Normalize();
 
                 // UV0
                 const Math::Vec2 uv0(
                     static_cast<float>(lon) / static_cast<float>(longitudeBands),
                     static_cast<float>(lat) / static_cast<float>(latitudeBands));
 
-                vertices.push_back({position, uv0});
+                vertices.push_back({position, normal, uv0});
             }
         }
 
@@ -136,40 +142,140 @@ namespace VoidArchitect
         VAArray<uint32_t> indices;
 
         // Front face
-        vertices.push_back({Math::Vec3(-halfSize, -halfSize, halfSize), Math::Vec2(0.0f, 0.0f)});
-        vertices.push_back({Math::Vec3(halfSize, -halfSize, halfSize), Math::Vec2(1.0f, 0.0f)});
-        vertices.push_back({Math::Vec3(halfSize, halfSize, halfSize), Math::Vec2(1.0f, 1.0f)});
-        vertices.push_back({Math::Vec3(-halfSize, halfSize, halfSize), Math::Vec2(0.0f, 1.0f)});
+        vertices.push_back(
+            {
+                Math::Vec3(-halfSize, -halfSize, halfSize),
+                Math::Vec3::Back(),
+                Math::Vec2(0.0f, 0.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(halfSize, -halfSize, halfSize),
+                Math::Vec3::Back(),
+                Math::Vec2(1.0f, 0.0f)
+            });
+        vertices.push_back(
+            {Math::Vec3(halfSize, halfSize, halfSize), Math::Vec3::Back(), Math::Vec2(1.0f, 1.0f)});
+        vertices.push_back(
+            {
+                Math::Vec3(-halfSize, halfSize, halfSize),
+                Math::Vec3::Back(),
+                Math::Vec2(0.0f, 1.0f)
+            });
 
         // Back face
-        vertices.push_back({Math::Vec3(halfSize, -halfSize, -halfSize), Math::Vec2(0.0f, 0.0f)});
-        vertices.push_back({Math::Vec3(-halfSize, -halfSize, -halfSize), Math::Vec2(1.0f, 0.0f)});
-        vertices.push_back({Math::Vec3(-halfSize, halfSize, -halfSize), Math::Vec2(1.0f, 1.0f)});
-        vertices.push_back({Math::Vec3(halfSize, halfSize, -halfSize), Math::Vec2(0.0f, 1.0f)});
+        vertices.push_back(
+            {
+                Math::Vec3(halfSize, -halfSize, -halfSize),
+                Math::Vec3::Forward(),
+                Math::Vec2(0.0f, 0.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(-halfSize, -halfSize, -halfSize),
+                Math::Vec3::Forward(),
+                Math::Vec2(1.0f, 0.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(-halfSize, halfSize, -halfSize),
+                Math::Vec3::Forward(),
+                Math::Vec2(1.0f, 1.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(halfSize, halfSize, -halfSize),
+                Math::Vec3::Forward(),
+                Math::Vec2(0.0f, 1.0f)
+            });
 
         // Right face
-        vertices.push_back({Math::Vec3(halfSize, -halfSize, halfSize), Math::Vec2(0.0f, 0.0f)});
-        vertices.push_back({Math::Vec3(halfSize, -halfSize, -halfSize), Math::Vec2(1.0f, 0.0f)});
-        vertices.push_back({Math::Vec3(halfSize, halfSize, -halfSize), Math::Vec2(1.0f, 1.0f)});
-        vertices.push_back({Math::Vec3(halfSize, halfSize, halfSize), Math::Vec2(0.0f, 1.0f)});
+        vertices.push_back(
+            {
+                Math::Vec3(halfSize, -halfSize, halfSize),
+                Math::Vec3::Right(),
+                Math::Vec2(0.0f, 0.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(halfSize, -halfSize, -halfSize),
+                Math::Vec3::Right(),
+                Math::Vec2(1.0f, 0.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(halfSize, halfSize, -halfSize),
+                Math::Vec3::Right(),
+                Math::Vec2(1.0f, 1.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(halfSize, halfSize, halfSize),
+                Math::Vec3::Right(),
+                Math::Vec2(0.0f, 1.0f)
+            });
 
         // Left face
-        vertices.push_back({Math::Vec3(-halfSize, -halfSize, -halfSize), Math::Vec2(0.0f, 0.0f)});
-        vertices.push_back({Math::Vec3(-halfSize, -halfSize, halfSize), Math::Vec2(1.0f, 0.0f)});
-        vertices.push_back({Math::Vec3(-halfSize, halfSize, halfSize), Math::Vec2(1.0f, 1.0f)});
-        vertices.push_back({Math::Vec3(-halfSize, halfSize, -halfSize), Math::Vec2(0.0f, 1.0f)});
+        vertices.push_back(
+            {
+                Math::Vec3(-halfSize, -halfSize, -halfSize),
+                Math::Vec3::Left(),
+                Math::Vec2(0.0f, 0.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(-halfSize, -halfSize, halfSize),
+                Math::Vec3::Left(),
+                Math::Vec2(1.0f, 0.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(-halfSize, halfSize, halfSize),
+                Math::Vec3::Left(),
+                Math::Vec2(1.0f, 1.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(-halfSize, halfSize, -halfSize),
+                Math::Vec3::Left(),
+                Math::Vec2(0.0f, 1.0f)
+            });
 
         // Up face
-        vertices.push_back({Math::Vec3(-halfSize, halfSize, halfSize), Math::Vec2(0.0f, 0.0f)});
-        vertices.push_back({Math::Vec3(halfSize, halfSize, halfSize), Math::Vec2(1.0f, 0.0f)});
-        vertices.push_back({Math::Vec3(halfSize, halfSize, -halfSize), Math::Vec2(1.0f, 1.0f)});
-        vertices.push_back({Math::Vec3(-halfSize, halfSize, -halfSize), Math::Vec2(0.0f, 1.0f)});
+        vertices.push_back(
+            {Math::Vec3(-halfSize, halfSize, halfSize), Math::Vec3::Up(), Math::Vec2(0.0f, 0.0f)});
+        vertices.push_back(
+            {Math::Vec3(halfSize, halfSize, halfSize), Math::Vec3::Up(), Math::Vec2(1.0f, 0.0f)});
+        vertices.push_back(
+            {Math::Vec3(halfSize, halfSize, -halfSize), Math::Vec3::Up(), Math::Vec2(1.0f, 1.0f)});
+        vertices.push_back(
+            {Math::Vec3(-halfSize, halfSize, -halfSize), Math::Vec3::Up(), Math::Vec2(0.0f, 1.0f)});
 
         // Down face
-        vertices.push_back({Math::Vec3(-halfSize, -halfSize, -halfSize), Math::Vec2(0.0f, 0.0f)});
-        vertices.push_back({Math::Vec3(halfSize, -halfSize, -halfSize), Math::Vec2(1.0f, 0.0f)});
-        vertices.push_back({Math::Vec3(halfSize, -halfSize, halfSize), Math::Vec2(1.0f, 1.0f)});
-        vertices.push_back({Math::Vec3(-halfSize, -halfSize, halfSize), Math::Vec2(0.0f, 1.0f)});
+        vertices.push_back(
+            {
+                Math::Vec3(-halfSize, -halfSize, -halfSize),
+                Math::Vec3::Down(),
+                Math::Vec2(0.0f, 0.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(halfSize, -halfSize, -halfSize),
+                Math::Vec3::Down(),
+                Math::Vec2(1.0f, 0.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(halfSize, -halfSize, halfSize),
+                Math::Vec3::Down(),
+                Math::Vec2(1.0f, 1.0f)
+            });
+        vertices.push_back(
+            {
+                Math::Vec3(-halfSize, -halfSize, halfSize),
+                Math::Vec3::Down(),
+                Math::Vec2(0.0f, 1.0f)
+            });
 
         for (uint32_t face = 0; face < 6; ++face)
         {
@@ -183,6 +289,26 @@ namespace VoidArchitect
             indices.push_back(baseIndex + 2);
             indices.push_back(baseIndex + 3);
         }
+
+        return CreateMesh(name, vertices, indices);
+    }
+
+    Resources::MeshPtr MeshSystem::CreateQuad(
+        const std::string& name,
+        const float width,
+        const float height)
+    {
+        const float halfWidth = width * 0.5f;
+        const float halfHeight = height * 0.5f;
+
+        const VAArray<Resources::MeshVertex> vertices
+        {
+            {Math::Vec3(-halfWidth, -halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(0.0f, 0.0f)},
+            {Math::Vec3(halfWidth, -halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(1.0f, 0.0f)},
+            {Math::Vec3(halfWidth, halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(1.0f, 1.0f)},
+            {Math::Vec3(-halfWidth, halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(0.0f, 1.0f)}
+        };
+        const VAArray<uint32_t> indices{0, 1, 2, 2, 3, 0};
 
         return CreateMesh(name, vertices, indices);
     }
@@ -230,7 +356,7 @@ namespace VoidArchitect
                 const auto position = tangent * localX + bitangent * localY;
                 const auto uv = Math::Vec2(u, v);
 
-                vertices.push_back({position, uv});
+                vertices.push_back({position, normal, uv});
             }
         }
 

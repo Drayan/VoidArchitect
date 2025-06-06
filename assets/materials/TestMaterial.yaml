@@ -1,5 +1,8 @@
 material:
   name: "TestMaterial"
+  pipeline: "ForwardOpaque"
   properties:
-    diffuse_color: [ 1.0, 0.0, 0.0, 1.0 ]
-    diffuse_map: "wall2_n"
+    diffuse_color: [ 1.0, 1.0, 1.0, 1.0 ]
+    specular: 64.0
+    diffuse_map: "wall3_color"
+    specular_map: "wall3_shga"

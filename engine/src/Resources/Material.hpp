@@ -5,11 +5,11 @@
 
 #include <memory>
 
-#include "Mesh.hpp"
-#include "RenderState.hpp"
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec4.hpp"
 #include "Core/Uuid.hpp"
+#include "Mesh.hpp"
+#include "RenderState.hpp"
 #include "Resources/Texture.hpp"
 
 namespace VoidArchitect::Platform
@@ -34,24 +34,24 @@ namespace VoidArchitect
             Math::Mat4 Projection;
             Math::Mat4 View;
             Math::Mat4 UIProjection;
-            Math::Mat4 Reserved0;
+            Math::Vec4 LightDirection;
+            Math::Vec4 LightColor;
+            Math::Vec4 ViewPosition;
         };
 
         struct MaterialUniformObject
         {
             Math::Vec4 DiffuseColor; // 16 bytes
-            Math::Vec4 Reserved0; // 16 bytes
-            Math::Vec4 Reserved1; // 16 bytes
-            Math::Vec4 Reserved2; // 16 bytes
+            Math::Vec4 Reserved0;    // 16 bytes
+            Math::Vec4 Reserved1;    // 16 bytes
+            Math::Vec4 Reserved2;    // 16 bytes
         };
 
         struct GeometryRenderData
         {
             GeometryRenderData();
             GeometryRenderData(
-                const Math::Mat4& model,
-                const MaterialPtr& material,
-                const MeshPtr& mesh);
+                const Math::Mat4& model, const MaterialPtr& material, const MeshPtr& mesh);
 
             Math::Mat4 Model;
             MeshPtr Mesh;
@@ -63,6 +63,8 @@ namespace VoidArchitect
             friend class VoidArchitect::MaterialSystem;
 
         public:
+            static constexpr size_t MAX_TEXTURES = 4;
+
             virtual ~IMaterial() = default;
 
             virtual void SetModel(
@@ -70,8 +72,7 @@ namespace VoidArchitect
                 const Math::Mat4& model,
                 const RenderStatePtr& pipeline) = 0;
             virtual void Bind(
-                Platform::IRenderingHardware& rhi,
-                const RenderStatePtr& pipeline) = 0;
+                Platform::IRenderingHardware& rhi, const RenderStatePtr& pipeline) = 0;
 
             static void SetDefaultDiffuseTexture(const Resources::Texture2DPtr& defaultTexture)
             {
@@ -80,9 +81,9 @@ namespace VoidArchitect
 
             [[nodiscard]] UUID GetUUID() const { return m_UUID; }
 
-            [[nodiscard]] const TexturePtr& GetTexture(size_t index = 0) const
+            [[nodiscard]] const TexturePtr& GetTexture(const size_t index = 0) const
             {
-                return m_DiffuseTexture;
+                return m_Textures[index];
             }
 
             Math::Vec4 GetDiffuseColor() const { return m_DiffuseColor; };
@@ -94,12 +95,17 @@ namespace VoidArchitect
                 m_Generation++;
             }
 
-            void SetTexture(size_t index, const TexturePtr& texture) { m_DiffuseTexture = texture; }
+            void SetTexture(const size_t index, const TexturePtr& texture)
+            {
+                m_Textures[index] = texture;
+            }
 
         protected:
             explicit IMaterial(const std::string& name);
 
-            virtual void InitializeResources(Platform::IRenderingHardware& rhi) = 0;
+            virtual void InitializeResources(
+                Platform::IRenderingHardware& rhi,
+                const Resources::RenderStatePtr& renderState) = 0;
             virtual void ReleaseResources() = 0;
 
             static Texture2DPtr s_DefaultDiffuseTexture;
@@ -111,7 +117,7 @@ namespace VoidArchitect
 
             Math::Vec4 m_DiffuseColor = Math::Vec4::One();
 
-            TexturePtr m_DiffuseTexture;
+            TexturePtr m_Textures[MAX_TEXTURES];
         };
     } // namespace Resources
 } // namespace VoidArchitect

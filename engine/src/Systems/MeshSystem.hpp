@@ -24,6 +24,10 @@ namespace VoidArchitect
             uint32_t latitudeBands = 8,
             uint32_t longitudeBands = 8);
         Resources::MeshPtr CreateCube(const std::string& name, float size = 1.0f);
+        Resources::MeshPtr CreateQuad(
+            const std::string& name,
+            float width = 1.0f,
+            float height = 1.0f);
         Resources::MeshPtr CreatePlane(
             const std::string& name,
             float width = 1.0f,

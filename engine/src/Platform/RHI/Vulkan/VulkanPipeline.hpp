@@ -53,8 +53,8 @@ namespace VoidArchitect::Platform
 
     private:
         static VkFormat TranslateEngineAttributeFormatToVulkanFormat(
-            VertexAttributeType type, AttributeFormat format);
-        static uint32_t GetEngineAttributeSize(VertexAttributeType type, AttributeFormat format);
+            AttributeType type, AttributeFormat format);
+        static uint32_t GetEngineAttributeSize(AttributeType type, AttributeFormat format);
 
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;

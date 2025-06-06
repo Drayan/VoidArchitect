@@ -27,7 +27,9 @@ namespace VoidArchitect::Platform
             VkAllocationCallbacks* allocator);
         ~VulkanMaterial() override;
 
-        void InitializeResources(IRenderingHardware& rhi) override;
+        void InitializeResources(
+            IRenderingHardware& rhi,
+            const Resources::RenderStatePtr& renderState) override;
 
         void Bind(IRenderingHardware& rhi, const Resources::RenderStatePtr& pipeline) override;
         void SetModel(
@@ -38,6 +40,9 @@ namespace VoidArchitect::Platform
     private:
         void ReleaseResources() override;
         void UpdateDescriptorSets(VulkanRHI& rhi);
+
+        // Material description
+        VAArray<ResourceBinding> m_PipelineResourceBindings;
 
         VkAllocationCallbacks* m_Allocator;
         VkDevice m_Device;
@@ -51,7 +56,9 @@ namespace VoidArchitect::Platform
         {
             uint32_t matGeneration = std::numeric_limits<uint32_t>::max();
             uint32_t texGeneration = std::numeric_limits<uint32_t>::max();
-            UUID texUUID = InvalidUUID;
+
+            std::vector<u_int32_t> resourcesGenerations;
+            std::vector<UUID> resourcesUUIDs;
         };
 
         std::array<DescriptorState, 3> m_MaterialDescriptorStates;

@@ -42,6 +42,7 @@ namespace VoidArchitect::Math
         Vec3 operator/(const float scalar) const;
         Vec3& operator+=(const Vec3& other);
         Vec3& operator-=(const Vec3& other);
+        Vec3& operator-();
 
         void X(const float x) { m_Vector.x = x; }
         void Y(const float y) { m_Vector.y = y; }
