@@ -42,7 +42,7 @@ namespace VoidArchitect::Renderer
         }
 
         static float angle = 0.f;
-        angle += (1.f * context.FrameData.deltaTime);
+        angle += (0.5f * context.FrameData.deltaTime);
         const auto geometry = Resources::GeometryRenderData(
             Math::Mat4::Rotate(angle, Math::Vec3::Up()),
             defaultMat,

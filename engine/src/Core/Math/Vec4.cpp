@@ -2,25 +2,19 @@
 // Created by Michael Desmedt on 22/05/2025.
 //
 #include "Vec4.hpp"
+#include "Vec3.hpp"
 
 #include "Core/Logger.hpp"
 
 namespace VoidArchitect::Math
 {
-    Vec4::Vec4()
-        : m_Vector()
-    {
-    }
+    Vec4::Vec4() : m_Vector() {}
 
-    Vec4::Vec4(const impl::glm::vec4& vector)
-        : m_Vector(vector)
-    {
-    }
+    Vec4::Vec4(const impl::glm::vec4& vector) : m_Vector(vector) {}
 
-    Vec4::Vec4(const float x, const float y, const float z, const float w)
-        : m_Vector(x, y, z, w)
-    {
-    }
+    Vec4::Vec4(const float x, const float y, const float z, const float w) : m_Vector(x, y, z, w) {}
+
+    Vec4::Vec4(Math::Vec3 vector, float w) : m_Vector(vector.X(), vector.Y(), vector.Z(), w) {}
 
     Vec4 Vec4::operator+(const Vec4& other) const { return Vec4(m_Vector + other.m_Vector); }
 

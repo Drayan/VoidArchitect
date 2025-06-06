@@ -9,7 +9,7 @@ struct VSInput
     float2 UV0 : TEXCOORD0;
 };
 
-struct DataTransfer
+struct PSInput
 {
     [[vk::location(0)]]
     float4 Position : SV_POSITION;
@@ -17,14 +17,8 @@ struct DataTransfer
     float3 Normal : NORMAL;
     [[vk::location(2)]]
     float2 UV0 : TEXCOORD0;
-};
-
-struct PSInput
-{
-    [[vk::location(1)]]
-    float3 Normal : NORMAL;
-    [[vk::location(2)]]
-    float2 UV0 : TEXCOORD0;
+    [[vk::location(3)]]
+    float4 PixelPosition : POSITION;
 };
 
 struct GlobalUBO
@@ -34,6 +28,7 @@ struct GlobalUBO
     float4x4 UIProjection;
     float4 LightDirection;
     float4 LightColor;
+    float4 ViewPosition;
 };
 struct MaterialUBO
 {

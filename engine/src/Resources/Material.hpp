@@ -5,11 +5,11 @@
 
 #include <memory>
 
-#include "Mesh.hpp"
-#include "RenderState.hpp"
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec4.hpp"
 #include "Core/Uuid.hpp"
+#include "Mesh.hpp"
+#include "RenderState.hpp"
 #include "Resources/Texture.hpp"
 
 namespace VoidArchitect::Platform
@@ -36,23 +36,22 @@ namespace VoidArchitect
             Math::Mat4 UIProjection;
             Math::Vec4 LightDirection;
             Math::Vec4 LightColor;
+            Math::Vec4 ViewPosition;
         };
 
         struct MaterialUniformObject
         {
             Math::Vec4 DiffuseColor; // 16 bytes
-            Math::Vec4 Reserved0; // 16 bytes
-            Math::Vec4 Reserved1; // 16 bytes
-            Math::Vec4 Reserved2; // 16 bytes
+            Math::Vec4 Reserved0;    // 16 bytes
+            Math::Vec4 Reserved1;    // 16 bytes
+            Math::Vec4 Reserved2;    // 16 bytes
         };
 
         struct GeometryRenderData
         {
             GeometryRenderData();
             GeometryRenderData(
-                const Math::Mat4& model,
-                const MaterialPtr& material,
-                const MeshPtr& mesh);
+                const Math::Mat4& model, const MaterialPtr& material, const MeshPtr& mesh);
 
             Math::Mat4 Model;
             MeshPtr Mesh;
@@ -73,8 +72,7 @@ namespace VoidArchitect
                 const Math::Mat4& model,
                 const RenderStatePtr& pipeline) = 0;
             virtual void Bind(
-                Platform::IRenderingHardware& rhi,
-                const RenderStatePtr& pipeline) = 0;
+                Platform::IRenderingHardware& rhi, const RenderStatePtr& pipeline) = 0;
 
             static void SetDefaultDiffuseTexture(const Resources::Texture2DPtr& defaultTexture)
             {

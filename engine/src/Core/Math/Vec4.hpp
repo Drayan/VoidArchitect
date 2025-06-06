@@ -10,6 +10,8 @@ namespace VoidArchitect::Math
 #include <glm/vec4.hpp>
     }
 
+    class Vec3;
+
     class Vec4
     {
         friend class Mat4;
@@ -23,6 +25,7 @@ namespace VoidArchitect::Math
 
         Vec4();
         Vec4(float x, float y, float z, float w);
+        Vec4(Math::Vec3 vector, float w = 1.0f);
 
         Vec4 operator+(const Vec4& other) const;
         Vec4 operator-(const Vec4& other) const;

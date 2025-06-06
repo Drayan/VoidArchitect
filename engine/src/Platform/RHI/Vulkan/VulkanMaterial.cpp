@@ -37,8 +37,7 @@ namespace VoidArchitect::Platform
     VulkanMaterial::~VulkanMaterial() { VulkanMaterial::ReleaseResources(); }
 
     void VulkanMaterial::InitializeResources(
-        IRenderingHardware& rhi,
-        const Resources::RenderStatePtr& renderState)
+        IRenderingHardware& rhi, const Resources::RenderStatePtr& renderState)
     {
         if (!g_VkMaterialBufferManager)
         {
@@ -114,9 +113,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanMaterial::SetModel(
-        IRenderingHardware& rhi,
-        const Math::Mat4& model,
-        const Resources::RenderStatePtr& pipeline)
+        IRenderingHardware& rhi, const Math::Mat4& model, const Resources::RenderStatePtr& pipeline)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
         const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
@@ -139,7 +136,7 @@ namespace VoidArchitect::Platform
         const auto& descriptorState = m_MaterialDescriptorStates[frameIndex];
 
         // 1. Check if we need to update the material descriptor set.
-        //TODO: This should be changed and split into two functions.
+        // TODO: This should be changed and split into two functions.
         if (descriptorState.resourcesGenerations[0] != m_Generation)
         {
             const auto materialBO = Resources::MaterialUniformObject{
@@ -199,105 +196,113 @@ namespace VoidArchitect::Platform
         writes.reserve(m_PipelineResourceBindings.size());
 
         // 1. If we need, we update the material descriptor set for uniform buffer.
-        for (const auto& resBinding : m_PipelineResourceBindings)
+        if (descriptorState.matGeneration != m_Generation)
         {
-            switch (resBinding.type)
+            for (const auto& resBinding : m_PipelineResourceBindings)
             {
-                case ResourceBindingType::ConstantBuffer:
+                switch (resBinding.type)
                 {
-                    // If the resource generation is different from the one we have in the descriptor,
-                    // it means we have to update it.
-                    if (descriptorState.resourcesGenerations[resBinding.binding] == m_Generation)
-                        continue;
-
-                    VkDescriptorBufferInfo bufferInfo{};
-                    auto [buffer, offset, range] = g_VkMaterialBufferManager->GetBindingInfo(
-                        m_BufferSlot);
-
-                    bufferInfo.buffer = buffer;
-                    bufferInfo.offset = offset;
-                    bufferInfo.range = range;
-
-                    // We store this because we need a valid pointer for Vulkan.
-                    bufferInfos.push_back(bufferInfo);
-
-                    VkWriteDescriptorSet write{};
-                    write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                    write.dstSet = m_MaterialDescriptorSets[frameIndex];
-                    write.dstBinding = 0;
-                    write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                    write.descriptorCount = 1;
-                    write.pBufferInfo = &bufferInfos[bufferInfoIndex++];
-
-                    writes.push_back(write);
-
-                    descriptorState.resourcesGenerations[resBinding.binding] = m_Generation;
-                }
-                break;
-
-                case ResourceBindingType::Texture1D:
-                case ResourceBindingType::Texture2D:
-                case ResourceBindingType::Texture3D:
-                {
-                    if (descriptorState.resourcesGenerations[resBinding.binding] == m_Generation)
-                        continue;
-
-                    // Retrieve the texture.
-                    auto texture = std::dynamic_pointer_cast<VulkanTexture2D>(
-                        m_Textures[imageInfoIndex]);
-                    // If we cannot find the texture, or if the texture generation is invalid,
-                    // we use the default texture.
-                    if (!texture || texture->GetGeneration() == std::numeric_limits<
-                        uint32_t>::max())
+                    case ResourceBindingType::ConstantBuffer:
                     {
-                        texture = std::dynamic_pointer_cast<VulkanTexture2D>(
-                            s_DefaultDiffuseTexture);
+                        // If the resource generation is different from the one we have in the
+                        // descriptor, it means we have to update it.
+                        if (descriptorState.resourcesGenerations[resBinding.binding]
+                            == m_Generation)
+                            continue;
+
+                        VkDescriptorBufferInfo bufferInfo{};
+                        auto [buffer, offset, range] =
+                            g_VkMaterialBufferManager->GetBindingInfo(m_BufferSlot);
+
+                        bufferInfo.buffer = buffer;
+                        bufferInfo.offset = offset;
+                        bufferInfo.range = range;
+
+                        // We store this because we need a valid pointer for Vulkan.
+                        bufferInfos.push_back(bufferInfo);
+
+                        VkWriteDescriptorSet write{};
+                        write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                        write.dstSet = m_MaterialDescriptorSets[frameIndex];
+                        write.dstBinding = resBinding.binding;
+                        write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                        write.descriptorCount = 1;
+                        write.pBufferInfo = &bufferInfos[bufferInfoIndex++];
+
+                        writes.push_back(write);
+
+                        descriptorState.resourcesGenerations[resBinding.binding] = m_Generation;
                     }
-
-                    // If we can't have a texture by this point, or if the texture hasn't changed,
-                    // we skip this resource.
-                    if (!texture || (descriptorState.resourcesUUIDs[resBinding.binding] == texture->
-                        GetUUID() && descriptorState.resourcesGenerations[resBinding.binding] ==
-                        texture->GetGeneration()))
-                        continue;
-
-                    VkDescriptorImageInfo imageInfo{};
-                    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                    imageInfo.imageView = texture->GetImageView();
-                    imageInfo.sampler = texture->GetSampler();
-
-                    imageInfos.push_back(imageInfo);
-
-                    VkWriteDescriptorSet write{};
-                    write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                    write.dstSet = m_MaterialDescriptorSets[frameIndex];
-                    write.dstBinding = 1;
-                    write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                    write.descriptorCount = 1;
-                    write.pImageInfo = &imageInfos[imageInfoIndex++];
-
-                    writes.push_back(write);
-
-                    descriptorState.resourcesUUIDs[resBinding.binding] = texture->GetUUID();
-                    descriptorState.resourcesGenerations[resBinding.binding] = texture->
-                        GetGeneration();
-                }
-                break;
-
-                default:
                     break;
+
+                    case ResourceBindingType::Texture1D:
+                    case ResourceBindingType::Texture2D:
+                    case ResourceBindingType::Texture3D:
+                    {
+                        // Retrieve the texture.
+                        auto texture =
+                            std::dynamic_pointer_cast<VulkanTexture2D>(m_Textures[imageInfoIndex]);
+                        // If we cannot find the texture, or if the texture generation is invalid,
+                        // we use the default texture.
+                        if (!texture
+                            || texture->GetGeneration() == std::numeric_limits<uint32_t>::max())
+                        {
+                            texture =
+                                std::dynamic_pointer_cast<VulkanTexture2D>(s_DefaultDiffuseTexture);
+                        }
+
+                        // If we can't have a texture by this point, or if the texture hasn't
+                        // changed, we skip this resource.
+                        if (!texture
+                            || (descriptorState.resourcesUUIDs[resBinding.binding]
+                                    == texture->GetUUID()
+                                && descriptorState.resourcesGenerations[resBinding.binding]
+                                       == texture->GetGeneration()))
+                            continue;
+
+                        VkDescriptorImageInfo imageInfo{};
+                        imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                        imageInfo.imageView = texture->GetImageView();
+                        imageInfo.sampler = texture->GetSampler();
+
+                        imageInfos.push_back(imageInfo);
+
+                        VkWriteDescriptorSet write{};
+                        write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                        write.dstSet = m_MaterialDescriptorSets[frameIndex];
+                        write.dstBinding = resBinding.binding;
+                        write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                        write.descriptorCount = 1;
+                        write.pImageInfo = &imageInfos[imageInfoIndex++];
+
+                        VA_ENGINE_DEBUG(
+                            "[VulkanMaterial] Updating descriptor set for binding {} with texture "
+                            ": {}",
+                            resBinding.binding,
+                            static_cast<uint64_t>(texture->GetUUID()));
+
+                        writes.push_back(write);
+
+                        descriptorState.resourcesUUIDs[resBinding.binding] = texture->GetUUID();
+                        descriptorState.resourcesGenerations[resBinding.binding] =
+                            texture->GetGeneration();
+                    }
+                    break;
+
+                    default:
+                        break;
+                }
             }
+
+            // Update the material generation.
+            descriptorState.matGeneration = m_Generation;
         }
 
         // 3. Apply updates
         if (!writes.empty())
         {
             vkUpdateDescriptorSets(
-                m_Device,
-                static_cast<uint32_t>(writes.size()),
-                writes.data(),
-                0,
-                nullptr);
+                m_Device, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
         }
     }
 } // namespace VoidArchitect::Platform
