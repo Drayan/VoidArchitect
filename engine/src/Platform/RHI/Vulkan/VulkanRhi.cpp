@@ -302,7 +302,8 @@ namespace VoidArchitect::Platform
         const Resources::GeometryRenderData& data,
         const Resources::RenderStatePtr& pipeline)
     {
-        data.Material->SetModel(*this, data.Model, pipeline);
+        //TODO: How to set the model ?
+        //data.Material->SetModel(*this, data.Model, pipeline);
         data.Mesh->Bind(*this);
         vkCmdDrawIndexed(
             GetCurrentCommandBuffer().GetHandle(),

@@ -37,7 +37,8 @@ namespace VoidArchitect::Platform
     VulkanMaterial::~VulkanMaterial() { VulkanMaterial::ReleaseResources(); }
 
     void VulkanMaterial::InitializeResources(
-        IRenderingHardware& rhi, const Resources::RenderStatePtr& renderState)
+        IRenderingHardware& rhi,
+        const VAArray<ResourceBinding>& bindings)
     {
         if (!g_VkMaterialBufferManager)
         {
@@ -56,7 +57,6 @@ namespace VoidArchitect::Platform
         // --- Local Descriptors ---
         // TODO Maybe we should retrieve the pipeline configuration and use that to determine the
         //  resources bindings.
-        const auto& [space, bindings] = renderState->GetInputLayout().spaces[1];
         m_PipelineResourceBindings = bindings;
 
         VAArray<VkDescriptorPoolSize> poolSizes;
@@ -113,7 +113,9 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanMaterial::SetModel(
-        IRenderingHardware& rhi, const Math::Mat4& model, const Resources::RenderStatePtr& pipeline)
+        IRenderingHardware& rhi,
+        const Math::Mat4& model,
+        const Resources::RenderStatePtr& pipeline)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
         const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
@@ -255,9 +257,9 @@ namespace VoidArchitect::Platform
                         // changed, we skip this resource.
                         if (!texture
                             || (descriptorState.resourcesUUIDs[resBinding.binding]
-                                    == texture->GetUUID()
+                                == texture->GetUUID()
                                 && descriptorState.resourcesGenerations[resBinding.binding]
-                                       == texture->GetGeneration()))
+                                == texture->GetGeneration()))
                             continue;
 
                         VkDescriptorImageInfo imageInfo{};
@@ -302,7 +304,11 @@ namespace VoidArchitect::Platform
         if (!writes.empty())
         {
             vkUpdateDescriptorSets(
-                m_Device, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
+                m_Device,
+                static_cast<uint32_t>(writes.size()),
+                writes.data(),
+                0,
+                nullptr);
         }
     }
 } // namespace VoidArchitect::Platform

@@ -371,12 +371,6 @@ namespace VoidArchitect::Renderer
             return false;
         }
 
-        if (!CompileMaterials())
-        {
-            VA_ENGINE_ERROR("[RenderGraph] Failed to compile materials.");
-            return false;
-        }
-
         // Step 5: Assign required states from renderers
         AssignRequiredStates();
 
@@ -523,69 +517,6 @@ namespace VoidArchitect::Renderer
         }
 
         VA_ENGINE_DEBUG("[RenderGraph] RenderStates compiled successfully.");
-        return true;
-    }
-
-    bool RenderGraph::CompileMaterials()
-    {
-        VA_ENGINE_DEBUG("[RenderGraph] Compiling materials...");
-
-        for (const auto& request : m_MaterialRequests)
-        {
-            // Find pass mapping
-            auto mappingIt = std::ranges::find_if(
-                m_PassMappings,
-                [&request](const PassMapping& mapping)
-                {
-                    return mapping.passType == request.passType;
-                });
-
-            if (mappingIt == m_PassMappings.end())
-            {
-                VA_ENGINE_ERROR(
-                    "[RenderGraph] No pass mapping found for pass type '{}' for material '{}'.",
-                    RenderPassTypeToString(request.passType),
-                    request.identifier);
-                return false;
-            }
-
-            const auto& mapping = *mappingIt;
-
-            // Get the RenderState for this material
-            auto renderState = g_RenderStateSystem->GetCachedRenderState(
-                request.renderStateTemplate,
-                mapping.signature);
-
-            if (!renderState)
-            {
-                VA_ENGINE_ERROR(
-                    "[RenderGraph] Failed to get RenderState '{}' for material '{}'.",
-                    request.renderStateTemplate,
-                    request.templateName);
-                return false;
-            }
-
-            // Create material using MaterialSystem
-            auto material = g_MaterialSystem->CreateMaterial(
-                request.templateName,
-                request.passType,
-                renderState);
-            if (!material)
-            {
-                VA_ENGINE_ERROR(
-                    "[RenderGraph] Failed to create material '{}' for material request '{}'.",
-                    request.templateName,
-                    request.templateName);
-                return false;
-            }
-
-            m_CompiledMaterials[request.templateName] = material;
-            VA_ENGINE_TRACE(
-                "[RenderGraph] Material '{}' compiled successfully.",
-                request.templateName);
-        }
-
-        VA_ENGINE_DEBUG("[RenderGraph] Materials compiled successfully.");
         return true;
     }
 
@@ -857,32 +788,6 @@ namespace VoidArchitect::Renderer
         m_StateChangeCount = 0;
     }
 
-    void RenderGraph::RegisterPassMapping(
-        RenderPassType passType,
-        const std::string& renderPassName,
-        const RenderStateSignature& signature)
-    {
-        m_PassMappings.push_back({passType, renderPassName, signature});
-        VA_ENGINE_TRACE(
-            "[RenderGraph] Registered pass mapping: {} -> {}.",
-            RenderPassTypeToString(passType),
-            renderPassName);
-    }
-
-    void RenderGraph::RequestMaterialForPassType(
-        const std::string& identifier,
-        const std::string& templateName,
-        const std::string& renderStateTemplate,
-        RenderPassType passType)
-    {
-        m_MaterialRequests.push_back({templateName, renderStateTemplate, identifier, passType});
-        VA_ENGINE_TRACE(
-            "[RenderGraph] Requested material for pass type '{}': {} -> {}.",
-            RenderPassTypeToString(passType),
-            templateName,
-            renderStateTemplate);
-    }
-
     void RenderGraph::BindRenderStateIfNeeded(const Resources::RenderStatePtr& newState)
     {
         if (!newState)
@@ -902,12 +807,6 @@ namespace VoidArchitect::Renderer
             //     newState->GetName(),
             //     m_StateChangeCount);
         }
-    }
-
-    Resources::MaterialPtr RenderGraph::GetMaterial(const std::string& identifier) const
-    {
-        auto it = m_CompiledMaterials.find(identifier);
-        return (it != m_CompiledMaterials.end()) ? it->second : nullptr;
     }
 
     void RenderGraph::OnResize(uint32_t width, uint32_t height)
@@ -1151,27 +1050,7 @@ namespace VoidArchitect::Renderer
         ConnectPassToTarget(forwardPassUUID, mainTargetUUID);
         ConnectPassToTarget(uiPassUUID, mainTargetUUID);
 
-        // === 6. Register materials ===
-        RegisterPassMapping(
-            RenderPassType::ForwardOpaque,
-            "ForwardOpaque",
-            g_RenderStateSystem->CreateSignatureFromPass(
-                g_RenderPassSystem->GetRenderPassTemplate(forwardPassTemplateUUID)));
-
-        RegisterPassMapping(
-            RenderPassType::UI,
-            "UI",
-            g_RenderStateSystem->CreateSignatureFromPass(
-                g_RenderPassSystem->GetRenderPassTemplate(uiPassTemplateUUID)));
-
-        RequestMaterialForPassType(
-            "Material",
-            "TestMaterial",
-            "Default",
-            RenderPassType::ForwardOpaque);
-        RequestMaterialForPassType("UI", "DefaultUI", "UI", RenderPassType::UI),
-
-            VA_ENGINE_INFO("[RenderGraph] Forward Renderer setup complete, ready for compilation.");
+        VA_ENGINE_INFO("[RenderGraph] Forward Renderer setup complete, ready for compilation.");
     }
 } // namespace VoidArchitect::Renderer
 // VoidArchitect

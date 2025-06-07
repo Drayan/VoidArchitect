@@ -11,7 +11,7 @@
 
 namespace VoidArchitect::Resources::Loaders
 {
-    MaterialDataDefinition::MaterialDataDefinition(const MaterialConfig& config)
+    MaterialDataDefinition::MaterialDataDefinition(const MaterialTemplate& config)
         : m_MaterialConfig(config)
     {
     }
@@ -37,7 +37,7 @@ namespace VoidArchitect::Resources::Loaders
         try
         {
             auto configFile = YAML::LoadFile(materialPath);
-            MaterialConfig config;
+            MaterialTemplate config;
 
             if (configFile["material"])
             {
@@ -56,11 +56,11 @@ namespace VoidArchitect::Resources::Loaders
                 }
 
                 // Pipeline (optional)
-                if (materialNode["pipeline"])
+                if (materialNode["render_state_class"])
                 {
-                    auto renderState = materialNode["pipeline"].as<std::string>();
+                    auto renderState = materialNode["render_state_class"].as<std::string>();
                     // TODO Retrieve the pipeline from the pipeline system
-                    config.renderStateTemplate = renderState;
+                    config.renderStateClass = renderState;
                 }
 
                 // Properties (required)

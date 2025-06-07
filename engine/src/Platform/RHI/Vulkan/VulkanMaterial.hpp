@@ -29,7 +29,7 @@ namespace VoidArchitect::Platform
 
         void InitializeResources(
             IRenderingHardware& rhi,
-            const Resources::RenderStatePtr& renderState) override;
+            const VAArray<ResourceBinding>& bindings) override;
 
         void Bind(IRenderingHardware& rhi, const Resources::RenderStatePtr& pipeline) override;
         void SetModel(

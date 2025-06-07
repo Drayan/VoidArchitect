@@ -20,14 +20,14 @@ namespace VoidArchitect::Platform
 namespace VoidArchitect
 {
     class MaterialSystem;
+    using MaterialHandle = uint32_t;
+    static constexpr MaterialHandle InvalidMaterialHandle = std::numeric_limits<uint32_t>::max();
 
     namespace Resources
     {
         class ITexture;
         class Texture2D;
         class IMaterial;
-
-        using MaterialPtr = std::shared_ptr<IMaterial>;
 
         struct GlobalUniformObject
         {
@@ -42,20 +42,22 @@ namespace VoidArchitect
         struct MaterialUniformObject
         {
             Math::Vec4 DiffuseColor; // 16 bytes
-            Math::Vec4 Reserved0;    // 16 bytes
-            Math::Vec4 Reserved1;    // 16 bytes
-            Math::Vec4 Reserved2;    // 16 bytes
+            Math::Vec4 Reserved0; // 16 bytes
+            Math::Vec4 Reserved1; // 16 bytes
+            Math::Vec4 Reserved2; // 16 bytes
         };
 
         struct GeometryRenderData
         {
             GeometryRenderData();
             GeometryRenderData(
-                const Math::Mat4& model, const MaterialPtr& material, const MeshPtr& mesh);
+                const Math::Mat4& model,
+                MaterialHandle material,
+                const MeshPtr& mesh);
 
             Math::Mat4 Model;
             MeshPtr Mesh;
-            MaterialPtr Material;
+            MaterialHandle Material;
         };
 
         class IMaterial
@@ -72,7 +74,8 @@ namespace VoidArchitect
                 const Math::Mat4& model,
                 const RenderStatePtr& pipeline) = 0;
             virtual void Bind(
-                Platform::IRenderingHardware& rhi, const RenderStatePtr& pipeline) = 0;
+                Platform::IRenderingHardware& rhi,
+                const RenderStatePtr& pipeline) = 0;
 
             static void SetDefaultDiffuseTexture(const Resources::Texture2DPtr& defaultTexture)
             {
@@ -105,7 +108,7 @@ namespace VoidArchitect
 
             virtual void InitializeResources(
                 Platform::IRenderingHardware& rhi,
-                const Resources::RenderStatePtr& renderState) = 0;
+                const VAArray<ResourceBinding>& bindings) = 0;
             virtual void ReleaseResources() = 0;
 
             static Texture2DPtr s_DefaultDiffuseTexture;

@@ -30,26 +30,26 @@ namespace VoidArchitect::Renderer
         }
 
         // Render test geometry
-        auto defaultMat = g_MaterialSystem->GetCachedMaterial(
-            "TestMaterial",
-            RenderPassType::ForwardOpaque,
-            context.RenderState->GetUUID());
-
-        if (!defaultMat)
-        {
-            VA_ENGINE_WARN("[ForwardOpaquePassRenderer] No default material found.");
-            return;
-        }
-
-        static float angle = 0.f;
-        angle += (0.5f * context.FrameData.deltaTime);
-        const auto geometry = Resources::GeometryRenderData(
-            Math::Mat4::Rotate(angle, Math::Vec3::Up()),
-            defaultMat,
-            RenderCommand::s_TestMesh);
-
-        defaultMat->Bind(context.Rhi, context.RenderState);
-        context.Rhi.DrawMesh(geometry, context.RenderState);
+        // auto defaultMat = g_MaterialSystem->GetCachedMaterial(
+        //     "TestMaterial",
+        //     RenderPassType::ForwardOpaque,
+        //     context.RenderState->GetUUID());
+        //
+        // if (!defaultMat)
+        // {
+        //     VA_ENGINE_WARN("[ForwardOpaquePassRenderer] No default material found.");
+        //     return;
+        // }
+        //
+        // static float angle = 0.f;
+        // angle += (0.5f * context.FrameData.deltaTime);
+        // const auto geometry = Resources::GeometryRenderData(
+        //     Math::Mat4::Rotate(angle, Math::Vec3::Up()),
+        //     defaultMat,
+        //     RenderCommand::s_TestMesh);
+        //
+        // defaultMat->Bind(context.Rhi, context.RenderState);
+        // context.Rhi.DrawMesh(geometry, context.RenderState);
     }
 
     std::string ForwardOpaquePassRenderer::GetCompatibleRenderState() const
@@ -83,25 +83,25 @@ namespace VoidArchitect::Renderer
         }
 
         // Use default material for now
-        auto uiMaterial = g_MaterialSystem->GetCachedMaterial(
-            "DefaultUI",
-            RenderPassType::UI,
-            context.RenderState->GetUUID());
-        if (!uiMaterial)
-        {
-            VA_ENGINE_ERROR("[UIPassRenderer] Failed to get default material.");
-            return;
-        }
-
-        // Create geometry render data
-        const auto uiGeometry = Resources::GeometryRenderData(
-            Math::Mat4::Translate(0.15f * 0.5f, 0.15f * 0.5f, 0.f),
-            uiMaterial,
-            uiMesh);
-
-        // Render the UI quad
-        uiMaterial->Bind(context.Rhi, context.RenderState);
-        context.Rhi.DrawMesh(uiGeometry, context.RenderState);
+        // auto uiMaterial = g_MaterialSystem->GetCachedMaterial(
+        //     "DefaultUI",
+        //     RenderPassType::UI,
+        //     context.RenderState->GetUUID());
+        // if (!uiMaterial)
+        // {
+        //     VA_ENGINE_ERROR("[UIPassRenderer] Failed to get default material.");
+        //     return;
+        // }
+        //
+        // // Create geometry render data
+        // const auto uiGeometry = Resources::GeometryRenderData(
+        //     Math::Mat4::Translate(0.15f * 0.5f, 0.15f * 0.5f, 0.f),
+        //     uiMaterial,
+        //     uiMesh);
+        //
+        // // Render the UI quad
+        // uiMaterial->Bind(context.Rhi, context.RenderState);
+        // context.Rhi.DrawMesh(uiGeometry, context.RenderState);
     }
 
     std::string UIPassRenderer::GetCompatibleRenderState() const

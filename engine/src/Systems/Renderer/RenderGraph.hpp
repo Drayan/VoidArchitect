@@ -82,7 +82,6 @@ namespace VoidArchitect
             // Compiled resources accessors
             Resources::RenderPassPtr GetRenderPass(const UUID& passUUID) const;
             Resources::RenderTargetPtr GetRenderTarget(const UUID& targetUUID) const;
-            Resources::MaterialPtr GetMaterial(const std::string& identifier) const;
 
             bool IsCompiled() const { return m_IsCompiled; }
 
@@ -115,21 +114,6 @@ namespace VoidArchitect
                 Resources::RenderTargetPtr RenderTarget;
             };
 
-            struct PassMapping
-            {
-                RenderPassType passType;
-                std::string renderPassName;
-                RenderStateSignature signature;
-            };
-
-            struct MaterialRequest
-            {
-                std::string templateName;
-                std::string renderStateTemplate;
-                std::string identifier;
-                RenderPassType passType;
-            };
-
             RenderPassNode* FindRenderPassNode(const UUID& instanceUUID);
             RenderTargetNode* FindRenderTargetNode(const UUID& instanceUUID);
             RenderPassNode* FindRenderPassNode(Resources::RenderPassPtr& pass);
@@ -152,7 +136,6 @@ namespace VoidArchitect
             bool CompileRenderPasses();
             bool CompileRenderTargets();
             bool CompileRenderStates();
-            bool CompileMaterials();
             void AssignRequiredStates();
             void OptimizeExecutionOrder();
             float CalculateStateSwitchCost() const;
@@ -173,11 +156,6 @@ namespace VoidArchitect
             VAHashMap<UUID, RenderTargetNode> m_RenderTargetsNodes;
 
             VAArray<UUID> m_ExecutionOrder;
-
-            // Material resources
-            VAArray<PassMapping> m_PassMappings;
-            VAArray<MaterialRequest> m_MaterialRequests;
-            VAHashMap<std::string, Resources::MaterialPtr> m_CompiledMaterials;
 
             // State
             Platform::IRenderingHardware& m_RHI;

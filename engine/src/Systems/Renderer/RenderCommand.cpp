@@ -19,8 +19,6 @@
 namespace VoidArchitect::Renderer
 {
     Resources::Texture2DPtr RenderCommand::s_TestTexture;
-    Resources::MaterialPtr RenderCommand::s_TestMaterial;
-    Resources::MaterialPtr RenderCommand::s_UIMaterial;
     Resources::MeshPtr RenderCommand::s_TestMesh;
     Resources::MeshPtr RenderCommand::s_UIMesh;
 
@@ -33,7 +31,8 @@ namespace VoidArchitect::Renderer
     VAArray<Camera> RenderCommand::m_Cameras;
 
     void RenderCommand::Initialize(
-        const Platform::RHI_API_TYPE apiType, std::unique_ptr<Window>& window)
+        const Platform::RHI_API_TYPE apiType,
+        std::unique_ptr<Window>& window)
     {
         m_ApiType = apiType;
 
@@ -42,11 +41,13 @@ namespace VoidArchitect::Renderer
 
         // Retrieve Pipeline's shared resources setup.
         // TODO This should be managed by the pipeline system.
-        const RenderStateInputLayout sharedInputLayout{VAArray{
-            // Global Space
-            SpaceLayout{
-                0,
-                VAArray{// Global UBO
+        const RenderStateInputLayout sharedInputLayout{
+            VAArray{
+                // Global Space
+                SpaceLayout{
+                    0,
+                    VAArray{
+                        // Global UBO
                         ResourceBinding{
                             ResourceBindingType::ConstantBuffer,
                             0,
@@ -61,27 +62,41 @@ namespace VoidArchitect::Renderer
                                 // Light Direction
                                 BufferBinding{3, AttributeType::Vec4, AttributeFormat::Float32},
                                 // Light Color
-                                BufferBinding{4, AttributeType::Vec4, AttributeFormat::Float32}},
-                        }},
-            },
-            // Material Space
-            SpaceLayout{
-                1,
-                VAArray{
-                    // Material UBO
-                    ResourceBinding{
-                        ResourceBindingType::ConstantBuffer,
-                        0,
-                        Resources::ShaderStage::Pixel,
-                        std::vector{
-                            // Diffuse Color
-                            BufferBinding{0, AttributeType::Vec4, AttributeFormat::Float32}}},
-                    // Diffuse Map
-                    ResourceBinding{
-                        ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel},
-                    // Specular Map
-                    ResourceBinding{
-                        ResourceBindingType::Texture2D, 2, Resources::ShaderStage::Pixel}}}}};
+                                BufferBinding{4, AttributeType::Vec4, AttributeFormat::Float32}
+                            },
+                        }
+                    },
+                },
+                // Material Space
+                SpaceLayout{
+                    1,
+                    VAArray{
+                        // Material UBO
+                        ResourceBinding{
+                            ResourceBindingType::ConstantBuffer,
+                            0,
+                            Resources::ShaderStage::Pixel,
+                            std::vector{
+                                // Diffuse Color
+                                BufferBinding{0, AttributeType::Vec4, AttributeFormat::Float32}
+                            }
+                        },
+                        // Diffuse Map
+                        ResourceBinding{
+                            ResourceBindingType::Texture2D,
+                            1,
+                            Resources::ShaderStage::Pixel
+                        },
+                        // Specular Map
+                        ResourceBinding{
+                            ResourceBindingType::Texture2D,
+                            2,
+                            Resources::ShaderStage::Pixel
+                        }
+                    }
+                }
+            }
+        };
 
         switch (apiType)
         {
@@ -140,8 +155,6 @@ namespace VoidArchitect::Renderer
 
         s_UIMesh = nullptr;
         s_TestMesh = nullptr;
-        s_UIMaterial = nullptr;
-        s_TestMaterial = nullptr;
         s_TestTexture = nullptr;
 
         // Shutdown subsystems
@@ -198,7 +211,8 @@ namespace VoidArchitect::Renderer
                 .UIProjection = s_UIProjectionMatrix,
                 .LightDirection = Math::Vec4::Zero() - Math::Vec4(0.f, 1.f, 1.f, 0.f),
                 .LightColor = Math::Vec4::One(),
-                .ViewPosition = Math::Vec4(camera.GetPosition(), 1.0f)};
+                .ViewPosition = Math::Vec4(camera.GetPosition(), 1.0f)
+            };
 
             // Update global state, might be moved elsewhere
             m_RenderingHardware->UpdateGlobalState(gUBO);
@@ -228,7 +242,12 @@ namespace VoidArchitect::Renderer
     }
 
     Camera& RenderCommand::CreateOrthographicCamera(
-        float left, float right, float bottom, float top, float near, float far)
+        float left,
+        float right,
+        float bottom,
+        float top,
+        float near,
+        float far)
     {
         return m_Cameras.emplace_back(top, bottom, left, right, near, far);
     }
@@ -247,13 +266,14 @@ namespace VoidArchitect::Renderer
             "wall3_shga",
             "wall4_color",
             "wall4_n",
-            "wall4_shga"};
+            "wall4_shga"
+        };
         static size_t index = std::size(textures) - 1;
         index = (index + 1) % std::size(textures);
 
         s_TestTexture =
             g_TextureSystem->LoadTexture2D(textures[index], Resources::TextureUse::Diffuse);
-        s_TestMaterial->SetTexture(/*Resources::TextureSlot::Diffuse*/ 0, s_TestTexture);
+        //s_TestMaterial->SetTexture(/*Resources::TextureSlot::Diffuse*/ 0, s_TestTexture);
     }
 
     void RenderCommand::SwapColor()
@@ -270,6 +290,6 @@ namespace VoidArchitect::Renderer
         static size_t index = std::size(colors) - 1;
         index = (index + 1) % std::size(colors);
 
-        s_TestMaterial->SetDiffuseColor(colors[index]);
+        //s_TestMaterial->SetDiffuseColor(colors[index]);
     }
 } // namespace VoidArchitect::Renderer

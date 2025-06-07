@@ -1,6 +1,6 @@
 material:
   name: "TestMaterial"
-  pipeline: "ForwardOpaque"
+  render_state_class: "Opaque"
   properties:
     diffuse_color: [ 1.0, 1.0, 1.0, 1.0 ]
     specular: 64.0
