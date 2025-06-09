@@ -14,7 +14,7 @@ namespace VoidArchitect
         VulkanDescriptorSetLayoutManager::VulkanDescriptorSetLayoutManager(
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
-            const RenderStateInputLayout& sharedInputLayout)
+            const Renderer::RenderStateInputLayout& sharedInputLayout)
             : m_Device(device->GetLogicalDeviceHandle()),
               m_Allocator(allocator),
               m_GlobalLayout(VK_NULL_HANDLE),
@@ -79,7 +79,7 @@ namespace VoidArchitect
         }
 
         VAArray<VkDescriptorSetLayoutBinding> VulkanDescriptorSetLayoutManager::
-        CreateDescriptorSetLayoutBindingsFromSpace(const SpaceLayout& spaceLayout)
+        CreateDescriptorSetLayoutBindingsFromSpace(const Renderer::SpaceLayout& spaceLayout)
         {
             VAArray<VkDescriptorSetLayoutBinding> bindings;
             for (const auto& [type, binding, stage, buf] : spaceLayout.bindings)

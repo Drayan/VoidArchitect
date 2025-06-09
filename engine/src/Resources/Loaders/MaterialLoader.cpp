@@ -7,7 +7,8 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "Systems/RenderStateSystem.hpp"
+#include "Resources/Shader.hpp"
+#include "Systems/Renderer/RendererTypes.hpp"
 
 namespace VoidArchitect::Resources::Loaders
 {
@@ -55,12 +56,36 @@ namespace VoidArchitect::Resources::Loaders
                     return nullptr;
                 }
 
-                // Pipeline (optional)
+                // RenderStateClass (required)
                 if (materialNode["render_state_class"])
                 {
                     auto renderState = materialNode["render_state_class"].as<std::string>();
                     // TODO Retrieve the pipeline from the pipeline system
                     config.renderStateClass = renderState;
+                }
+
+                // Bindings (required)
+                if (materialNode["bindings"])
+                {
+                    auto bindingsNode = materialNode["bindings"];
+                    if (!bindingsNode.IsSequence())
+                    {
+                        VA_ENGINE_WARN(
+                            "[MaterialSystem] Material file '{}' is missing bindings.",
+                            config.name);
+                        return nullptr;
+                    }
+
+                    for (auto binding : bindingsNode)
+                    {
+                        auto bindingIndex = binding["binding"].as<uint32_t>();
+                        auto bindingTypeStr = binding["type"].as<std::string>();
+                        auto bindingType = Renderer::ResourceBindingTypeFromString(bindingTypeStr);
+                        auto stageStr = binding["stage"].as<std::string>();
+                        auto stage = ShaderStageFromString(stageStr);
+
+                        config.resourceBindings.push_back({bindingType, bindingIndex, stage, {}});
+                    }
                 }
 
                 // Properties (required)

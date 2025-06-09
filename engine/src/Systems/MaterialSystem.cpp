@@ -8,6 +8,8 @@
 #include "Resources/Material.hpp"
 #include "TextureSystem.hpp"
 #include "Renderer/RenderGraph.hpp"
+#include "Renderer/RenderSystem.hpp"
+#include "Resources/Shader.hpp"
 
 namespace VoidArchitect
 {
@@ -27,6 +29,52 @@ namespace VoidArchitect
             }
         }
         m_Materials.clear();
+    }
+
+    MaterialHandle MaterialSystem::GetHandleFor(const std::string& name)
+    {
+        // Check if the material is in the cache
+        for (MaterialHandle handle = 0; handle < m_Materials.size(); ++handle)
+        {
+            if (const auto& node = m_Materials[handle]; node.config.name == name)
+            {
+                if (node.state == MaterialLoadingState::Loaded)
+                    return handle;
+
+                // The material exist but is unloaded, we need to load it first.
+                LoadMaterial(handle);
+                return handle;
+            }
+        }
+
+        // This is the first time the system is asked an handle for this material,
+        // we have to load its config file from disk.
+        const auto handle = LoadTemplate(name);
+        LoadMaterial(handle);
+
+        return handle;
+    }
+
+    void MaterialSystem::Bind(
+        const MaterialHandle handle,
+        const Resources::RenderStatePtr& renderState)
+    {
+        // Is this handle valid?
+        if (handle >= m_Materials.size())
+        {
+            VA_ENGINE_ERROR("[MaterialSystem] Invalid material handle.");
+            return;
+        }
+
+        // Is the material loaded?
+        if (m_Materials[handle].state != MaterialLoadingState::Loaded)
+        {
+            // This material is unloaded, load it now.
+            LoadMaterial(handle);
+        }
+
+        // Bind the material
+        m_Materials[handle].materialPtr->Bind(*Renderer::g_RenderSystem->GetRHI(), renderState);
     }
 
     MaterialHandle MaterialSystem::LoadTemplate(const std::string& name)
@@ -77,20 +125,12 @@ namespace VoidArchitect
         return handle;
     }
 
-    void MaterialSystem::Get(MaterialHandle handle)
+    void MaterialSystem::LoadMaterial(const MaterialHandle handle)
     {
-        // Check if the material is 1. In the system and 2. is already loaded
-        if (handle >= m_Materials.size())
-        {
-            VA_ENGINE_ERROR("[MaterialSystem] Invalid material handle '{}'.", handle);
-        }
-
-        if (m_Materials[handle].state == MaterialLoadingState::Loaded)
+        auto node = m_Materials[handle];
+        if (node.state == MaterialLoadingState::Loaded)
             return;
 
-        // NOTE: This is where we could launch an AsyncJob to load the material in the background
-        //  But for now we will do it synchronously.
-        const auto& node = m_Materials[handle];
         const auto material = CreateMaterial(node.config);
         if (!material)
         {
@@ -108,7 +148,7 @@ namespace VoidArchitect
         const MaterialTemplate& matTemplate)
     {
         // Ask the RHI to create the required data on the GPU.
-        const auto material = Renderer::RenderCommand::GetRHIRef().CreateMaterial(
+        const auto material = Renderer::g_RenderSystem->GetRHI()->CreateMaterial(
             matTemplate.name);
         if (!material)
         {
@@ -165,7 +205,7 @@ namespace VoidArchitect
 
         // Initialize resources with RenderState
         material->InitializeResources(
-            Renderer::RenderCommand::GetRHIRef(),
+            *Renderer::g_RenderSystem->GetRHI(),
             matTemplate.resourceBindings);
 
         return material;
@@ -180,11 +220,11 @@ namespace VoidArchitect
 
         // Define the DefaultMaterial bindings
         defaultTemplate.resourceBindings = {
-            {ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::Pixel, {}},
+            {Renderer::ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::Pixel, {}},
             // MaterialUBO
-            {ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel, {}},
+            {Renderer::ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel, {}},
             // DiffuseMap
-            {ResourceBindingType::Texture2D, 2, Resources::ShaderStage::Pixel, {}},
+            {Renderer::ResourceBindingType::Texture2D, 2, Resources::ShaderStage::Pixel, {}},
             // SpecularMap
         };
 
@@ -197,9 +237,9 @@ namespace VoidArchitect
 
         uiTemplate.resourceBindings = {
             // MaterialUBO
-            {ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::Pixel, {}},
+            {Renderer::ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::Pixel, {}},
             // DiffuseMap
-            {ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel, {}},
+            {Renderer::ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel, {}},
         };
 
         RegisterTemplate("DefaultUIMaterial", uiTemplate);

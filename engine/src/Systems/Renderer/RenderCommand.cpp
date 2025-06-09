@@ -18,19 +18,19 @@
 
 namespace VoidArchitect::Renderer
 {
-    Resources::Texture2DPtr RenderCommand::s_TestTexture;
-    Resources::MeshPtr RenderCommand::s_TestMesh;
-    Resources::MeshPtr RenderCommand::s_UIMesh;
+    Resources::Texture2DPtr _RenderCommand::s_TestTexture;
+    Resources::MeshPtr _RenderCommand::s_TestMesh;
+    Resources::MeshPtr _RenderCommand::s_UIMesh;
 
-    Math::Mat4 RenderCommand::s_UIProjectionMatrix = Math::Mat4::Identity();
+    Math::Mat4 _RenderCommand::s_UIProjectionMatrix = Math::Mat4::Identity();
 
-    Platform::RHI_API_TYPE RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
-    Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
-    uint32_t RenderCommand::m_Width = 0;
-    uint32_t RenderCommand::m_Height = 0;
-    VAArray<Camera> RenderCommand::m_Cameras;
+    Platform::RHI_API_TYPE _RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
+    Platform::IRenderingHardware* _RenderCommand::m_RenderingHardware = nullptr;
+    uint32_t _RenderCommand::m_Width = 0;
+    uint32_t _RenderCommand::m_Height = 0;
+    VAArray<Camera> _RenderCommand::m_Cameras;
 
-    void RenderCommand::Initialize(
+    void _RenderCommand::Initialize(
         const Platform::RHI_API_TYPE apiType,
         std::unique_ptr<Window>& window)
     {
@@ -101,7 +101,7 @@ namespace VoidArchitect::Renderer
         switch (apiType)
         {
             case Platform::RHI_API_TYPE::Vulkan:
-                m_RenderingHardware = new Platform::VulkanRHI(window, sharedInputLayout);
+                m_RenderingHardware = new Platform::VulkanRHI(window);
                 break;
             default:
                 break;
@@ -115,23 +115,21 @@ namespace VoidArchitect::Renderer
         g_MaterialSystem = std::make_unique<MaterialSystem>();
         g_MeshSystem = std::make_unique<MeshSystem>();
 
-        g_RenderGraph = std::make_unique<RenderGraph>(*m_RenderingHardware);
+        // g_RenderGraph = std::make_unique<RenderGraph>(*m_RenderingHardware);
 
-        g_MaterialSystem->LoadTemplate("TestMaterial");
-        g_MaterialSystem->LoadTemplate("DefaultUI");
-        g_RenderGraph->SetupForwardRenderer(m_Width, m_Height);
+        // g_RenderGraph->SetupForwardRenderer(m_Width, m_Height);
 
-        if (!g_RenderGraph->Compile())
-        {
-            VA_ENGINE_CRITICAL("[RenderCommand] Failed to compile render graph.");
-            return;
-        }
-
-        if (!g_RenderGraph)
-        {
-            VA_ENGINE_CRITICAL("[RenderCommand] Failed to setup render graph.");
-            return;
-        }
+        // if (!g_RenderGraph->Compile())
+        // {
+        //     VA_ENGINE_CRITICAL("[RenderCommand] Failed to compile render graph.");
+        //     return;
+        // }
+        //
+        // if (!g_RenderGraph)
+        // {
+        //     VA_ENGINE_CRITICAL("[RenderCommand] Failed to setup render graph.");
+        //     return;
+        // }
 
         const float aspectRatio = static_cast<float>(m_Width) / static_cast<float>(m_Height);
         s_UIProjectionMatrix =
@@ -146,12 +144,9 @@ namespace VoidArchitect::Renderer
         // SwapTestTexture();
     }
 
-    void RenderCommand::Shutdown()
+    void _RenderCommand::Shutdown()
     {
-        // Wait that any pending operation is completed before beginning the shutdown procedure.
-        m_RenderingHardware->WaitIdle(0);
-
-        g_RenderGraph = nullptr;
+        // g_RenderGraph = nullptr;
 
         s_UIMesh = nullptr;
         s_TestMesh = nullptr;
@@ -168,7 +163,7 @@ namespace VoidArchitect::Renderer
         delete m_RenderingHardware;
     }
 
-    void RenderCommand::Resize(const uint32_t width, const uint32_t height)
+    void _RenderCommand::Resize(const uint32_t width, const uint32_t height)
     {
         m_Width = width;
         m_Height = height;
@@ -181,59 +176,59 @@ namespace VoidArchitect::Renderer
         s_UIProjectionMatrix =
             Math::Mat4::Orthographic(0.f, 1.0f, 0.f, 1.0f / aspectRatio, -1.0f, 1.0f);
 
-        g_RenderGraph->OnResize(width, height);
-        g_RenderGraph->Compile();
+        // g_RenderGraph->OnResize(width, height);
+        // g_RenderGraph->Compile();
     }
 
-    bool RenderCommand::BeginFrame(const float deltaTime)
+    bool _RenderCommand::BeginFrame(const float deltaTime)
     {
         // Render with the default camera.
         return BeginFrame(m_Cameras[0], deltaTime);
     }
 
-    bool RenderCommand::BeginFrame(Camera& camera, const float deltaTime)
+    bool _RenderCommand::BeginFrame(Camera& camera, const float deltaTime)
     {
         if (!m_RenderingHardware->BeginFrame(deltaTime))
             return false;
 
-        if (g_RenderGraph)
-        {
-            camera.RecalculateView();
-
-            FrameData frameData;
-            frameData.deltaTime = deltaTime;
-            frameData.Projection = camera.GetProjection();
-            frameData.View = camera.GetView();
-
-            const Resources::GlobalUniformObject gUBO{
-                .View = frameData.View,
-                .Projection = frameData.Projection,
-                .UIProjection = s_UIProjectionMatrix,
-                .LightDirection = Math::Vec4::Zero() - Math::Vec4(0.f, 1.f, 1.f, 0.f),
-                .LightColor = Math::Vec4::One(),
-                .ViewPosition = Math::Vec4(camera.GetPosition(), 1.0f)
-            };
-
-            // Update global state, might be moved elsewhere
-            m_RenderingHardware->UpdateGlobalState(gUBO);
-
-            g_RenderGraph->Execute(frameData);
-        }
-        else
-        {
-            VA_ENGINE_CRITICAL("[RenderCommand] Render graph is not initialized.");
-            return false;
-        }
+        // if (g_RenderGraph)
+        // {
+        //     camera.RecalculateView();
+        //
+        //     FrameData frameData;
+        //     frameData.deltaTime = deltaTime;
+        //     frameData.Projection = camera.GetProjection();
+        //     frameData.View = camera.GetView();
+        //
+        //     const Resources::GlobalUniformObject gUBO{
+        //         .View = frameData.View,
+        //         .Projection = frameData.Projection,
+        //         .UIProjection = s_UIProjectionMatrix,
+        //         .LightDirection = Math::Vec4::Zero() - Math::Vec4(0.f, 1.f, 1.f, 0.f),
+        //         .LightColor = Math::Vec4::One(),
+        //         .ViewPosition = Math::Vec4(camera.GetPosition(), 1.0f)
+        //     };
+        //
+        //     // Update global state, might be moved elsewhere
+        //     m_RenderingHardware->UpdateGlobalState(gUBO);
+        //
+        //     g_RenderGraph->Execute(frameData);
+        // }
+        // else
+        // {
+        //     VA_ENGINE_CRITICAL("[RenderCommand] Render graph is not initialized.");
+        //     return false;
+        // }
 
         return true;
     }
 
-    bool RenderCommand::EndFrame(const float deltaTime)
+    bool _RenderCommand::EndFrame(const float deltaTime)
     {
         return m_RenderingHardware->EndFrame(deltaTime);
     }
 
-    Camera& RenderCommand::CreatePerspectiveCamera(float fov, float near, float far)
+    Camera& _RenderCommand::CreatePerspectiveCamera(float fov, float near, float far)
     {
         auto aspect = m_Width / static_cast<float>(m_Height);
         if (m_Width == 0 || m_Height == 0)
@@ -241,7 +236,7 @@ namespace VoidArchitect::Renderer
         return m_Cameras.emplace_back(fov, aspect, near, far);
     }
 
-    Camera& RenderCommand::CreateOrthographicCamera(
+    Camera& _RenderCommand::CreateOrthographicCamera(
         float left,
         float right,
         float bottom,
@@ -252,7 +247,7 @@ namespace VoidArchitect::Renderer
         return m_Cameras.emplace_back(top, bottom, left, right, near, far);
     }
 
-    void RenderCommand::SwapTestTexture()
+    void _RenderCommand::SwapTestTexture()
     {
         constexpr std::string textures[] = {
             "wall1_color",
@@ -276,7 +271,7 @@ namespace VoidArchitect::Renderer
         //s_TestMaterial->SetTexture(/*Resources::TextureSlot::Diffuse*/ 0, s_TestTexture);
     }
 
-    void RenderCommand::SwapColor()
+    void _RenderCommand::SwapColor()
     {
         const Math::Vec4 colors[] = {
             Math::Vec4(1.0f, 0.0f, 0.0f, 1.0f),

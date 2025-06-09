@@ -5,28 +5,20 @@
 #include <vulkan/vulkan_core.h>
 
 #include "Core/Logger.hpp"
+#include "Systems/Renderer/RendererTypes.hpp"
 
 namespace VoidArchitect
 {
-    namespace Renderer
-    {
-        enum class StoreOp;
-        enum class LoadOp;
-        enum class TextureFormat;
-    }
-
     namespace Resources
     {
         enum class ShaderStage;
     }
-
-    enum class ResourceBindingType;
 } // namespace VoidArchitect
 
 namespace VoidArchitect::Platform
 {
     // === Engine -> Vulkan translation functions ===
-    VkDescriptorType TranslateEngineResourceTypeToVulkan(ResourceBindingType type);
+    VkDescriptorType TranslateEngineResourceTypeToVulkan(Renderer::ResourceBindingType type);
     VkShaderStageFlagBits TranslateEngineShaderStageToVulkan(Resources::ShaderStage stage);
     VkFormat TranslateEngineTextureFormatToVulkan(Renderer::TextureFormat format);
     VkAttachmentLoadOp TranslateEngineLoadOpToVulkan(Renderer::LoadOp op);

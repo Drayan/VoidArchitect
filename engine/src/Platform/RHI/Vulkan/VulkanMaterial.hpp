@@ -29,7 +29,7 @@ namespace VoidArchitect::Platform
 
         void InitializeResources(
             IRenderingHardware& rhi,
-            const VAArray<ResourceBinding>& bindings) override;
+            const VAArray<Renderer::ResourceBinding>& bindings) override;
 
         void Bind(IRenderingHardware& rhi, const Resources::RenderStatePtr& pipeline) override;
         void SetModel(
@@ -42,7 +42,7 @@ namespace VoidArchitect::Platform
         void UpdateDescriptorSets(VulkanRHI& rhi);
 
         // Material description
-        VAArray<ResourceBinding> m_PipelineResourceBindings;
+        VAArray<Renderer::ResourceBinding> m_PipelineResourceBindings;
 
         VkAllocationCallbacks* m_Allocator;
         VkDevice m_Device;

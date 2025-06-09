@@ -3,122 +3,104 @@
 //
 #pragma once
 
-#include "Core/Uuid.hpp"
+#include "Core/Utils.hpp"
 #include "Core/Math/Vec4.hpp"
-#include "Renderer/PassRenderers.hpp"
+#include "Renderer/RendererTypes.hpp"
+#include "Resources/RenderPass.hpp"
 
 namespace VoidArchitect
 {
     namespace Renderer
     {
-        enum class LoadOp
-        {
-            Load,
-            Clear,
-            DontCare
-        };
-
-        enum class StoreOp
-        {
-            Store,
-            DontCare
-        };
-
-        // TODO : Add support for more formats
-        enum class TextureFormat
-        {
-            RGBA8_UNORM,
-            BGRA8_UNORM,
-            RGBA8_SRGB,
-            BGRA8_SRGB,
-
-            D32_SFLOAT,
-            D24_UNORM_S8_UINT,
-
-            SWAPCHAIN_FORMAT,
-            SWAPCHAIN_DEPTH
-        };
-
-        enum class RenderPassType
-        {
-            ForwardOpaque,
-            ForwardTransparent,
-            Shadow,
-            DepthPrepass,
-            PostProcess,
-            UI,
-            Unknown
-        };
-
-        enum class PassPosition
-        {
-            First, // UNDEFINED -> COLOR_ATTACHMENT
-            Middle, // COLOR_ATTACHMENT -> COLOR_ATTACHMENT
-            Last, // COLOR_ATTACHMENT -> PRESENT
-            Standalone // UNDEFINED -> PRESENT
-        };
-    } // namespace Renderer
+        enum class PassPosition;
+    }
 
     struct RenderPassConfig
     {
-        std::string Name;
-        Renderer::RenderPassType Type = Renderer::RenderPassType::Unknown;
-
-        VAArray<std::string> CompatibleStates;
-        Renderer::PassPosition Position = Renderer::PassPosition::Standalone;
+        std::string name;
+        Renderer::RenderPassType type = Renderer::RenderPassType::Unknown;
 
         struct AttachmentConfig
         {
-            std::string Name;
+            std::string name;
 
-            Renderer::TextureFormat Format;
-            Renderer::LoadOp LoadOp = Renderer::LoadOp::Clear;
-            Renderer::StoreOp StoreOp = Renderer::StoreOp::Store;
+            Renderer::TextureFormat format;
+            Renderer::LoadOp loadOp = Renderer::LoadOp::Clear;
+            Renderer::StoreOp storeOp = Renderer::StoreOp::Store;
 
             // Clear values (used if LoadOp is Clear)
-            Math::Vec4 ClearColor = Math::Vec4(0.0f, 0.0f, 0.0f, 1.0f);
-            float ClearDepth = 1.0f;
-            uint32_t ClearStencil = 0;
+            Math::Vec4 clearColor = Math::Vec4(0.0f, 0.0f, 0.0f, 1.0f);
+            float clearDepth = 1.0f;
+            uint32_t clearStencil = 0;
+
+            bool operator==(const AttachmentConfig&) const;
         };
 
-        VAArray<AttachmentConfig> Attachments;
-    };
+        VAArray<AttachmentConfig> attachments;
 
-    struct RenderPassSignature
-    {
-        VAArray<Renderer::TextureFormat> AttachmentFormats;
-
-        bool operator==(const RenderPassSignature& rhs) const;
-        size_t GetHash() const;
+        bool operator==(const RenderPassConfig&) const;
     };
 
     struct RenderPassCacheKey
     {
-        UUID templateUUID;
-        RenderPassSignature Signature;
+        RenderPassConfig config;
+        Renderer::PassPosition position;
 
-        bool operator==(const RenderPassCacheKey& rhs) const;
-        size_t GetHash() const;
+        bool operator==(const RenderPassCacheKey&) const;
     };
+
+    using RenderPassHandle = uint32_t;
+    static constexpr RenderPassHandle InvalidRenderPassHandle = std::numeric_limits<
+        uint32_t>::max();
 }
 
 namespace std
 {
     template <>
-    struct hash<VoidArchitect::RenderPassSignature>
+    struct hash<VoidArchitect::RenderPassConfig::AttachmentConfig>
     {
-        size_t operator()(const VoidArchitect::RenderPassSignature& signature) const noexcept
+        size_t operator()(
+            const VoidArchitect::RenderPassConfig::AttachmentConfig& config) const noexcept
         {
-            return signature.GetHash();
+            size_t seed = 0;
+            VoidArchitect::HashCombine(seed, config.name);
+            VoidArchitect::HashCombine(seed, static_cast<int>(config.format));
+            VoidArchitect::HashCombine(seed, static_cast<int>(config.loadOp));
+            VoidArchitect::HashCombine(seed, static_cast<int>(config.storeOp));
+
+            return seed;
+        }
+    };
+
+    template <>
+    struct hash<VoidArchitect::RenderPassConfig>
+    {
+        size_t operator()(
+            const VoidArchitect::RenderPassConfig& config) const noexcept
+        {
+            size_t seed = 0;
+            VoidArchitect::HashCombine(seed, config.name);
+            VoidArchitect::HashCombine(seed, static_cast<int>(config.type));
+            for (const auto& attachment : config.attachments)
+            {
+                VoidArchitect::HashCombine(seed, attachment);
+            }
+
+            return seed;
         }
     };
 
     template <>
     struct hash<VoidArchitect::RenderPassCacheKey>
     {
-        size_t operator()(const VoidArchitect::RenderPassCacheKey& key) const noexcept
+        size_t operator()(
+            const VoidArchitect::RenderPassCacheKey& key) const noexcept
         {
-            return key.GetHash();
+            size_t seed = 0;
+            VoidArchitect::HashCombine(seed, key.config);
+            VoidArchitect::HashCombine(seed, static_cast<int>(key.position));
+
+            return seed;
         }
     };
 }
@@ -131,58 +113,28 @@ namespace VoidArchitect
         RenderPassSystem();
         ~RenderPassSystem() = default;
 
-        // Template management
-        UUID RegisterRenderPassTemplate(const std::string& name, const RenderPassConfig& config);
-        bool HasRenderPassTemplate(const UUID& uuid) const;
-        bool HasRenderPassTemplate(const std::string& name) const;
-        const RenderPassConfig& GetRenderPassTemplate(const UUID& uuid) const;
-        UUID GetRenderPassTemplateUUID(const std::string& name) const;
+        RenderPassHandle GetHandleFor(
+            const RenderPassConfig& config,
+            Renderer::PassPosition position);
 
-        // Pass Renderer Management
-        void RegisterPassRenderer(Renderer::PassRendererPtr& renderer);
-        Renderer::IPassRenderer* GetPassRenderer(Renderer::RenderPassType type) const;
+        void ReleasePass(RenderPassHandle handle);
 
-        const VAArray<std::string>& GetAvailableRenderers() const
-        {
-            return m_AvailableRenderersNames;
-        }
-
-        // Creation with caching
-        Resources::RenderPassPtr CreateRenderPass(
-            const UUID& templateUUID,
-            Renderer::PassPosition passPosition);
-
-        Resources::RenderPassPtr GetCachedRenderPass(
-            const UUID& templateUUID,
-            const RenderPassSignature& signature);
-
-        RenderPassSignature CreateSignature(const RenderPassConfig& config);
-
-        void ClearCache();
+        Resources::IRenderPass* GetPointerFor(uint32_t handle) const;
 
     private:
-        void GenerateDefaultRenderPasses();
-        void RegisterDefaultRenderers();
+        static Resources::IRenderPass* CreateRenderPass(
+            const RenderPassConfig& config,
+            Renderer::PassPosition passPosition);
+        RenderPassHandle GetFreeHandle();
 
-        struct RenderPassTemplate
-        {
-            UUID UUID;
-            std::string Name;
-            RenderPassConfig Config;
-        };
+        VAArray<std::unique_ptr<Resources::IRenderPass>> m_RenderPasses;
+        VAHashMap<RenderPassCacheKey, RenderPassHandle> m_RenderPassCache;
 
-        // Templates storage
-        VAHashMap<UUID, RenderPassTemplate> m_RenderPassTemplates;
-        VAHashMap<std::string, UUID> m_TemplatesNameToUUIDMap;
-
-        // Cache based on signature
-        VAHashMap<RenderPassCacheKey, Resources::RenderPassPtr> m_RenderPassCache;
-
-        // Pass renderers
-        VAHashMap<Renderer::RenderPassType, Renderer::PassRendererPtr> m_PassRenderers;
-        VAArray<std::string> m_AvailableRenderersNames;
+        std::queue<RenderPassHandle> m_FreeRenderPassHandles;
+        RenderPassHandle m_NextFreeRenderPassHandle = 0;
     };
 
     inline std::unique_ptr<RenderPassSystem> g_RenderPassSystem;
 } // namespace VoidArchitect
+
 

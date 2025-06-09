@@ -12,7 +12,7 @@ namespace VoidArchitect
 
         Math::Vec4 diffuseColor = Math::Vec4::One();
 
-        VAArray<ResourceBinding> resourceBindings;
+        VAArray<Renderer::ResourceBinding> resourceBindings;
 
         struct TextureConfig
         {
@@ -30,17 +30,26 @@ namespace VoidArchitect
         MaterialSystem();
         ~MaterialSystem();
 
-        MaterialHandle LoadTemplate(const std::string& name);
-        MaterialHandle RegisterTemplate(const std::string& name, const MaterialTemplate& config);
-        MaterialHandle GetDefaultMaterialHandle() { return 0; };
+        MaterialHandle GetHandleFor(const std::string& name);
+        MaterialHandle GetHandleForDefaultMaterial() { return 0; };
 
-        void Get(MaterialHandle handle);
+        // Interaction with Material
+        void Bind(MaterialHandle handle, const Resources::RenderStatePtr& renderState);
 
     private:
+        MaterialHandle LoadTemplate(const std::string& name);
+        MaterialHandle RegisterTemplate(const std::string& name, const MaterialTemplate& config);
+
+        void LoadMaterial(MaterialHandle handle);
+        //void UnloadMaterial(MaterialHandle handle);
+
         void LoadDefaultMaterials();
+
         MaterialHandle GetFreeMaterialHandle();
+
         static Resources::IMaterial* CreateMaterial(
             const MaterialTemplate& matTemplate);
+
         void ReleaseMaterial(const Resources::IMaterial* material);
 
         enum class MaterialLoadingState
@@ -56,7 +65,7 @@ namespace VoidArchitect
             MaterialTemplate config;
             MaterialLoadingState state = MaterialLoadingState::Unloaded;
 
-            Resources::IMaterial* materialPtr;
+            Resources::IMaterial* materialPtr = nullptr;
         };
 
         std::queue<MaterialHandle> m_FreeMaterialHandles;

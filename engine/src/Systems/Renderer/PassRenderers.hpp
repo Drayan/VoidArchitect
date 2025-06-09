@@ -25,22 +25,25 @@ namespace VoidArchitect
     {
         struct FrameData;
         enum class RenderPassType;
+        class RenderGraphBuilder;
 
         struct RenderContext
         {
             Platform::IRenderingHardware& Rhi;
-            const FrameData& FrameData;
-            const Resources::RenderPassPtr& RenderPass;
-            const Resources::RenderTargetPtr& RenderTarget;
-            const Resources::RenderStatePtr& RenderState;
-
-            VAHashMap<std::string, std::any> passData;
+            // const FrameData& FrameData;
+            // const Resources::RenderPassPtr& RenderPass;
+            // const Resources::RenderTargetPtr& RenderTarget;
+            // const Resources::RenderStatePtr& RenderState;
+            //
+            // VAHashMap<std::string, std::any> passData;
         };
 
         class IPassRenderer
         {
         public:
             virtual ~IPassRenderer() = default;
+
+            virtual void Setup(RenderGraphBuilder& builder) = 0;
 
             virtual void Execute(
                 const RenderContext& context) = 0;
@@ -57,6 +60,8 @@ namespace VoidArchitect
         {
         public:
             ForwardOpaquePassRenderer() = default;
+
+            void Setup(RenderGraphBuilder& builder) override;
 
             void Execute(
                 const RenderContext& context) override;
@@ -133,6 +138,8 @@ namespace VoidArchitect
         {
         public:
             UIPassRenderer() = default;
+
+            void Setup(RenderGraphBuilder& builder) override;
 
             void Execute(
                 const RenderContext& context) override;

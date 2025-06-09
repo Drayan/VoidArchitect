@@ -5,7 +5,8 @@
 
 #include "Core/Logger.hpp"
 #include "VulkanBuffer.hpp"
-#include "VulkanRhi.hpp"
+#include "VulkanCommandBuffer.hpp"
+#include "VulkanDevice.hpp"
 #include "VulkanUtils.hpp"
 
 namespace VoidArchitect::Platform
@@ -35,7 +36,6 @@ namespace VoidArchitect::Platform
     }
 
     VulkanImage::VulkanImage(
-        const VulkanRHI& rhi,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
         const uint32_t width,
@@ -55,7 +55,7 @@ namespace VoidArchitect::Platform
           m_ImageView{},
           m_Memory{}
     {
-        CreateImage(rhi, width, height, format, tiling, usage, memoryFlags);
+        CreateImage(device, width, height, format, tiling, usage, memoryFlags);
         if (createImageView)
         {
             CreateImageView(m_Image, format, aspect);
@@ -158,7 +158,8 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanImage::CopyFromBuffer(
-        const VulkanCommandBuffer& cmdBuf, const VulkanBuffer& buffer) const
+        const VulkanCommandBuffer& cmdBuf,
+        const VulkanBuffer& buffer) const
     {
         auto region = VkBufferImageCopy{};
         region.bufferOffset = 0;
@@ -181,7 +182,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanImage::CreateImage(
-        const VulkanRHI& rhi,
+        const std::unique_ptr<VulkanDevice>& device,
         const uint32_t width,
         const uint32_t height,
         const VkFormat format,
@@ -195,8 +196,8 @@ namespace VoidArchitect::Platform
         createInfo.extent.width = width;
         createInfo.extent.height = height;
         createInfo.extent.depth = 1; // TODO Support configurable depth
-        createInfo.mipLevels = 4;    // TODO Support mip mapping
-        createInfo.arrayLayers = 1;  // TODO Support number of layers in the image
+        createInfo.mipLevels = 4; // TODO Support mip mapping
+        createInfo.arrayLayers = 1; // TODO Support number of layers in the image
         createInfo.format = format;
         createInfo.tiling = tiling;
         createInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -204,13 +205,14 @@ namespace VoidArchitect::Platform
         createInfo.samples = VK_SAMPLE_COUNT_1_BIT;
         createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        VA_VULKAN_CHECK_RESULT_WARN(vkCreateImage(m_Device, &createInfo, m_Allocator, &m_Image));
+        VA_VULKAN_CHECK_RESULT_WARN(
+            vkCreateImage(m_Device, &createInfo, m_Allocator, &m_Image));
 
         // Query memory requirements
         VkMemoryRequirements memRequirements;
         vkGetImageMemoryRequirements(m_Device, m_Image, &memRequirements);
         const int32_t memoryTypeIndex =
-            rhi.FindMemoryIndex(memRequirements.memoryTypeBits, memoryFlags);
+            device->FindMemoryIndex(memRequirements.memoryTypeBits, memoryFlags);
         if (memoryTypeIndex == -1)
         {
             VA_ENGINE_CRITICAL("[VulkanImage] Failed to find memory type index.");
@@ -224,14 +226,18 @@ namespace VoidArchitect::Platform
         allocateInfo.memoryTypeIndex = memoryTypeIndex;
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkAllocateMemory(m_Device, &allocateInfo, m_Allocator, &m_Memory));
+            vkAllocateMemory(m_Device, &allocateInfo, m_Allocator, &
+                m_Memory));
 
         // Bind the memory, TODO Configurable memory offset
-        VA_VULKAN_CHECK_RESULT_WARN(vkBindImageMemory(m_Device, m_Image, m_Memory, 0));
+        VA_VULKAN_CHECK_RESULT_WARN(
+            vkBindImageMemory(m_Device, m_Image, m_Memory, 0));
     }
 
     void VulkanImage::CreateImageView(
-        const VkImage image, const VkFormat format, const VkImageAspectFlags aspect)
+        const VkImage image,
+        const VkFormat format,
+        const VkImageAspectFlags aspect)
     {
         auto createInfo = VkImageViewCreateInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -249,7 +255,8 @@ namespace VoidArchitect::Platform
         createInfo.components.a = VK_COMPONENT_SWIZZLE_A;
 
         VA_VULKAN_CHECK_RESULT_WARN(
-            vkCreateImageView(m_Device, &createInfo, m_Allocator, &m_ImageView));
+            vkCreateImageView(m_Device, &createInfo, m_Allocator, &
+                m_ImageView));
     }
 
     void VulkanImage::InvalidateResources()

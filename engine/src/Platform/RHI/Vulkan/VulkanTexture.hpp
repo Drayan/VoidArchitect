@@ -17,7 +17,6 @@ namespace VoidArchitect::Platform
     {
     public:
         VulkanTexture2D(
-            const VulkanRHI& rhi,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
             const std::string& name,

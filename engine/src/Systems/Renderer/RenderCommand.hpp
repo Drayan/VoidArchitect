@@ -38,7 +38,7 @@ namespace VoidArchitect
             }
         };
 
-        class RenderCommand
+        class _RenderCommand
         {
         public:
             static Resources::MeshPtr s_UIMesh;

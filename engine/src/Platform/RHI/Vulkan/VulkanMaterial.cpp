@@ -9,6 +9,7 @@
 #include "VulkanBuffer.hpp"
 #include "VulkanCommandBuffer.hpp"
 #include "VulkanDescriptorSetLayoutManager.hpp"
+#include "VulkanExecutionContext.hpp"
 #include "VulkanMaterialBufferManager.hpp"
 #include "VulkanPipeline.hpp"
 #include "VulkanSwapchain.hpp"
@@ -38,7 +39,7 @@ namespace VoidArchitect::Platform
 
     void VulkanMaterial::InitializeResources(
         IRenderingHardware& rhi,
-        const VAArray<ResourceBinding>& bindings)
+        const VAArray<Renderer::ResourceBinding>& bindings)
     {
         if (!g_VkMaterialBufferManager)
         {
@@ -74,12 +75,12 @@ namespace VoidArchitect::Platform
 
             switch (binding.type)
             {
-                case ResourceBindingType::ConstantBuffer:
+                case Renderer::ResourceBindingType::ConstantBuffer:
                     poolSizes.push_back({VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 3});
                     break;
-                case ResourceBindingType::Texture1D:
-                case ResourceBindingType::Texture2D:
-                case ResourceBindingType::Texture3D:
+                case Renderer::ResourceBindingType::Texture1D:
+                case Renderer::ResourceBindingType::Texture2D:
+                case Renderer::ResourceBindingType::Texture3D:
                     poolSizes.push_back({VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 3});
                     break;
                 default:
@@ -118,7 +119,7 @@ namespace VoidArchitect::Platform
         const Resources::RenderStatePtr& pipeline)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
-        const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
+        const auto& cmdBuf = vulkanRhi.GetExecutionContextRef()->GetCurrentCommandBuffer();
         const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(pipeline);
 
         vkCmdPushConstants(
@@ -134,7 +135,7 @@ namespace VoidArchitect::Platform
     void VulkanMaterial::Bind(IRenderingHardware& rhi, const Resources::RenderStatePtr& pipeline)
     {
         auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
-        const uint32_t frameIndex = vulkanRhi.GetImageIndex();
+        const uint32_t frameIndex = vulkanRhi.GetExecutionContextRef()->GetImageIndex();
         const auto& descriptorState = m_MaterialDescriptorStates[frameIndex];
 
         // 1. Check if we need to update the material descriptor set.
@@ -149,7 +150,7 @@ namespace VoidArchitect::Platform
 
         UpdateDescriptorSets(vulkanRhi);
 
-        const auto& cmdBuf = vulkanRhi.GetCurrentCommandBuffer();
+        const auto& cmdBuf = vulkanRhi.GetExecutionContextRef()->GetCurrentCommandBuffer();
         const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(pipeline);
 
         // Bind the descriptor set to be updated, or in case the shader(material) changed.
@@ -184,7 +185,7 @@ namespace VoidArchitect::Platform
 
     void VulkanMaterial::UpdateDescriptorSets(VulkanRHI& rhi)
     {
-        const uint32_t frameIndex = rhi.GetImageIndex();
+        const uint32_t frameIndex = rhi.GetExecutionContextRef()->GetImageIndex();
         auto& descriptorState = m_MaterialDescriptorStates[frameIndex];
 
         VAArray<VkDescriptorBufferInfo> bufferInfos{};
@@ -204,7 +205,7 @@ namespace VoidArchitect::Platform
             {
                 switch (resBinding.type)
                 {
-                    case ResourceBindingType::ConstantBuffer:
+                    case Renderer::ResourceBindingType::ConstantBuffer:
                     {
                         // If the resource generation is different from the one we have in the
                         // descriptor, it means we have to update it.
@@ -237,9 +238,9 @@ namespace VoidArchitect::Platform
                     }
                     break;
 
-                    case ResourceBindingType::Texture1D:
-                    case ResourceBindingType::Texture2D:
-                    case ResourceBindingType::Texture3D:
+                    case Renderer::ResourceBindingType::Texture1D:
+                    case Renderer::ResourceBindingType::Texture2D:
+                    case Renderer::ResourceBindingType::Texture3D:
                     {
                         // Retrieve the texture.
                         auto texture =

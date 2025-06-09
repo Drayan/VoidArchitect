@@ -15,6 +15,7 @@
 #include <SDL3/SDL_timer.h>
 
 #include "Systems/ResourceSystem.hpp"
+#include "Systems/Renderer/RenderSystem.hpp"
 
 namespace VoidArchitect
 {
@@ -29,7 +30,11 @@ namespace VoidArchitect
         try
         {
             g_ResourceSystem = std::make_unique<ResourceSystem>();
-            Renderer::RenderCommand::Initialize(Platform::RHI_API_TYPE::Vulkan, m_MainWindow);
+            Renderer::g_RenderSystem = std::make_unique<Renderer::RenderSystem>(
+                Platform::RHI_API_TYPE::Vulkan,
+                m_MainWindow);
+
+            Renderer::g_RenderSystem->InitializeSubsystems();
         }
         catch (std::exception& e)
         {
@@ -40,7 +45,7 @@ namespace VoidArchitect
 
     Application::~Application()
     {
-        Renderer::RenderCommand::Shutdown();
+        Renderer::g_RenderSystem = nullptr;
         g_ResourceSystem = nullptr;
     }
 
@@ -65,10 +70,11 @@ namespace VoidArchitect
                 accumulator -= FIXED_STEP;
             }
 
-            if (Renderer::RenderCommand::BeginFrame(frameTime))
-            {
-                Renderer::RenderCommand::EndFrame(frameTime);
-            }
+            // if (Renderer::RenderCommand::BeginFrame(frameTime))
+            // {
+            //     Renderer::RenderCommand::EndFrame(frameTime);
+            // }
+            Renderer::g_RenderSystem->RenderFrame(frameTime);
 
             m_MainWindow->OnUpdate();
         }
@@ -113,7 +119,7 @@ namespace VoidArchitect
     bool Application::OnWindowResized(WindowResizedEvent& e)
     {
         VA_ENGINE_TRACE("[Application] Window resized to {0}, {1}.", e.GetWidth(), e.GetHeight());
-        Renderer::RenderCommand::Resize(e.GetWidth(), e.GetHeight());
+        // Renderer::RenderCommand::Resize(e.GetWidth(), e.GetHeight());
         return true;
     }
 

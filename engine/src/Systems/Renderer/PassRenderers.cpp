@@ -5,6 +5,7 @@
 
 #include "RenderCommand.hpp"
 #include "RenderGraph.hpp"
+#include "RenderGraphBuilder.hpp"
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Systems/MaterialSystem.hpp"
@@ -19,13 +20,25 @@ namespace VoidArchitect::Renderer
     // ForwardOpaquePassRenderer Implementation
     // =============================================================================================
 
+    void ForwardOpaquePassRenderer::Setup(RenderGraphBuilder& builder)
+    {
+        builder.ReadsFrom("TestMaterial").WritesToColorBuffer().WritesToDepthBuffer();
+    }
+
     void ForwardOpaquePassRenderer::Execute(
         const RenderContext& context)
     {
-        if (!context.RenderState)
+        // if (!context.RenderState)
+        // {
+        //     VA_ENGINE_ERROR(
+        //         "[ForwardOpaquePassRenderer] No render state provided by the RenderGraph.");
+        //     return;
+        // }
+
+        const auto testMat = g_MaterialSystem->GetHandleFor("TestMaterial");
+        if (testMat == InvalidMaterialHandle)
         {
-            VA_ENGINE_ERROR(
-                "[ForwardOpaquePassRenderer] No render state provided by the RenderGraph.");
+            VA_ENGINE_ERROR("[ForwardOpaquePassRenderer] Failed to get test material.");
             return;
         }
 
@@ -66,21 +79,25 @@ namespace VoidArchitect::Renderer
     // UIPassRenderer Implementation
     //==============================================================================================
 
+    void UIPassRenderer::Setup(RenderGraphBuilder& builder)
+    {
+    }
+
     void UIPassRenderer::Execute(const RenderContext& context)
     {
-        if (!context.RenderState)
-        {
-            VA_ENGINE_ERROR("[UIPassRenderer] No render state provided by the RenderGraph.");
-            return;
-        }
+        // if (!context.RenderState)
+        // {
+        //     VA_ENGINE_ERROR("[UIPassRenderer] No render state provided by the RenderGraph.");
+        //     return;
+        // }
 
         // Create a simple UI quad in normalized coordinates (-1 to +1)
-        auto uiMesh = RenderCommand::s_UIMesh;
-        if (!uiMesh)
-        {
-            VA_ENGINE_ERROR("[UIPassRenderer] Failed to create UI mesh.");
-            return;
-        }
+        // auto uiMesh = RenderCommand::s_UIMesh;
+        // if (!uiMesh)
+        // {
+        //     VA_ENGINE_ERROR("[UIPassRenderer] Failed to create UI mesh.");
+        //     return;
+        // }
 
         // Use default material for now
         // auto uiMaterial = g_MaterialSystem->GetCachedMaterial(

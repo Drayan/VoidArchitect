@@ -7,6 +7,7 @@
 #include "Systems/RenderStateSystem.hpp"
 #include "VulkanDescriptorSetLayoutManager.hpp"
 #include "VulkanDevice.hpp"
+#include "VulkanExecutionContext.hpp"
 #include "VulkanRenderPass.hpp"
 #include "VulkanRhi.hpp"
 #include "VulkanShader.hpp"
@@ -118,7 +119,7 @@ namespace VoidArchitect::Platform
         colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
         colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT
-                                              | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+            | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 
         auto colorBlendInfo = VkPipelineColorBlendStateCreateInfo{};
         colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
@@ -155,8 +156,10 @@ namespace VoidArchitect::Platform
             descriptorSetLayoutCreateInfo.bindingCount = static_cast<uint32_t>(bindings.size());
             descriptorSetLayoutCreateInfo.pBindings = bindings.data();
 
-            VA_VULKAN_CHECK_RESULT_WARN(vkCreateDescriptorSetLayout(
-                m_Device, &descriptorSetLayoutCreateInfo, m_Allocator, &m_DescriptorSetLayouts[i]));
+            VA_VULKAN_CHECK_RESULT_WARN(
+                vkCreateDescriptorSetLayout(
+                    m_Device, &descriptorSetLayoutCreateInfo, m_Allocator, &m_DescriptorSetLayouts[i
+                    ]));
 
             VA_ENGINE_TRACE(
                 "[VulkanPipeline] Descriptor set layout {} created, for pipeline '{}'.",
@@ -192,8 +195,9 @@ namespace VoidArchitect::Platform
         pipelineLayoutCreateInfo.pushConstantRangeCount = 1;
         pipelineLayoutCreateInfo.pPushConstantRanges = &pushConstantRange;
 
-        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreatePipelineLayout(
-            m_Device, &pipelineLayoutCreateInfo, m_Allocator, &m_PipelineLayout));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreatePipelineLayout(
+                m_Device, &pipelineLayoutCreateInfo, m_Allocator, &m_PipelineLayout));
         VA_ENGINE_TRACE("[VulkanPipeline] Pipeline layout created.");
 
         // --- Pipeline ---
@@ -224,8 +228,9 @@ namespace VoidArchitect::Platform
         pipelineCreateInfo.layout = m_PipelineLayout;
         pipelineCreateInfo.renderPass = renderPass->GetHandle();
 
-        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreateGraphicsPipelines(
-            m_Device, nullptr, 1, &pipelineCreateInfo, m_Allocator, &m_Pipeline));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreateGraphicsPipelines(
+                m_Device, nullptr, 1, &pipelineCreateInfo, m_Allocator, &m_Pipeline));
         VA_ENGINE_TRACE("[VulkanPipeline] Pipeline {} created.", config.name);
     }
 
@@ -260,55 +265,56 @@ namespace VoidArchitect::Platform
     {
         auto& vkRhi = dynamic_cast<VulkanRHI&>(rhi);
         vkCmdBindPipeline(
-            vkRhi.GetCurrentCommandBuffer().GetHandle(),
+            vkRhi.GetExecutionContextRef()->GetCurrentCommandBuffer().GetHandle(),
             VK_PIPELINE_BIND_POINT_GRAPHICS,
             m_Pipeline);
     }
 
     VkFormat VulkanPipeline::TranslateEngineAttributeFormatToVulkanFormat(
-        const AttributeType type, const AttributeFormat format)
+        const Renderer::AttributeType type,
+        const Renderer::AttributeFormat format)
     {
         auto vulkanFormat = VK_FORMAT_UNDEFINED;
         switch (type)
         {
-            case AttributeType::Float:
+            case Renderer::AttributeType::Float:
             {
                 switch (format)
                 {
-                    case AttributeFormat::Float32:
+                    case Renderer::AttributeFormat::Float32:
                         vulkanFormat = VK_FORMAT_R32_SFLOAT;
                         break;
                 }
             }
             break;
 
-            case AttributeType::Vec2:
+            case Renderer::AttributeType::Vec2:
             {
                 switch (format)
                 {
-                    case AttributeFormat::Float32:
+                    case Renderer::AttributeFormat::Float32:
                         vulkanFormat = VK_FORMAT_R32G32_SFLOAT;
                         break;
                 }
             }
             break;
 
-            case AttributeType::Vec3:
+            case Renderer::AttributeType::Vec3:
             {
                 switch (format)
                 {
-                    case AttributeFormat::Float32:
+                    case Renderer::AttributeFormat::Float32:
                         vulkanFormat = VK_FORMAT_R32G32B32_SFLOAT;
                         break;
                 }
             }
             break;
 
-            case AttributeType::Vec4:
+            case Renderer::AttributeType::Vec4:
             {
                 switch (format)
                 {
-                    case AttributeFormat::Float32:
+                    case Renderer::AttributeFormat::Float32:
                         vulkanFormat = VK_FORMAT_R32G32B32A32_SFLOAT;
                         break;
                 }
@@ -323,12 +329,13 @@ namespace VoidArchitect::Platform
     }
 
     uint32_t VulkanPipeline::GetEngineAttributeSize(
-        const AttributeType type, const AttributeFormat format)
+        const Renderer::AttributeType type,
+        const Renderer::AttributeFormat format)
     {
         auto size = 0;
         switch (format)
         {
-            case AttributeFormat::Float32:
+            case Renderer::AttributeFormat::Float32:
                 size = sizeof(float);
                 break;
 
@@ -338,19 +345,19 @@ namespace VoidArchitect::Platform
 
         switch (type)
         {
-            case AttributeType::Float:
+            case Renderer::AttributeType::Float:
                 size *= 1;
                 break;
-            case AttributeType::Vec2:
+            case Renderer::AttributeType::Vec2:
                 size *= 2;
                 break;
-            case AttributeType::Vec3:
+            case Renderer::AttributeType::Vec3:
                 size *= 3;
                 break;
-            case AttributeType::Vec4:
+            case Renderer::AttributeType::Vec4:
                 size *= 4;
                 break;
-            case AttributeType::Mat4:
+            case Renderer::AttributeType::Mat4:
                 size *= 16;
                 break;
         }

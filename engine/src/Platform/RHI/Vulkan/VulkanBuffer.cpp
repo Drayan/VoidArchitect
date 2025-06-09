@@ -13,7 +13,6 @@
 namespace VoidArchitect::Platform
 {
     VulkanBuffer::VulkanBuffer(
-        const VulkanRHI& rhi,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
         const uint64_t size,
@@ -41,7 +40,9 @@ namespace VoidArchitect::Platform
         // Gather memory requirements.
         VkMemoryRequirements memRequirements;
         vkGetBufferMemoryRequirements(m_Device, m_Buffer, &memRequirements);
-        const auto memoryIndex = rhi.FindMemoryIndex(memRequirements.memoryTypeBits, memProperties);
+        const auto memoryIndex = device->FindMemoryIndex(
+            memRequirements.memoryTypeBits,
+            memProperties);
         if (memoryIndex == -1)
         {
             VA_ENGINE_CRITICAL("[VulkanBuffer] Failed to find memory type index.");
@@ -119,7 +120,7 @@ namespace VoidArchitect::Platform
     }
 
     bool VulkanBuffer::Resize(
-        const VulkanRHI& rhi,
+        const std::unique_ptr<VulkanDevice>& device,
         const uint64_t newSize,
         const VkQueue queue,
         const VkCommandPool pool)
@@ -139,7 +140,7 @@ namespace VoidArchitect::Platform
         VkMemoryRequirements memRequirements;
         vkGetBufferMemoryRequirements(m_Device, newBuffer, &memRequirements);
         const auto memoryIndex =
-            rhi.FindMemoryIndex(memRequirements.memoryTypeBits, m_MemoryProperties);
+            device->FindMemoryIndex(memRequirements.memoryTypeBits, m_MemoryProperties);
         if (memoryIndex == -1)
         {
             VA_ENGINE_CRITICAL("[VulkanBuffer] Failed to find memory type index.");
@@ -217,13 +218,11 @@ namespace VoidArchitect::Platform
     }
 
     VulkanVertexBuffer::VulkanVertexBuffer(
-        const VulkanRHI& rhi,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
         const VAArray<Resources::MeshVertex>& data,
         const bool bindOnCreate)
         : VulkanBuffer(
-            rhi,
             device,
             allocator,
             data.size() * sizeof(Resources::MeshVertex),
@@ -232,7 +231,7 @@ namespace VoidArchitect::Platform
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
             bindOnCreate)
     {
-        const auto staging = VulkanStagingBuffer(rhi, device, allocator, data);
+        const auto staging = VulkanStagingBuffer(device, allocator, data);
         auto fence = VulkanFence(m_Device, m_Allocator);
         staging.CopyTo(
             device->GetGraphicsCommandPool(),
@@ -250,12 +249,13 @@ namespace VoidArchitect::Platform
     {
         auto& vkRhi = dynamic_cast<VulkanRHI&>(rhi);
         VkDeviceSize offsets = {0};
-        vkCmdBindVertexBuffers(
-            vkRhi.GetCurrentCommandBuffer().GetHandle(),
-            0,
-            1,
-            &m_Buffer,
-            &offsets);
+        VA_ENGINE_WARN("[VulkanVertexBuffer] Bind vertex buffer not implemented.");
+        // vkCmdBindVertexBuffers(
+        //     vkRhi.GetCurrentCommandBuffer().GetHandle(),
+        //     0,
+        //     1,
+        //     &m_Buffer,
+        //     &offsets);
     }
 
     void VulkanVertexBuffer::Unbind()
@@ -263,13 +263,11 @@ namespace VoidArchitect::Platform
     }
 
     VulkanIndexBuffer::VulkanIndexBuffer(
-        const VulkanRHI& rhi,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
         const VAArray<uint32_t>& data,
         bool bindOnCreate)
         : VulkanBuffer(
-            rhi,
             device,
             allocator,
             data.size() * sizeof(uint32_t),
@@ -278,7 +276,7 @@ namespace VoidArchitect::Platform
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
             bindOnCreate)
     {
-        const auto staging = VulkanStagingBuffer(rhi, device, allocator, data);
+        const auto staging = VulkanStagingBuffer(device, allocator, data);
         auto fence = VulkanFence(m_Device, m_Allocator);
         staging.CopyTo(
             device->GetGraphicsCommandPool(),
@@ -295,11 +293,12 @@ namespace VoidArchitect::Platform
     void VulkanIndexBuffer::Bind(IRenderingHardware& rhi)
     {
         auto& vkRhi = dynamic_cast<VulkanRHI&>(rhi);
-        vkCmdBindIndexBuffer(
-            vkRhi.GetCurrentCommandBuffer().GetHandle(),
-            m_Buffer,
-            0,
-            VK_INDEX_TYPE_UINT32);
+        VA_ENGINE_WARN("[VulkanIndexBuffer] Bind index buffer not implemented.");
+        // vkCmdBindIndexBuffer(
+        //     vkRhi.GetCurrentCommandBuffer().GetHandle(),
+        //     m_Buffer,
+        //     0,
+        //     VK_INDEX_TYPE_UINT32);
     }
 
     void VulkanIndexBuffer::Unbind()

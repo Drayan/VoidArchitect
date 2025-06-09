@@ -7,6 +7,7 @@
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Renderer/RenderCommand.hpp"
 #include "ResourceSystem.hpp"
+#include "Renderer/RenderSystem.hpp"
 #include "Resources/Loaders/ShaderLoader.hpp"
 
 namespace VoidArchitect
@@ -33,21 +34,14 @@ namespace VoidArchitect
         // Load the shader with the resource loader
         const auto shaderData =
             g_ResourceSystem->LoadResource<Resources::Loaders::ShaderDataDefinition>(
-                ResourceType::Shader, name);
+                ResourceType::Shader,
+                name);
 
         // 5. Create a new shader resource
-        Resources::IShader* shader = nullptr;
-        switch (Renderer::RenderCommand::GetApiType())
-        {
-            case Platform::RHI_API_TYPE::Vulkan:
-            {
-                shader = Renderer::RenderCommand::GetRHIRef().CreateShader(
-                    name, shaderData->GetConfig(), shaderData->GetCode());
-            }
-            default:
-                break;
-        }
-
+        Resources::IShader* shader = Renderer::g_RenderSystem->GetRHI()->CreateShader(
+            name,
+            shaderData->GetConfig(),
+            shaderData->GetCode());
         if (!shader)
         {
             VA_ENGINE_WARN("[ShaderSystem] Failed to create shader '{}'.", name);

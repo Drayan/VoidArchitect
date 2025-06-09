@@ -1,0 +1,108 @@
+//
+// Created by Michael Desmedt on 08/06/2025.
+//
+#pragma once
+
+#include <vulkan/vulkan.h>
+
+#include "VulkanCommandBuffer.hpp"
+#include "Resources/RenderState.hpp"
+#include "Resources/RenderTarget.hpp"
+#include "Systems/RenderPassSystem.hpp"
+
+namespace VoidArchitect::Platform
+{
+    class VulkanResourceFactory;
+}
+
+namespace VoidArchitect::Platform
+{
+    class VulkanFramebufferCache;
+}
+
+namespace VoidArchitect::Resources
+{
+    struct GlobalUniformObject;
+}
+
+namespace VoidArchitect::Platform
+{
+    class VulkanSwapchain;
+    class VulkanDevice;
+    class VulkanFence;
+    class VulkanBuffer;
+
+    class VulkanExecutionContext
+    {
+    public:
+        VulkanExecutionContext(
+            const std::unique_ptr<VulkanDevice>& device,
+            const std::unique_ptr<VulkanResourceFactory>& resourceFactory,
+            VkAllocationCallbacks* allocator,
+            uint32_t width,
+            uint32_t height);
+        ~VulkanExecutionContext();
+
+        bool BeginFrame(float deltaTime);
+        bool EndFrame(float deltaTime);
+
+        void BeginRenderPass(
+            RenderPassHandle passHandle,
+            const VAArray<Resources::RenderTargetHandle>& targetHandles);
+        void EndRenderPass() const;
+
+        void UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) const;
+        void BindGlobalState(const Resources::RenderStatePtr& pipeline);
+
+        void RequestResize(const uint32_t width, const uint32_t height);
+
+        VulkanCommandBuffer& GetCurrentCommandBuffer()
+        {
+            return m_GraphicsCommandBuffers[m_ImageIndex];
+        }
+
+        [[nodiscard]] uint32_t GetImageIndex() const { return m_ImageIndex; }
+        Resources::RenderTargetHandle GetCurrentColorRenderTargetHandle() const;
+        Resources::RenderTargetHandle GetDepthRenderTargetHandle() const;
+        VkFormat GetSwapchainFormat() const;
+        VkFormat GetDepthFormat() const;
+
+    private:
+        void CreateSyncObjects();
+        void CreateCommandBuffers();
+        void CreateGlobalUBO();
+
+        void HandleResize();
+
+        void DestroySyncObjects();
+
+        const std::unique_ptr<VulkanDevice>& m_Device;
+        VkAllocationCallbacks* m_Allocator;
+
+        uint32_t m_ImageIndex = 0;
+        uint32_t m_CurrentIndex = 0;
+        bool m_RecreatingSwapchain = false;
+
+        uint32_t m_CurrentWidth = 0;
+        uint32_t m_CurrentHeight = 0;
+        uint32_t m_PendingWidth = 0;
+        uint32_t m_PendingHeight = 0;
+        uint64_t m_ProcessedSizeGeneration = 0;
+        uint64_t m_RequestedSizeGeneration = 0;
+        std::unique_ptr<VulkanSwapchain> m_Swapchain;
+
+        VAArray<VkSemaphore> m_ImageAvailableSemaphores;
+        VAArray<VkSemaphore> m_QueueCompleteSemaphores;
+
+        VAArray<VulkanFence> m_InFlightFences;
+        VAArray<VulkanFence*> m_ImagesInFlight;
+
+        VAArray<VulkanCommandBuffer> m_GraphicsCommandBuffers;
+
+        VkDescriptorPool m_GlobalDescriptorPool;
+        VkDescriptorSet* m_GlobalDescriptorSets;
+        std::unique_ptr<VulkanBuffer> m_GlobalUniformBuffer;
+
+        std::unique_ptr<VulkanFramebufferCache> m_FramebufferCache;
+    };
+}

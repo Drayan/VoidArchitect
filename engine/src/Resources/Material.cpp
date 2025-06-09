@@ -12,7 +12,7 @@ namespace VoidArchitect::Resources
 
     GeometryRenderData::GeometryRenderData()
         : Model(Math::Mat4::Identity()),
-          Material(g_MaterialSystem->GetDefaultMaterialHandle())
+          Material(g_MaterialSystem->GetHandleForDefaultMaterial())
     {
     }
 

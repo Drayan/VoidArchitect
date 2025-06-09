@@ -108,7 +108,7 @@ namespace VoidArchitect
 
             virtual void InitializeResources(
                 Platform::IRenderingHardware& rhi,
-                const VAArray<ResourceBinding>& bindings) = 0;
+                const VAArray<Renderer::ResourceBinding>& bindings) = 0;
             virtual void ReleaseResources() = 0;
 
             static Texture2DPtr s_DefaultDiffuseTexture;

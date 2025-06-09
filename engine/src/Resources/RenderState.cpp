@@ -5,7 +5,9 @@
 
 namespace VoidArchitect::Resources
 {
-    IRenderState::IRenderState(const std::string& name, const RenderStateInputLayout& inputLayout)
+    IRenderState::IRenderState(
+        const std::string& name,
+        const Renderer::RenderStateInputLayout& inputLayout)
         : m_Name(name), m_InputLayout(inputLayout)
     {
     }

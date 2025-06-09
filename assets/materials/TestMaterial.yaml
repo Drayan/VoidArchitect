@@ -1,6 +1,16 @@
 material:
   name: "TestMaterial"
   render_state_class: "Opaque"
+  bindings:
+    - binding: 0
+      type: "ConstantBuffer"
+      stage: "All"
+    - binding: 1
+      type: "Texture2D"
+      stage: "Pixel"
+    - binding: 2
+      type: "Texture2D"
+      stage: "Pixel"
   properties:
     diffuse_color: [ 1.0, 1.0, 1.0, 1.0 ]
     specular: 64.0

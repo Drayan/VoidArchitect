@@ -23,11 +23,11 @@ namespace VoidArchitect
             VulkanDescriptorSetLayoutManager(
                 const std::unique_ptr<VulkanDevice>& device,
                 VkAllocationCallbacks* allocator,
-                const RenderStateInputLayout& sharedInputLayout);
+                const Renderer::RenderStateInputLayout& sharedInputLayout);
             ~VulkanDescriptorSetLayoutManager();
 
             static VAArray<VkDescriptorSetLayoutBinding> CreateDescriptorSetLayoutBindingsFromSpace(
-                const SpaceLayout& spaceLayout);
+                const Renderer::SpaceLayout& spaceLayout);
 
             [[nodiscard]] VkDescriptorSetLayout GetGlobalLayout() const { return m_GlobalLayout; }
 
@@ -41,13 +41,13 @@ namespace VoidArchitect
                 return m_PerObjectLayout;
             }
 
-            [[nodiscard]] const RenderStateInputLayout& GetSharedInputLayout() const
+            [[nodiscard]] const Renderer::RenderStateInputLayout& GetSharedInputLayout() const
             {
                 return m_SharedInputLayout;
             }
 
         private:
-            RenderStateInputLayout m_SharedInputLayout;
+            Renderer::RenderStateInputLayout m_SharedInputLayout;
 
             VkDevice m_Device;
             VkAllocationCallbacks* m_Allocator;

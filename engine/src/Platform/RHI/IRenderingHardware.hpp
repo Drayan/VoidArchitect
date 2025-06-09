@@ -4,6 +4,8 @@
 #pragma once
 #include "IRenderingHardware.hpp"
 #include "Resources/Mesh.hpp"
+#include "Resources/RenderTarget.hpp"
+#include "Systems/RenderPassSystem.hpp"
 
 namespace VoidArchitect
 {
@@ -52,17 +54,17 @@ namespace VoidArchitect::Platform
         virtual ~IRenderingHardware() = default;
 
         virtual void Resize(uint32_t width, uint32_t height) = 0;
-        virtual void WaitIdle(uint64_t timeout) = 0;
 
         virtual bool BeginFrame(float deltaTime) = 0;
         virtual bool EndFrame(float deltaTime) = 0;
 
-        virtual void UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) = 0;
-        virtual void BindGlobalState(const Resources::RenderStatePtr& pipeline) = 0;
+        virtual void BeginRenderPass(
+            RenderPassHandle passHandle,
+            const VAArray<Resources::RenderTargetHandle>& targetHandles) = 0;
+        virtual void EndRenderPass() = 0;
 
-        virtual void DrawMesh(
-            const Resources::GeometryRenderData& data,
-            const Resources::RenderStatePtr& pipeline) = 0;
+        virtual void UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) = 0;
+        virtual void BindGlobalState(const Resources::RenderStatePtr& renderState) = 0;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
@@ -74,24 +76,31 @@ namespace VoidArchitect::Platform
             uint8_t channels,
             bool hasTransparency,
             const VAArray<uint8_t>& data) = 0;
-        virtual Resources::IRenderState* CreatePipeline(
+
+        virtual Resources::IRenderState* CreateRenderState(
             RenderStateConfig& config,
-            Resources::IRenderPass* renderPass) = 0;
+            RenderPassHandle passHandle) = 0;
+
         virtual Resources::IMaterial* CreateMaterial(const std::string& name) = 0;
+
         virtual Resources::IShader* CreateShader(
             const std::string& name,
             const ShaderConfig& config,
             const VAArray<uint8_t>& data) = 0;
+
         virtual Resources::IMesh* CreateMesh(
             const std::string& name,
             const VAArray<Resources::MeshVertex>& vertices,
             const VAArray<uint32_t>& indices) = 0;
 
-        ///////////////////////////////////////////////////////////////////////
-        //// RenderGraph Resources ////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////
-        virtual Resources::IRenderTarget* CreateRenderTarget(
+        virtual Resources::RenderTargetHandle CreateRenderTarget(
             const Renderer::RenderTargetConfig& config) = 0;
+
+        virtual void ReleaseRenderTarget(Resources::RenderTargetHandle handle) = 0;
+
+        virtual Resources::RenderTargetHandle GetCurrentColorRenderTargetHandle() const = 0;
+        virtual Resources::RenderTargetHandle GetDepthRenderTargetHandle() const = 0;
+
         virtual Resources::IRenderPass* CreateRenderPass(
             const RenderPassConfig& config,
             Renderer::PassPosition passPosition) = 0;

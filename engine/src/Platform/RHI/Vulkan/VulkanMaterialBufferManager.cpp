@@ -23,7 +23,6 @@ namespace VoidArchitect
             const auto bufferSize = sizeof(Resources::MaterialUniformObject) * MAX_MATERIALS;
 
             m_MaterialUniformBuffer = std::make_unique<VulkanBuffer>(
-                rhi,
                 rhi.GetDeviceRef(),
                 m_Allocator,
                 bufferSize,

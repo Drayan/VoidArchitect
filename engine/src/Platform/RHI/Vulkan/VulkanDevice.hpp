@@ -21,13 +21,14 @@ namespace VoidArchitect::Platform
     {
     public:
         VulkanDevice(
-            VkInstance instance,
             VkAllocationCallbacks* allocator,
             const std::unique_ptr<Window>& window,
             const DeviceRequirements& requirements);
         ~VulkanDevice();
 
         void WaitIdle() const;
+
+        int32_t FindMemoryIndex(uint32_t typeFilter, uint32_t propertyFlags) const;
 
         [[nodiscard]] VkDevice GetLogicalDeviceHandle() const { return m_LogicalDevice; }
         [[nodiscard]] VkPhysicalDevice GetPhysicalDeviceHandle() const { return m_PhysicalDevice; }
@@ -63,6 +64,20 @@ namespace VoidArchitect::Platform
         VkQueue GetComputeQueueHandle() const { return m_ComputeQueue; }
 
     private:
+        void CreateInstance();
+#ifdef DEBUG
+        void CreateDebugMessenger();
+        void DestroyDebugMessenger() const;
+        static void AddDebugExtensions(
+            char const* const*& extensions,
+            unsigned int& extensionCount);
+        static void CleaningDebugExtensionsArray(
+            char const* const*& extensions,
+            unsigned int extensionCount);
+
+        VkDebugUtilsMessengerEXT m_DebugMessenger;
+#endif
+
         void SelectPhysicalDevice(const DeviceRequirements& requirements);
         bool IsDeviceMeetRequirements(
             const VkPhysicalDevice& device,

@@ -7,6 +7,7 @@
 #include "Core/Math/Constants.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Renderer/RenderCommand.hpp"
+#include "Renderer/RenderSystem.hpp"
 
 namespace VoidArchitect
 {
@@ -48,7 +49,7 @@ namespace VoidArchitect
         const VAArray<uint32_t>& indices)
     {
         Resources::IMesh* mesh =
-            Renderer::RenderCommand::GetRHIRef().CreateMesh(name, vertices, indices);
+            Renderer::g_RenderSystem->GetRHI()->CreateMesh(name, vertices, indices);
         if (!mesh)
         {
             VA_ENGINE_WARN("[MeshSystem] Failed to create mesh '{}'.", name);

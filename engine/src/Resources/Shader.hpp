@@ -21,6 +21,8 @@ namespace VoidArchitect
             All
         };
 
+        ShaderStage ShaderStageFromString(const std::string& stage);
+
         class IShader
         {
             friend class VoidArchitect::ShaderSystem;

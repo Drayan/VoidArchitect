@@ -3,118 +3,34 @@
 //
 #pragma once
 #include "RenderPassSystem.hpp"
+#include "Renderer/RendererTypes.hpp"
 #include "Resources/RenderPass.hpp"
+#include "Resources/RenderState.hpp"
 #include "Resources/Shader.hpp"
 
 namespace VoidArchitect
 {
-    namespace Renderer
-    {
-        enum class TextureFormat;
-        enum class RenderPassType;
-    } // namespace Renderer
-
-    enum class VertexFormat
-    {
-        Position,
-        PositionColor,
-        PositionUV,
-        PositionNormal,
-        PositionNormalUV,
-        PositionNormalUVTangent,
-        Custom
-    };
-
-    enum class AttributeFormat
-    {
-        Float32,
-    };
-
-    enum class AttributeType
-    {
-        Float,
-        Vec2,
-        Vec3,
-        Vec4,
-        Mat4,
-    };
-
-    struct VertexAttribute
-    {
-        AttributeType type;
-        AttributeFormat format;
-    };
-
-    enum class ResourceBindingType
-    {
-        ConstantBuffer,
-        Texture1D,
-        Texture2D,
-        Texture3D,
-        TextureCube,
-        Sampler,
-        StorageBuffer,
-        StorageTexture
-    };
-
-    struct BufferBinding
-    {
-        uint32_t binding;
-        AttributeType type;
-        AttributeFormat format;
-    };
-
-    struct ResourceBinding
-    {
-        ResourceBindingType type;
-        uint32_t binding;
-        Resources::ShaderStage stage;
-
-        std::optional<std::vector<BufferBinding>> bufferBindings;
-    };
-
-    struct SpaceLayout
-    {
-        uint32_t space;
-        VAArray<ResourceBinding> bindings;
-    };
-
-    struct RenderStateInputLayout
-    {
-        VAArray<SpaceLayout> spaces;
-    };
-
     struct RenderStateConfig
     {
         std::string name;
+
+        std::string renderStateClass;
+        Renderer::RenderPassType passType;
+        Renderer::VertexFormat vertexFormat = Renderer::VertexFormat::Position;
+
         VAArray<Resources::ShaderPtr> shaders;
-
-        VAArray<Renderer::RenderPassType> compatiblePassTypes;
-        VAArray<std::string> compatiblePassNames;
-
-        // TODO VertexFormat -> How vertex data is structured?
-        VertexFormat vertexFormat = VertexFormat::Position;
-        VAArray<VertexAttribute> vertexAttributes;
-
+        VAArray<Renderer::VertexAttribute> vertexAttributes;
         // TODO InputLayout; -> Which data bindings are used?
-        RenderStateInputLayout inputLayout;
-
+        Renderer::RenderStateInputLayout inputLayout;
         // TODO RenderState -> Allow configuration options like culling, depth testing, etc.
-    };
-
-    struct RenderStateSignature
-    {
-        VAArray<Renderer::TextureFormat> colorFormats;
-        std::optional<Renderer::TextureFormat> depthFormat;
-
-        bool operator==(const RenderStateSignature& other) const;
-        [[nodiscard]] size_t GetHash() const;
     };
 
     struct RenderStateCacheKey
     {
-        std::string templateName;
-        RenderStateSignature signature;
+        std::string renderStateClass;
+        Renderer::RenderPassType passType;
+        Renderer::VertexFormat vertexFormat;
+        Resources::RenderPassSignature passSignature;
 
         bool operator==(const RenderStateCacheKey& other) const;
         [[nodiscard]] size_t GetHash() const;
@@ -123,15 +39,6 @@ namespace VoidArchitect
 
 namespace std
 {
-    template <>
-    struct hash<VoidArchitect::RenderStateSignature>
-    {
-        size_t operator()(const VoidArchitect::RenderStateSignature& signature) const noexcept
-        {
-            return signature.GetHash();
-        }
-    };
-
     template <>
     struct hash<VoidArchitect::RenderStateCacheKey>
     {
@@ -144,42 +51,54 @@ namespace std
 
 namespace VoidArchitect
 {
+    using RenderStateHandle = uint32_t;
+    static constexpr RenderStateHandle InvalidRenderStateHandle = std::numeric_limits<
+        uint32_t>::max();
+
     class RenderStateSystem
     {
     public:
         RenderStateSystem();
         ~RenderStateSystem() = default;
 
-        void RegisterRenderStateTemplate(const std::string& name, const RenderStateConfig& config);
-        [[nodiscard]] bool HasRenderStateTemplate(const std::string& name) const;
-        [[nodiscard]] const RenderStateConfig& GetRenderStateTemplate(
-            const std::string& name) const;
+        void RegisterPermutation(const RenderStateConfig& config);
+        RenderStateHandle GetHandleFor(
+            const RenderStateCacheKey& key,
+            RenderPassHandle passHandle);
 
-        Resources::RenderStatePtr CreateRenderState(
-            const std::string& templateName,
-            const RenderPassConfig& passConfig,
-            const Resources::RenderPassPtr& renderPass);
-        Resources::RenderStatePtr GetCachedRenderState(
-            const std::string& templateName,
-            const RenderStateSignature& signature);
-
-        void ClearCache();
-
-        [[nodiscard]] bool IsRenderStateCompatibleWithPass(
-            const std::string& renderStateName,
-            Renderer::RenderPassType passType) const;
-        [[nodiscard]] VAArray<std::string> GetCompatibleRenderStatesForPass(
-            Renderer::RenderPassType passType) const;
-
-        RenderStateSignature CreateSignatureFromPass(const RenderPassConfig& passConfig);
+        void Bind(RenderStateHandle handle);
 
     private:
-        void GenerateDefaultRenderStates();
+        static Resources::IRenderState* CreateRenderState(
+            RenderStateConfig& config,
+            RenderPassHandle passHandle);
 
-        VAHashMap<std::string, RenderStateConfig> m_RenderStateTemplates;
-        VAHashMap<RenderStateCacheKey, Resources::RenderStatePtr> m_RenderStateCache;
+        void LoadDefaultRenderStates();
 
-        Resources::RenderStatePtr m_DefaultState;
+        RenderStateHandle GetFreeRenderStateHandle();
+
+        enum class RenderStateLoadingState
+        {
+            Unloaded,
+            Loading,
+            Loaded
+        };
+
+        struct RenderStateData
+        {
+            RenderStateLoadingState state = RenderStateLoadingState::Unloaded;
+            Resources::IRenderState* renderStatePtr = nullptr;
+        };
+
+        using ConfigLookupKey = std::tuple<
+            std::string, Renderer::RenderPassType, Renderer::VertexFormat>;
+        VAHashMap<ConfigLookupKey, RenderStateConfig> m_ConfigMap;
+
+        VAArray<RenderStateData> m_RenderStates;
+        VAHashMap<RenderStateCacheKey, RenderStateHandle> m_RenderStateCache;
+
+        std::queue<RenderStateHandle> m_FreeRenderStateHandles;
+        RenderStateHandle m_NextFreeRenderStateHandle = 0;
     };
 
     inline std::unique_ptr<RenderStateSystem> g_RenderStateSystem;

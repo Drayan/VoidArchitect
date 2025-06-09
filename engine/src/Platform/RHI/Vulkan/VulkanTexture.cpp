@@ -4,11 +4,12 @@
 #include "VulkanTexture.hpp"
 
 #include "VulkanBuffer.hpp"
+#include "VulkanCommandBuffer.hpp"
+#include "VulkanDevice.hpp"
 
 namespace VoidArchitect::Platform
 {
     VulkanTexture2D::VulkanTexture2D(
-        const VulkanRHI& rhi,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
         const std::string& name,
@@ -29,9 +30,8 @@ namespace VoidArchitect::Platform
         VkFormat imageFormat = VK_FORMAT_R8G8B8A8_UNORM;
 
         // Create the staging buffer and image.
-        auto staging = VulkanStagingBuffer(rhi, device, m_Allocator, data);
+        auto staging = VulkanStagingBuffer(device, m_Allocator, data);
         m_Image = VulkanImage(
-            rhi,
             device,
             m_Allocator,
             m_Width,
@@ -40,7 +40,7 @@ namespace VoidArchitect::Platform
             VK_IMAGE_ASPECT_COLOR_BIT,
             VK_IMAGE_TILING_OPTIMAL,
             VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
-                | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+            | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
         // Load the data from the staging buffer to the image.
@@ -48,7 +48,10 @@ namespace VoidArchitect::Platform
         VulkanCommandBuffer::SingleUseBegin(device, device->GetGraphicsCommandPool(), cmdBuf);
 
         m_Image.TransitionLayout(
-            device, cmdBuf, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+            device,
+            cmdBuf,
+            VK_IMAGE_LAYOUT_UNDEFINED,
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
         m_Image.CopyFromBuffer(cmdBuf, staging);
         m_Image.TransitionLayout(
             device,

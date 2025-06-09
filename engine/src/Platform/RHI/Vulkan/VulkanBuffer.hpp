@@ -18,7 +18,6 @@ namespace VoidArchitect::Platform
     {
     public:
         VulkanBuffer(
-            const VulkanRHI& rhi,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
             uint64_t size,
@@ -35,20 +34,31 @@ namespace VoidArchitect::Platform
         // void Bind(uint64_t offset);
         void BindMemory(uint64_t offset = 0);
 
-        void Bind(IRenderingHardware& rhi) override {}
+        void Bind(IRenderingHardware& rhi) override
+        {
+        }
 
-        void Unbind() override {}
+        void Unbind() override
+        {
+        }
 
-        template <typename T> void LoadData(VAArray<T>& data)
+        template <typename T>
+        void LoadData(VAArray<T>& data)
         {
             const auto bufData = LockMemory(0, m_Size, 0);
             memcpy(bufData, data.data(), m_Size);
             UnlockMemory();
         }
 
-        bool Resize(const VulkanRHI& rhi, uint64_t newSize, VkQueue queue, VkCommandPool pool);
+        bool Resize(
+            const std::unique_ptr<VulkanDevice>& device,
+            uint64_t newSize,
+            VkQueue queue,
+            VkCommandPool pool);
         void* LockMemory(
-            const uint64_t offset, const uint64_t size, const VkMemoryMapFlags flags) const;
+            const uint64_t offset,
+            const uint64_t size,
+            const VkMemoryMapFlags flags) const;
         void UnlockMemory() const;
 
         void CopyTo(
@@ -81,38 +91,40 @@ namespace VoidArchitect::Platform
         VkMemoryPropertyFlags m_MemoryProperties;
     };
 
-    template <typename T> class VulkanStagingBuffer : public VulkanBuffer
+    template <typename T>
+    class VulkanStagingBuffer : public VulkanBuffer
     {
     public:
         VulkanStagingBuffer(
-            const VulkanRHI& rhi,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
             const VAArray<T>& data,
             bool bindOnCreate = true)
             : VulkanBuffer(
-                  rhi,
-                  device,
-                  allocator,
-                  data.size() * sizeof(T),
-                  VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+                device,
+                allocator,
+                data.size() * sizeof(T),
+                VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
         {
             const auto bufData = LockMemory(0, m_Size, 0);
             memcpy(bufData, data.data(), m_Size);
             UnlockMemory();
         }
 
-        void Bind(IRenderingHardware& rhi) override {}
+        void Bind(IRenderingHardware& rhi) override
+        {
+        }
 
-        void Unbind() override {}
+        void Unbind() override
+        {
+        }
     };
 
     class VulkanVertexBuffer : public VulkanBuffer
     {
     public:
         VulkanVertexBuffer(
-            const VulkanRHI& rhi,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
             const VAArray<Resources::MeshVertex>& data,
@@ -126,7 +138,6 @@ namespace VoidArchitect::Platform
     {
     public:
         VulkanIndexBuffer(
-            const VulkanRHI& rhi,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
             const VAArray<uint32_t>& data,

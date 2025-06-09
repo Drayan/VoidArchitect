@@ -9,6 +9,7 @@
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Renderer/RenderCommand.hpp"
 #include "ResourceSystem.hpp"
+#include "Renderer/RenderSystem.hpp"
 #include "Resources/Loaders/ImageLoader.hpp"
 #include "Resources/Material.hpp"
 #include "Resources/Texture.hpp"
@@ -49,7 +50,8 @@ namespace VoidArchitect
     }
 
     Resources::Texture2DPtr TextureSystem::LoadTexture2D(
-        const std::string& name, const Resources::TextureUse use)
+        const std::string& name,
+        const Resources::TextureUse use)
     {
         // Check if the texture is in the cache
         for (auto& [uuid, texture] : m_TextureCache)
@@ -71,25 +73,17 @@ namespace VoidArchitect
         // If not found, load the texture from a file
         const auto imageDefinition =
             g_ResourceSystem->LoadResource<Resources::Loaders::ImageDataDefinition>(
-                ResourceType::Image, name);
+                ResourceType::Image,
+                name);
         // const auto data = LoadRawData(name, width, height, channels, hasTransparency);
 
-        Resources::Texture2D* texture = nullptr;
-        switch (Renderer::RenderCommand::GetApiType())
-        {
-            case Platform::RHI_API_TYPE::Vulkan:
-            {
-                texture = Renderer::RenderCommand::GetRHIRef().CreateTexture2D(
-                    name,
-                    imageDefinition->GetWidth(),
-                    imageDefinition->GetHeight(),
-                    4,
-                    imageDefinition->HasTransparency(),
-                    imageDefinition->GetData());
-            }
-            default:
-                break;
-        }
+        Resources::Texture2D* texture = Renderer::g_RenderSystem->GetRHI()->CreateTexture2D(
+            name,
+            imageDefinition->GetWidth(),
+            imageDefinition->GetHeight(),
+            4,
+            imageDefinition->HasTransparency(),
+            imageDefinition->GetData());
 
         if (texture)
         {
@@ -106,7 +100,9 @@ namespace VoidArchitect
             m_TotalTexturesLoaded++;
 
             VA_ENGINE_TRACE(
-                "[TextureSystem] Created texture '{}' with handle {}.", texture->m_Name, handle);
+                "[TextureSystem] Created texture '{}' with handle {}.",
+                texture->m_Name,
+                handle);
             return texturePtr;
         }
 
@@ -123,16 +119,13 @@ namespace VoidArchitect
         const bool hasTransparency,
         const VAArray<uint8_t>& data)
     {
-        Resources::Texture2D* texture = nullptr;
-        switch (Renderer::RenderCommand::GetApiType())
-        {
-            case Platform::RHI_API_TYPE::Vulkan:
-                texture = Renderer::RenderCommand::GetRHIRef().CreateTexture2D(
-                    name, width, height, channels, hasTransparency, data);
-            default:
-                break;
-        }
-
+        Resources::Texture2D* texture = Renderer::g_RenderSystem->GetRHI()->CreateTexture2D(
+            name,
+            width,
+            height,
+            channels,
+            hasTransparency,
+            data);
         if (texture)
         {
             auto texturePtr = Resources::Texture2DPtr(texture, TextureDeleter{this});
@@ -148,7 +141,9 @@ namespace VoidArchitect
             m_TotalTexturesLoaded++;
 
             VA_ENGINE_TRACE(
-                "[TextureSystem] Created texture '{}' with handle {}.", texture->m_Name, handle);
+                "[TextureSystem] Created texture '{}' with handle {}.",
+                texture->m_Name,
+                handle);
             return texturePtr;
         }
 

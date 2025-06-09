@@ -1,8 +1,15 @@
 # TODO List
 
+# Current
+
+- [ ] Implement VulkanBindingGroupManager
+
 ## Engine
 
 ### General
+
+- [ ] Asset UUID => Currently UUID is usable at runtime (it uniquely identify an INSTANCE)
+  but it can not be used to reference an asset. We will need this kind of system
 
 ### Rendering
 

@@ -6,276 +6,235 @@
 #include "RenderPassSystem.hpp"
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
-#include "Renderer/RenderCommand.hpp"
 #include "Renderer/RenderGraph.hpp"
 #include "ShaderSystem.hpp"
+#include "Renderer/RenderSystem.hpp"
 
 namespace VoidArchitect
 {
-    RenderStateSystem::RenderStateSystem() { GenerateDefaultRenderStates(); }
+    RenderStateSystem::RenderStateSystem() { LoadDefaultRenderStates(); }
 
-    void RenderStateSystem::RegisterRenderStateTemplate(
-        const std::string& name,
+    void RenderStateSystem::RegisterPermutation(
         const RenderStateConfig& config)
     {
-        m_RenderStateTemplates[name] = config;
+        // First, check the config map if this particular permutation exists or not
+        const ConfigLookupKey key{config.name, config.passType, config.vertexFormat};
+        if (m_ConfigMap.contains(key))
+        {
+            VA_ENGINE_WARN(
+                "[RenderStateSystem] Permutation '{}' already exists for pass '{}'.",
+                config.name,
+                Renderer::RenderPassTypeToString(config.passType));
+            return;
+        }
 
+        // Store the permutation config into the map
+        m_ConfigMap[key] = config;
         VA_ENGINE_TRACE(
-            "[RenderStateSystem] Pipeline template '{}' registered with compatibility",
-            name);
-        for (const auto& passType : config.compatiblePassTypes)
-        {
-            VA_ENGINE_TRACE(
-                "[RenderStateSystem] - Pass Type: {}",
-                Renderer::RenderPassTypeToString(passType));
-        }
-        for (const auto& passName : config.compatiblePassNames)
-        {
-            VA_ENGINE_TRACE("[RenderStateSystem] - Pass Name: {}", passName);
-        }
+            "[RenderStateSystem] Permutation '{}' registered for pass '{}'.",
+            config.name,
+            Renderer::RenderPassTypeToString(config.passType));
     }
 
-    bool RenderStateSystem::HasRenderStateTemplate(const std::string& name) const
+    RenderStateHandle RenderStateSystem::GetHandleFor(
+        const RenderStateCacheKey& key,
+        const RenderPassHandle passHandle)
     {
-        return m_RenderStateTemplates.contains(name);
-    }
-
-    const RenderStateConfig& RenderStateSystem::GetRenderStateTemplate(
-        const std::string& name) const
-    {
-        auto it = m_RenderStateTemplates.find(name);
-        if (it == m_RenderStateTemplates.end())
+        // Check if this renderState permutation is already in the cache.
+        if (m_RenderStateCache.contains(key))
         {
-            VA_ENGINE_ERROR("[RenderStateSystem] Pipeline template '{}' not found.", name);
-            static const RenderStateConfig emptyConfig{};
-            return emptyConfig;
+            // This renderState exists, let's check if it's loaded.
+            const auto handle = m_RenderStateCache[key];
+            const auto& node = m_RenderStates[handle];
+            if (node.state == RenderStateLoadingState::Loaded)
+            {
+                // Okay, this state exists and is loaded, return its handle.
+                return handle;
+            }
+
+            // The renderState exist but is unloaded, we need to load it first.
+            // LoadRenderState(handle);
+            return handle;
         }
 
-        return it->second;
-    }
-
-    Resources::RenderStatePtr RenderStateSystem::CreateRenderState(
-        const std::string& templateName,
-        const RenderPassConfig& passConfig,
-        const Resources::RenderPassPtr& renderPass)
-    {
-        // Check if the render state template exists
-        if (!HasRenderStateTemplate(templateName))
+        // Check the config map to find a suitable config
+        ConfigLookupKey lookupKey{key.renderStateClass, key.passType, key.vertexFormat};
+        if (!m_ConfigMap.contains(lookupKey))
         {
             VA_ENGINE_ERROR(
-                "[RenderStateSystem] Pipeline template '{}' not found for pass '{}'.",
-                templateName,
-                passConfig.Name);
-            return nullptr;
+                "[RenderStateSystem] No render state permutation found for pass '{}' with MaterialClass '{}'.",
+                Renderer::RenderPassTypeToString(key.passType),
+                key.renderStateClass);
+            return InvalidRenderStateHandle;
         }
 
-        // Create the signature
-        auto signature = CreateSignatureFromPass(passConfig);
+        auto& config = m_ConfigMap[lookupKey];
 
-        // Check if the render state isn't already in the cache
-        RenderStateCacheKey cacheKey(templateName, signature);
-        if (auto cached = GetCachedRenderState(templateName, signature))
+        // This is the first time the system is asked an handle for this renderState
+        const auto renderStatePtr = CreateRenderState(config, passHandle);
+        if (!renderStatePtr)
         {
-            VA_ENGINE_DEBUG(
-                "[RenderStateSystem] Using cached render state '{}' for pass '{}'.",
-                templateName,
-                passConfig.Name);
-            return cached;
+            VA_ENGINE_ERROR(
+                "[RenderStateSystem] Failed to create render state for pass '{}' and MaterialClass '{}'.",
+                Renderer::RenderPassTypeToString(key.passType),
+                key.renderStateClass);
+            return InvalidRenderStateHandle;
         }
 
-        auto config = GetRenderStateTemplate(templateName);
+        const RenderStateData node{
+            RenderStateLoadingState::Unloaded,
+            renderStatePtr
+        };
+        const auto handle = GetFreeRenderStateHandle();
+        m_RenderStates[handle] = node;
+        m_RenderStateCache[key] = handle;
 
+        return handle;
+    }
+
+    Resources::IRenderState* RenderStateSystem::CreateRenderState(
+        RenderStateConfig& config,
+        const RenderPassHandle passHandle)
+    {
         // Add required data to the config
-        switch (config.vertexFormat)
+        if (config.vertexAttributes.empty())
         {
-            case VertexFormat::Position:
+            switch (config.vertexFormat)
             {
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
-            }
-            break;
-            case VertexFormat::PositionColor:
-            {
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec4, AttributeFormat::Float32});
-            }
-            break;
-            case VertexFormat::PositionNormal:
-            {
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
-            }
-            break;
-            case VertexFormat::PositionNormalUV:
-            {
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec2, AttributeFormat::Float32});
-            }
-            break;
-            case VertexFormat::PositionNormalUVTangent:
-            {
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec2, AttributeFormat::Float32});
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
-            }
-            break;
-            case VertexFormat::PositionUV:
-            {
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec3, AttributeFormat::Float32});
-                config.vertexAttributes.push_back(
-                    VertexAttribute{AttributeType::Vec2, AttributeFormat::Float32});
-            }
-            break;
-
-            // TODO Implement custom vertex format definition (from config file ?)
-            case VertexFormat::Custom:
-            default:
-                VA_ENGINE_WARN(
-                    "[RenderStateSystem] Unknown vertex format for render state '{}'.",
-                    config.name);
+                case Renderer::VertexFormat::Position:
+                {
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec3,
+                            Renderer::AttributeFormat::Float32
+                        });
+                }
                 break;
+                case Renderer::VertexFormat::PositionColor:
+                {
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec3,
+                            Renderer::AttributeFormat::Float32
+                        });
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec4,
+                            Renderer::AttributeFormat::Float32
+                        });
+                }
+                break;
+                case Renderer::VertexFormat::PositionNormal:
+                {
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec3,
+                            Renderer::AttributeFormat::Float32
+                        });
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec3,
+                            Renderer::AttributeFormat::Float32
+                        });
+                }
+                break;
+                case Renderer::VertexFormat::PositionNormalUV:
+                {
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec3,
+                            Renderer::AttributeFormat::Float32
+                        });
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec3,
+                            Renderer::AttributeFormat::Float32
+                        });
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec2,
+                            Renderer::AttributeFormat::Float32
+                        });
+                }
+                break;
+                case Renderer::VertexFormat::PositionNormalUVTangent:
+                {
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec3,
+                            Renderer::AttributeFormat::Float32
+                        });
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec3,
+                            Renderer::AttributeFormat::Float32
+                        });
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec2,
+                            Renderer::AttributeFormat::Float32
+                        });
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec3,
+                            Renderer::AttributeFormat::Float32
+                        });
+                }
+                break;
+                case Renderer::VertexFormat::PositionUV:
+                {
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec3,
+                            Renderer::AttributeFormat::Float32
+                        });
+                    config.vertexAttributes.push_back(
+                        Renderer::VertexAttribute{
+                            Renderer::AttributeType::Vec2,
+                            Renderer::AttributeFormat::Float32
+                        });
+                }
+                break;
+
+                // TODO Implement custom vertex format definition (from config file ?)
+                case Renderer::VertexFormat::Custom:
+                default:
+                    VA_ENGINE_WARN(
+                        "[RenderStateSystem] Unknown vertex format for render state '{}'.",
+                        config.name);
+                    break;
+            }
         }
 
         // Create a new render state resource
         const auto renderState =
-            Renderer::RenderCommand::GetRHIRef().CreatePipeline(config, renderPass.get());
+            Renderer::g_RenderSystem->GetRHI()->CreateRenderState(config, passHandle);
 
         if (!renderState)
         {
             VA_ENGINE_WARN(
                 "[RenderStateSystem] Failed to create render state '{}' for pass '{}'.",
                 config.name,
-                passConfig.Name);
+                Renderer::RenderPassTypeToString(config.passType));
             return nullptr;
         }
 
-        // Store the render state in the cache
-        auto renderStatePtr = Resources::RenderStatePtr(renderState);
-
-        m_RenderStateCache[cacheKey] = renderStatePtr;
-
         VA_ENGINE_TRACE(
-            "[RenderStateSystem] Pipeline '{}' created for pass '{}' (Type: {}).",
+            "[RenderStateSystem] RenderState '{}' created for pass '{}'.",
             config.name,
-            passConfig.Name,
-            Renderer::RenderPassTypeToString(passConfig.Type));
+            Renderer::RenderPassTypeToString(config.passType));
 
-        return renderStatePtr;
+        return renderState;
     }
 
-    Resources::RenderStatePtr RenderStateSystem::GetCachedRenderState(
-        const std::string& templateName,
-        const RenderStateSignature& signature)
-    {
-        const RenderStateCacheKey cacheKey(templateName, signature);
-        if (const auto it = m_RenderStateCache.find(cacheKey); it != m_RenderStateCache.end())
-        {
-            if (auto& cachedPipeline = it->second)
-            {
-                return cachedPipeline;
-            }
-
-            VA_ENGINE_WARN(
-                "[RenderStateSystem] Cached render state '{}' is expired.",
-                templateName);
-            m_RenderStateCache.erase(it);
-        }
-
-        return nullptr;
-    }
-
-    void RenderStateSystem::ClearCache()
-    {
-        m_RenderStateCache.clear();
-        VA_ENGINE_DEBUG("[RenderStateSystem] Cache cleared.");
-    }
-
-    bool RenderStateSystem::IsRenderStateCompatibleWithPass(
-        const std::string& renderStateName,
-        Renderer::RenderPassType passType) const
-    {
-        auto it = m_RenderStateTemplates.find(renderStateName);
-        if (it == m_RenderStateTemplates.end())
-        {
-            VA_ENGINE_WARN(
-                "[RenderStateSystem] Pipeline '{}' not found in the cache.",
-                renderStateName);
-            return false;
-        }
-
-        const auto& config = it->second;
-
-        return std::ranges::find(config.compatiblePassTypes, passType)
-            != config.compatiblePassTypes.end();
-    }
-
-    VAArray<std::string> RenderStateSystem::GetCompatibleRenderStatesForPass(
-        Renderer::RenderPassType passType) const
-    {
-        VAArray<std::string> compatiblePipelines;
-
-        for (const auto& [renderStateName, config] : m_RenderStateTemplates)
-        {
-            if (std::ranges::find(config.compatiblePassTypes, passType)
-                != config.compatiblePassTypes.end())
-            {
-                compatiblePipelines.push_back(renderStateName);
-            }
-        }
-
-        return compatiblePipelines;
-    }
-
-    RenderStateSignature RenderStateSystem::CreateSignatureFromPass(
-        const RenderPassConfig& passConfig)
-    {
-        RenderStateSignature signature;
-
-        for (const auto& attachment : passConfig.Attachments)
-        {
-            const bool isDepthAttachment =
-            (attachment.Name == "depth"
-                || attachment.Format == Renderer::TextureFormat::SWAPCHAIN_DEPTH
-                || attachment.Format == Renderer::TextureFormat::D24_UNORM_S8_UINT
-                || attachment.Format == Renderer::TextureFormat::D32_SFLOAT);
-
-            if (isDepthAttachment)
-            {
-                signature.depthFormat = attachment.Format;
-            }
-            else
-            {
-                signature.colorFormats.push_back(attachment.Format);
-            }
-        }
-
-        return signature;
-    }
-
-    void RenderStateSystem::GenerateDefaultRenderStates()
+    void RenderStateSystem::LoadDefaultRenderStates()
     {
         auto renderStateConfig = RenderStateConfig{};
         renderStateConfig.name = "Default";
 
-        renderStateConfig.compatiblePassTypes = {
-            Renderer::RenderPassType::ForwardOpaque,
-            Renderer::RenderPassType::DepthPrepass
-        };
-        renderStateConfig.compatiblePassNames = {"ForwardPass"};
+        renderStateConfig.renderStateClass = "Opaque";
+        renderStateConfig.passType = Renderer::RenderPassType::ForwardOpaque;
+        renderStateConfig.vertexFormat = Renderer::VertexFormat::PositionNormalUV;
 
         // Try to load the default shaders into the render state.
         auto vertexShader = g_ShaderSystem->LoadShader("BuiltinObject.vert");
@@ -284,18 +243,19 @@ namespace VoidArchitect
         renderStateConfig.shaders.emplace_back(vertexShader);
         renderStateConfig.shaders.emplace_back(pixelShader);
 
-        renderStateConfig.vertexFormat = VertexFormat::PositionNormalUV;
-        renderStateConfig.inputLayout = RenderStateInputLayout{}; // Use default configuration
+        renderStateConfig.inputLayout = Renderer::RenderStateInputLayout{};
+        // Use default configuration
 
-        RegisterRenderStateTemplate("Default", renderStateConfig);
+        RegisterPermutation(renderStateConfig);
         VA_ENGINE_INFO("[RenderStateSystem] Default render state template registered.");
 
         // UI RenderState
         auto uiRenderStateConfig = RenderStateConfig{};
-        renderStateConfig.name = "UI";
+        uiRenderStateConfig.name = "UI";
 
-        renderStateConfig.compatiblePassTypes = {Renderer::RenderPassType::UI};
-        renderStateConfig.compatiblePassNames = {"UI"};
+        uiRenderStateConfig.renderStateClass = "UI";
+        uiRenderStateConfig.passType = Renderer::RenderPassType::UI;
+        uiRenderStateConfig.vertexFormat = Renderer::VertexFormat::PositionNormalUV;
 
         // Try to load the default UI shaders into the render state.
         auto uiVertexShader = g_ShaderSystem->LoadShader("UI.vert");
@@ -304,43 +264,50 @@ namespace VoidArchitect
         uiRenderStateConfig.shaders.emplace_back(uiVertexShader);
         uiRenderStateConfig.shaders.emplace_back(uiPixelShader);
 
-        uiRenderStateConfig.vertexFormat = VertexFormat::PositionNormalUV;
-        uiRenderStateConfig.inputLayout = RenderStateInputLayout{}; // Use default configuration
+        uiRenderStateConfig.inputLayout = Renderer::RenderStateInputLayout{};
+        // Use default configuration
 
-        RegisterRenderStateTemplate("UI", uiRenderStateConfig);
+        RegisterPermutation(uiRenderStateConfig);
         VA_ENGINE_INFO("[RenderStateSystem] UI render state template registered.");
     }
 
-    size_t RenderStateSignature::GetHash() const
+    RenderStateHandle RenderStateSystem::GetFreeRenderStateHandle()
     {
-        size_t hash = 0;
-        for (const auto& format : colorFormats)
+        // If we have a free handle in the queue, return that first.
+        if (!m_FreeRenderStateHandles.empty())
         {
-            hash ^=
-                std::hash<int>{}(static_cast<int>(format) + 0x9e3779b9 + (hash << 6) + (hash >> 2));
+            const auto handle = m_FreeRenderStateHandles.front();
+            m_FreeRenderStateHandles.pop();
+            return handle;
         }
 
-        if (depthFormat.has_value())
+        // Otherwise, return the next handle and increment it.
+        if (m_NextFreeRenderStateHandle >= m_RenderStates.size())
         {
-            hash ^= std::hash<int>{}(
-                static_cast<int>(depthFormat.value()) + 0x9e3779b9 + (hash << 6) + (hash >> 2));
+            m_RenderStates.resize(m_NextFreeRenderStateHandle + 1);
         }
+        const auto handle = m_NextFreeRenderStateHandle;
+        m_NextFreeRenderStateHandle++;
 
-        return hash;
+        return handle;
     }
 
     size_t RenderStateCacheKey::GetHash() const
     {
-        return std::hash<std::string>{}(templateName) ^ signature.GetHash();
+        size_t seed = 0;
+
+        HashCombine(seed, renderStateClass);
+        HashCombine(seed, static_cast<int32_t>(passType));
+        HashCombine(seed, static_cast<int32_t>(vertexFormat));
+
+        HashCombine(seed, passSignature.GetHash());
+
+        return seed;
     }
 
     bool RenderStateCacheKey::operator==(const RenderStateCacheKey& other) const
     {
-        return templateName == other.templateName && signature == other.signature;
-    }
-
-    bool RenderStateSignature::operator==(const RenderStateSignature& other) const
-    {
-        return colorFormats == other.colorFormats && depthFormat == other.depthFormat;
+        return renderStateClass == other.renderStateClass && passSignature == other.passSignature &&
+            passType == other.passType && vertexFormat == other.vertexFormat;
     }
 } // namespace VoidArchitect
