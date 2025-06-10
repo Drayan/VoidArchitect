@@ -13,6 +13,26 @@
 
 namespace VoidArchitect
 {
+    size_t MaterialTemplate::GetHash() const
+    {
+        size_t seed = 0;
+        HashCombine(seed, name);
+        HashCombine(seed, diffuseColor.X());
+        HashCombine(seed, diffuseColor.Y());
+        HashCombine(seed, diffuseColor.Z());
+        HashCombine(seed, diffuseColor.W());
+        for (auto& binding : resourceBindings)
+        {
+            HashCombine(seed, binding.binding);
+            HashCombine(seed, binding.type);
+            HashCombine(seed, binding.stage);
+        }
+        HashCombine(seed, diffuseTexture.name);
+        HashCombine(seed, specularTexture.name);
+        HashCombine(seed, renderStateClass);
+        return seed;
+    }
+
     MaterialSystem::MaterialSystem()
     {
         m_Materials.reserve(256); // Reserve some space for the material nodes
@@ -53,6 +73,11 @@ namespace VoidArchitect
         LoadMaterial(handle);
 
         return handle;
+    }
+
+    MaterialTemplate& MaterialSystem::GetTemplateFor(const MaterialHandle handle)
+    {
+        return m_Materials[handle].config;
     }
 
     void MaterialSystem::Bind(

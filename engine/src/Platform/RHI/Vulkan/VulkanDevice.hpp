@@ -63,6 +63,14 @@ namespace VoidArchitect::Platform
         VkQueue GetTransferQueueHandle() const { return m_TransferQueue; }
         VkQueue GetComputeQueueHandle() const { return m_ComputeQueue; }
 
+        VkPhysicalDeviceProperties GetProperties() const { return m_PhysicalDeviceProperties; }
+        VkPhysicalDeviceFeatures GetFeatures() const { return m_PhysicalDeviceFeatures; }
+
+        VkPhysicalDeviceMemoryProperties GetMemoryProperties() const
+        {
+            return m_PhysicalDeviceMemoryProperties;
+        }
+
     private:
         void CreateInstance();
 #ifdef DEBUG

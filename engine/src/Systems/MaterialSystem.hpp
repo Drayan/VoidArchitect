@@ -22,6 +22,8 @@ namespace VoidArchitect
 
         TextureConfig diffuseTexture;
         TextureConfig specularTexture;
+
+        [[nodiscard]] size_t GetHash() const;
     };
 
     class MaterialSystem
@@ -32,6 +34,8 @@ namespace VoidArchitect
 
         MaterialHandle GetHandleFor(const std::string& name);
         MaterialHandle GetHandleForDefaultMaterial() { return 0; };
+
+        MaterialTemplate& GetTemplateFor(MaterialHandle handle);
 
         // Interaction with Material
         void Bind(MaterialHandle handle, const Resources::RenderStatePtr& renderState);

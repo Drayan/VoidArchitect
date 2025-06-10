@@ -131,8 +131,6 @@ namespace VoidArchitect::Platform
         vkCmdSetViewport(cmdBuf.GetHandle(), 0, 1, &viewport);
         vkCmdSetScissor(cmdBuf.GetHandle(), 0, 1, &scissor);
 
-        g_VkMaterialBufferManager->FlushUpdates();
-
         return true;
     }
 
@@ -363,6 +361,22 @@ namespace VoidArchitect::Platform
 
     void VulkanExecutionContext::CreateGlobalUBO()
     {
+        // Global DescriptorSetLayout
+        VkDescriptorSetLayoutBinding globalDescriptorSetLayoutBinding{};
+        globalDescriptorSetLayoutBinding.binding = 0;
+        globalDescriptorSetLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        globalDescriptorSetLayoutBinding.descriptorCount = 1;
+        globalDescriptorSetLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT |
+            VK_SHADER_STAGE_FRAGMENT_BIT;
+
+        VkDescriptorSetLayoutCreateInfo globalDescriptorSetLayoutInfo{};
+        globalDescriptorSetLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        globalDescriptorSetLayoutInfo.bindingCount = 1;
+        globalDescriptorSetLayoutInfo.pBindings = &globalDescriptorSetLayoutBinding;
+
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreateDescriptorSetLayout(m_Device->GetLogicalDeviceHandle(), &
+                globalDescriptorSetLayoutInfo, m_Allocator, &m_GlobalDescriptorSetLayout));
         // --- Global descriptor pool ---
         auto globalPoolSize = VkDescriptorPoolSize{};
         globalPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -388,11 +402,10 @@ namespace VoidArchitect::Platform
             VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-        const auto globalDescriptorSetLayout = g_VkDescriptorSetLayoutManager->GetGlobalLayout();
         const VAArray globalLayouts = {
-            globalDescriptorSetLayout,
-            globalDescriptorSetLayout,
-            globalDescriptorSetLayout
+            m_GlobalDescriptorSetLayout,
+            m_GlobalDescriptorSetLayout,
+            m_GlobalDescriptorSetLayout
         };
 
         m_GlobalDescriptorSets = new VkDescriptorSet[globalLayouts.size()];

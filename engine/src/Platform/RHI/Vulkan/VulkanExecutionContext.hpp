@@ -100,6 +100,7 @@ namespace VoidArchitect::Platform
         VAArray<VulkanCommandBuffer> m_GraphicsCommandBuffers;
 
         VkDescriptorPool m_GlobalDescriptorPool;
+        VkDescriptorSetLayout m_GlobalDescriptorSetLayout;
         VkDescriptorSet* m_GlobalDescriptorSets;
         std::unique_ptr<VulkanBuffer> m_GlobalUniformBuffer;
 

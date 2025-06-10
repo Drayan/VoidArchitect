@@ -83,7 +83,7 @@ namespace VoidArchitect::Platform
 
     void VulkanRHI::CreateBindingGroupsManager()
     {
-        m_BindingGroupsManager = std::make_unique<VulkanBindingGroupManager>();
+        m_BindingGroupsManager = std::make_unique<VulkanBindingGroupManager>(m_Device, m_Allocator);
         VA_ENGINE_INFO("[VulkanRHI] Binding groups manager created.");
     }
 

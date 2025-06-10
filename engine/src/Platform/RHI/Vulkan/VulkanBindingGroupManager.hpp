@@ -3,12 +3,58 @@
 //
 #pragma once
 
-namespace VoidArchitect
+#include <vulkan/vulkan.h>
+
+#include "Resources/Material.hpp"
+#include "Systems/RenderStateSystem.hpp"
+
+namespace VoidArchitect::Platform
 {
-    namespace Platform
+    class VulkanDevice;
+    class VulkanBuffer;
+
+    class VulkanBindingGroupManager
     {
-        class VulkanBindingGroupManager
-        {
-        };
-    }
+    public:
+        static constexpr uint32_t MAX_MATERIALS = 1024;
+
+        VulkanBindingGroupManager(
+            std::unique_ptr<VulkanDevice>& device,
+            VkAllocationCallbacks* allocator);
+        ~VulkanBindingGroupManager();
+
+        VulkanBindingGroupManager(const VulkanBindingGroupManager&) = delete;
+        VulkanBindingGroupManager& operator=(const VulkanBindingGroupManager&) = delete;
+
+        void BindMaterialGroup(
+            VkCommandBuffer cmdsBuf,
+            VkPipelineLayout pipelineLayout,
+            MaterialHandle materialHandle,
+            RenderStateHandle stateHandle);
+
+        void UpdateMaterialUBO(
+            MaterialHandle materialHandle,
+            const Resources::MaterialUniformObject& ubo);
+
+    private:
+        bool AreLayoutCompatible(MaterialHandle MaterialHandle, RenderStateHandle stateHandle);
+        VkDescriptorSetLayout GetHandleFor(MaterialHandle materialHandle);
+        VkDescriptorSet AllocateSet(VkDescriptorSetLayout layout);
+
+        void UpdateDescriptorSet(VkDescriptorSet set, MaterialHandle materialHandle);
+
+        std::unique_ptr<VulkanDevice>& m_Device;
+        VkAllocationCallbacks* m_Allocator;
+
+        VkDescriptorPool m_DescriptorPool = VK_NULL_HANDLE;
+        VAHashMap<size_t, VkDescriptorSetLayout> m_SetLayoutCache;
+        VAHashMap<MaterialHandle, VkDescriptorSet> m_MaterialSetCache;
+
+        std::unique_ptr<VulkanBuffer> m_MaterialUniformBuffer;
+        void* m_MaterialUniformBufferMemory = nullptr;
+
+        size_t m_MaterialUniformBufferSize = 0;
+        size_t m_NextFreeUboOffset = 0;
+        VAHashMap<MaterialHandle, size_t> m_MaterialUboOffsets;
+    };
 }
