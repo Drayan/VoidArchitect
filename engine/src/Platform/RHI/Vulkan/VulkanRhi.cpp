@@ -16,8 +16,7 @@
 
 namespace VoidArchitect::Platform
 {
-    VulkanRHI::VulkanRHI(
-        std::unique_ptr<Window>& window)
+    VulkanRHI::VulkanRHI(std::unique_ptr<Window>& window)
         : m_Window(window),
           m_Allocator(nullptr)
     {
@@ -27,7 +26,7 @@ namespace VoidArchitect::Platform
 
         CreateDevice();
         CreateResourceFactory();
-        g_VkRenderTargetSystem = std::make_unique<VulkanRenderTargetSystem>(m_ResourceFactory);
+        g_VkRenderTargetSystem = std::make_unique<VulkanRenderTargetSystem>(g_VkResourceFactory);
 
         CreateExecutionContext(m_Window->GetWidth(), m_Window->GetHeight());
         CreateBindingGroupsManager();
@@ -37,10 +36,10 @@ namespace VoidArchitect::Platform
     {
         m_Device->WaitIdle();
 
-        m_BindingGroupsManager = nullptr;
-        m_ExecutionContext = nullptr;
+        g_VkBindingGroupManager = nullptr;
+        g_VkExecutionContext = nullptr;
         g_VkRenderTargetSystem = nullptr;
-        m_ResourceFactory = nullptr;
+        g_VkResourceFactory = nullptr;
 
         m_Device = nullptr;
         VA_ENGINE_INFO("[VulkanRHI] Device destroyed.");
@@ -66,9 +65,8 @@ namespace VoidArchitect::Platform
 
     void VulkanRHI::CreateExecutionContext(uint32_t width, uint32_t height)
     {
-        m_ExecutionContext = std::make_unique<VulkanExecutionContext>(
+        g_VkExecutionContext = std::make_unique<VulkanExecutionContext>(
             m_Device,
-            m_ResourceFactory,
             m_Allocator,
             width,
             height);
@@ -77,51 +75,64 @@ namespace VoidArchitect::Platform
 
     void VulkanRHI::CreateResourceFactory()
     {
-        m_ResourceFactory = std::make_unique<VulkanResourceFactory>(m_Device, m_Allocator);
+        g_VkResourceFactory = std::make_unique<VulkanResourceFactory>(m_Device, m_Allocator);
         VA_ENGINE_INFO("[VulkanRHI] Resource factory created.");
     }
 
     void VulkanRHI::CreateBindingGroupsManager()
     {
-        m_BindingGroupsManager = std::make_unique<VulkanBindingGroupManager>(m_Device, m_Allocator);
+        g_VkBindingGroupManager = std::make_unique<
+            VulkanBindingGroupManager>(m_Device, m_Allocator);
         VA_ENGINE_INFO("[VulkanRHI] Binding groups manager created.");
     }
 
     void VulkanRHI::Resize(const uint32_t width, const uint32_t height)
     {
-        m_ExecutionContext->RequestResize(width, height);
+        g_VkExecutionContext->RequestResize(width, height);
+    }
+
+    void VulkanRHI::WaitIdle()
+    {
+        m_Device->WaitIdle();
     }
 
     bool VulkanRHI::BeginFrame(const float deltaTime)
     {
-        return m_ExecutionContext->BeginFrame(deltaTime);
+        return g_VkExecutionContext->BeginFrame(deltaTime);
     }
 
     bool VulkanRHI::EndFrame(const float deltaTime)
     {
-        return m_ExecutionContext->EndFrame(deltaTime);
+        return g_VkExecutionContext->EndFrame(deltaTime);
     }
 
     void VulkanRHI::BeginRenderPass(
         const RenderPassHandle passHandle,
         const VAArray<Resources::RenderTargetHandle>& targetHandles)
     {
-        m_ExecutionContext->BeginRenderPass(passHandle, targetHandles);
+        g_VkExecutionContext->BeginRenderPass(passHandle, targetHandles);
     }
 
     void VulkanRHI::EndRenderPass()
     {
-        m_ExecutionContext->EndRenderPass();
+        g_VkExecutionContext->EndRenderPass();
     }
 
     void VulkanRHI::UpdateGlobalState(const Resources::GlobalUniformObject& gUBO)
     {
-        m_ExecutionContext->UpdateGlobalState(gUBO);
+        g_VkExecutionContext->UpdateGlobalState(gUBO);
     }
 
     void VulkanRHI::BindGlobalState(const Resources::RenderStatePtr& pipeline)
     {
-        m_ExecutionContext->BindGlobalState(pipeline);
+        g_VkExecutionContext->BindGlobalState(pipeline);
+    }
+
+    void VulkanRHI::BindMaterial(
+        const MaterialHandle materialHandle,
+        const RenderStateHandle stateHandle)
+    {
+        g_VkExecutionContext->BindMaterialGroup(materialHandle, stateHandle);
     }
 
     Resources::Texture2D* VulkanRHI::CreateTexture2D(
@@ -132,7 +143,7 @@ namespace VoidArchitect::Platform
         const bool hasTransparency,
         const VAArray<uint8_t>& data)
     {
-        return m_ResourceFactory->CreateTexture2D(
+        return g_VkResourceFactory->CreateTexture2D(
             name,
             width,
             height,
@@ -145,12 +156,14 @@ namespace VoidArchitect::Platform
         RenderStateConfig& config,
         const RenderPassHandle passHandle)
     {
-        return m_ResourceFactory->CreateRenderState(config, passHandle);
+        return g_VkResourceFactory->CreateRenderState(config, passHandle);
     }
 
-    Resources::IMaterial* VulkanRHI::CreateMaterial(const std::string& name)
+    Resources::IMaterial* VulkanRHI::CreateMaterial(
+        const std::string& name,
+        const MaterialTemplate& matTemplate)
     {
-        return m_ResourceFactory->CreateMaterial(name);
+        return g_VkResourceFactory->CreateMaterial(name, matTemplate);
     }
 
     Resources::IShader* VulkanRHI::CreateShader(
@@ -158,7 +171,7 @@ namespace VoidArchitect::Platform
         const ShaderConfig& config,
         const VAArray<uint8_t>& data)
     {
-        return m_ResourceFactory->CreateShader(name, config, data);
+        return g_VkResourceFactory->CreateShader(name, config, data);
     }
 
     Resources::IMesh* VulkanRHI::CreateMesh(
@@ -166,7 +179,7 @@ namespace VoidArchitect::Platform
         const VAArray<Resources::MeshVertex>& vertices,
         const VAArray<uint32_t>& indices)
     {
-        return m_ResourceFactory->CreateMesh(name, vertices, indices);
+        return g_VkResourceFactory->CreateMesh(name, vertices, indices);
     }
 
     Resources::RenderTargetHandle VulkanRHI::CreateRenderTarget(
@@ -182,21 +195,21 @@ namespace VoidArchitect::Platform
 
     Resources::RenderTargetHandle VulkanRHI::GetCurrentColorRenderTargetHandle() const
     {
-        return m_ExecutionContext->GetCurrentColorRenderTargetHandle();
+        return g_VkExecutionContext->GetCurrentColorRenderTargetHandle();
     }
 
     Resources::RenderTargetHandle VulkanRHI::GetDepthRenderTargetHandle() const
     {
-        return m_ExecutionContext->GetDepthRenderTargetHandle();
+        return g_VkExecutionContext->GetDepthRenderTargetHandle();
     }
 
     Resources::IRenderPass* VulkanRHI::CreateRenderPass(
-        const RenderPassConfig& config,
+        const Renderer::RenderPassConfig& config,
         const Renderer::PassPosition passPosition)
     {
-        const auto swapchainFormat = m_ExecutionContext->GetSwapchainFormat();
-        const auto depthFormat = m_ExecutionContext->GetDepthFormat();
-        return m_ResourceFactory->CreateRenderPass(
+        const auto swapchainFormat = g_VkExecutionContext->GetSwapchainFormat();
+        const auto depthFormat = g_VkExecutionContext->GetDepthFormat();
+        return g_VkResourceFactory->CreateRenderPass(
             config,
             passPosition,
             swapchainFormat,

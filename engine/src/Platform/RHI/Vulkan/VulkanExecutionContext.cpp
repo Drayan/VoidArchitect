@@ -5,11 +5,9 @@
 
 #include "VulkanBuffer.hpp"
 #include "VulkanCommandBuffer.hpp"
-#include "VulkanDescriptorSetLayoutManager.hpp"
 #include "VulkanDevice.hpp"
 #include "VulkanFence.hpp"
 #include "VulkanFramebufferCache.hpp"
-#include "VulkanMaterialBufferManager.hpp"
 #include "VulkanPipeline.hpp"
 #include "VulkanRenderPass.hpp"
 #include "VulkanRenderTarget.hpp"
@@ -17,12 +15,12 @@
 #include "VulkanSwapchain.hpp"
 #include "VulkanUtils.hpp"
 #include "Core/Logger.hpp"
+#include "Resources/Material.hpp"
 
 namespace VoidArchitect::Platform
 {
     VulkanExecutionContext::VulkanExecutionContext(
         const std::unique_ptr<VulkanDevice>& device,
-        const std::unique_ptr<VulkanResourceFactory>& resourceFactory,
         VkAllocationCallbacks* allocator,
         uint32_t width,
         uint32_t height)
@@ -33,7 +31,6 @@ namespace VoidArchitect::Platform
     {
         m_Swapchain = std::make_unique<VulkanSwapchain>(
             m_Device,
-            resourceFactory,
             m_Allocator,
             m_CurrentWidth,
             m_CurrentHeight);
@@ -76,8 +73,8 @@ namespace VoidArchitect::Platform
         const auto device = m_Device->GetLogicalDeviceHandle();
         if (m_RecreatingSwapchain)
         {
-            if (const auto result = vkDeviceWaitIdle(device);
-                result != VK_SUCCESS && result != VK_TIMEOUT)
+            if (const auto result = vkDeviceWaitIdle(device); result != VK_SUCCESS && result !=
+                VK_TIMEOUT)
             {
                 VA_ENGINE_ERROR("[VulkanRHI] Failed to wait for device idle.");
                 return false;
@@ -88,8 +85,7 @@ namespace VoidArchitect::Platform
         // Check if the window has been resized. If so, a new swapchain must be created.
         if (m_ProcessedSizeGeneration != m_RequestedSizeGeneration)
         {
-            if (m_CurrentWidth == 0 || m_CurrentHeight == 0)
-                return false;
+            if (m_CurrentWidth == 0 || m_CurrentHeight == 0) return false;
 
             HandleResize();
 
@@ -107,8 +103,7 @@ namespace VoidArchitect::Platform
             m_ImageAvailableSemaphores[m_CurrentIndex],
             nullptr);
 
-        if (!index.has_value())
-            return false;
+        if (!index.has_value()) return false;
 
         m_ImageIndex = index.value();
 
@@ -183,8 +178,8 @@ namespace VoidArchitect::Platform
 
         cmdBuf.End();
 
-        if (m_ImagesInFlight[m_ImageIndex] != nullptr)
-            m_ImagesInFlight[m_ImageIndex]->Wait(std::numeric_limits<uint64_t>::max());
+        if (m_ImagesInFlight[m_ImageIndex] != nullptr) m_ImagesInFlight[m_ImageIndex]->Wait(
+            std::numeric_limits<uint64_t>::max());
 
         // Mark the image fence as in use by this frame.
         m_ImagesInFlight[m_ImageIndex] = &m_InFlightFences[m_CurrentIndex];
@@ -202,17 +197,12 @@ namespace VoidArchitect::Platform
         submitInfo.waitSemaphoreCount = 1;
         submitInfo.pWaitSemaphores = &m_ImageAvailableSemaphores[m_CurrentIndex];
 
-        const VAArray flags = {
-            VkPipelineStageFlags{VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}
-        };
+        const VAArray flags = {VkPipelineStageFlags{VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT}};
         submitInfo.pWaitDstStageMask = flags.data();
 
         if (VA_VULKAN_CHECK_RESULT(
-            vkQueueSubmit(
-                m_Device->GetGraphicsQueueHandle(),
-                1,
-                &submitInfo,
-                m_InFlightFences[m_CurrentIndex].GetHandle())))
+            vkQueueSubmit( m_Device->GetGraphicsQueueHandle(), 1, &submitInfo, m_InFlightFences[
+                m_CurrentIndex].GetHandle())))
         {
             VA_ENGINE_ERROR("[VulkanRHI] Failed to submit graphics command buffer.");
             return false;
@@ -271,6 +261,15 @@ namespace VoidArchitect::Platform
             &m_GlobalDescriptorSets[m_ImageIndex],
             0,
             nullptr);
+    }
+
+    void VulkanExecutionContext::BindMaterialGroup(
+        const MaterialHandle materialHandle,
+        const RenderStateHandle stateHandle)
+    {
+        const auto& cmdBuf = GetCurrentCommandBuffer();
+
+        g_VkBindingGroupManager->BindMaterialGroup(cmdBuf.GetHandle(), materialHandle, stateHandle);
     }
 
     void VulkanExecutionContext::RequestResize(const uint32_t width, const uint32_t height)
@@ -336,15 +335,13 @@ namespace VoidArchitect::Platform
             semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
             VkSemaphore semaphore;
             VA_VULKAN_CHECK_RESULT_WARN(
-                vkCreateSemaphore(
-                    m_Device->GetLogicalDeviceHandle(), &semaphoreCreateInfo, m_Allocator, &
-                    semaphore));
+                vkCreateSemaphore( m_Device->GetLogicalDeviceHandle(), &semaphoreCreateInfo,
+                    m_Allocator, & semaphore));
             m_ImageAvailableSemaphores.push_back(semaphore);
 
             VA_VULKAN_CHECK_RESULT_WARN(
-                vkCreateSemaphore(
-                    m_Device->GetLogicalDeviceHandle(), &semaphoreCreateInfo, m_Allocator, &
-                    semaphore));
+                vkCreateSemaphore( m_Device->GetLogicalDeviceHandle(), &semaphoreCreateInfo,
+                    m_Allocator, & semaphore));
             m_QueueCompleteSemaphores.push_back(semaphore);
 
             m_InFlightFences.emplace_back(m_Device, m_Allocator, true);
@@ -389,11 +386,8 @@ namespace VoidArchitect::Platform
         globalPoolInfo.pPoolSizes = &globalPoolSize;
 
         VA_VULKAN_CHECK_RESULT_WARN(
-            vkCreateDescriptorPool(
-                m_Device->GetLogicalDeviceHandle(),
-                &globalPoolInfo,
-                m_Allocator,
-                &m_GlobalDescriptorPool));
+            vkCreateDescriptorPool( m_Device->GetLogicalDeviceHandle(), &globalPoolInfo, m_Allocator
+                , &m_GlobalDescriptorPool));
 
         m_GlobalUniformBuffer = std::make_unique<VulkanBuffer>(
             m_Device,
@@ -416,8 +410,8 @@ namespace VoidArchitect::Platform
         allocInfo.descriptorSetCount = static_cast<uint32_t>(globalLayouts.size());
         allocInfo.pSetLayouts = globalLayouts.data();
         VA_VULKAN_CHECK_RESULT_WARN(
-            vkAllocateDescriptorSets(
-                m_Device->GetLogicalDeviceHandle(), &allocInfo, m_GlobalDescriptorSets));
+            vkAllocateDescriptorSets( m_Device->GetLogicalDeviceHandle(), &allocInfo,
+                m_GlobalDescriptorSets));
     }
 
     void VulkanExecutionContext::DestroySyncObjects()

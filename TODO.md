@@ -2,7 +2,12 @@
 
 # Current
 
-- [ ] Implement VulkanBindingGroupManager
+- [x] Implement VulkanBindingGroupManager
+- [ ] Move RenderState logic creation into ResourceFactory
+- [ ] Bind everything into IRenderPass...
+- [ ] Refactor TextureSystem to use handle
+- [ ] Refactor ShaderSystem to use handle
+- [x] Refactor MeshSystem to use handle
 
 ## Engine
 

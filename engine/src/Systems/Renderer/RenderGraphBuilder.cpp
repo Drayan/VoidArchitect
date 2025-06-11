@@ -12,8 +12,7 @@ namespace VoidArchitect::Renderer
     {
     }
 
-    RenderGraphBuilder& RenderGraphBuilder::WritesTo(
-        const std::string& name)
+    RenderGraphBuilder& RenderGraphBuilder::WritesTo(const std::string& name)
     {
         if (!m_CurrentPass || !m_RenderGraph)
         {
@@ -31,8 +30,7 @@ namespace VoidArchitect::Renderer
         return *this;
     }
 
-    RenderGraphBuilder& RenderGraphBuilder::ReadsFrom(
-        const std::string& name)
+    RenderGraphBuilder& RenderGraphBuilder::ReadsFrom(const std::string& name)
     {
         if (!m_CurrentPass || !m_RenderGraph)
         {
@@ -52,21 +50,21 @@ namespace VoidArchitect::Renderer
 
     RenderGraphBuilder& RenderGraphBuilder::ReadsFromColorBuffer()
     {
-        return ReadsFrom("ViewportColorOutput");
+        return ReadsFrom(WELL_KNOWN_RT_VIEWPORT_COLOR);
     }
 
     RenderGraphBuilder& RenderGraphBuilder::WritesToColorBuffer()
     {
-        return WritesTo("ViewportColorOutput");
+        return WritesTo(WELL_KNOWN_RT_VIEWPORT_COLOR);
     }
 
     RenderGraphBuilder& RenderGraphBuilder::ReadsFromDepthBuffer()
     {
-        return ReadsFrom("ViewportDepthOutput");
+        return ReadsFrom(WELL_KNOWN_RT_VIEWPORT_DEPTH);
     }
 
     RenderGraphBuilder& RenderGraphBuilder::WritesToDepthBuffer()
     {
-        return WritesTo("ViewportDepthOutput");
+        return WritesTo(WELL_KNOWN_RT_VIEWPORT_DEPTH);
     }
 }

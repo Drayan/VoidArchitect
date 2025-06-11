@@ -4,6 +4,7 @@
 #include "VulkanFramebufferCache.hpp"
 
 #include "VulkanDevice.hpp"
+#include "Core/Logger.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -50,6 +51,8 @@ namespace VoidArchitect::Platform
             m_Allocator,
             &buffer);
         m_FramebuffersCache[key] = buffer;
+
+        VA_ENGINE_TRACE("[VulkanFramebufferCache] Framebuffer created.");
 
         return buffer;
     }

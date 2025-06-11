@@ -7,9 +7,7 @@
 
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec4.hpp"
-#include "Core/Uuid.hpp"
 #include "Mesh.hpp"
-#include "RenderState.hpp"
 #include "Resources/Texture.hpp"
 
 namespace VoidArchitect::Platform
@@ -53,10 +51,10 @@ namespace VoidArchitect
             GeometryRenderData(
                 const Math::Mat4& model,
                 MaterialHandle material,
-                const MeshPtr& mesh);
+                MeshHandle mesh);
 
             Math::Mat4 Model;
-            MeshPtr Mesh;
+            MeshHandle Mesh;
             MaterialHandle Material;
         };
 
@@ -69,58 +67,20 @@ namespace VoidArchitect
 
             virtual ~IMaterial() = default;
 
-            virtual void SetModel(
-                Platform::IRenderingHardware& rhi,
-                const Math::Mat4& model,
-                const RenderStatePtr& pipeline) = 0;
-            virtual void Bind(
-                Platform::IRenderingHardware& rhi,
-                const RenderStatePtr& pipeline) = 0;
+            virtual void SetDiffuseColor(const Math::Vec4& color) = 0;
+            virtual void SetTexture(
+                Resources::TextureUse use,
+                Resources::TextureHandle texture) = 0;
 
-            static void SetDefaultDiffuseTexture(const Resources::Texture2DPtr& defaultTexture)
-            {
-                s_DefaultDiffuseTexture = defaultTexture;
-            }
-
-            [[nodiscard]] UUID GetUUID() const { return m_UUID; }
-
-            [[nodiscard]] const TexturePtr& GetTexture(const size_t index = 0) const
-            {
-                return m_Textures[index];
-            }
-
-            Math::Vec4 GetDiffuseColor() const { return m_DiffuseColor; };
-            uint32_t GetGeneration() const { return m_Generation; }
-
-            void SetDiffuseColor(const Math::Vec4& color)
-            {
-                m_DiffuseColor = color;
-                m_Generation++;
-            }
-
-            void SetTexture(const size_t index, const TexturePtr& texture)
-            {
-                m_Textures[index] = texture;
-            }
+            [[nodiscard]] uint32_t GetGeneration() const { return m_Generation; }
 
         protected:
             explicit IMaterial(const std::string& name);
 
-            virtual void InitializeResources(
-                Platform::IRenderingHardware& rhi,
-                const VAArray<Renderer::ResourceBinding>& bindings) = 0;
-            virtual void ReleaseResources() = 0;
-
-            static Texture2DPtr s_DefaultDiffuseTexture;
-            GlobalUniformObject m_GlobalUniformObject;
-
-            UUID m_UUID = InvalidUUID;
             std::string m_Name;
             uint32_t m_Generation = std::numeric_limits<uint32_t>::max();
 
             Math::Vec4 m_DiffuseColor = Math::Vec4::One();
-
-            TexturePtr m_Textures[MAX_TEXTURES];
         };
     } // namespace Resources
 } // namespace VoidArchitect

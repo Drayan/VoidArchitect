@@ -115,6 +115,7 @@ namespace VoidArchitect
 
         RenderSystem::~RenderSystem()
         {
+            m_RHI->WaitIdle();
             // Shutdown subsystems
             g_MeshSystem = nullptr;
             g_MaterialSystem = nullptr;
@@ -128,30 +129,53 @@ namespace VoidArchitect
 
         void RenderSystem::RenderFrame(const float frameTime)
         {
+            m_RenderGraph = {};
+
+            // --- Import persistent resources ---
+            m_RenderGraph.ImportRenderTarget(
+                WELL_KNOWN_RT_VIEWPORT_COLOR,
+                m_RHI->GetCurrentColorRenderTargetHandle());
+            m_RenderGraph.ImportRenderTarget(
+                WELL_KNOWN_RT_VIEWPORT_DEPTH,
+                m_RHI->GetDepthRenderTargetHandle());
+
+            // --- Add passes to the graph. ---
+            m_RenderGraph.AddPass("ForwardOpaque", &m_ForwardOpaquePassRenderer);
+            // m_RenderGraph.AddPass("UI", &m_UIPassRenderer);
+
+            // --- Set up the graph. ---
+            m_RenderGraph.Setup();
+
+            // --- Step 3: Compilation ---
+            // Compile the graph.
+            auto executionPlan = m_RenderGraph.Compile();
+            if (executionPlan.empty())
+            {
+                VA_ENGINE_ERROR(
+                    "[RenderSystem] Render graph compilation failed or resulted in an empty plan.");
+                return;
+            }
+
+            // --- Step 4: Execution ---
+            // Execute rendering.
             if (!m_RHI->BeginFrame(frameTime))
             {
                 VA_ENGINE_ERROR("[RenderSystem] Failed to begin the frame.");
                 return;
             }
 
-            // Create a new RenderGraph for this frame.
-            m_RenderGraph = {};
-
-            // Add passes to the graph.
-            m_RenderGraph.AddPass("ForwardOpaque", &m_ForwardOpaquePassRenderer);
-            m_RenderGraph.AddPass("UI", &m_UIPassRenderer);
-
-            // Set up the graph.
-            m_RenderGraph.Setup();
-
-            // Compile the graph.
-            auto executionOrder = m_RenderGraph.Compile();
-
-            // Execute rendering.
-            for (const auto& pass : executionOrder)
+            RenderContext context{*m_RHI};
+            for (const auto& step : executionPlan)
             {
-                RenderContext context{*m_RHI};
-                pass->Execute(context);
+                // Ask the RenderPassSystem the handle for the config of this pass.
+                const RenderPassHandle passHandle = g_RenderPassSystem->GetHandleFor(
+                    step.passConfig,
+                    step.passPosition);
+
+                // Get the handles of RenderTargets
+                m_RHI->BeginRenderPass(passHandle, step.renderTargets);
+                step.passRenderer->Execute(context);
+                m_RHI->EndRenderPass();
             }
 
             m_RHI->EndFrame(frameTime);

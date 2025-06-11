@@ -3,6 +3,8 @@
 //
 #pragma once
 #include "Core/Core.hpp"
+#include "Core/Math/Vec4.hpp"
+#include "Resources/RenderTarget.hpp"
 
 namespace VoidArchitect::Resources
 {
@@ -11,6 +13,8 @@ namespace VoidArchitect::Resources
 
 namespace VoidArchitect::Renderer
 {
+    class IPassRenderer;
+
     enum class LoadOp
     {
         Load,
@@ -117,17 +121,11 @@ namespace VoidArchitect::Renderer
         VoidArchitect::Resources::ShaderStage stage;
 
         std::optional<std::vector<BufferBinding>> bufferBindings;
-    };
 
-    struct SpaceLayout
-    {
-        uint32_t space;
-        VAArray<ResourceBinding> bindings;
-    };
-
-    struct RenderStateInputLayout
-    {
-        VAArray<SpaceLayout> spaces;
+        bool operator<(const ResourceBinding& other) const
+        {
+            return binding < other.binding;
+        }
     };
 
     enum class RenderTargetUsage : uint32_t
@@ -154,5 +152,74 @@ namespace VoidArchitect::Renderer
         SizingPolicy sizingPolicy = SizingPolicy::RelativeToViewport;
         uint32_t width = 0;
         uint32_t height = 0;
+    };
+
+    enum class MaterialClass
+    {
+        Standard,
+        UI
+    };
+
+    struct RenderPassConfig
+    {
+        std::string name;
+        Renderer::RenderPassType type = Renderer::RenderPassType::Unknown;
+
+        struct AttachmentConfig
+        {
+            std::string name;
+
+            Renderer::TextureFormat format;
+            Renderer::LoadOp loadOp = Renderer::LoadOp::Clear;
+            Renderer::StoreOp storeOp = Renderer::StoreOp::Store;
+
+            // Clear values (used if LoadOp is Clear)
+            Math::Vec4 clearColor = Math::Vec4(0.0f, 0.0f, 0.0f, 1.0f);
+            float clearDepth = 1.0f;
+            uint32_t clearStencil = 0;
+
+            bool operator==(const AttachmentConfig&) const;
+        };
+
+        VAArray<AttachmentConfig> attachments;
+
+        bool operator==(const RenderPassConfig&) const;
+    };
+
+    //==============================================================================================
+    // Render Graph Execution Plan Structures
+    //==============================================================================================
+
+    static constexpr auto WELL_KNOWN_RT_VIEWPORT_COLOR = "ViewportColorOutput";
+    static constexpr auto WELL_KNOWN_RT_VIEWPORT_DEPTH = "ViewportDepthOutput";
+
+    struct RenderPassStep
+    {
+        // --- Identity ---
+        std::string name; // For debugging (e.g., "ForwardOpaque", "UI")
+        // The PassRenderer that will record the draw commands.
+        IPassRenderer* passRenderer = nullptr;
+
+        // --- RHI Configuration ---
+        // The configuration for the render pass itself (attachments, formats).
+        RenderPassConfig passConfig;
+        PassPosition passPosition; // The position in the frame.
+
+        // --- Resource Binding ---
+        // The concrete handles to the render targets to be bound.
+        VAArray<Resources::RenderTargetHandle> renderTargets;
+
+        // TODO: We will add barrier information here later.
+    };
+
+    struct RenderGraphExecutionPlan
+    {
+        VAArray<RenderPassStep> steps;
+
+        // Allows for each iteration: for(const auto& step: executionPlan)
+        auto begin() const { return steps.begin(); }
+        auto end() const { return steps.end(); }
+        bool empty() const { return steps.empty(); }
+        size_t size() const { return steps.size(); }
     };
 } // namespace Renderer

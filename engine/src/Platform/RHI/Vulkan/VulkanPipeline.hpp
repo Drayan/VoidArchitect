@@ -25,31 +25,17 @@ namespace VoidArchitect::Platform
     {
     public:
         VulkanPipeline(
-            const RenderStateConfig& config,
+            const std::string& name,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
-            VulkanRenderPass* renderPass);
+            VkPipeline pipelineHandle,
+            VkPipelineLayout layoutHandle);
         ~VulkanPipeline() override;
 
         // void Bind(const VulkanCommandBuffer& cmdBuf, VkPipelineBindPoint bindPoint) const;
         void Bind(Platform::IRenderingHardware& rhi) override;
         [[nodiscard]] VkPipelineLayout GetPipelineLayout() const { return m_PipelineLayout; }
         VkPipeline GetHandle() const { return m_Pipeline; }
-
-        VkDescriptorSetLayout GetDescriptorSetLayout(const size_t index) const
-        {
-            return m_DescriptorSetLayouts[index];
-        }
-
-        VkDescriptorSetLayout GetGlobalDescriptorSetLayout() const
-        {
-            return m_DescriptorSetLayouts[0];
-        }
-
-        VkDescriptorSetLayout GetMaterialDescriptorSetLayout() const
-        {
-            return m_DescriptorSetLayouts[1];
-        }
 
     private:
         static VkFormat TranslateEngineAttributeFormatToVulkanFormat(
@@ -63,11 +49,7 @@ namespace VoidArchitect::Platform
         VkDevice m_Device;
         VkAllocationCallbacks* m_Allocator;
 
-        VAArray<Resources::ShaderPtr> m_Shaders;
-
         VkPipeline m_Pipeline;
-
         VkPipelineLayout m_PipelineLayout;
-        VAArray<VkDescriptorSetLayout> m_DescriptorSetLayouts;
     };
 } // namespace VoidArchitect::Platform

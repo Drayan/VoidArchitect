@@ -4,7 +4,6 @@
 #pragma once
 
 #include "Core/Utils.hpp"
-#include "Core/Math/Vec4.hpp"
 #include "Renderer/RendererTypes.hpp"
 #include "Resources/RenderPass.hpp"
 
@@ -15,35 +14,9 @@ namespace VoidArchitect
         enum class PassPosition;
     }
 
-    struct RenderPassConfig
-    {
-        std::string name;
-        Renderer::RenderPassType type = Renderer::RenderPassType::Unknown;
-
-        struct AttachmentConfig
-        {
-            std::string name;
-
-            Renderer::TextureFormat format;
-            Renderer::LoadOp loadOp = Renderer::LoadOp::Clear;
-            Renderer::StoreOp storeOp = Renderer::StoreOp::Store;
-
-            // Clear values (used if LoadOp is Clear)
-            Math::Vec4 clearColor = Math::Vec4(0.0f, 0.0f, 0.0f, 1.0f);
-            float clearDepth = 1.0f;
-            uint32_t clearStencil = 0;
-
-            bool operator==(const AttachmentConfig&) const;
-        };
-
-        VAArray<AttachmentConfig> attachments;
-
-        bool operator==(const RenderPassConfig&) const;
-    };
-
     struct RenderPassCacheKey
     {
-        RenderPassConfig config;
+        Renderer::RenderPassConfig config;
         Renderer::PassPosition position;
 
         bool operator==(const RenderPassCacheKey&) const;
@@ -57,10 +30,11 @@ namespace VoidArchitect
 namespace std
 {
     template <>
-    struct hash<VoidArchitect::RenderPassConfig::AttachmentConfig>
+    struct hash<VoidArchitect::Renderer::RenderPassConfig::AttachmentConfig>
     {
         size_t operator()(
-            const VoidArchitect::RenderPassConfig::AttachmentConfig& config) const noexcept
+            const VoidArchitect::Renderer::RenderPassConfig::AttachmentConfig& config) const
+            noexcept
         {
             size_t seed = 0;
             VoidArchitect::HashCombine(seed, config.name);
@@ -73,10 +47,9 @@ namespace std
     };
 
     template <>
-    struct hash<VoidArchitect::RenderPassConfig>
+    struct hash<VoidArchitect::Renderer::RenderPassConfig>
     {
-        size_t operator()(
-            const VoidArchitect::RenderPassConfig& config) const noexcept
+        size_t operator()(const VoidArchitect::Renderer::RenderPassConfig& config) const noexcept
         {
             size_t seed = 0;
             VoidArchitect::HashCombine(seed, config.name);
@@ -93,8 +66,7 @@ namespace std
     template <>
     struct hash<VoidArchitect::RenderPassCacheKey>
     {
-        size_t operator()(
-            const VoidArchitect::RenderPassCacheKey& key) const noexcept
+        size_t operator()(const VoidArchitect::RenderPassCacheKey& key) const noexcept
         {
             size_t seed = 0;
             VoidArchitect::HashCombine(seed, key.config);
@@ -114,16 +86,16 @@ namespace VoidArchitect
         ~RenderPassSystem() = default;
 
         RenderPassHandle GetHandleFor(
-            const RenderPassConfig& config,
+            const Renderer::RenderPassConfig& config,
             Renderer::PassPosition position);
 
         void ReleasePass(RenderPassHandle handle);
 
-        Resources::IRenderPass* GetPointerFor(uint32_t handle) const;
+        [[nodiscard]] Resources::IRenderPass* GetPointerFor(uint32_t handle) const;
 
     private:
         static Resources::IRenderPass* CreateRenderPass(
-            const RenderPassConfig& config,
+            const Renderer::RenderPassConfig& config,
             Renderer::PassPosition passPosition);
         RenderPassHandle GetFreeHandle();
 

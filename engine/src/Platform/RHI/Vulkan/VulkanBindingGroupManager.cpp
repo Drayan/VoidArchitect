@@ -7,6 +7,7 @@
 
 #include "VulkanBuffer.hpp"
 #include "VulkanDevice.hpp"
+#include "VulkanPipeline.hpp"
 #include "VulkanUtils.hpp"
 #include "Systems/MaterialSystem.hpp"
 
@@ -63,9 +64,22 @@ namespace VoidArchitect::Platform
         }
     }
 
+    VkDescriptorSetLayout VulkanBindingGroupManager::GetLayoutFor(
+        const RenderStateConfig& stateConfig)
+    {
+        const auto hash = stateConfig.GetBindingsHash();
+        // Search in the cache for a compatible layout
+        if (const auto it = m_SetLayoutCache.find(hash); it != m_SetLayoutCache.end())
+        {
+            return it->second;
+        }
+
+        VA_ENGINE_ERROR("[VulkanBindingGroupManager] No compatible layout found.");
+        return VK_NULL_HANDLE;
+    }
+
     void VulkanBindingGroupManager::BindMaterialGroup(
         VkCommandBuffer cmdsBuf,
-        VkPipelineLayout pipelineLayout,
         MaterialHandle materialHandle,
         RenderStateHandle stateHandle)
     {
@@ -76,7 +90,7 @@ namespace VoidArchitect::Platform
             return;
         }
 
-        // 2. Obtain the descriptor set for this material
+        // 2. Get the descriptor set for this material
         auto it = m_MaterialSetCache.find(materialHandle);
         VkDescriptorSet materialSet;
         if (it == m_MaterialSetCache.end())
@@ -91,7 +105,6 @@ namespace VoidArchitect::Platform
             UpdateDescriptorSet(materialSet, materialHandle);
             m_MaterialSetCache[materialHandle] = materialSet;
         }
-
         else
         {
             materialSet = it->second;
@@ -101,11 +114,15 @@ namespace VoidArchitect::Platform
             // }
         }
 
-        // 3. Bind the descriptor set
+        // 3. Get the RenderState* from the system.
+        const auto statePtr = dynamic_cast<VulkanPipeline*>(g_RenderStateSystem->GetPointerFor(
+            stateHandle));
+
+        // 4. Bind the descriptor set
         vkCmdBindDescriptorSets(
             cmdsBuf,
             VK_PIPELINE_BIND_POINT_GRAPHICS,
-            pipelineLayout,
+            statePtr->GetPipelineLayout(),
             1,
             1,
             &materialSet,
@@ -149,10 +166,11 @@ namespace VoidArchitect::Platform
         return true;
     }
 
-    VkDescriptorSetLayout VulkanBindingGroupManager::GetHandleFor(MaterialHandle materialHandle)
+    VkDescriptorSetLayout VulkanBindingGroupManager::GetHandleFor(
+        const MaterialHandle materialHandle)
     {
         const auto& materialConfig = g_MaterialSystem->GetTemplateFor(materialHandle);
-        const size_t hash = materialConfig.GetHash();
+        const size_t hash = materialConfig.GetBindingsHash();
 
         auto it = m_SetLayoutCache.find(hash);
         if (it != m_SetLayoutCache.end())
@@ -178,8 +196,8 @@ namespace VoidArchitect::Platform
 
         VkDescriptorSetLayout layout;
         VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkCreateDescriptorSetLayout(
-                m_Device->GetLogicalDeviceHandle(), &layoutInfo, m_Allocator, &layout));
+            vkCreateDescriptorSetLayout( m_Device->GetLogicalDeviceHandle(), &layoutInfo,
+                m_Allocator, &layout));
 
         m_SetLayoutCache[hash] = layout;
         return layout;

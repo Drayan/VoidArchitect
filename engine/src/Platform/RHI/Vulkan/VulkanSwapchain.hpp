@@ -15,7 +15,6 @@ namespace VoidArchitect::Platform
     public:
         VulkanSwapchain(
             const std::unique_ptr<VulkanDevice>& device,
-            const std::unique_ptr<VulkanResourceFactory>& resourceFactory,
             VkAllocationCallbacks* allocator,
             uint32_t width,
             uint32_t height);
@@ -48,7 +47,6 @@ namespace VoidArchitect::Platform
         [[nodiscard]] VkFormat ChooseDepthFormat() const;
 
         const std::unique_ptr<VulkanDevice>& m_Device;
-        const std::unique_ptr<VulkanResourceFactory>& m_ResourceFactory;
         VkAllocationCallbacks* m_Allocator;
         VkSwapchainKHR m_Swapchain;
 

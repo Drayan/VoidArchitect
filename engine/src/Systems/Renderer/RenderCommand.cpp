@@ -18,10 +18,6 @@
 
 namespace VoidArchitect::Renderer
 {
-    Resources::Texture2DPtr _RenderCommand::s_TestTexture;
-    Resources::MeshPtr _RenderCommand::s_TestMesh;
-    Resources::MeshPtr _RenderCommand::s_UIMesh;
-
     Math::Mat4 _RenderCommand::s_UIProjectionMatrix = Math::Mat4::Identity();
 
     Platform::RHI_API_TYPE _RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
@@ -41,62 +37,62 @@ namespace VoidArchitect::Renderer
 
         // Retrieve Pipeline's shared resources setup.
         // TODO This should be managed by the pipeline system.
-        const RenderStateInputLayout sharedInputLayout{
-            VAArray{
-                // Global Space
-                SpaceLayout{
-                    0,
-                    VAArray{
-                        // Global UBO
-                        ResourceBinding{
-                            ResourceBindingType::ConstantBuffer,
-                            0,
-                            Resources::ShaderStage::All,
-                            std::vector{
-                                // Projection
-                                BufferBinding{0, AttributeType::Mat4, AttributeFormat::Float32},
-                                // View
-                                BufferBinding{1, AttributeType::Mat4, AttributeFormat::Float32},
-                                // UI Projection
-                                BufferBinding{2, AttributeType::Mat4, AttributeFormat::Float32},
-                                // Light Direction
-                                BufferBinding{3, AttributeType::Vec4, AttributeFormat::Float32},
-                                // Light Color
-                                BufferBinding{4, AttributeType::Vec4, AttributeFormat::Float32}
-                            },
-                        }
-                    },
-                },
-                // Material Space
-                SpaceLayout{
-                    1,
-                    VAArray{
-                        // Material UBO
-                        ResourceBinding{
-                            ResourceBindingType::ConstantBuffer,
-                            0,
-                            Resources::ShaderStage::Pixel,
-                            std::vector{
-                                // Diffuse Color
-                                BufferBinding{0, AttributeType::Vec4, AttributeFormat::Float32}
-                            }
-                        },
-                        // Diffuse Map
-                        ResourceBinding{
-                            ResourceBindingType::Texture2D,
-                            1,
-                            Resources::ShaderStage::Pixel
-                        },
-                        // Specular Map
-                        ResourceBinding{
-                            ResourceBindingType::Texture2D,
-                            2,
-                            Resources::ShaderStage::Pixel
-                        }
-                    }
-                }
-            }
-        };
+        // const RenderStateInputLayout sharedInputLayout{
+        //     VAArray{
+        //         // Global Space
+        //         SpaceLayout{
+        //             0,
+        //             VAArray{
+        //                 // Global UBO
+        //                 ResourceBinding{
+        //                     ResourceBindingType::ConstantBuffer,
+        //                     0,
+        //                     Resources::ShaderStage::All,
+        //                     std::vector{
+        //                         // Projection
+        //                         BufferBinding{0, AttributeType::Mat4, AttributeFormat::Float32},
+        //                         // View
+        //                         BufferBinding{1, AttributeType::Mat4, AttributeFormat::Float32},
+        //                         // UI Projection
+        //                         BufferBinding{2, AttributeType::Mat4, AttributeFormat::Float32},
+        //                         // Light Direction
+        //                         BufferBinding{3, AttributeType::Vec4, AttributeFormat::Float32},
+        //                         // Light Color
+        //                         BufferBinding{4, AttributeType::Vec4, AttributeFormat::Float32}
+        //                     },
+        //                 }
+        //             },
+        //         },
+        //         // Material Space
+        //         SpaceLayout{
+        //             1,
+        //             VAArray{
+        //                 // Material UBO
+        //                 ResourceBinding{
+        //                     ResourceBindingType::ConstantBuffer,
+        //                     0,
+        //                     Resources::ShaderStage::Pixel,
+        //                     std::vector{
+        //                         // Diffuse Color
+        //                         BufferBinding{0, AttributeType::Vec4, AttributeFormat::Float32}
+        //                     }
+        //                 },
+        //                 // Diffuse Map
+        //                 ResourceBinding{
+        //                     ResourceBindingType::Texture2D,
+        //                     1,
+        //                     Resources::ShaderStage::Pixel
+        //                 },
+        //                 // Specular Map
+        //                 ResourceBinding{
+        //                     ResourceBindingType::Texture2D,
+        //                     2,
+        //                     Resources::ShaderStage::Pixel
+        //                 }
+        //             }
+        //         }
+        //     }
+        // };
 
         switch (apiType)
         {
@@ -132,12 +128,13 @@ namespace VoidArchitect::Renderer
         // }
 
         const float aspectRatio = static_cast<float>(m_Width) / static_cast<float>(m_Height);
-        s_UIProjectionMatrix =
-            Math::Mat4::Orthographic(0.f, 1.0f, 0.f, 1.0f / aspectRatio, -1.0f, 1.0f);
-
-        // TEMP Create a test mesh.
-        s_TestMesh = g_MeshSystem->CreateCube("TestMesh");
-        s_UIMesh = g_MeshSystem->CreateQuad("UIMesh", 0.15f, 0.15f);
+        s_UIProjectionMatrix = Math::Mat4::Orthographic(
+            0.f,
+            1.0f,
+            0.f,
+            1.0f / aspectRatio,
+            -1.0f,
+            1.0f);
 
         CreatePerspectiveCamera(45.0f, 0.1f, 100.0f);
 
@@ -146,12 +143,6 @@ namespace VoidArchitect::Renderer
 
     void _RenderCommand::Shutdown()
     {
-        // g_RenderGraph = nullptr;
-
-        s_UIMesh = nullptr;
-        s_TestMesh = nullptr;
-        s_TestTexture = nullptr;
-
         // Shutdown subsystems
         g_MeshSystem = nullptr;
         g_MaterialSystem = nullptr;
@@ -170,11 +161,15 @@ namespace VoidArchitect::Renderer
 
         // Update all camera's aspect ratio
         float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-        for (auto& camera : m_Cameras)
-            camera.SetAspectRatio(aspectRatio);
+        for (auto& camera : m_Cameras) camera.SetAspectRatio(aspectRatio);
 
-        s_UIProjectionMatrix =
-            Math::Mat4::Orthographic(0.f, 1.0f, 0.f, 1.0f / aspectRatio, -1.0f, 1.0f);
+        s_UIProjectionMatrix = Math::Mat4::Orthographic(
+            0.f,
+            1.0f,
+            0.f,
+            1.0f / aspectRatio,
+            -1.0f,
+            1.0f);
 
         // g_RenderGraph->OnResize(width, height);
         // g_RenderGraph->Compile();
@@ -188,8 +183,7 @@ namespace VoidArchitect::Renderer
 
     bool _RenderCommand::BeginFrame(Camera& camera, const float deltaTime)
     {
-        if (!m_RenderingHardware->BeginFrame(deltaTime))
-            return false;
+        if (!m_RenderingHardware->BeginFrame(deltaTime)) return false;
 
         // if (g_RenderGraph)
         // {
@@ -231,8 +225,7 @@ namespace VoidArchitect::Renderer
     Camera& _RenderCommand::CreatePerspectiveCamera(float fov, float near, float far)
     {
         auto aspect = m_Width / static_cast<float>(m_Height);
-        if (m_Width == 0 || m_Height == 0)
-            aspect = 1.0f;
+        if (m_Width == 0 || m_Height == 0) aspect = 1.0f;
         return m_Cameras.emplace_back(fov, aspect, near, far);
     }
 
@@ -266,8 +259,6 @@ namespace VoidArchitect::Renderer
         static size_t index = std::size(textures) - 1;
         index = (index + 1) % std::size(textures);
 
-        s_TestTexture =
-            g_TextureSystem->LoadTexture2D(textures[index], Resources::TextureUse::Diffuse);
         //s_TestMaterial->SetTexture(/*Resources::TextureSlot::Diffuse*/ 0, s_TestTexture);
     }
 

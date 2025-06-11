@@ -29,19 +29,12 @@ namespace VoidArchitect::Resources
         [[nodiscard]] std::string GetName() const { return m_Name; }
         [[nodiscard]] UUID GetUUID() const { return m_UUID; };
 
-        [[nodiscard]] const Renderer::RenderStateInputLayout& GetInputLayout() const
-        {
-            return m_InputLayout;
-        }
-
     protected:
         explicit IRenderState(
-            const std::string& name,
-            const Renderer::RenderStateInputLayout& inputLayout);
+            const std::string& name);
 
         UUID m_UUID;
         std::string m_Name;
-        Renderer::RenderStateInputLayout m_InputLayout;
     };
 
     using RenderStatePtr = std::shared_ptr<IRenderState>;

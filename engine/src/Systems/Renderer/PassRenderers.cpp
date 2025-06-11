@@ -25,8 +25,25 @@ namespace VoidArchitect::Renderer
         builder.ReadsFrom("TestMaterial").WritesToColorBuffer().WritesToDepthBuffer();
     }
 
-    void ForwardOpaquePassRenderer::Execute(
-        const RenderContext& context)
+    Renderer::RenderPassConfig ForwardOpaquePassRenderer::GetRenderPassConfig() const
+    {
+        RenderPassConfig config;
+        config.attachments = {
+            {
+                "color",
+                TextureFormat::SWAPCHAIN_FORMAT,
+                LoadOp::Clear,
+                StoreOp::Store,
+                Math::Vec4::One()
+            },
+            {"depth", TextureFormat::SWAPCHAIN_DEPTH, LoadOp::Clear, StoreOp::DontCare}
+        };
+        config.type = RenderPassType::ForwardOpaque;
+        config.name = m_Name;
+        return config;
+    }
+
+    void ForwardOpaquePassRenderer::Execute(const RenderContext& context)
     {
         // if (!context.RenderState)
         // {
@@ -65,22 +82,17 @@ namespace VoidArchitect::Renderer
         // context.Rhi.DrawMesh(geometry, context.RenderState);
     }
 
-    std::string ForwardOpaquePassRenderer::GetCompatibleRenderState() const
-    {
-        return "Default";
-    }
-
-    bool ForwardOpaquePassRenderer::IsCompatibleWith(const RenderPassType passType) const
-    {
-        return passType == RenderPassType::ForwardOpaque;
-    }
-
     //==============================================================================================
     // UIPassRenderer Implementation
     //==============================================================================================
 
     void UIPassRenderer::Setup(RenderGraphBuilder& builder)
     {
+    }
+
+    Renderer::RenderPassConfig UIPassRenderer::GetRenderPassConfig() const
+    {
+        return {};
     }
 
     void UIPassRenderer::Execute(const RenderContext& context)
@@ -119,15 +131,5 @@ namespace VoidArchitect::Renderer
         // // Render the UI quad
         // uiMaterial->Bind(context.Rhi, context.RenderState);
         // context.Rhi.DrawMesh(uiGeometry, context.RenderState);
-    }
-
-    std::string UIPassRenderer::GetCompatibleRenderState() const
-    {
-        return "UI";
-    }
-
-    bool UIPassRenderer::IsCompatibleWith(const RenderPassType passType) const
-    {
-        return passType == RenderPassType::UI;
     }
 }

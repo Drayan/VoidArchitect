@@ -15,7 +15,7 @@ namespace VoidArchitect
     }
 
     RenderPassHandle RenderPassSystem::GetHandleFor(
-        const RenderPassConfig& config,
+        const Renderer::RenderPassConfig& config,
         Renderer::PassPosition position)
     {
         // Check if this renderPass is already in the cache.
@@ -45,7 +45,7 @@ namespace VoidArchitect
     }
 
     Resources::IRenderPass* RenderPassSystem::CreateRenderPass(
-        const RenderPassConfig& config,
+        const Renderer::RenderPassConfig& config,
         Renderer::PassPosition passPosition)
     {
         // Create a new RenderPass resource
@@ -102,13 +102,14 @@ namespace VoidArchitect
         m_FreeRenderPassHandles.push(handle);
     }
 
-    bool RenderPassConfig::AttachmentConfig::operator==(const AttachmentConfig& other) const
+    bool Renderer::RenderPassConfig::AttachmentConfig::operator==(
+        const AttachmentConfig& other) const
     {
         return name == other.name && format == other.format && loadOp == other.loadOp && storeOp ==
             other.storeOp;
     }
 
-    bool RenderPassConfig::operator==(const RenderPassConfig& other) const
+    bool Renderer::RenderPassConfig::operator==(const RenderPassConfig& other) const
     {
         return name == other.name && type == other.type && attachments == other.attachments;
     }

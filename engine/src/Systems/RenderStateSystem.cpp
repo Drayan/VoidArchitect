@@ -14,11 +14,10 @@ namespace VoidArchitect
 {
     RenderStateSystem::RenderStateSystem() { LoadDefaultRenderStates(); }
 
-    void RenderStateSystem::RegisterPermutation(
-        const RenderStateConfig& config)
+    void RenderStateSystem::RegisterPermutation(const RenderStateConfig& config)
     {
         // First, check the config map if this particular permutation exists or not
-        const ConfigLookupKey key{config.name, config.passType, config.vertexFormat};
+        const ConfigLookupKey key{config.materialClass, config.passType, config.vertexFormat};
         if (m_ConfigMap.contains(key))
         {
             VA_ENGINE_WARN(
@@ -58,13 +57,13 @@ namespace VoidArchitect
         }
 
         // Check the config map to find a suitable config
-        ConfigLookupKey lookupKey{key.renderStateClass, key.passType, key.vertexFormat};
+        const ConfigLookupKey lookupKey{key.materialClass, key.passType, key.vertexFormat};
         if (!m_ConfigMap.contains(lookupKey))
         {
             VA_ENGINE_ERROR(
                 "[RenderStateSystem] No render state permutation found for pass '{}' with MaterialClass '{}'.",
                 Renderer::RenderPassTypeToString(key.passType),
-                key.renderStateClass);
+                static_cast<uint32_t>(key.materialClass));
             return InvalidRenderStateHandle;
         }
 
@@ -77,19 +76,21 @@ namespace VoidArchitect
             VA_ENGINE_ERROR(
                 "[RenderStateSystem] Failed to create render state for pass '{}' and MaterialClass '{}'.",
                 Renderer::RenderPassTypeToString(key.passType),
-                key.renderStateClass);
+                static_cast<uint32_t>(key.materialClass));
             return InvalidRenderStateHandle;
         }
 
-        const RenderStateData node{
-            RenderStateLoadingState::Unloaded,
-            renderStatePtr
-        };
+        const RenderStateData node{RenderStateLoadingState::Unloaded, renderStatePtr};
         const auto handle = GetFreeRenderStateHandle();
         m_RenderStates[handle] = node;
         m_RenderStateCache[key] = handle;
 
         return handle;
+    }
+
+    Resources::IRenderState* RenderStateSystem::GetPointerFor(const RenderStateHandle handle)
+    {
+        return m_RenderStates[handle].renderStatePtr;
     }
 
     Resources::IRenderState* RenderStateSystem::CreateRenderState(
@@ -197,9 +198,7 @@ namespace VoidArchitect
                 break;
 
                 // TODO Implement custom vertex format definition (from config file ?)
-                case Renderer::VertexFormat::Custom:
-                default:
-                    VA_ENGINE_WARN(
+                case Renderer::VertexFormat::Custom: default: VA_ENGINE_WARN(
                         "[RenderStateSystem] Unknown vertex format for render state '{}'.",
                         config.name);
                     break;
@@ -207,8 +206,9 @@ namespace VoidArchitect
         }
 
         // Create a new render state resource
-        const auto renderState =
-            Renderer::g_RenderSystem->GetRHI()->CreateRenderState(config, passHandle);
+        const auto renderState = Renderer::g_RenderSystem->GetRHI()->CreateRenderState(
+            config,
+            passHandle);
 
         if (!renderState)
         {
@@ -232,19 +232,34 @@ namespace VoidArchitect
         auto renderStateConfig = RenderStateConfig{};
         renderStateConfig.name = "Default";
 
-        renderStateConfig.renderStateClass = "Opaque";
+        renderStateConfig.materialClass = Renderer::MaterialClass::Standard;
         renderStateConfig.passType = Renderer::RenderPassType::ForwardOpaque;
         renderStateConfig.vertexFormat = Renderer::VertexFormat::PositionNormalUV;
 
         // Try to load the default shaders into the render state.
-        auto vertexShader = g_ShaderSystem->LoadShader("BuiltinObject.vert");
-        auto pixelShader = g_ShaderSystem->LoadShader("BuiltinObject.pixl");
+        auto vertexShader = g_ShaderSystem->GetHandleFor("BuiltinObject.vert");
+        auto pixelShader = g_ShaderSystem->GetHandleFor("BuiltinObject.pixl");
 
         renderStateConfig.shaders.emplace_back(vertexShader);
         renderStateConfig.shaders.emplace_back(pixelShader);
 
-        renderStateConfig.inputLayout = Renderer::RenderStateInputLayout{};
-        // Use default configuration
+        renderStateConfig.expectedBindings = {
+            Renderer::ResourceBinding{
+                Renderer::ResourceBindingType::ConstantBuffer,
+                0,
+                Resources::ShaderStage::Vertex
+            },
+            Renderer::ResourceBinding{
+                Renderer::ResourceBindingType::Texture2D,
+                1,
+                Resources::ShaderStage::Pixel
+            },
+            Renderer::ResourceBinding{
+                Renderer::ResourceBindingType::Texture2D,
+                2,
+                Resources::ShaderStage::Pixel
+            }
+        };
 
         RegisterPermutation(renderStateConfig);
         VA_ENGINE_INFO("[RenderStateSystem] Default render state template registered.");
@@ -253,19 +268,29 @@ namespace VoidArchitect
         auto uiRenderStateConfig = RenderStateConfig{};
         uiRenderStateConfig.name = "UI";
 
-        uiRenderStateConfig.renderStateClass = "UI";
+        uiRenderStateConfig.materialClass = Renderer::MaterialClass::UI;
         uiRenderStateConfig.passType = Renderer::RenderPassType::UI;
         uiRenderStateConfig.vertexFormat = Renderer::VertexFormat::PositionNormalUV;
 
         // Try to load the default UI shaders into the render state.
-        auto uiVertexShader = g_ShaderSystem->LoadShader("UI.vert");
-        auto uiPixelShader = g_ShaderSystem->LoadShader("UI.pixl");
+        auto uiVertexShader = g_ShaderSystem->GetHandleFor("UI.vert");
+        auto uiPixelShader = g_ShaderSystem->GetHandleFor("UI.pixl");
 
         uiRenderStateConfig.shaders.emplace_back(uiVertexShader);
         uiRenderStateConfig.shaders.emplace_back(uiPixelShader);
 
-        uiRenderStateConfig.inputLayout = Renderer::RenderStateInputLayout{};
-        // Use default configuration
+        uiRenderStateConfig.expectedBindings = {
+            Renderer::ResourceBinding{
+                Renderer::ResourceBindingType::ConstantBuffer,
+                0,
+                Resources::ShaderStage::Vertex
+            },
+            Renderer::ResourceBinding{
+                Renderer::ResourceBindingType::Texture2D,
+                1,
+                Resources::ShaderStage::Pixel
+            }
+        };
 
         RegisterPermutation(uiRenderStateConfig);
         VA_ENGINE_INFO("[RenderStateSystem] UI render state template registered.");
@@ -296,7 +321,7 @@ namespace VoidArchitect
     {
         size_t seed = 0;
 
-        HashCombine(seed, renderStateClass);
+        HashCombine(seed, static_cast<int32_t>(materialClass));
         HashCombine(seed, static_cast<int32_t>(passType));
         HashCombine(seed, static_cast<int32_t>(vertexFormat));
 
@@ -305,9 +330,26 @@ namespace VoidArchitect
         return seed;
     }
 
+    size_t RenderStateConfig::GetBindingsHash() const
+    {
+        size_t seed = 0;
+
+        // Sort the bindings by their binding property
+        auto bindings = expectedBindings;
+        std::sort(bindings.begin(), bindings.end());
+        for (auto& binding : bindings)
+        {
+            HashCombine(seed, binding.binding);
+            HashCombine(seed, binding.type);
+            HashCombine(seed, binding.stage);
+        }
+
+        return seed;
+    }
+
     bool RenderStateCacheKey::operator==(const RenderStateCacheKey& other) const
     {
-        return renderStateClass == other.renderStateClass && passSignature == other.passSignature &&
+        return materialClass == other.materialClass && passSignature == other.passSignature &&
             passType == other.passType && vertexFormat == other.vertexFormat;
     }
 } // namespace VoidArchitect

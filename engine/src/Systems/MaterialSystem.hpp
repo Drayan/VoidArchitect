@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RenderStateSystem.hpp"
 #include "Resources/Material.hpp"
 #include "Resources/RenderState.hpp"
 
@@ -24,6 +25,7 @@ namespace VoidArchitect
         TextureConfig specularTexture;
 
         [[nodiscard]] size_t GetHash() const;
+        size_t GetBindingsHash() const;
     };
 
     class MaterialSystem
@@ -38,7 +40,7 @@ namespace VoidArchitect
         MaterialTemplate& GetTemplateFor(MaterialHandle handle);
 
         // Interaction with Material
-        void Bind(MaterialHandle handle, const Resources::RenderStatePtr& renderState);
+        void Bind(MaterialHandle handle, RenderStateHandle stateHandle);
 
     private:
         MaterialHandle LoadTemplate(const std::string& name);
@@ -51,8 +53,7 @@ namespace VoidArchitect
 
         MaterialHandle GetFreeMaterialHandle();
 
-        static Resources::IMaterial* CreateMaterial(
-            const MaterialTemplate& matTemplate);
+        static Resources::IMaterial* CreateMaterial(const MaterialTemplate& matTemplate);
 
         void ReleaseMaterial(const Resources::IMaterial* material);
 

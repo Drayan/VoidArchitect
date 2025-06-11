@@ -24,6 +24,9 @@ namespace VoidArchitect
             Math::Vec2 UV0;
         };
 
+        using MeshHandle = uint32_t;
+        static constexpr MeshHandle InvalidMeshHandle = std::numeric_limits<uint32_t>::max();
+
         class IMesh
         {
             friend class VoidArchitect::MeshSystem;
@@ -40,10 +43,6 @@ namespace VoidArchitect
             virtual void Release() = 0;
 
             std::string m_Name;
-            uint32_t m_Handle;
-            UUID m_UUID;
         };
-
-        using MeshPtr = std::shared_ptr<IMesh>;
     } // namespace Resources
 } // namespace VoidArchitect

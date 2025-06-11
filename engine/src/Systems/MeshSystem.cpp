@@ -13,37 +13,42 @@ namespace VoidArchitect
 {
     MeshSystem::MeshSystem() { m_Meshes.reserve(1024); }
 
-    MeshSystem::~MeshSystem()
-    {
-        if (!m_MeshCache.empty())
-        {
-            VA_ENGINE_WARN(
-                "[MeshSystem] Mesh cache is not empty during destruction. This may indicate a "
-                "resource leak.");
-
-            for (const auto& [uuid, mesh] : m_MeshCache)
-            {
-                if (const auto msh = mesh.lock())
-                {
-                    VA_ENGINE_WARN(
-                        "[MeshSystem] Mesh '{}' with UUID {} was not released properly.",
-                        msh->m_Name,
-                        static_cast<uint64_t>(uuid));
-                    msh->Release();
-                }
-            }
-        }
-
-        m_MeshCache.clear();
-    }
-
-    Resources::MeshPtr MeshSystem::LoadMesh(const std::string& name)
+    Resources::MeshHandle MeshSystem::LoadMesh(const std::string& name)
     {
         // TODO Implement loading mesh from a file
-        return nullptr;
+        return Resources::InvalidMeshHandle;
     }
 
-    Resources::MeshPtr MeshSystem::CreateMesh(
+    Resources::MeshHandle MeshSystem::LoadMesh(
+        const std::string& name,
+        const VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
+    {
+        //TODO Implement loading mesh from datas
+        return Resources::InvalidMeshHandle;
+    }
+
+    Resources::MeshHandle MeshSystem::GetHandleFor(
+        const std::string& name,
+        const VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
+    {
+        // Check if the mesh already exists
+        for (uint32_t i = 0; i < m_Meshes.size(); i++)
+        {
+            if (m_Meshes[i]->m_Name == name)
+                return i;
+        }
+
+        // This is the first time the system is asked a handle for this Mesh.
+        const auto meshPtr = CreateMesh(name, vertices, indices);
+        const auto handle = GetFreeMeshHandle();
+        m_Meshes[handle] = std::unique_ptr<Resources::IMesh>(meshPtr);
+
+        return handle;
+    }
+
+    Resources::IMesh* MeshSystem::CreateMesh(
         const std::string& name,
         const VAArray<Resources::MeshVertex>& vertices,
         const VAArray<uint32_t>& indices)
@@ -56,25 +61,11 @@ namespace VoidArchitect
             return nullptr;
         }
 
-        auto meshPtr = Resources::MeshPtr(mesh, MeshDeleter{this});
-        m_MeshCache[mesh->m_UUID] = meshPtr;
-
-        const auto handle = GetFreeMeshHandle();
-        mesh->m_Handle = handle;
-
-        m_Meshes[handle] = {
-            mesh->m_UUID,
-            vertices.size() * sizeof(Resources::MeshVertex) + indices.size() * sizeof(uint32_t)
-        };
-
-        m_TotalMemoryUsed += m_Meshes[handle].dataSize;
-        m_TotalMeshesLoaded++;
-
-        VA_ENGINE_TRACE("[MeshSystem] Mesh '{}' created with handle {}.", name, handle);
-        return meshPtr;
+        VA_ENGINE_TRACE("[MeshSystem] Created mesh '{}'.", name);
+        return mesh;
     }
 
-    Resources::MeshPtr MeshSystem::CreateSphere(
+    Resources::MeshHandle MeshSystem::CreateSphere(
         const std::string& name,
         const float radius,
         const uint32_t latitudeBands,
@@ -132,10 +123,10 @@ namespace VoidArchitect
             }
         }
 
-        return CreateMesh(name, vertices, indices);
+        return GetHandleFor(name, vertices, indices);
     }
 
-    Resources::MeshPtr MeshSystem::CreateCube(const std::string& name, const float size)
+    Resources::MeshHandle MeshSystem::CreateCube(const std::string& name, const float size)
     {
         const float halfSize = size * 0.5f;
 
@@ -291,10 +282,10 @@ namespace VoidArchitect
             indices.push_back(baseIndex + 3);
         }
 
-        return CreateMesh(name, vertices, indices);
+        return GetHandleFor(name, vertices, indices);
     }
 
-    Resources::MeshPtr MeshSystem::CreateQuad(
+    Resources::MeshHandle MeshSystem::CreateQuad(
         const std::string& name,
         const float width,
         const float height)
@@ -311,10 +302,10 @@ namespace VoidArchitect
         };
         const VAArray<uint32_t> indices{0, 1, 2, 2, 3, 0};
 
-        return CreateMesh(name, vertices, indices);
+        return GetHandleFor(name, vertices, indices);
     }
 
-    Resources::MeshPtr MeshSystem::CreatePlane(
+    Resources::MeshHandle MeshSystem::CreatePlane(
         const std::string& name,
         float width,
         float height,
@@ -380,7 +371,12 @@ namespace VoidArchitect
             }
         }
 
-        return CreateMesh(name, vertices, indices);
+        return GetHandleFor(name, vertices, indices);
+    }
+
+    Resources::IMesh* MeshSystem::GetPointerFor(const Resources::MeshHandle handle) const
+    {
+        return m_Meshes[handle].get();
     }
 
     uint32_t MeshSystem::GetFreeMeshHandle()
@@ -403,23 +399,5 @@ namespace VoidArchitect
 
     void MeshSystem::ReleaseMesh(const Resources::IMesh* mesh)
     {
-        if (const auto it = m_MeshCache.find(mesh->m_UUID); it != m_MeshCache.end())
-        {
-            VA_ENGINE_TRACE("[MeshSystem] Releasing mesh '{}'.", mesh->m_Name);
-            // Release the mesh handle
-            m_FreeMeshHandles.push(mesh->m_Handle);
-            const auto size = m_Meshes[mesh->m_Handle].dataSize;
-            m_Meshes[mesh->m_Handle] = {InvalidUUID, 0};
-            m_MeshCache.erase(it);
-
-            m_TotalMemoryUsed -= size;
-            m_TotalMeshesLoaded--;
-        }
-    }
-
-    void MeshSystem::MeshDeleter::operator()(const Resources::IMesh* mesh) const
-    {
-        system->ReleaseMesh(mesh);
-        delete mesh;
     }
 } // namespace VoidArchitect

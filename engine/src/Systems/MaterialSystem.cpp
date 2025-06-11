@@ -2,12 +2,10 @@
 
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
-#include "Renderer/RenderCommand.hpp"
 #include "ResourceSystem.hpp"
 #include "Resources/Loaders/MaterialLoader.hpp"
 #include "Resources/Material.hpp"
 #include "TextureSystem.hpp"
-#include "Renderer/RenderGraph.hpp"
 #include "Renderer/RenderSystem.hpp"
 #include "Resources/Shader.hpp"
 
@@ -21,15 +19,27 @@ namespace VoidArchitect
         HashCombine(seed, diffuseColor.Y());
         HashCombine(seed, diffuseColor.Z());
         HashCombine(seed, diffuseColor.W());
-        for (auto& binding : resourceBindings)
+        HashCombine(seed, GetBindingsHash());
+        HashCombine(seed, diffuseTexture.name);
+        HashCombine(seed, specularTexture.name);
+        HashCombine(seed, renderStateClass);
+        return seed;
+    }
+
+    size_t MaterialTemplate::GetBindingsHash() const
+    {
+        size_t seed = 0;
+
+        // Sort the bindings by their binding property
+        auto bindings = resourceBindings;
+        std::sort(bindings.begin(), bindings.end());
+        for (auto& binding : bindings)
         {
             HashCombine(seed, binding.binding);
             HashCombine(seed, binding.type);
             HashCombine(seed, binding.stage);
         }
-        HashCombine(seed, diffuseTexture.name);
-        HashCombine(seed, specularTexture.name);
-        HashCombine(seed, renderStateClass);
+
         return seed;
     }
 
@@ -58,8 +68,7 @@ namespace VoidArchitect
         {
             if (const auto& node = m_Materials[handle]; node.config.name == name)
             {
-                if (node.state == MaterialLoadingState::Loaded)
-                    return handle;
+                if (node.state == MaterialLoadingState::Loaded) return handle;
 
                 // The material exist but is unloaded, we need to load it first.
                 LoadMaterial(handle);
@@ -80,9 +89,7 @@ namespace VoidArchitect
         return m_Materials[handle].config;
     }
 
-    void MaterialSystem::Bind(
-        const MaterialHandle handle,
-        const Resources::RenderStatePtr& renderState)
+    void MaterialSystem::Bind(const MaterialHandle handle, const RenderStateHandle stateHandle)
     {
         // Is this handle valid?
         if (handle >= m_Materials.size())
@@ -99,7 +106,7 @@ namespace VoidArchitect
         }
 
         // Bind the material
-        m_Materials[handle].materialPtr->Bind(*Renderer::g_RenderSystem->GetRHI(), renderState);
+        Renderer::g_RenderSystem->GetRHI()->BindMaterial(handle, stateHandle);
     }
 
     MaterialHandle MaterialSystem::LoadTemplate(const std::string& name)
@@ -115,10 +122,8 @@ namespace VoidArchitect
         }
 
         // Load the MaterialTemplate from the disk
-        const auto materialData =
-            g_ResourceSystem->LoadResource<Resources::Loaders::MaterialDataDefinition>(
-                ResourceType::Material,
-                name);
+        const auto materialData = g_ResourceSystem->LoadResource<
+            Resources::Loaders::MaterialDataDefinition>(ResourceType::Material, name);
         if (!materialData)
         {
             VA_ENGINE_ERROR("[MaterialSystem] Failed to load material template '{}'.", name);
@@ -153,15 +158,12 @@ namespace VoidArchitect
     void MaterialSystem::LoadMaterial(const MaterialHandle handle)
     {
         auto node = m_Materials[handle];
-        if (node.state == MaterialLoadingState::Loaded)
-            return;
+        if (node.state == MaterialLoadingState::Loaded) return;
 
         const auto material = CreateMaterial(node.config);
         if (!material)
         {
-            VA_ENGINE_ERROR(
-                "[MaterialSystem] Failed to load material '{}'.",
-                node.config.name);
+            VA_ENGINE_ERROR("[MaterialSystem] Failed to load material '{}'.", node.config.name);
         }
 
         VA_ENGINE_TRACE("[MaterialSystem] Loaded material '{}'.", node.config.name);
@@ -169,17 +171,15 @@ namespace VoidArchitect
         m_Materials[handle].state = MaterialLoadingState::Loaded;
     }
 
-    Resources::IMaterial* MaterialSystem::CreateMaterial(
-        const MaterialTemplate& matTemplate)
+    Resources::IMaterial* MaterialSystem::CreateMaterial(const MaterialTemplate& matTemplate)
     {
         // Ask the RHI to create the required data on the GPU.
         const auto material = Renderer::g_RenderSystem->GetRHI()->CreateMaterial(
-            matTemplate.name);
+            matTemplate.name,
+            matTemplate);
         if (!material)
         {
-            VA_ENGINE_ERROR(
-                "[MaterialSystem] Failed to create material '{}'.",
-                matTemplate.name);
+            VA_ENGINE_ERROR("[MaterialSystem] Failed to create material '{}'.", matTemplate.name);
             return nullptr;
         }
 
@@ -189,12 +189,9 @@ namespace VoidArchitect
         // Load textures
         if (!matTemplate.diffuseTexture.name.empty())
         {
-            const auto texture = g_TextureSystem->LoadTexture2D(
-                matTemplate.diffuseTexture.name,
-                Resources::TextureUse::Diffuse);
-            if (texture)
+            if (const auto texture = g_TextureSystem->GetHandleFor(matTemplate.diffuseTexture.name))
             {
-                material->SetTexture(0, texture);
+                material->SetTexture(matTemplate.diffuseTexture.use, texture);
             }
             else
             {
@@ -202,19 +199,16 @@ namespace VoidArchitect
                     "[MaterialSystem] Failed to load diffuse texture '{}' for material '{}', "
                     "using default.",
                     matTemplate.diffuseTexture.name,
-                    matTemplate.name
-                );
+                    matTemplate.name);
             }
         }
 
         if (!matTemplate.specularTexture.name.empty())
         {
-            const auto texture = g_TextureSystem->LoadTexture2D(
-                matTemplate.specularTexture.name,
-                Resources::TextureUse::Specular);
+            const auto texture = g_TextureSystem->GetHandleFor(matTemplate.specularTexture.name);
             if (texture)
             {
-                material->SetTexture(1, texture);
+                material->SetTexture(matTemplate.specularTexture.use, texture);
             }
             else
             {
@@ -227,11 +221,6 @@ namespace VoidArchitect
         }
 
         // TODO: Load other textures
-
-        // Initialize resources with RenderState
-        material->InitializeResources(
-            *Renderer::g_RenderSystem->GetRHI(),
-            matTemplate.resourceBindings);
 
         return material;
     }

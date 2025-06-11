@@ -3,6 +3,7 @@
 //
 #pragma once
 #include "VulkanDevice.hpp"
+#include "Systems/MaterialSystem.hpp"
 #include "Systems/RenderPassSystem.hpp"
 
 namespace VoidArchitect
@@ -29,6 +30,9 @@ namespace VoidArchitect
 
     namespace Platform
     {
+        class VulkanBindingGroupManager;
+        class VulkanExecutionContext;
+
         class VulkanResourceFactory
         {
         public:
@@ -49,7 +53,9 @@ namespace VoidArchitect
                 const RenderStateConfig& config,
                 RenderPassHandle passHandle) const;
 
-            Resources::IMaterial* CreateMaterial(const std::string& name) const;
+            Resources::IMaterial* CreateMaterial(
+                const std::string& name,
+                const MaterialTemplate& templ) const;
 
             Resources::IShader* CreateShader(
                 const std::string& name,
@@ -69,14 +75,26 @@ namespace VoidArchitect
                 VkFormat format) const;
 
             Resources::IRenderPass* CreateRenderPass(
-                const RenderPassConfig& config,
+                const Renderer::RenderPassConfig& config,
                 Renderer::PassPosition passPosition,
                 VkFormat swapchainFormat,
                 VkFormat depthFormat) const;
 
         private:
+            VkPipelineRasterizationStateCreateInfo CreateRasterizerState(
+                const RenderStateConfig& stateConfig) const;
+            VkPipelineDepthStencilStateCreateInfo CreateDepthStencilState(
+                const RenderStateConfig& stateConfig) const;
+            std::pair<VkPipelineColorBlendStateCreateInfo, VkPipelineColorBlendAttachmentState>
+            CreateColorBlendState(const RenderStateConfig& stateConfig) const;
+            std::pair<VkVertexInputBindingDescription, std::vector<
+                          VkVertexInputAttributeDescription>> GetVertexInputDesc(
+                const RenderStateConfig& stateConfig) const;
+
             const std::unique_ptr<VulkanDevice>& m_Device;
             VkAllocationCallbacks* m_Allocator;
         };
+
+        inline std::unique_ptr<VulkanResourceFactory> g_VkResourceFactory;
     } // Platform
 } // VoidArchitect

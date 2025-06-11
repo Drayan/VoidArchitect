@@ -25,14 +25,14 @@ namespace VoidArchitect::Math
 
         Vec4();
         Vec4(float x, float y, float z, float w);
-        Vec4(Math::Vec3 vector, float w = 1.0f);
+        explicit Vec4(Vec3 vector, float w = 1.0f);
 
         Vec4 operator+(const Vec4& other) const;
         Vec4 operator-(const Vec4& other) const;
         Vec4 operator*(const Vec4& other) const;
         Vec4 operator/(const Vec4& other) const;
-        Vec4 operator*(const float scalar) const;
-        Vec4 operator/(const float scalar) const;
+        Vec4 operator*(float scalar) const;
+        Vec4 operator/(float scalar) const;
         Vec4& operator+=(const Vec4& other);
         Vec4& operator-=(const Vec4& other);
 
@@ -41,10 +41,11 @@ namespace VoidArchitect::Math
         void Z(const float z) { m_Vector.z = z; }
         void W(const float w) { m_Vector.w = w; }
 
-        float X() const { return m_Vector.x; }
-        float Y() const { return m_Vector.y; }
-        float Z() const { return m_Vector.z; }
-        float W() const { return m_Vector.w; }
+        [[nodiscard]] float X() const { return m_Vector.x; }
+        [[nodiscard]] float Y() const { return m_Vector.y; }
+        [[nodiscard]] float Z() const { return m_Vector.z; }
+        [[nodiscard]] float W() const { return m_Vector.w; }
+        bool operator==(const Vec4& Vec4) const = default;
 
     private:
         explicit Vec4(const impl::glm::vec4& vector);

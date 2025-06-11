@@ -13,12 +13,10 @@ namespace VoidArchitect::Platform
 {
     VulkanSwapchain::VulkanSwapchain(
         const std::unique_ptr<VulkanDevice>& device,
-        const std::unique_ptr<VulkanResourceFactory>& resourceFactory,
         VkAllocationCallbacks* allocator,
         const uint32_t width,
         const uint32_t height)
         : m_Device(device),
-          m_ResourceFactory(resourceFactory),
           m_Allocator(allocator),
           m_Swapchain(VK_NULL_HANDLE)
     {
@@ -83,8 +81,7 @@ namespace VoidArchitect::Platform
             swapchainCreateInfo.queueFamilyIndexCount = 2;
             swapchainCreateInfo.pQueueFamilyIndices = queueFamilyIndices;
         }
-        else
-            swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        else swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
         swapchainCreateInfo.preTransform = m_Capabilities.currentTransform;
         swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
@@ -93,18 +90,17 @@ namespace VoidArchitect::Platform
         swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkCreateSwapchainKHR(
-                m_Device->GetLogicalDeviceHandle(), &swapchainCreateInfo, m_Allocator, &m_Swapchain
-            ));
+            vkCreateSwapchainKHR( m_Device->GetLogicalDeviceHandle(), &swapchainCreateInfo,
+                m_Allocator, &m_Swapchain ));
 
         // Retrieve the images from the swapchain...
         VA_VULKAN_CHECK_RESULT_WARN(
-            vkGetSwapchainImagesKHR(
-                m_Device->GetLogicalDeviceHandle(), m_Swapchain, &imageCount, nullptr));
+            vkGetSwapchainImagesKHR( m_Device->GetLogicalDeviceHandle(), m_Swapchain, &imageCount,
+                nullptr));
         auto images = VAArray<VkImage>(imageCount);
         VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkGetSwapchainImagesKHR(
-                m_Device->GetLogicalDeviceHandle(), m_Swapchain, &imageCount, images.data()));
+            vkGetSwapchainImagesKHR( m_Device->GetLogicalDeviceHandle(), m_Swapchain, &imageCount,
+                images.data()));
 
         // And give them wrapped into our VulkanImage object that manages Image and ImageView.
         m_SwapchainImages = images;
@@ -170,15 +166,15 @@ namespace VoidArchitect::Platform
         // --- Present modes ---
         uint32_t presentModeCount;
         VA_VULKAN_CHECK_RESULT_WARN(
-            vkGetPhysicalDeviceSurfacePresentModesKHR(
-                physicalDevice, surface, &presentModeCount, nullptr));
+            vkGetPhysicalDeviceSurfacePresentModesKHR( physicalDevice, surface, &presentModeCount,
+                nullptr));
 
         if (presentModeCount != 0)
         {
             m_PresentModes.resize(presentModeCount);
             VA_VULKAN_CHECK_RESULT_WARN(
-                vkGetPhysicalDeviceSurfacePresentModesKHR(
-                    physicalDevice, surface, &presentModeCount, m_PresentModes.data()));
+                vkGetPhysicalDeviceSurfacePresentModesKHR( physicalDevice, surface, &
+                    presentModeCount, m_PresentModes.data()));
         }
         else
         {
@@ -198,8 +194,8 @@ namespace VoidArchitect::Platform
         {
             for (const auto& prefFormat : prefFormats)
             {
-                if (availableFormat.format == prefFormat
-                    && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+                if (availableFormat.format == prefFormat && availableFormat.colorSpace ==
+                    VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
                 {
                     return availableFormat;
                 }
@@ -332,8 +328,8 @@ namespace VoidArchitect::Platform
         presentInfo.pSwapchains = &m_Swapchain;
         presentInfo.pImageIndices = &imageIndex;
 
-        if (const auto result = vkQueuePresentKHR(graphicsQueue, &presentInfo);
-            result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+        if (const auto result = vkQueuePresentKHR(graphicsQueue, &presentInfo); result ==
+            VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
         {
             // TODO Recreate the swapchain
         }

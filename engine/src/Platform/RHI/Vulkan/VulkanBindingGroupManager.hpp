@@ -26,9 +26,10 @@ namespace VoidArchitect::Platform
         VulkanBindingGroupManager(const VulkanBindingGroupManager&) = delete;
         VulkanBindingGroupManager& operator=(const VulkanBindingGroupManager&) = delete;
 
+        VkDescriptorSetLayout GetLayoutFor(const RenderStateConfig& stateConfig);
+
         void BindMaterialGroup(
             VkCommandBuffer cmdsBuf,
-            VkPipelineLayout pipelineLayout,
             MaterialHandle materialHandle,
             RenderStateHandle stateHandle);
 
@@ -57,4 +58,6 @@ namespace VoidArchitect::Platform
         size_t m_NextFreeUboOffset = 0;
         VAHashMap<MaterialHandle, size_t> m_MaterialUboOffsets;
     };
+
+    inline std::unique_ptr<VulkanBindingGroupManager> g_VkBindingGroupManager;
 }

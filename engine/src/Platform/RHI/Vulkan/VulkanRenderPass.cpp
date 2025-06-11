@@ -11,7 +11,7 @@
 namespace VoidArchitect::Platform
 {
     VulkanRenderPass::VulkanRenderPass(
-        const RenderPassConfig& config,
+        const Renderer::RenderPassConfig& config,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
         Renderer::PassPosition passPosition,
@@ -54,7 +54,7 @@ namespace VoidArchitect::Platform
     }
 
     void VulkanRenderPass::CreateRenderPassFromConfig(
-        const RenderPassConfig& config,
+        const Renderer::RenderPassConfig& config,
         Renderer::PassPosition passPosition,
         VkFormat swapchainFormat,
         VkFormat depthFormat)
@@ -92,10 +92,10 @@ namespace VoidArchitect::Platform
             attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
             bool isDepthAttachment = false;
 
-            if (attachmentConfig.name == "depth"
-                || attachmentConfig.format == Renderer::TextureFormat::SWAPCHAIN_DEPTH
-                || attachmentConfig.format == Renderer::TextureFormat::D32_SFLOAT
-                || attachmentConfig.format == Renderer::TextureFormat::D24_UNORM_S8_UINT)
+            if (attachmentConfig.name == "depth" || attachmentConfig.format ==
+                Renderer::TextureFormat::SWAPCHAIN_DEPTH || attachmentConfig.format ==
+                Renderer::TextureFormat::D32_SFLOAT || attachmentConfig.format ==
+                Renderer::TextureFormat::D24_UNORM_S8_UINT)
             {
                 isDepthAttachment = true;
                 depthRef = {
@@ -116,9 +116,8 @@ namespace VoidArchitect::Platform
                         break;
                 }
             }
-            else if (
-                attachmentConfig.name == "color"
-                || attachmentConfig.format == Renderer::TextureFormat::SWAPCHAIN_FORMAT)
+            else if (attachmentConfig.name == "color" || attachmentConfig.format ==
+                Renderer::TextureFormat::SWAPCHAIN_FORMAT)
             {
                 colorRefs.push_back(
                     {static_cast<uint32_t>(i), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL});
@@ -193,8 +192,8 @@ namespace VoidArchitect::Platform
         dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         dependency.srcAccessMask = 0;
         dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependency.dstAccessMask =
-            VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
         dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
         // if (depthRef.has_value())

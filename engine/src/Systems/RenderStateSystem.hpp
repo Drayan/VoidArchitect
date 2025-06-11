@@ -14,20 +14,23 @@ namespace VoidArchitect
     {
         std::string name;
 
-        std::string renderStateClass;
+        Renderer::MaterialClass materialClass;
         Renderer::RenderPassType passType;
         Renderer::VertexFormat vertexFormat = Renderer::VertexFormat::Position;
 
-        VAArray<Resources::ShaderPtr> shaders;
+        VAArray<Renderer::ResourceBinding> expectedBindings;
+
+        VAArray<Resources::ShaderHandle> shaders;
         VAArray<Renderer::VertexAttribute> vertexAttributes;
         // TODO InputLayout; -> Which data bindings are used?
-        Renderer::RenderStateInputLayout inputLayout;
         // TODO RenderState -> Allow configuration options like culling, depth testing, etc.
+
+        size_t GetBindingsHash() const;
     };
 
     struct RenderStateCacheKey
     {
-        std::string renderStateClass;
+        Renderer::MaterialClass materialClass;
         Renderer::RenderPassType passType;
         Renderer::VertexFormat vertexFormat;
         Resources::RenderPassSignature passSignature;
@@ -62,11 +65,11 @@ namespace VoidArchitect
         ~RenderStateSystem() = default;
 
         void RegisterPermutation(const RenderStateConfig& config);
-        RenderStateHandle GetHandleFor(
-            const RenderStateCacheKey& key,
-            RenderPassHandle passHandle);
+        RenderStateHandle GetHandleFor(const RenderStateCacheKey& key, RenderPassHandle passHandle);
 
         void Bind(RenderStateHandle handle);
+
+        Resources::IRenderState* GetPointerFor(RenderStateHandle handle);
 
     private:
         static Resources::IRenderState* CreateRenderState(
@@ -91,7 +94,7 @@ namespace VoidArchitect
         };
 
         using ConfigLookupKey = std::tuple<
-            std::string, Renderer::RenderPassType, Renderer::VertexFormat>;
+            Renderer::MaterialClass, Renderer::RenderPassType, Renderer::VertexFormat>;
         VAHashMap<ConfigLookupKey, RenderStateConfig> m_ConfigMap;
 
         VAArray<RenderStateData> m_RenderStates;

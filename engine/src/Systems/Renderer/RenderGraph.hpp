@@ -26,7 +26,6 @@ namespace VoidArchitect
 
         const char* RenderPassTypeToString(RenderPassType type);
 
-
         class RenderGraph
         {
             friend class RenderGraphBuilder;
@@ -36,9 +35,10 @@ namespace VoidArchitect
             ~RenderGraph() = default;
 
             void AddPass(const std::string& name, IPassRenderer* passRenderer);
+            void ImportRenderTarget(const std::string& name, Resources::RenderTargetHandle handle);
 
             void Setup();
-            VAArray<IPassRenderer*> Compile();
+            RenderGraphExecutionPlan Compile();
 
         private:
             struct PassNode
@@ -67,6 +67,7 @@ namespace VoidArchitect
 
             VAArray<PassNode> m_Passes;
             VAHashMap<std::string, VAArray<ResourceAccessInfo>> m_ResourcesMap;
+            VAHashMap<std::string, Resources::RenderTargetHandle> m_RenderTargets;
         };
     } // namespace Renderer
 } // namespace VoidArchitect

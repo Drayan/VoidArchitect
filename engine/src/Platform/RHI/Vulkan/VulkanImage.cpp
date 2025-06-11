@@ -32,7 +32,6 @@ namespace VoidArchitect::Platform
         {
             CreateImageView(image, format, aspect);
         }
-        VA_ENGINE_TRACE("[VulkanImage] Image created.");
     }
 
     VulkanImage::VulkanImage(
@@ -90,6 +89,7 @@ namespace VoidArchitect::Platform
             m_Image = other.m_Image;
             m_ImageView = other.m_ImageView;
             m_Memory = other.m_Memory;
+            m_ExternallyAllocated = other.m_ExternallyAllocated;
 
             other.InvalidateResources();
         }
@@ -119,8 +119,8 @@ namespace VoidArchitect::Platform
         VkPipelineStageFlags sourceStage;
         VkPipelineStageFlags destinationStage;
 
-        if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED
-            && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+        if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout ==
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
         {
             barrier.srcAccessMask = 0;
             barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -128,9 +128,8 @@ namespace VoidArchitect::Platform
             sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
             destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
         }
-        else if (
-            oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
-            && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+        else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout ==
+            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
         {
             barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
             barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
@@ -205,14 +204,14 @@ namespace VoidArchitect::Platform
         createInfo.samples = VK_SAMPLE_COUNT_1_BIT;
         createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        VA_VULKAN_CHECK_RESULT_WARN(
-            vkCreateImage(m_Device, &createInfo, m_Allocator, &m_Image));
+        VA_VULKAN_CHECK_RESULT_WARN(vkCreateImage(m_Device, &createInfo, m_Allocator, &m_Image));
 
         // Query memory requirements
         VkMemoryRequirements memRequirements;
         vkGetImageMemoryRequirements(m_Device, m_Image, &memRequirements);
-        const int32_t memoryTypeIndex =
-            device->FindMemoryIndex(memRequirements.memoryTypeBits, memoryFlags);
+        const int32_t memoryTypeIndex = device->FindMemoryIndex(
+            memRequirements.memoryTypeBits,
+            memoryFlags);
         if (memoryTypeIndex == -1)
         {
             VA_ENGINE_CRITICAL("[VulkanImage] Failed to find memory type index.");
@@ -226,12 +225,10 @@ namespace VoidArchitect::Platform
         allocateInfo.memoryTypeIndex = memoryTypeIndex;
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(
-            vkAllocateMemory(m_Device, &allocateInfo, m_Allocator, &
-                m_Memory));
+            vkAllocateMemory(m_Device, &allocateInfo, m_Allocator, & m_Memory));
 
         // Bind the memory, TODO Configurable memory offset
-        VA_VULKAN_CHECK_RESULT_WARN(
-            vkBindImageMemory(m_Device, m_Image, m_Memory, 0));
+        VA_VULKAN_CHECK_RESULT_WARN(vkBindImageMemory(m_Device, m_Image, m_Memory, 0));
     }
 
     void VulkanImage::CreateImageView(
@@ -255,8 +252,9 @@ namespace VoidArchitect::Platform
         createInfo.components.a = VK_COMPONENT_SWIZZLE_A;
 
         VA_VULKAN_CHECK_RESULT_WARN(
-            vkCreateImageView(m_Device, &createInfo, m_Allocator, &
-                m_ImageView));
+            vkCreateImageView(m_Device, &createInfo, m_Allocator, & m_ImageView));
+
+        VA_ENGINE_TRACE("[VulkanImage] ImageView created.");
     }
 
     void VulkanImage::InvalidateResources()

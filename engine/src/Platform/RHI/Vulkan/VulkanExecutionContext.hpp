@@ -5,10 +5,13 @@
 
 #include <vulkan/vulkan.h>
 
+#include "VulkanBindingGroupManager.hpp"
 #include "VulkanCommandBuffer.hpp"
+#include "Resources/Material.hpp"
 #include "Resources/RenderState.hpp"
 #include "Resources/RenderTarget.hpp"
 #include "Systems/RenderPassSystem.hpp"
+#include "Systems/RenderStateSystem.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -37,7 +40,6 @@ namespace VoidArchitect::Platform
     public:
         VulkanExecutionContext(
             const std::unique_ptr<VulkanDevice>& device,
-            const std::unique_ptr<VulkanResourceFactory>& resourceFactory,
             VkAllocationCallbacks* allocator,
             uint32_t width,
             uint32_t height);
@@ -54,6 +56,8 @@ namespace VoidArchitect::Platform
         void UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) const;
         void BindGlobalState(const Resources::RenderStatePtr& pipeline);
 
+        void BindMaterialGroup(MaterialHandle materialHandle, RenderStateHandle stateHandle);
+
         void RequestResize(const uint32_t width, const uint32_t height);
 
         VulkanCommandBuffer& GetCurrentCommandBuffer()
@@ -66,6 +70,7 @@ namespace VoidArchitect::Platform
         Resources::RenderTargetHandle GetDepthRenderTargetHandle() const;
         VkFormat GetSwapchainFormat() const;
         VkFormat GetDepthFormat() const;
+        VkDescriptorSetLayout GetGlobalSetLayout() const { return m_GlobalDescriptorSetLayout; }
 
     private:
         void CreateSyncObjects();
@@ -106,4 +111,6 @@ namespace VoidArchitect::Platform
 
         std::unique_ptr<VulkanFramebufferCache> m_FramebufferCache;
     };
+
+    inline std::unique_ptr<VulkanExecutionContext> g_VkExecutionContext;
 }

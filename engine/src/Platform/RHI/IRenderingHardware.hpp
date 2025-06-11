@@ -3,12 +3,15 @@
 //
 #pragma once
 #include "IRenderingHardware.hpp"
+#include "Resources/Material.hpp"
 #include "Resources/Mesh.hpp"
 #include "Resources/RenderTarget.hpp"
 #include "Systems/RenderPassSystem.hpp"
+#include "Systems/RenderStateSystem.hpp"
 
 namespace VoidArchitect
 {
+    struct MaterialTemplate;
     struct RenderPassConfig;
     struct ShaderConfig;
     struct RenderStateConfig;
@@ -54,6 +57,7 @@ namespace VoidArchitect::Platform
         virtual ~IRenderingHardware() = default;
 
         virtual void Resize(uint32_t width, uint32_t height) = 0;
+        virtual void WaitIdle() = 0;
 
         virtual bool BeginFrame(float deltaTime) = 0;
         virtual bool EndFrame(float deltaTime) = 0;
@@ -65,6 +69,8 @@ namespace VoidArchitect::Platform
 
         virtual void UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) = 0;
         virtual void BindGlobalState(const Resources::RenderStatePtr& renderState) = 0;
+
+        virtual void BindMaterial(MaterialHandle materialHandle, RenderStateHandle stateHandle) = 0;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
@@ -81,7 +87,9 @@ namespace VoidArchitect::Platform
             RenderStateConfig& config,
             RenderPassHandle passHandle) = 0;
 
-        virtual Resources::IMaterial* CreateMaterial(const std::string& name) = 0;
+        virtual Resources::IMaterial* CreateMaterial(
+            const std::string& name,
+            const MaterialTemplate& matTemplate) = 0;
 
         virtual Resources::IShader* CreateShader(
             const std::string& name,
@@ -102,7 +110,7 @@ namespace VoidArchitect::Platform
         virtual Resources::RenderTargetHandle GetDepthRenderTargetHandle() const = 0;
 
         virtual Resources::IRenderPass* CreateRenderPass(
-            const RenderPassConfig& config,
+            const Renderer::RenderPassConfig& config,
             Renderer::PassPosition passPosition) = 0;
     };
 } // namespace VoidArchitect::Platform

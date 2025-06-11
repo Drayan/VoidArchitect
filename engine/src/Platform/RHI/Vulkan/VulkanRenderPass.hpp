@@ -31,7 +31,7 @@ namespace VoidArchitect::Platform
     public:
         // New constructor using RenderPassConfig (preferred)
         VulkanRenderPass(
-            const RenderPassConfig& config,
+            const Renderer::RenderPassConfig& config,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
             Renderer::PassPosition passPosition,
@@ -57,7 +57,7 @@ namespace VoidArchitect::Platform
 
     private:
         void CreateRenderPassFromConfig(
-            const RenderPassConfig& config,
+            const Renderer::RenderPassConfig& config,
             Renderer::PassPosition passPosition,
             VkFormat swapchainFormat,
             VkFormat depthFormat);

@@ -5,7 +5,6 @@
 
 #include "Camera.hpp"
 #include "Resources/Material.hpp"
-#include "Resources/Texture.hpp"
 
 namespace VoidArchitect::Resources
 {
@@ -41,7 +40,6 @@ namespace VoidArchitect
         class _RenderCommand
         {
         public:
-            static Resources::MeshPtr s_UIMesh;
             static void Initialize(Platform::RHI_API_TYPE apiType, std::unique_ptr<Window>& window);
             static void Shutdown();
 
@@ -69,9 +67,6 @@ namespace VoidArchitect
             static void SwapTestTexture();
             static void SwapColor();
             static Platform::IRenderingHardware& GetRHIRef() { return *m_RenderingHardware; };
-
-            static Resources::Texture2DPtr s_TestTexture;
-            static Resources::MeshPtr s_TestMesh;
 
             static Math::Mat4 s_UIProjectionMatrix;
 

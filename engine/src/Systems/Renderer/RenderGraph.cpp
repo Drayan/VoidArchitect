@@ -47,6 +47,13 @@ namespace VoidArchitect::Renderer
         m_Passes.push_back(node);
     }
 
+    void RenderGraph::ImportRenderTarget(
+        const std::string& name,
+        const Resources::RenderTargetHandle handle)
+    {
+        m_RenderTargets[name] = handle;
+    }
+
     void RenderGraph::Setup()
     {
         m_ResourcesMap.clear();
@@ -60,7 +67,7 @@ namespace VoidArchitect::Renderer
         }
     }
 
-    VAArray<IPassRenderer*> RenderGraph::Compile()
+    RenderGraphExecutionPlan RenderGraph::Compile()
     {
         // Walk the resourceMap to deduce the relationship between passes
         for (const auto& access : m_ResourcesMap | std::views::values)
@@ -69,8 +76,7 @@ namespace VoidArchitect::Renderer
             {
                 for (uint32_t j = 0; j < access.size(); ++j)
                 {
-                    if (i == j)
-                        continue;
+                    if (i == j) continue;
 
                     auto& p1Access = access[i];
                     auto& p2Access = access[j];
@@ -102,25 +108,22 @@ namespace VoidArchitect::Renderer
 
         // Use the Kahn algorithm to compute the execution order
         std::queue<PassNode*> queue;
-        VAArray<IPassRenderer*> sortedPasses;
+        VAArray<PassNode*> sortedPasses;
         for (auto& pass : m_Passes)
         {
-            if (pass.degrees == 0)
-                queue.push(&pass);
+            if (pass.degrees == 0) queue.push(&pass);
         }
 
         while (!queue.empty())
         {
             auto pass = queue.front();
             queue.pop();
-            sortedPasses.push_back(pass->passRenderer);
+            sortedPasses.push_back(pass);
 
-            // For each successors
             for (auto& successor : pass->successors)
             {
                 successor->degrees--;
-                if (successor->degrees == 0)
-                    queue.push(successor);
+                if (successor->degrees == 0) queue.push(successor);
             }
         }
 
@@ -131,14 +134,82 @@ namespace VoidArchitect::Renderer
             return {};
         }
 
-        return sortedPasses;
+        if (sortedPasses.empty()) return {};
+
+        // --- Build the Execution plan ---
+        RenderGraphExecutionPlan plan;
+        for (size_t i = 0; i < sortedPasses.size(); ++i)
+        {
+            auto* passNode = sortedPasses[i];
+
+            RenderPassStep step;
+            step.name = passNode->name;
+            step.passRenderer = passNode->passRenderer;
+
+            // Provide RenderPassConfig
+            step.passConfig = passNode->passRenderer->GetRenderPassConfig();
+
+            // Provide PassPosition
+            if (sortedPasses.size() == 1)
+            {
+                step.passPosition = PassPosition::Standalone;
+            }
+            else if (i == 0)
+            {
+                step.passPosition = PassPosition::First;
+            }
+            else if (i == sortedPasses.size() - 1)
+            {
+                step.passPosition = PassPosition::Last;
+            }
+            else
+            {
+                step.passPosition = PassPosition::Middle;
+            }
+
+            // Indicate RenderTargets
+            // The builder stored the names of the resources. Now we resolve them to handles.
+            //TODO: Retrieve render targets
+            for (const auto& [resourceName, accessList] : m_ResourcesMap)
+            {
+                for (const auto& accessInfo : accessList)
+                {
+                    // If the current pass is in the access list with 'Write' type...
+                    if (accessInfo.node == passNode && accessInfo.type == ResourceAccessType::Write)
+                    {
+                        // ... then this pass writes to 'resourceName'. Resolve it to a handle.
+                        auto it = m_RenderTargets.find(resourceName);
+                        if (it != m_RenderTargets.end())
+                        {
+                            step.renderTargets.push_back(it->second);
+                        }
+                        else
+                        {
+                            VA_ENGINE_WARN(
+                                "[RenderGraph] Render target '{}' not found in the render graph for pass '{}'.",
+                                resourceName,
+                                passNode->name);
+                        }
+                        // We found the write access for this resources, no need to check other.
+                        break;
+                    }
+                }
+            }
+
+            // TODO: Barrier calculation
+            // This is where we could analyse resource reads/writes between this pass and
+            // the previous one to insert necessary barriers.
+
+            plan.steps.push_back(step);
+        }
+
+        return plan;
     }
 
     void RenderGraph::AddEdge(PassNode* from, PassNode* to)
     {
         // Don't allow double relation
-        if (std::ranges::find(from->successors, to) ==
-            from->successors.end())
+        if (std::ranges::find(from->successors, to) == from->successors.end())
         {
             from->successors.push_back(to);
             to->degrees++;

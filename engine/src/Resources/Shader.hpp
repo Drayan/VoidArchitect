@@ -23,6 +23,10 @@ namespace VoidArchitect
 
         ShaderStage ShaderStageFromString(const std::string& stage);
 
+        using ShaderHandle = uint32_t;
+        static constexpr ShaderHandle InvalidShaderHandle = std::numeric_limits<
+            ShaderHandle>::max();
+
         class IShader
         {
             friend class VoidArchitect::ShaderSystem;
@@ -40,7 +44,5 @@ namespace VoidArchitect
             ShaderStage m_Stage;
             std::string m_EntryPoint;
         };
-
-        using ShaderPtr = std::shared_ptr<IShader>;
     } // namespace Resources
 } // namespace VoidArchitect

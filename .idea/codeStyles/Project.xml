@@ -43,6 +43,25 @@
       <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Local_0020variables/@EntryIndexedValue" value="&lt;NamingElement Priority=&quot;7&quot;&gt;&lt;Descriptor Static=&quot;Indeterminate&quot; Constexpr=&quot;Indeterminate&quot; Const=&quot;Indeterminate&quot; Volatile=&quot;Indeterminate&quot; Accessibility=&quot;NOT_APPLICABLE&quot;&gt;&lt;type Name=&quot;local variable&quot; /&gt;&lt;/Descriptor&gt;&lt;Policy Inspect=&quot;True&quot; WarnAboutPrefixesAndSuffixes=&quot;False&quot; Prefix=&quot;&quot; Suffix=&quot;&quot; Style=&quot;aaBb&quot; /&gt;&lt;/NamingElement&gt;" type="string" />
       <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Global_0020variables/@EntryIndexedValue" value="&lt;NamingElement Priority=&quot;8&quot;&gt;&lt;Descriptor Static=&quot;Indeterminate&quot; Constexpr=&quot;Indeterminate&quot; Const=&quot;Indeterminate&quot; Volatile=&quot;Indeterminate&quot; Accessibility=&quot;NOT_APPLICABLE&quot;&gt;&lt;type Name=&quot;global variable&quot; /&gt;&lt;/Descriptor&gt;&lt;Policy Inspect=&quot;True&quot; WarnAboutPrefixesAndSuffixes=&quot;False&quot; Prefix=&quot;&quot; Suffix=&quot;&quot; Style=&quot;aaBb&quot; /&gt;&lt;/NamingElement&gt;" type="string" />
       <option name="/Default/CodeStyle/Naming/CppNaming/Rules/=Global_0020functions/@EntryIndexedValue" value="&lt;NamingElement Priority=&quot;9&quot;&gt;&lt;Descriptor Static=&quot;Indeterminate&quot; Constexpr=&quot;Indeterminate&quot; Const=&quot;Indeterminate&quot; Volatile=&quot;Indeterminate&quot; Accessibility=&quot;NOT_APPLICABLE&quot;&gt;&lt;type Name=&quot;global function&quot; /&gt;&lt;/Descriptor&gt;&lt;Policy Inspect=&quot;True&quot; WarnAboutPrefixesAndSuffixes=&quot;False&quot; Prefix=&quot;&quot; Suffix=&quot;&quot; Style=&quot;AaBb&quot; /&gt;&lt;/NamingElement&gt;" type="string" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/LINE_BREAK_BEFORE_COMMA_IN_MEMBER_INITIALIZER_LISTS/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/LINE_BREAK_AFTER_COMMA_IN_MEMBER_INITIALIZER_LISTS/@EntryValue" value="true" type="bool" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/KEEP_USER_LINEBREAKS/@EntryValue" value="false" type="bool" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/WRAP_LINES/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/WRAP_BEFORE_COMMA/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/WRAP_BEFORE_COMMA_IN_BASE_CLAUSE/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/WRAP_BEFORE_TERNARY_OPSIGNS/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/WRAP_BEFORE_INVOCATION_LPAR/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/WRAP_BEFORE_INVOCATION_RPAR/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/SPACE_AFTER_UNARY_OPERATOR/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/CONTINUOUS_LINE_INDENT/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/USE_CONTINUOUS_LINE_INDENT_IN_METHOD_PARS/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/USE_CONTINUOUS_LINE_INDENT_IN_EXPRESSION_BRACES/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALIGN_MULTILINE_ARGUMENT/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALIGN_FIRST_ARG_BY_PAREN/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/OUTDENT_DOTS/@EntryValue" value="true" type="bool" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALIGN_MULTILINE_BINARY_EXPRESSIONS_CHAIN/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/INT_ALIGN_EQ/@EntryValue" />
+      <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/INT_ALIGN_DECLARATION_NAMES/@EntryValue" />
     </RiderCodeStyleSettings>
     <files>
       <extensions>

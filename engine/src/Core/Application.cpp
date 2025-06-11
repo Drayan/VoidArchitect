@@ -64,16 +64,11 @@ namespace VoidArchitect
 
             while (accumulator >= FIXED_STEP)
             {
-                for (Layer* layer : m_LayerStack)
-                    layer->OnFixedUpdate(FIXED_STEP);
+                for (Layer* layer : m_LayerStack) layer->OnFixedUpdate(FIXED_STEP);
 
                 accumulator -= FIXED_STEP;
             }
 
-            // if (Renderer::RenderCommand::BeginFrame(frameTime))
-            // {
-            //     Renderer::RenderCommand::EndFrame(frameTime);
-            // }
             Renderer::g_RenderSystem->RenderFrame(frameTime);
 
             m_MainWindow->OnUpdate();
@@ -93,8 +88,7 @@ namespace VoidArchitect
         for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
         {
             (*--it)->OnEvent(e);
-            if (e.Handled)
-                break;
+            if (e.Handled) break;
         }
     }
 

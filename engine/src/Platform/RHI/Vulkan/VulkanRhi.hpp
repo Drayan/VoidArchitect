@@ -5,6 +5,8 @@
 #include <vulkan/vulkan.h>
 
 #include "Platform/RHI/IRenderingHardware.hpp"
+#include "Resources/Material.hpp"
+#include "Systems/RenderStateSystem.hpp"
 
 namespace VoidArchitect
 {
@@ -22,11 +24,11 @@ namespace VoidArchitect::Platform
     class VulkanRHI final : public IRenderingHardware
     {
     public:
-        explicit VulkanRHI(
-            std::unique_ptr<Window>& window);
+        explicit VulkanRHI(std::unique_ptr<Window>& window);
         ~VulkanRHI() override;
 
         void Resize(uint32_t width, uint32_t height) override;
+        void WaitIdle() override;
 
         bool BeginFrame(float deltaTime) override;
         bool EndFrame(float deltaTime) override;
@@ -38,6 +40,8 @@ namespace VoidArchitect::Platform
 
         void UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) override;
         void BindGlobalState(const Resources::RenderStatePtr& pipeline) override;
+
+        void BindMaterial(MaterialHandle materialHandle, RenderStateHandle stateHandle) override;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////
@@ -54,7 +58,9 @@ namespace VoidArchitect::Platform
             RenderStateConfig& config,
             RenderPassHandle passHandle) override;
 
-        Resources::IMaterial* CreateMaterial(const std::string& name) override;
+        Resources::IMaterial* CreateMaterial(
+            const std::string& name,
+            const MaterialTemplate& matTemplate) override;
 
         Resources::IShader* CreateShader(
             const std::string& name,
@@ -76,15 +82,10 @@ namespace VoidArchitect::Platform
         Resources::RenderTargetHandle GetDepthRenderTargetHandle() const override;
 
         Resources::IRenderPass* CreateRenderPass(
-            const RenderPassConfig& config,
+            const Renderer::RenderPassConfig& config,
             Renderer::PassPosition passPosition) override;
 
         std::unique_ptr<VulkanDevice>& GetDeviceRef() { return m_Device; }
-
-        std::unique_ptr<VulkanExecutionContext>& GetExecutionContextRef()
-        {
-            return m_ExecutionContext;
-        };
 
     private:
         void CreateDevice();
@@ -96,9 +97,6 @@ namespace VoidArchitect::Platform
 
         VkAllocationCallbacks* m_Allocator;
         std::unique_ptr<VulkanDevice> m_Device;
-        std::unique_ptr<VulkanExecutionContext> m_ExecutionContext;
-        std::unique_ptr<VulkanResourceFactory> m_ResourceFactory;
-        std::unique_ptr<VulkanBindingGroupManager> m_BindingGroupsManager;
 
         VAArray<VulkanRenderTarget*> m_MainRenderTargets;
     };

@@ -4,6 +4,8 @@
 #pragma once
 #include <any>
 
+#include "RendererTypes.hpp"
+
 namespace VoidArchitect
 {
     namespace Platform
@@ -45,12 +47,9 @@ namespace VoidArchitect
 
             virtual void Setup(RenderGraphBuilder& builder) = 0;
 
-            virtual void Execute(
-                const RenderContext& context) = 0;
-            virtual std::string GetCompatibleRenderState() const = 0;
+            virtual void Execute(const RenderContext& context) = 0;
 
-            virtual bool IsCompatibleWith(RenderPassType passType) const = 0;
-
+            virtual Renderer::RenderPassConfig GetRenderPassConfig() const = 0;
             virtual const std::string& GetName() const = 0;
         };
 
@@ -63,11 +62,9 @@ namespace VoidArchitect
 
             void Setup(RenderGraphBuilder& builder) override;
 
-            void Execute(
-                const RenderContext& context) override;
-            [[nodiscard]] std::string GetCompatibleRenderState() const override;
+            void Execute(const RenderContext& context) override;
 
-            bool IsCompatibleWith(RenderPassType passType) const override;
+            Renderer::RenderPassConfig GetRenderPassConfig() const override;
             const std::string& GetName() const override { return m_Name; }
 
         private:
@@ -79,10 +76,8 @@ namespace VoidArchitect
         public:
             ForwardTransparentPassRenderer() = default;
 
-            void Execute(
-                const RenderContext& context) override;
-            std::string GetCompatibleRenderState() const override;
-            bool IsCompatibleWith(RenderPassType passType) const override;
+            void Execute(const RenderContext& context) override;
+            Renderer::RenderPassConfig GetRenderPassConfig() const override;
             const std::string& GetName() const override { return m_Name; }
 
         private:
@@ -94,11 +89,10 @@ namespace VoidArchitect
         public:
             ShadowPassRenderer() = default;
 
-            void Execute(
-                const RenderContext& context) override;
-            std::string GetCompatibleRenderState() const override;
-            bool IsCompatibleWith(RenderPassType passType) const override;
+            void Execute(const RenderContext& context) override;
             const std::string& GetName() const override { return m_Name; }
+            void Setup(RenderGraphBuilder& builder) override;
+            Renderer::RenderPassConfig GetRenderPassConfig() const override;
 
         private:
             static const std::string m_Name;
@@ -109,11 +103,10 @@ namespace VoidArchitect
         public:
             DepthPrepassPassRenderer() = default;
 
-            void Execute(
-                const RenderContext& context) override;
-            std::string GetCompatibleRenderState() const override;
-            bool IsCompatibleWith(RenderPassType passType) const override;
+            void Execute(const RenderContext& context) override;
             const std::string& GetName() const override { return m_Name; }
+            void Setup(RenderGraphBuilder& builder) override;
+            Renderer::RenderPassConfig GetRenderPassConfig() const override;
 
         private:
             static const std::string m_Name;
@@ -124,11 +117,10 @@ namespace VoidArchitect
         public:
             PostProcessPassRenderer() = default;
 
-            void Execute(
-                const RenderContext& context) override;
-            std::string GetCompatibleRenderState() const override;
-            bool IsCompatibleWith(RenderPassType passType) const override;
+            void Execute(const RenderContext& context) override;
             const std::string& GetName() const override { return m_Name; }
+            void Setup(RenderGraphBuilder& builder) override;
+            Renderer::RenderPassConfig GetRenderPassConfig() const override;
 
         private:
             static const std::string m_Name;
@@ -141,10 +133,8 @@ namespace VoidArchitect
 
             void Setup(RenderGraphBuilder& builder) override;
 
-            void Execute(
-                const RenderContext& context) override;
-            std::string GetCompatibleRenderState() const override;
-            bool IsCompatibleWith(RenderPassType passType) const override;
+            void Execute(const RenderContext& context) override;
+            Renderer::RenderPassConfig GetRenderPassConfig() const override;
             const std::string& GetName() const override { return m_Name; }
 
         private:
