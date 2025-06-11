@@ -70,7 +70,8 @@ namespace VoidArchitect::Platform
           m_Format(other.m_Format),
           m_Image(other.m_Image),
           m_ImageView(other.m_ImageView),
-          m_Memory(other.m_Memory)
+          m_Memory(other.m_Memory),
+          m_ExternallyAllocated(other.m_ExternallyAllocated)
     {
         other.InvalidateResources();
     }

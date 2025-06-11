@@ -130,6 +130,11 @@ namespace VoidArchitect
         void RenderSystem::RenderFrame(const float frameTime)
         {
             m_RenderGraph = {};
+            if (!m_RHI->BeginFrame(frameTime))
+            {
+                VA_ENGINE_ERROR("[RenderSystem] Failed to begin the frame.");
+                return;
+            }
 
             // --- Import persistent resources ---
             m_RenderGraph.ImportRenderTarget(
@@ -158,11 +163,6 @@ namespace VoidArchitect
 
             // --- Step 4: Execution ---
             // Execute rendering.
-            if (!m_RHI->BeginFrame(frameTime))
-            {
-                VA_ENGINE_ERROR("[RenderSystem] Failed to begin the frame.");
-                return;
-            }
 
             RenderContext context{*m_RHI};
             for (const auto& step : executionPlan)

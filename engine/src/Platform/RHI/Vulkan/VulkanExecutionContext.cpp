@@ -65,6 +65,16 @@ namespace VoidArchitect::Platform
             VA_ENGINE_TRACE("[VulkanExecutionContext] Global descriptor pool destroyed.");
         }
 
+        if (m_GlobalDescriptorSetLayout != VK_NULL_HANDLE)
+        {
+            vkDestroyDescriptorSetLayout(
+                m_Device->GetLogicalDeviceHandle(),
+                m_GlobalDescriptorSetLayout,
+                m_Allocator);
+            m_GlobalDescriptorSetLayout = VK_NULL_HANDLE;
+            VA_ENGINE_TRACE("[VulkanExecutionContext] Global descriptor set layout destroyed.");
+        }
+
         DestroySyncObjects();
     }
 
@@ -98,14 +108,26 @@ namespace VoidArchitect::Platform
             return false;
         }
 
+        auto& acquisitionFence = m_ImageAcquisitionFences[m_CurrentIndex];
+        if (!acquisitionFence.Wait())
+        {
+            VA_ENGINE_WARN("[VulkanRHI] Failed to wait for image acquisition fence.");
+        }
+        acquisitionFence.Reset();
+
         const auto index = m_Swapchain->AcquireNextImage(
             std::numeric_limits<uint64_t>::max(),
             m_ImageAvailableSemaphores[m_CurrentIndex],
-            nullptr);
+            acquisitionFence.GetHandle());
 
         if (!index.has_value()) return false;
-
         m_ImageIndex = index.value();
+
+        if (!acquisitionFence.Wait())
+        {
+            VA_ENGINE_ERROR("[VulkanExecutionContext] Failed to wait for image acquisition fence.");
+            return false;
+        }
 
         // Begin recording commands.
         auto& cmdBuf = m_GraphicsCommandBuffers[m_ImageIndex];
@@ -178,8 +200,8 @@ namespace VoidArchitect::Platform
 
         cmdBuf.End();
 
-        if (m_ImagesInFlight[m_ImageIndex] != nullptr) m_ImagesInFlight[m_ImageIndex]->Wait(
-            std::numeric_limits<uint64_t>::max());
+        if (m_ImagesInFlight[m_ImageIndex] != nullptr)
+            m_ImagesInFlight[m_ImageIndex]->Wait(std::numeric_limits<uint64_t>::max());
 
         // Mark the image fence as in use by this frame.
         m_ImagesInFlight[m_ImageIndex] = &m_InFlightFences[m_CurrentIndex];
@@ -353,6 +375,12 @@ namespace VoidArchitect::Platform
             m_ImagesInFlight.emplace_back(nullptr);
         }
 
+        m_ImageAcquisitionFences.reserve(maxFrameInFlight);
+        for (uint32_t i = 0; i < maxFrameInFlight; i++)
+        {
+            m_ImageAcquisitionFences.emplace_back(m_Device, m_Allocator, true);
+        }
+
         VA_ENGINE_INFO("[VulkanRHI] Sync objects created.");
     }
 
@@ -428,6 +456,7 @@ namespace VoidArchitect::Platform
         m_QueueCompleteSemaphores.clear();
         m_InFlightFences.clear();
         m_ImagesInFlight.clear();
+        m_ImageAcquisitionFences.clear();
     }
 
     Resources::RenderTargetHandle VulkanExecutionContext::GetCurrentColorRenderTargetHandle() const

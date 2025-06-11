@@ -186,6 +186,7 @@ namespace VoidArchitect::Platform
         subpass.pDepthStencilAttachment = depthRef.has_value() ? &depthRef.value() : nullptr;
 
         // Subpass dependencies
+        VAArray<VkSubpassDependency> dependencies;
         VkSubpassDependency dependency{};
         dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
         dependency.dstSubpass = 0;
@@ -194,7 +195,21 @@ namespace VoidArchitect::Platform
         dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
             VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+        dependency.dependencyFlags = 0;
+
+        dependencies.push_back(dependency);
+
+        VkSubpassDependency dependency2{};
+        dependency2.srcSubpass = 0;
+        dependency2.dstSubpass = VK_SUBPASS_EXTERNAL;
+        dependency2.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dependency2.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        dependency2.dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+        dependency2.dstAccessMask = 0;
+        dependency2.dependencyFlags = 0;
+
+        dependencies.push_back(dependency2);
 
         // if (depthRef.has_value())
         // {
@@ -210,8 +225,8 @@ namespace VoidArchitect::Platform
         renderPassInfo.pAttachments = attachments.data();
         renderPassInfo.subpassCount = 1;
         renderPassInfo.pSubpasses = &subpass;
-        renderPassInfo.dependencyCount = 1;
-        renderPassInfo.pDependencies = &dependency;
+        renderPassInfo.dependencyCount = dependencies.size();
+        renderPassInfo.pDependencies = dependencies.data();
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(
             vkCreateRenderPass(m_Device, &renderPassInfo, m_Allocator, &m_Renderpass));

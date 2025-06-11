@@ -101,6 +101,7 @@ namespace VoidArchitect::Platform
 
         VAArray<VulkanFence> m_InFlightFences;
         VAArray<VulkanFence*> m_ImagesInFlight;
+        VAArray<VulkanFence> m_ImageAcquisitionFences;
 
         VAArray<VulkanCommandBuffer> m_GraphicsCommandBuffers;
 

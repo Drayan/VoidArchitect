@@ -59,6 +59,14 @@ namespace VoidArchitect::Platform
 
     void VulkanFramebufferCache::Clear()
     {
+        for (auto& framebuffer : m_FramebuffersCache)
+        {
+            vkDestroyFramebuffer(
+                m_Device->GetLogicalDeviceHandle(),
+                framebuffer.second,
+                m_Allocator);
+            VA_ENGINE_TRACE("[VulkanFramebufferCache] Framebuffer destroyed.");
+        }
         m_FramebuffersCache.clear();
     }
 
