@@ -29,15 +29,12 @@ namespace VoidArchitect
         // Check if the texture is in the cache
         for (uint32_t i = 0; i < m_Textures.size(); i++)
         {
-            if (m_Textures[i]->m_Name == name)
-                return i;
+            if (m_Textures[i]->m_Name == name) return i;
         }
 
         // If not found, load the texture from a file
-        const auto imageDefinition =
-            g_ResourceSystem->LoadResource<Resources::Loaders::ImageDataDefinition>(
-                ResourceType::Image,
-                name);
+        const auto imageDefinition = g_ResourceSystem->LoadResource<
+            Resources::Loaders::ImageDataDefinition>(ResourceType::Image, name);
 
         Resources::Texture2D* rawPtr = Renderer::g_RenderSystem->GetRHI()->CreateTexture2D(
             name,
@@ -64,6 +61,11 @@ namespace VoidArchitect
 
         VA_ENGINE_WARN("[RenderCommand] Failed to create a texture {}.", name);
         return Resources::InvalidTextureHandle;
+    }
+
+    Resources::ITexture* TextureSystem::GetPointerFor(const Resources::TextureHandle handle) const
+    {
+        return m_Textures[handle].get();
     }
 
     Resources::TextureHandle TextureSystem::CreateTexture2D(

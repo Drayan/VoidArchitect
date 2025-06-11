@@ -76,6 +76,12 @@ namespace VoidArchitect
         return m_RenderPasses[handle].get();
     }
 
+    const Resources::RenderPassSignature& RenderPassSystem::GetSignatureFor(
+        const RenderPassHandle passHandle) const
+    {
+        return m_RenderPasses[passHandle]->GetSignature();
+    }
+
     RenderPassHandle RenderPassSystem::GetFreeHandle()
     {
         // If we have a free handle in the queue, return that first

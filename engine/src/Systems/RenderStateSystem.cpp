@@ -14,6 +14,16 @@ namespace VoidArchitect
 {
     RenderStateSystem::RenderStateSystem() { LoadDefaultRenderStates(); }
 
+    RenderStateSystem::~RenderStateSystem()
+    {
+        for (uint32_t i = 0; i < m_RenderStates.size(); ++i)
+        {
+            delete m_RenderStates[i].renderStatePtr;
+        }
+        m_RenderStates.clear();
+        m_ConfigMap.clear();
+    }
+
     void RenderStateSystem::RegisterPermutation(const RenderStateConfig& config)
     {
         // First, check the config map if this particular permutation exists or not
@@ -80,7 +90,7 @@ namespace VoidArchitect
             return InvalidRenderStateHandle;
         }
 
-        const RenderStateData node{RenderStateLoadingState::Unloaded, renderStatePtr};
+        const RenderStateData node = {RenderStateLoadingState::Unloaded, config, renderStatePtr};
         const auto handle = GetFreeRenderStateHandle();
         m_RenderStates[handle] = node;
         m_RenderStateCache[key] = handle;
@@ -91,6 +101,11 @@ namespace VoidArchitect
     Resources::IRenderState* RenderStateSystem::GetPointerFor(const RenderStateHandle handle)
     {
         return m_RenderStates[handle].renderStatePtr;
+    }
+
+    const RenderStateConfig& RenderStateSystem::GetConfigFor(const RenderStateHandle handle)
+    {
+        return m_RenderStates[handle].config;
     }
 
     Resources::IRenderState* RenderStateSystem::CreateRenderState(
@@ -247,7 +262,7 @@ namespace VoidArchitect
             Renderer::ResourceBinding{
                 Renderer::ResourceBindingType::ConstantBuffer,
                 0,
-                Resources::ShaderStage::Vertex
+                Resources::ShaderStage::All
             },
             Renderer::ResourceBinding{
                 Renderer::ResourceBindingType::Texture2D,
@@ -283,13 +298,13 @@ namespace VoidArchitect
             Renderer::ResourceBinding{
                 Renderer::ResourceBindingType::ConstantBuffer,
                 0,
-                Resources::ShaderStage::Vertex
+                Resources::ShaderStage::All
             },
             Renderer::ResourceBinding{
                 Renderer::ResourceBindingType::Texture2D,
                 1,
                 Resources::ShaderStage::Pixel
-            }
+            },
         };
 
         RegisterPermutation(uiRenderStateConfig);

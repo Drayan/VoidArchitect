@@ -20,70 +20,15 @@ namespace VoidArchitect
     namespace Renderer
     {
         RenderSystem::RenderSystem(Platform::RHI_API_TYPE apiType, std::unique_ptr<Window>& window)
+            : m_MainCamera(45.0f, 1.f, 0.1f, 1000.f)
         {
             m_ApiType = apiType;
 
             m_Width = window->GetWidth();
             m_Height = window->GetHeight();
 
-            // Retrieve Pipeline's shared resources setup.
-            // TODO: Actually this should be revised.
-            // const RenderStateInputLayout sharedInputLayout{
-            //     VAArray{
-            //         // Global Space
-            //         SpaceLayout{
-            //             0,
-            //             VAArray{
-            //                 // Global UBO
-            //                 ResourceBinding{
-            //                     ResourceBindingType::ConstantBuffer,
-            //                     0,
-            //                     Resources::ShaderStage::All,
-            //                     std::vector{
-            //                         // Projection
-            //                         BufferBinding{0, AttributeType::Mat4, AttributeFormat::Float32},
-            //                         // View
-            //                         BufferBinding{1, AttributeType::Mat4, AttributeFormat::Float32},
-            //                         // UI Projection
-            //                         BufferBinding{2, AttributeType::Mat4, AttributeFormat::Float32},
-            //                         // Light Direction
-            //                         BufferBinding{3, AttributeType::Vec4, AttributeFormat::Float32},
-            //                         // Light Color
-            //                         BufferBinding{4, AttributeType::Vec4, AttributeFormat::Float32}
-            //                     },
-            //                 }
-            //             },
-            //         },
-            //         // Material Space
-            //         SpaceLayout{
-            //             1,
-            //             VAArray{
-            //                 // Material UBO
-            //                 ResourceBinding{
-            //                     ResourceBindingType::ConstantBuffer,
-            //                     0,
-            //                     Resources::ShaderStage::Pixel,
-            //                     std::vector{
-            //                         // Diffuse Color
-            //                         BufferBinding{0, AttributeType::Vec4, AttributeFormat::Float32}
-            //                     }
-            //                 },
-            //                 // Diffuse Map
-            //                 ResourceBinding{
-            //                     ResourceBindingType::Texture2D,
-            //                     1,
-            //                     Resources::ShaderStage::Pixel
-            //                 },
-            //                 // Specular Map
-            //                 ResourceBinding{
-            //                     ResourceBindingType::Texture2D,
-            //                     2,
-            //                     Resources::ShaderStage::Pixel
-            //                 }
-            //             }
-            //         }
-            //     }
-            // };
+            m_MainCamera.SetPosition(Math::Vec3(0.f, 0.f, 3.f));
+            m_MainCamera.SetAspectRatio(static_cast<float>(m_Width) / static_cast<float>(m_Height));
 
             // Initialize the RHI
             switch (apiType)
@@ -146,7 +91,7 @@ namespace VoidArchitect
 
             // --- Add passes to the graph. ---
             m_RenderGraph.AddPass("ForwardOpaque", &m_ForwardOpaquePassRenderer);
-            // m_RenderGraph.AddPass("UI", &m_UIPassRenderer);
+            m_RenderGraph.AddPass("UI", &m_UIPassRenderer);
 
             // --- Set up the graph. ---
             m_RenderGraph.Setup();
@@ -164,7 +109,25 @@ namespace VoidArchitect
             // --- Step 4: Execution ---
             // Execute rendering.
 
-            RenderContext context{*m_RHI};
+            m_MainCamera.RecalculateView();
+            const auto aspectRatio = static_cast<float>(m_Width) / static_cast<float>(m_Height);
+            const auto UIProjectionMatrix = Math::Mat4::Orthographic(
+                0.f,
+                1.0f,
+                0.f,
+                1.0f / aspectRatio,
+                -1.0f,
+                1.0f);
+
+            Resources::GlobalUniformObject ubo{};
+            ubo.View = m_MainCamera.GetView();
+            ubo.Projection = m_MainCamera.GetProjection();
+            ubo.LightColor = Math::Vec4::One();
+            ubo.LightDirection = Math::Vec4::Zero() - Math::Vec4(0.f, 1.f, 1.f, 0.f);
+            ubo.ViewPosition = Math::Vec4(m_MainCamera.GetPosition(), 1.0f);
+            ubo.UIProjection = UIProjectionMatrix;
+
+            m_RHI->UpdateGlobalState(ubo);
             for (const auto& step : executionPlan)
             {
                 // Ask the RenderPassSystem the handle for the config of this pass.
@@ -172,6 +135,8 @@ namespace VoidArchitect
                     step.passConfig,
                     step.passPosition);
 
+                const auto& passSignature = g_RenderPassSystem->GetSignatureFor(passHandle);
+                RenderContext context{*m_RHI.get(), {frameTime}, passHandle, passSignature};
                 // Get the handles of RenderTargets
                 m_RHI->BeginRenderPass(passHandle, step.renderTargets);
                 step.passRenderer->Execute(context);

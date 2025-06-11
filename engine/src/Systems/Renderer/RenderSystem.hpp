@@ -2,6 +2,7 @@
 // Created by Michael Desmedt on 07/06/2025.
 //
 #pragma once
+#include "Camera.hpp"
 #include "PassRenderers.hpp"
 #include "RenderGraph.hpp"
 
@@ -38,6 +39,8 @@ namespace VoidArchitect
 
             ForwardOpaquePassRenderer m_ForwardOpaquePassRenderer;
             UIPassRenderer m_UIPassRenderer;
+
+            Camera m_MainCamera;
         };
 
         inline std::unique_ptr<RenderSystem> g_RenderSystem;

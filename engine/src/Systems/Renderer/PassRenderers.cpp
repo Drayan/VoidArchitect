@@ -9,6 +9,7 @@
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Systems/MaterialSystem.hpp"
+#include "Systems/MeshSystem.hpp"
 #include "Systems/RenderPassSystem.hpp"
 
 namespace VoidArchitect::Renderer
@@ -22,6 +23,7 @@ namespace VoidArchitect::Renderer
 
     void ForwardOpaquePassRenderer::Setup(RenderGraphBuilder& builder)
     {
+        g_MeshSystem->CreateCube("TestCube");
         builder.ReadsFrom("TestMaterial").WritesToColorBuffer().WritesToDepthBuffer();
     }
 
@@ -45,13 +47,6 @@ namespace VoidArchitect::Renderer
 
     void ForwardOpaquePassRenderer::Execute(const RenderContext& context)
     {
-        // if (!context.RenderState)
-        // {
-        //     VA_ENGINE_ERROR(
-        //         "[ForwardOpaquePassRenderer] No render state provided by the RenderGraph.");
-        //     return;
-        // }
-
         const auto testMat = g_MaterialSystem->GetHandleFor("TestMaterial");
         if (testMat == InvalidMaterialHandle)
         {
@@ -60,26 +55,30 @@ namespace VoidArchitect::Renderer
         }
 
         // Render test geometry
-        // auto defaultMat = g_MaterialSystem->GetCachedMaterial(
-        //     "TestMaterial",
-        //     RenderPassType::ForwardOpaque,
-        //     context.RenderState->GetUUID());
-        //
-        // if (!defaultMat)
-        // {
-        //     VA_ENGINE_WARN("[ForwardOpaquePassRenderer] No default material found.");
-        //     return;
-        // }
-        //
-        // static float angle = 0.f;
-        // angle += (0.5f * context.FrameData.deltaTime);
-        // const auto geometry = Resources::GeometryRenderData(
-        //     Math::Mat4::Rotate(angle, Math::Vec3::Up()),
-        //     defaultMat,
-        //     RenderCommand::s_TestMesh);
-        //
-        // defaultMat->Bind(context.Rhi, context.RenderState);
-        // context.Rhi.DrawMesh(geometry, context.RenderState);
+        static float angle = 0.f;
+        angle += (0.5f * context.frameData.deltaTime);
+        auto handle = g_MeshSystem->GetHandleFor("TestCube");
+        const auto geometry = Resources::GeometryRenderData(
+            Math::Mat4::Rotate(angle, Math::Vec3::Up()),
+            testMat,
+            handle);
+
+        const RenderStateCacheKey key = {
+            g_MaterialSystem->GetClass(testMat),
+            RenderPassType::ForwardOpaque,
+            VertexFormat::PositionNormalUV,
+            context.currentPassSignature
+        };
+        const auto stateHandle = g_RenderStateSystem->GetHandleFor(key, context.currentPassHandle);
+        context.rhi.BindRenderState(stateHandle);
+        context.rhi.BindMaterial(geometry.Material, stateHandle);
+
+        context.rhi.PushConstants(
+            Resources::ShaderStage::Vertex,
+            sizeof(Math::Mat4),
+            &geometry.Model);
+        context.rhi.BindMesh(geometry.Mesh);
+        context.rhi.DrawIndexed(g_MeshSystem->GetIndexCountFor(handle));
     }
 
     //==============================================================================================
@@ -88,21 +87,23 @@ namespace VoidArchitect::Renderer
 
     void UIPassRenderer::Setup(RenderGraphBuilder& builder)
     {
+        g_MeshSystem->CreateQuad("UIQuad", 0.15f, 0.15f);
+        builder.ReadsFromColorBuffer().WritesToColorBuffer();
     }
 
     Renderer::RenderPassConfig UIPassRenderer::GetRenderPassConfig() const
     {
-        return {};
+        RenderPassConfig config;
+        config.attachments = {
+            {"color", TextureFormat::SWAPCHAIN_FORMAT, LoadOp::Load, StoreOp::Store,}
+        };
+        config.type = RenderPassType::UI;
+        config.name = m_Name;
+        return config;
     }
 
     void UIPassRenderer::Execute(const RenderContext& context)
     {
-        // if (!context.RenderState)
-        // {
-        //     VA_ENGINE_ERROR("[UIPassRenderer] No render state provided by the RenderGraph.");
-        //     return;
-        // }
-
         // Create a simple UI quad in normalized coordinates (-1 to +1)
         // auto uiMesh = RenderCommand::s_UIMesh;
         // if (!uiMesh)
@@ -110,26 +111,35 @@ namespace VoidArchitect::Renderer
         //     VA_ENGINE_ERROR("[UIPassRenderer] Failed to create UI mesh.");
         //     return;
         // }
+        const auto uiMaterial = g_MaterialSystem->GetHandleFor("DefaultUI");
+        if (uiMaterial == InvalidMaterialHandle)
+        {
+            VA_ENGINE_ERROR("[UIPassRenderer] Failed to get default material.");
+            return;
+        }
 
-        // Use default material for now
-        // auto uiMaterial = g_MaterialSystem->GetCachedMaterial(
-        //     "DefaultUI",
-        //     RenderPassType::UI,
-        //     context.RenderState->GetUUID());
-        // if (!uiMaterial)
-        // {
-        //     VA_ENGINE_ERROR("[UIPassRenderer] Failed to get default material.");
-        //     return;
-        // }
-        //
-        // // Create geometry render data
-        // const auto uiGeometry = Resources::GeometryRenderData(
-        //     Math::Mat4::Translate(0.15f * 0.5f, 0.15f * 0.5f, 0.f),
-        //     uiMaterial,
-        //     uiMesh);
-        //
+        // Create geometry render data
+        const auto uiGeometry = Resources::GeometryRenderData(
+            Math::Mat4::Translate(0.15f * 0.5f, 0.15f * 0.5f, 0.f),
+            uiMaterial,
+            g_MeshSystem->GetHandleFor("UIQuad"));
+
         // // Render the UI quad
-        // uiMaterial->Bind(context.Rhi, context.RenderState);
-        // context.Rhi.DrawMesh(uiGeometry, context.RenderState);
+        const RenderStateCacheKey key = {
+            g_MaterialSystem->GetClass(uiMaterial),
+            RenderPassType::UI,
+            VertexFormat::PositionNormalUV,
+            context.currentPassSignature
+        };
+        const auto stateHandle = g_RenderStateSystem->GetHandleFor(key, context.currentPassHandle);
+        context.rhi.BindRenderState(stateHandle);
+        context.rhi.BindMaterial(uiGeometry.Material, stateHandle);
+
+        context.rhi.PushConstants(
+            Resources::ShaderStage::Vertex,
+            sizeof(Math::Mat4),
+            &uiGeometry.Model);
+        context.rhi.BindMesh(uiGeometry.Mesh);
+        context.rhi.DrawIndexed(g_MeshSystem->GetIndexCountFor(uiGeometry.Mesh));
     }
 }

@@ -8,6 +8,11 @@
 
 namespace VoidArchitect
 {
+    class IBuffer;
+}
+
+namespace VoidArchitect
+{
     class MeshSystem;
 
     namespace Platform
@@ -34,9 +39,9 @@ namespace VoidArchitect
         public:
             virtual ~IMesh() = default;
 
-            virtual void Bind(Platform::IRenderingHardware& rhi) = 0;
-
-            virtual uint32_t GetIndicesCount() = 0;
+            virtual IBuffer* GetVertexBuffer() const = 0;
+            virtual IBuffer* GetIndexBuffer() const = 0;
+            virtual uint32_t GetIndicesCount() const = 0;
 
         protected:
             explicit IMesh(std::string name);

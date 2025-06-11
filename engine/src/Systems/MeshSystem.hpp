@@ -27,6 +27,8 @@ namespace VoidArchitect
             const VAArray<Resources::MeshVertex>& vertices,
             const VAArray<uint32_t>& indices);
 
+        uint32_t GetIndexCountFor(Resources::MeshHandle handle) const;
+
         Resources::MeshHandle CreateSphere(
             const std::string& name,
             float radius = 0.5f,

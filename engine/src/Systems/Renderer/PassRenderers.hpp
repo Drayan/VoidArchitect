@@ -5,6 +5,12 @@
 #include <any>
 
 #include "RendererTypes.hpp"
+#include "Systems/RenderPassSystem.hpp"
+
+namespace VoidArchitect::Resources
+{
+    struct RenderPassSignature;
+}
 
 namespace VoidArchitect
 {
@@ -31,13 +37,10 @@ namespace VoidArchitect
 
         struct RenderContext
         {
-            Platform::IRenderingHardware& Rhi;
-            // const FrameData& FrameData;
-            // const Resources::RenderPassPtr& RenderPass;
-            // const Resources::RenderTargetPtr& RenderTarget;
-            // const Resources::RenderStatePtr& RenderState;
-            //
-            // VAHashMap<std::string, std::any> passData;
+            Platform::IRenderingHardware& rhi;
+            const FrameData& frameData;
+            const RenderPassHandle currentPassHandle;
+            const Resources::RenderPassSignature& currentPassSignature;
         };
 
         class IPassRenderer

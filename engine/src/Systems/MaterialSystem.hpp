@@ -35,9 +35,11 @@ namespace VoidArchitect
         ~MaterialSystem();
 
         MaterialHandle GetHandleFor(const std::string& name);
-        MaterialHandle GetHandleForDefaultMaterial() { return 0; };
+        MaterialHandle GetHandleForDefaultMaterial() { return 0; }
+        Renderer::MaterialClass GetClass(MaterialHandle handle) const;
 
         MaterialTemplate& GetTemplateFor(MaterialHandle handle);
+        Resources::IMaterial* GetPointerFor(MaterialHandle handle) const;;
 
         // Interaction with Material
         void Bind(MaterialHandle handle, RenderStateHandle stateHandle);

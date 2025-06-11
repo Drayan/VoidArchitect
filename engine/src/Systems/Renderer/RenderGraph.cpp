@@ -208,6 +208,9 @@ namespace VoidArchitect::Renderer
 
     void RenderGraph::AddEdge(PassNode* from, PassNode* to)
     {
+        // Don't allow self-relation
+        if (from == to) return;
+
         // Don't allow double relation
         if (std::ranges::find(from->successors, to) == from->successors.end())
         {

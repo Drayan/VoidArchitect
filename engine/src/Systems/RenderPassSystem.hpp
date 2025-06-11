@@ -92,6 +92,7 @@ namespace VoidArchitect
         void ReleasePass(RenderPassHandle handle);
 
         [[nodiscard]] Resources::IRenderPass* GetPointerFor(uint32_t handle) const;
+        const Resources::RenderPassSignature& GetSignatureFor(RenderPassHandle passHandle) const;
 
     private:
         static Resources::IRenderPass* CreateRenderPass(

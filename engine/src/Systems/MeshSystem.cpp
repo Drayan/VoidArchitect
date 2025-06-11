@@ -28,6 +28,11 @@ namespace VoidArchitect
         return Resources::InvalidMeshHandle;
     }
 
+    uint32_t MeshSystem::GetIndexCountFor(const Resources::MeshHandle handle) const
+    {
+        return m_Meshes[handle]->GetIndicesCount();
+    }
+
     Resources::MeshHandle MeshSystem::GetHandleFor(
         const std::string& name,
         const VAArray<Resources::MeshVertex>& vertices,
@@ -36,8 +41,7 @@ namespace VoidArchitect
         // Check if the mesh already exists
         for (uint32_t i = 0; i < m_Meshes.size(); i++)
         {
-            if (m_Meshes[i]->m_Name == name)
-                return i;
+            if (m_Meshes[i]->m_Name == name) return i;
         }
 
         // This is the first time the system is asked a handle for this Mesh.
@@ -53,8 +57,10 @@ namespace VoidArchitect
         const VAArray<Resources::MeshVertex>& vertices,
         const VAArray<uint32_t>& indices)
     {
-        Resources::IMesh* mesh =
-            Renderer::g_RenderSystem->GetRHI()->CreateMesh(name, vertices, indices);
+        Resources::IMesh* mesh = Renderer::g_RenderSystem->GetRHI()->CreateMesh(
+            name,
+            vertices,
+            indices);
         if (!mesh)
         {
             VA_ENGINE_WARN("[MeshSystem] Failed to create mesh '{}'.", name);
@@ -76,15 +82,15 @@ namespace VoidArchitect
 
         for (uint32_t lat = 0; lat <= latitudeBands; ++lat)
         {
-            const float theta =
-                static_cast<float>(lat) * Math::PI / static_cast<float>(latitudeBands);
+            const float theta = static_cast<float>(lat) * Math::PI / static_cast<float>(
+                latitudeBands);
             const float sinTheta = std::sin(theta);
             const float cosTheta = std::cos(theta);
 
             for (uint32_t lon = 0; lon <= longitudeBands; ++lon)
             {
-                const float phi =
-                    static_cast<float>(lon) * Math::PI * 2.0f / static_cast<float>(longitudeBands);
+                const float phi = static_cast<float>(lon) * Math::PI * 2.0f / static_cast<float>(
+                    longitudeBands);
                 const float sinPhi = std::sin(phi);
                 const float cosPhi = std::cos(phi);
 
@@ -293,8 +299,7 @@ namespace VoidArchitect
         const float halfWidth = width * 0.5f;
         const float halfHeight = height * 0.5f;
 
-        const VAArray<Resources::MeshVertex> vertices
-        {
+        const VAArray<Resources::MeshVertex> vertices{
             {Math::Vec3(-halfWidth, -halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(0.0f, 0.0f)},
             {Math::Vec3(halfWidth, -halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(1.0f, 0.0f)},
             {Math::Vec3(halfWidth, halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(1.0f, 1.0f)},
@@ -322,9 +327,9 @@ namespace VoidArchitect
         Math::Vec3 tangent, bitangent;
 
         auto reference = Math::Vec3::Up();
-        if (std::abs(Math::Vec3::Cross(n, reference).X()) < Math::EPSILON
-            && std::abs(Math::Vec3::Cross(n, reference).Y()) < Math::EPSILON
-            && std::abs(Math::Vec3::Cross(n, reference).Z()) < Math::EPSILON)
+        if (std::abs(Math::Vec3::Cross(n, reference).X()) < Math::EPSILON && std::abs(
+            Math::Vec3::Cross(n, reference).Y()) < Math::EPSILON && std::abs(
+            Math::Vec3::Cross(n, reference).Z()) < Math::EPSILON)
         {
             reference = Math::Vec3::Right();
         }

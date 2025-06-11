@@ -10,9 +10,7 @@
 
 namespace VoidArchitect::Platform
 {
-    VulkanMaterial::VulkanMaterial(
-        const std::string& name,
-        const MaterialTemplate& config)
+    VulkanMaterial::VulkanMaterial(const std::string& name, const MaterialTemplate& config)
         : IMaterial(name),
           m_Template(config)
     {
@@ -27,6 +25,7 @@ namespace VoidArchitect::Platform
         {
             m_UniformData.DiffuseColor = color;
             m_IsDirty = true;
+            m_Generation++;
         }
     }
 
@@ -38,6 +37,7 @@ namespace VoidArchitect::Platform
         {
             m_Textures[use] = texture;
             m_IsDirty = true;
+            m_Generation++;
         }
     }
 

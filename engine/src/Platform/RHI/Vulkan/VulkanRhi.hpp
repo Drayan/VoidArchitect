@@ -39,9 +39,12 @@ namespace VoidArchitect::Platform
         void EndRenderPass() override;
 
         void UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) override;
-        void BindGlobalState(const Resources::RenderStatePtr& pipeline) override;
 
+        void BindRenderState(RenderStateHandle stateHandle) override;
         void BindMaterial(MaterialHandle materialHandle, RenderStateHandle stateHandle) override;
+        void BindMesh(Resources::MeshHandle meshHandle) override;
+        void DrawIndexed(uint32_t indexCount) override;
+        void PushConstants(Resources::ShaderStage stage, uint32_t size, const void* data) override;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////

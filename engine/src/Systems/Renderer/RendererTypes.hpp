@@ -160,6 +160,11 @@ namespace VoidArchitect::Renderer
         UI
     };
 
+    struct FrameData
+    {
+        float deltaTime;
+    };
+
     struct RenderPassConfig
     {
         std::string name;

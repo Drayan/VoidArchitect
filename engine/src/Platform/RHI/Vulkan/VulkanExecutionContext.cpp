@@ -8,6 +8,7 @@
 #include "VulkanDevice.hpp"
 #include "VulkanFence.hpp"
 #include "VulkanFramebufferCache.hpp"
+#include "VulkanMesh.hpp"
 #include "VulkanPipeline.hpp"
 #include "VulkanRenderPass.hpp"
 #include "VulkanRenderTarget.hpp"
@@ -16,6 +17,7 @@
 #include "VulkanUtils.hpp"
 #include "Core/Logger.hpp"
 #include "Resources/Material.hpp"
+#include "Systems/MeshSystem.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -269,20 +271,27 @@ namespace VoidArchitect::Platform
             nullptr);
     }
 
-    void VulkanExecutionContext::BindGlobalState(const Resources::RenderStatePtr& pipeline)
+    void VulkanExecutionContext::BindRenderState(RenderStateHandle stateHandle)
     {
         const auto& cmdBuf = GetCurrentCommandBuffer();
-        const auto& vkPipeline = std::dynamic_pointer_cast<VulkanPipeline>(pipeline);
+        const auto* vkRenderState = dynamic_cast<VulkanPipeline*>(g_RenderStateSystem->
+            GetPointerFor(stateHandle));
+        vkCmdBindPipeline(
+            cmdBuf.GetHandle(),
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            vkRenderState->GetHandle());
 
         vkCmdBindDescriptorSets(
             cmdBuf.GetHandle(),
             VK_PIPELINE_BIND_POINT_GRAPHICS,
-            vkPipeline->GetPipelineLayout(),
+            vkRenderState->GetPipelineLayout(),
             0,
             1,
             &m_GlobalDescriptorSets[m_ImageIndex],
             0,
             nullptr);
+
+        m_LastBoundPipelineLayout = vkRenderState->GetPipelineLayout();
     }
 
     void VulkanExecutionContext::BindMaterialGroup(
@@ -292,6 +301,40 @@ namespace VoidArchitect::Platform
         const auto& cmdBuf = GetCurrentCommandBuffer();
 
         g_VkBindingGroupManager->BindMaterialGroup(cmdBuf.GetHandle(), materialHandle, stateHandle);
+    }
+
+    void VulkanExecutionContext::BindMesh(const Resources::MeshHandle meshHandle)
+    {
+        const auto& cmdBuf = GetCurrentCommandBuffer();
+        const auto* vkMesh = dynamic_cast<VulkanMesh*>(g_MeshSystem->GetPointerFor(meshHandle));
+        const auto* vkVertices = dynamic_cast<VulkanVertexBuffer*>(vkMesh->GetVertexBuffer());
+        const auto* vkIndices = dynamic_cast<VulkanIndexBuffer*>(vkMesh->GetIndexBuffer());
+
+        const VkDeviceSize offsets = {0};
+        const auto vertBuf = vkVertices->GetHandle();
+        vkCmdBindVertexBuffers(cmdBuf.GetHandle(), 0, 1, &vertBuf, &offsets);
+        vkCmdBindIndexBuffer(cmdBuf.GetHandle(), vkIndices->GetHandle(), 0, VK_INDEX_TYPE_UINT32);
+    }
+
+    void VulkanExecutionContext::PushConstants(
+        const Resources::ShaderStage stage,
+        const uint32_t size,
+        const void* data)
+    {
+        const auto& cmdBuf = GetCurrentCommandBuffer();
+        vkCmdPushConstants(
+            cmdBuf.GetHandle(),
+            m_LastBoundPipelineLayout,
+            TranslateEngineShaderStageToVulkan(stage),
+            0,
+            size,
+            data);
+    }
+
+    void VulkanExecutionContext::DrawIndexed(const uint32_t indexCount)
+    {
+        const auto& cmdBuf = GetCurrentCommandBuffer();
+        vkCmdDrawIndexed(cmdBuf.GetHandle(), indexCount, 1, 0, 0, 0);
     }
 
     void VulkanExecutionContext::RequestResize(const uint32_t width, const uint32_t height)

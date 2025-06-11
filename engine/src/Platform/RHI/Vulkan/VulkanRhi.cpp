@@ -123,9 +123,9 @@ namespace VoidArchitect::Platform
         g_VkExecutionContext->UpdateGlobalState(gUBO);
     }
 
-    void VulkanRHI::BindGlobalState(const Resources::RenderStatePtr& pipeline)
+    void VulkanRHI::BindRenderState(RenderStateHandle stateHandle)
     {
-        g_VkExecutionContext->BindGlobalState(pipeline);
+        g_VkExecutionContext->BindRenderState(stateHandle);
     }
 
     void VulkanRHI::BindMaterial(
@@ -133,6 +133,24 @@ namespace VoidArchitect::Platform
         const RenderStateHandle stateHandle)
     {
         g_VkExecutionContext->BindMaterialGroup(materialHandle, stateHandle);
+    }
+
+    void VulkanRHI::BindMesh(Resources::MeshHandle meshHandle)
+    {
+        g_VkExecutionContext->BindMesh(meshHandle);
+    }
+
+    void VulkanRHI::DrawIndexed(uint32_t indexCount)
+    {
+        g_VkExecutionContext->DrawIndexed(indexCount);
+    }
+
+    void VulkanRHI::PushConstants(
+        const Resources::ShaderStage stage,
+        const uint32_t size,
+        const void* data)
+    {
+        g_VkExecutionContext->PushConstants(stage, size, data);
     }
 
     Resources::Texture2D* VulkanRHI::CreateTexture2D(

@@ -68,9 +68,15 @@ namespace VoidArchitect::Platform
         virtual void EndRenderPass() = 0;
 
         virtual void UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) = 0;
-        virtual void BindGlobalState(const Resources::RenderStatePtr& renderState) = 0;
 
+        virtual void BindRenderState(RenderStateHandle stateHandle) = 0;
         virtual void BindMaterial(MaterialHandle materialHandle, RenderStateHandle stateHandle) = 0;
+        virtual void BindMesh(Resources::MeshHandle meshHandle) = 0;
+        virtual void PushConstants(
+            Resources::ShaderStage stage,
+            uint32_t size,
+            const void* data) = 0;
+        virtual void DrawIndexed(uint32_t indexCount) = 0;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////

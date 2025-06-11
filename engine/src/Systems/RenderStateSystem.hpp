@@ -62,7 +62,7 @@ namespace VoidArchitect
     {
     public:
         RenderStateSystem();
-        ~RenderStateSystem() = default;
+        ~RenderStateSystem();
 
         void RegisterPermutation(const RenderStateConfig& config);
         RenderStateHandle GetHandleFor(const RenderStateCacheKey& key, RenderPassHandle passHandle);
@@ -70,6 +70,7 @@ namespace VoidArchitect
         void Bind(RenderStateHandle handle);
 
         Resources::IRenderState* GetPointerFor(RenderStateHandle handle);
+        const RenderStateConfig& GetConfigFor(RenderStateHandle handle);
 
     private:
         static Resources::IRenderState* CreateRenderState(
@@ -90,6 +91,7 @@ namespace VoidArchitect
         struct RenderStateData
         {
             RenderStateLoadingState state = RenderStateLoadingState::Unloaded;
+            RenderStateConfig config;
             Resources::IRenderState* renderStatePtr = nullptr;
         };
 

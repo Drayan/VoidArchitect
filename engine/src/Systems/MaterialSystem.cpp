@@ -84,9 +84,22 @@ namespace VoidArchitect
         return handle;
     }
 
+    Renderer::MaterialClass MaterialSystem::GetClass(const MaterialHandle handle) const
+    {
+        const auto& node = m_Materials[handle];
+        if (node.config.renderStateClass.empty() || node.config.renderStateClass != "UI") return
+            Renderer::MaterialClass::Standard;
+        else return Renderer::MaterialClass::UI;
+    }
+
     MaterialTemplate& MaterialSystem::GetTemplateFor(const MaterialHandle handle)
     {
         return m_Materials[handle].config;
+    }
+
+    Resources::IMaterial* MaterialSystem::GetPointerFor(const MaterialHandle handle) const
+    {
+        return m_Materials[handle].materialPtr;
     }
 
     void MaterialSystem::Bind(const MaterialHandle handle, const RenderStateHandle stateHandle)

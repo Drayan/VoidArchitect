@@ -54,9 +54,12 @@ namespace VoidArchitect::Platform
         void EndRenderPass() const;
 
         void UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) const;
-        void BindGlobalState(const Resources::RenderStatePtr& pipeline);
 
+        void BindRenderState(RenderStateHandle stateHandle);
         void BindMaterialGroup(MaterialHandle materialHandle, RenderStateHandle stateHandle);
+        void BindMesh(Resources::MeshHandle meshHandle);
+        void PushConstants(Resources::ShaderStage stage, uint32_t size, const void* data);
+        void DrawIndexed(uint32_t indexCount);
 
         void RequestResize(const uint32_t width, const uint32_t height);
 
@@ -104,6 +107,7 @@ namespace VoidArchitect::Platform
         VAArray<VulkanFence> m_ImageAcquisitionFences;
 
         VAArray<VulkanCommandBuffer> m_GraphicsCommandBuffers;
+        VkPipelineLayout m_LastBoundPipelineLayout = VK_NULL_HANDLE;
 
         VkDescriptorPool m_GlobalDescriptorPool;
         VkDescriptorSetLayout m_GlobalDescriptorSetLayout;

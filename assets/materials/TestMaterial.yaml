@@ -4,13 +4,13 @@ material:
   bindings:
     - binding: 0
       type: "ConstantBuffer"
-      stage: "All"
+      stage: "all"
     - binding: 1
       type: "Texture2D"
-      stage: "Pixel"
+      stage: "pixel"
     - binding: 2
       type: "Texture2D"
-      stage: "Pixel"
+      stage: "pixel"
   properties:
     diffuse_color: [ 1.0, 1.0, 1.0, 1.0 ]
     specular: 64.0

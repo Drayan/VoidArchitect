@@ -7,9 +7,12 @@
 
 #include "VulkanBuffer.hpp"
 #include "VulkanDevice.hpp"
+#include "VulkanMaterial.hpp"
 #include "VulkanPipeline.hpp"
+#include "VulkanTexture.hpp"
 #include "VulkanUtils.hpp"
 #include "Systems/MaterialSystem.hpp"
+#include "Systems/TextureSystem.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -74,8 +77,30 @@ namespace VoidArchitect::Platform
             return it->second;
         }
 
-        VA_ENGINE_ERROR("[VulkanBindingGroupManager] No compatible layout found.");
-        return VK_NULL_HANDLE;
+        // If not found, create a new layout
+        VAArray<VkDescriptorSetLayoutBinding> vkBindings;
+        for (const auto& bindingConfig : stateConfig.expectedBindings)
+        {
+            VkDescriptorSetLayoutBinding binding{};
+            binding.binding = bindingConfig.binding;
+            binding.descriptorType = TranslateEngineResourceTypeToVulkan(bindingConfig.type);
+            binding.descriptorCount = 1;
+            binding.stageFlags = TranslateEngineShaderStageToVulkan(bindingConfig.stage);
+            vkBindings.push_back(binding);
+        }
+
+        VkDescriptorSetLayoutCreateInfo layoutInfo{};
+        layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+        layoutInfo.bindingCount = static_cast<uint32_t>(vkBindings.size());
+        layoutInfo.pBindings = vkBindings.data();
+
+        VkDescriptorSetLayout layout;
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreateDescriptorSetLayout( m_Device->GetLogicalDeviceHandle(), &layoutInfo,
+                m_Allocator, &layout));
+
+        m_SetLayoutCache[hash] = layout;
+        return layout;
     }
 
     void VulkanBindingGroupManager::BindMaterialGroup(
@@ -88,6 +113,11 @@ namespace VoidArchitect::Platform
         {
             //TODO: Use a default error material.
             return;
+        }
+
+        if (NeedsUpdate(materialHandle))
+        {
+            UpdateData(materialHandle);
         }
 
         // 2. Get the descriptor set for this material
@@ -112,6 +142,10 @@ namespace VoidArchitect::Platform
             // if(g_MaterialSystem->IsDirty(materialHandle)) {
             //  UpdateDescriptorSet(materialSet, materialHandle);
             // }
+            if (NeedsUpdate(materialHandle))
+            {
+                UpdateDescriptorSet(materialSet, materialHandle);
+            }
         }
 
         // 3. Get the RenderState* from the system.
@@ -149,19 +183,26 @@ namespace VoidArchitect::Platform
     }
 
     bool VulkanBindingGroupManager::AreLayoutCompatible(
-        MaterialHandle MaterialHandle,
-        RenderStateHandle stateHandle)
+        const MaterialHandle MaterialHandle,
+        const RenderStateHandle stateHandle)
     {
-        // const auto& materialConfig = g_MaterialSystem->GetTemplateFor(MaterialHandle);
-        // const auto& stateConfig = g_RenderStateSystem->GetConfigFor(stateHandle);
-        //
-        // if (materialConfig.resourceBindings.size() != stateConfig.resourceBindings.size())
-        // {
-        //     VA_ENGINE_ERROR("[VulkanBindingGroupManager] Incompatible layout.");
-        //     return false;
-        // }
+        const auto& materialConfig = g_MaterialSystem->GetTemplateFor(MaterialHandle);
+        const auto& stateConfig = g_RenderStateSystem->GetConfigFor(stateHandle);
+
+        if (materialConfig.resourceBindings.size() != stateConfig.expectedBindings.size())
+        {
+            VA_ENGINE_ERROR("[VulkanBindingGroupManager] Incompatible layout.");
+            return false;
+        }
 
         //TODO: We should compare every member.
+        const auto materialBindingHash = materialConfig.GetBindingsHash();
+        const auto stateBindingHash = stateConfig.GetBindingsHash();
+        if (materialBindingHash != stateBindingHash)
+        {
+            VA_ENGINE_ERROR("[VulkanBindingGroupManager] Incompatible layout.");
+            return false;
+        }
 
         return true;
     }
@@ -222,6 +263,14 @@ namespace VoidArchitect::Platform
         MaterialHandle materialHandle)
     {
         const auto& materialConfig = g_MaterialSystem->GetTemplateFor(materialHandle);
+        const auto* vkMat = dynamic_cast<VulkanMaterial*>(g_MaterialSystem->GetPointerFor(
+            materialHandle));
+
+        if (!vkMat)
+        {
+            VA_ENGINE_ERROR("[VulkanBindingGroupManager] Failed to get vulkan material.");
+            return;
+        }
 
         // Pointer storage must live until the end
         VAArray<VkWriteDescriptorSet> descriptorWrites;
@@ -251,7 +300,46 @@ namespace VoidArchitect::Platform
             else if (bindingConfig.type == Renderer::ResourceBindingType::Texture2D)
             {
                 write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                //TODO: Retrieve texture from the TextureSystem
+
+                auto textureHandle = Resources::InvalidTextureHandle;
+                switch (bindingConfig.binding)
+                {
+                    case 1:
+                        textureHandle = vkMat->GetTexture(Resources::TextureUse::Diffuse);
+                        break;
+                    case 2:
+                        textureHandle = vkMat->GetTexture(Resources::TextureUse::Specular);
+                        break;
+                    default: VA_ENGINE_WARN(
+                            "[VulkanBindingGroupManager] Unsupported texture binding.");
+                        break;
+                }
+
+                if (textureHandle == Resources::InvalidTextureHandle)
+                    textureHandle = g_TextureSystem->GetDefaultTextureHandle();
+
+                auto vkTexture = dynamic_cast<VulkanTexture2D*>(g_TextureSystem->GetPointerFor(
+                    textureHandle));
+                if (!vkTexture)
+                {
+                    VA_ENGINE_ERROR("[VulkanBindingGroupManager] Invalid texture.");
+                    vkTexture = dynamic_cast<VulkanTexture2D*>(g_TextureSystem->GetPointerFor(
+                        g_TextureSystem->GetDefaultTextureHandle()));
+                    if (!vkTexture)
+                    {
+                        VA_ENGINE_CRITICAL(
+                            "[VulkanBindingGroupManager] Failed to get default texture.");
+                        throw std::runtime_error("Failed to get default texture.");
+                    }
+                }
+
+                VkDescriptorImageInfo imageInfo{};
+                imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                imageInfo.imageView = vkTexture->GetImageView();
+                imageInfo.sampler = vkTexture->GetSampler();
+
+                imageInfos.push_back(imageInfo);
+                write.pImageInfo = &imageInfos.back();
             }
 
             descriptorWrites.push_back(write);
@@ -263,5 +351,33 @@ namespace VoidArchitect::Platform
             descriptorWrites.data(),
             0,
             nullptr);
+    }
+
+    bool VulkanBindingGroupManager::NeedsUpdate(const MaterialHandle materialHandle)
+    {
+        auto& matTemplate = g_MaterialSystem->GetTemplateFor(materialHandle);
+        const auto* mat = g_MaterialSystem->GetPointerFor(materialHandle);
+
+        if (!mat) return false;
+
+        const auto currentGen = mat->GetGeneration();
+        if (m_MaterialGenerations.contains(materialHandle))
+        {
+            return currentGen != m_MaterialGenerations[materialHandle];
+        }
+
+        return true;
+    }
+
+    void VulkanBindingGroupManager::UpdateData(MaterialHandle materialHandle)
+    {
+        auto* mat = g_MaterialSystem->GetPointerFor(materialHandle);
+        if (!mat) return;
+
+        auto* vkMat = dynamic_cast<VulkanMaterial*>(mat);
+        if (!vkMat) return;
+
+        UpdateMaterialUBO(materialHandle, vkMat->GetUniformData());
+        m_MaterialGenerations[materialHandle] = mat->GetGeneration();
     }
 }

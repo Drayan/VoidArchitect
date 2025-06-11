@@ -15,7 +15,8 @@ namespace VoidArchitect
 
         Resources::TextureHandle GetHandleFor(const std::string& name);
 
-        Resources::ITexture* GetPointerFor(Resources::TextureHandle handle);
+        Resources::ITexture* GetPointerFor(Resources::TextureHandle handle) const;
+        Resources::TextureHandle GetDefaultTextureHandle() const { return m_DefaultTextureHandle; };
 
     private:
         Resources::TextureHandle CreateTexture2D(

@@ -213,6 +213,15 @@ namespace VoidArchitect::Platform
         // Set 1: Material UBO (from BindingGroupManager)
         descriptorSetLayouts.push_back(g_VkBindingGroupManager->GetLayoutFor(config));
 
+        if (std::ranges::any_of(
+            descriptorSetLayouts,
+            [](const auto& val) { return val == VK_NULL_HANDLE; }))
+        {
+            VA_ENGINE_CRITICAL(
+                "[VulkanResourceFactory] Invalid descriptor set layout. Application cannot continue.");
+            throw std::runtime_error("Invalid descriptor set layout.");
+        }
+
         // TODO: More spaces ?
 
         VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
@@ -280,7 +289,7 @@ namespace VoidArchitect::Platform
         rasterizerInfo.rasterizerDiscardEnable = VK_FALSE;
         rasterizerInfo.polygonMode = VK_POLYGON_MODE_FILL;
         rasterizerInfo.lineWidth = 1.0f;
-        rasterizerInfo.cullMode = VK_CULL_MODE_BACK_BIT;
+        rasterizerInfo.cullMode = VK_CULL_MODE_NONE;
         rasterizerInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizerInfo.depthBiasEnable = VK_FALSE;
 

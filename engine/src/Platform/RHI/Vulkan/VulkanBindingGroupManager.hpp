@@ -38,11 +38,13 @@ namespace VoidArchitect::Platform
             const Resources::MaterialUniformObject& ubo);
 
     private:
-        bool AreLayoutCompatible(MaterialHandle MaterialHandle, RenderStateHandle stateHandle);
+        static bool AreLayoutCompatible(MaterialHandle MaterialHandle, RenderStateHandle stateHandle);
         VkDescriptorSetLayout GetHandleFor(MaterialHandle materialHandle);
         VkDescriptorSet AllocateSet(VkDescriptorSetLayout layout);
 
         void UpdateDescriptorSet(VkDescriptorSet set, MaterialHandle materialHandle);
+        bool NeedsUpdate(MaterialHandle materialHandle);
+        void UpdateData(MaterialHandle materialHandle);
 
         std::unique_ptr<VulkanDevice>& m_Device;
         VkAllocationCallbacks* m_Allocator;
@@ -50,6 +52,7 @@ namespace VoidArchitect::Platform
         VkDescriptorPool m_DescriptorPool = VK_NULL_HANDLE;
         VAHashMap<size_t, VkDescriptorSetLayout> m_SetLayoutCache;
         VAHashMap<MaterialHandle, VkDescriptorSet> m_MaterialSetCache;
+        VAHashMap<MaterialHandle, uint32_t> m_MaterialGenerations;
 
         std::unique_ptr<VulkanBuffer> m_MaterialUniformBuffer;
         void* m_MaterialUniformBufferMemory = nullptr;
