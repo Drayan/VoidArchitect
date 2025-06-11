@@ -238,8 +238,8 @@ namespace VoidArchitect::Platform
         const uint32_t width,
         const uint32_t height) const
     {
-        if (m_Capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
-            return m_Capabilities.currentExtent;
+        if (m_Capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) return
+            m_Capabilities.currentExtent;
 
         VkExtent2D actualExtent = {width, height};
 
