@@ -18,6 +18,13 @@ namespace VoidArchitect
 
     namespace Renderer
     {
+        enum class RenderSystemDebugMode
+        {
+            None = 0,
+            Lighting = 1,
+            Normals = 2,
+        };
+
         class RenderSystem
         {
         public:
@@ -30,9 +37,11 @@ namespace VoidArchitect
             void Resize(uint32_t width, uint32_t height);
 
             std::unique_ptr<Platform::IRenderingHardware>& GetRHI() { return m_RHI; }
-            //TEMP I will expose a camera from here, for debugging purpose until we get a proper
-            //      scene management and we can remove this ugly hack.
+            // TEMP I will expose a camera from here, for debugging purpose until we get a proper
+            //       scene management and we can remove this ugly hack.
             Camera& GetMainCamera() { return m_MainCamera; }
+
+            void SetDebugMode(RenderSystemDebugMode mode) { m_DebugMode = mode; }
 
         private:
             Platform::RHI_API_TYPE m_ApiType;
@@ -46,8 +55,9 @@ namespace VoidArchitect
             UIPassRenderer m_UIPassRenderer;
 
             Camera m_MainCamera;
+            RenderSystemDebugMode m_DebugMode = RenderSystemDebugMode::None;
         };
 
         inline std::unique_ptr<RenderSystem> g_RenderSystem;
-    } // Renderer
-} // VoidArchitect
+    } // namespace Renderer
+} // namespace VoidArchitect

@@ -35,23 +35,21 @@ namespace VoidArchitect
             Math::Vec4 LightDirection;
             Math::Vec4 LightColor;
             Math::Vec4 ViewPosition;
+            uint32_t DebugMode;
         };
 
         struct MaterialUniformObject
         {
             Math::Vec4 DiffuseColor; // 16 bytes
-            Math::Vec4 Reserved0; // 16 bytes
-            Math::Vec4 Reserved1; // 16 bytes
-            Math::Vec4 Reserved2; // 16 bytes
+            Math::Vec4 Reserved0;    // 16 bytes
+            Math::Vec4 Reserved1;    // 16 bytes
+            Math::Vec4 Reserved2;    // 16 bytes
         };
 
         struct GeometryRenderData
         {
             GeometryRenderData();
-            GeometryRenderData(
-                const Math::Mat4& model,
-                MaterialHandle material,
-                MeshHandle mesh);
+            GeometryRenderData(const Math::Mat4& model, MaterialHandle material, MeshHandle mesh);
 
             Math::Mat4 Model;
             MeshHandle Mesh;
@@ -69,8 +67,7 @@ namespace VoidArchitect
 
             virtual void SetDiffuseColor(const Math::Vec4& color) = 0;
             virtual void SetTexture(
-                Resources::TextureUse use,
-                Resources::TextureHandle texture) = 0;
+                Resources::TextureUse use, Resources::TextureHandle texture) = 0;
 
             [[nodiscard]] uint32_t GetGeneration() const { return m_Generation; }
 

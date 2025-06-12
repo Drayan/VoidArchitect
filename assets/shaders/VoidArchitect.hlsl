@@ -33,6 +33,7 @@ struct GlobalUBO
     float4 LightDirection;
     float4 LightColor;
     float4 ViewPosition;
+    uint DebugMode;
 };
 struct MaterialUBO
 {
@@ -43,3 +44,18 @@ struct Constants
 {
     float4x4 Model;
 };
+
+struct PointLight
+{
+    float3 Position;
+    float4 Color;
+    float Constant;
+    float Linear;
+    float Quadratic;
+};
+
+// TODO: Implement a proper lighting system that will provide these
+static PointLight g_PointLights[3] = {
+    {float3(0.0f, 1.2f, 0.0f), float4(0.0f, 1.0f, 0.0f, 1.0f), 1.0f, 0.35f, 0.032f},
+    {float3(1.2f, 0.0f, 0.0f), float4(1.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0.35f, 0.032f},
+    {float3(-1.2f, 0.0f, 0.0f), float4(0.0f, 0.0f, 1.0f, 1.0f), 1.0f, 0.35f, 0.032f}};

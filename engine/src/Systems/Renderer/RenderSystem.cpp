@@ -3,12 +3,12 @@
 //
 #include "RenderSystem.hpp"
 
-#include "PassRenderers.hpp"
-#include "RenderGraph.hpp"
 #include "Core/Logger.hpp"
 #include "Core/Window.hpp"
+#include "PassRenderers.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Platform/RHI/Vulkan/VulkanRhi.hpp"
+#include "RenderGraph.hpp"
 #include "Systems/MaterialSystem.hpp"
 #include "Systems/MeshSystem.hpp"
 #include "Systems/RenderStateSystem.hpp"
@@ -83,11 +83,9 @@ namespace VoidArchitect
 
             // --- Import persistent resources ---
             m_RenderGraph.ImportRenderTarget(
-                WELL_KNOWN_RT_VIEWPORT_COLOR,
-                m_RHI->GetCurrentColorRenderTargetHandle());
+                WELL_KNOWN_RT_VIEWPORT_COLOR, m_RHI->GetCurrentColorRenderTargetHandle());
             m_RenderGraph.ImportRenderTarget(
-                WELL_KNOWN_RT_VIEWPORT_DEPTH,
-                m_RHI->GetDepthRenderTargetHandle());
+                WELL_KNOWN_RT_VIEWPORT_DEPTH, m_RHI->GetDepthRenderTargetHandle());
 
             // --- Add passes to the graph. ---
             m_RenderGraph.AddPass("ForwardOpaque", &m_ForwardOpaquePassRenderer);
@@ -111,13 +109,8 @@ namespace VoidArchitect
 
             m_MainCamera.RecalculateView();
             const auto aspectRatio = static_cast<float>(m_Width) / static_cast<float>(m_Height);
-            const auto UIProjectionMatrix = Math::Mat4::Orthographic(
-                0.f,
-                1.0f,
-                0.f,
-                1.0f / aspectRatio,
-                -1.0f,
-                1.0f);
+            const auto UIProjectionMatrix =
+                Math::Mat4::Orthographic(0.f, 1.0f, 0.f, 1.0f / aspectRatio, -1.0f, 1.0f);
 
             Resources::GlobalUniformObject ubo{};
             ubo.View = m_MainCamera.GetView();
@@ -126,14 +119,14 @@ namespace VoidArchitect
             ubo.LightDirection = Math::Vec4::Zero() - Math::Vec4(0.f, 1.f, 1.f, 0.f);
             ubo.ViewPosition = Math::Vec4(m_MainCamera.GetPosition(), 1.0f);
             ubo.UIProjection = UIProjectionMatrix;
+            ubo.DebugMode = static_cast<uint32_t>(m_DebugMode); // No debug mode by default
 
             m_RHI->UpdateGlobalState(ubo);
             for (const auto& step : executionPlan)
             {
                 // Ask the RenderPassSystem the handle for the config of this pass.
-                const RenderPassHandle passHandle = g_RenderPassSystem->GetHandleFor(
-                    step.passConfig,
-                    step.passPosition);
+                const RenderPassHandle passHandle =
+                    g_RenderPassSystem->GetHandleFor(step.passConfig, step.passPosition);
 
                 const auto& passSignature = g_RenderPassSystem->GetSignatureFor(passHandle);
                 RenderContext context{*m_RHI.get(), {frameTime}, passHandle, passSignature};
@@ -154,5 +147,5 @@ namespace VoidArchitect
 
             m_RHI->Resize(width, height);
         }
-    } // Renderer
-} // VoidArchitect
+    } // namespace Renderer
+} // namespace VoidArchitect

@@ -14,8 +14,8 @@
 #include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_timer.h>
 
-#include "Systems/ResourceSystem.hpp"
 #include "Systems/Renderer/RenderSystem.hpp"
+#include "Systems/ResourceSystem.hpp"
 
 namespace VoidArchitect
 {
@@ -31,8 +31,7 @@ namespace VoidArchitect
         {
             g_ResourceSystem = std::make_unique<ResourceSystem>();
             Renderer::g_RenderSystem = std::make_unique<Renderer::RenderSystem>(
-                Platform::RHI_API_TYPE::Vulkan,
-                m_MainWindow);
+                Platform::RHI_API_TYPE::Vulkan, m_MainWindow);
 
             Renderer::g_RenderSystem->InitializeSubsystems();
         }
@@ -64,7 +63,8 @@ namespace VoidArchitect
 
             while (accumulator >= FIXED_STEP)
             {
-                for (Layer* layer : m_LayerStack) layer->OnFixedUpdate(FIXED_STEP);
+                for (Layer* layer : m_LayerStack)
+                    layer->OnFixedUpdate(FIXED_STEP);
 
                 accumulator -= FIXED_STEP;
             }
@@ -88,7 +88,8 @@ namespace VoidArchitect
         for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
         {
             (*--it)->OnEvent(e);
-            if (e.Handled) break;
+            if (e.Handled)
+                break;
         }
     }
 
@@ -123,6 +124,17 @@ namespace VoidArchitect
         {
             case SDLK_ESCAPE:
                 m_Running = false;
+                return true;
+
+            // Debug rendering modes
+            case SDLK_0:
+                Renderer::g_RenderSystem->SetDebugMode(Renderer::RenderSystemDebugMode::None);
+                return true;
+            case SDLK_1:
+                Renderer::g_RenderSystem->SetDebugMode(Renderer::RenderSystemDebugMode::Lighting);
+                return true;
+            case SDLK_2:
+                Renderer::g_RenderSystem->SetDebugMode(Renderer::RenderSystemDebugMode::Normals);
                 return true;
 
             default:
