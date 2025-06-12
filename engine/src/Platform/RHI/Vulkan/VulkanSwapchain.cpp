@@ -18,7 +18,8 @@ namespace VoidArchitect::Platform
         const uint32_t height)
         : m_Device(device),
           m_Allocator(allocator),
-          m_Swapchain(VK_NULL_HANDLE)
+          m_Swapchain(VK_NULL_HANDLE),
+          m_DepthRenderTarget(Resources::InvalidRenderTargetHandle)
     {
         Create(width, height);
     }
@@ -110,10 +111,22 @@ namespace VoidArchitect::Platform
 
     void VulkanSwapchain::CreateRenderTargetViews()
     {
-        // Create a RenderTarget for each ColorImage.
+        // NOTE: This method will be called at the start AND when resizing, we need to clear
+        //  old render targets in the case of a resizing.
+        for (const auto handle : m_ColorRenderTargets)
+        {
+            g_VkRenderTargetSystem->ReleaseRenderTarget(handle);
+        }
+
+        if (m_DepthRenderTarget != Resources::InvalidRenderTargetHandle)
+        {
+            g_VkRenderTargetSystem->ReleaseRenderTarget(m_DepthRenderTarget);
+        }
+
         m_ColorRenderTargets.clear();
         m_ColorRenderTargets.reserve(m_SwapchainImages.size());
 
+        // Create a RenderTarget for each ColorImage.
         uint32_t index = 0;
         for (const auto& image : m_SwapchainImages)
         {
@@ -238,8 +251,8 @@ namespace VoidArchitect::Platform
         const uint32_t width,
         const uint32_t height) const
     {
-        if (m_Capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
-            return m_Capabilities.currentExtent;
+        if (m_Capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) return
+            m_Capabilities.currentExtent;
 
         VkExtent2D actualExtent = {width, height};
 

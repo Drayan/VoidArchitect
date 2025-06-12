@@ -109,8 +109,11 @@ namespace VoidArchitect::Resources::Loaders
                             VAArray<float> values;
                             for (auto val : propertiesNode["diffuse_color"])
                                 values.push_back(val.as<float>());
-                            config.diffuseColor =
-                                Math::Vec4(values[0], values[1], values[2], values[3]);
+                            config.diffuseColor = Math::Vec4(
+                                values[0],
+                                values[1],
+                                values[2],
+                                values[3]);
                         }
                     }
                     else
@@ -132,6 +135,14 @@ namespace VoidArchitect::Resources::Loaders
                         auto specularMapName = propertiesNode["specular_map"].as<std::string>();
                         config.specularTexture.name = specularMapName;
                         config.specularTexture.use = Resources::TextureUse::Specular;
+                    }
+
+                    // Normal map (optional)
+                    if (propertiesNode["normal_map"])
+                    {
+                        auto normalMapName = propertiesNode["normal_map"].as<std::string>();
+                        config.normalTexture.name = normalMapName;
+                        config.normalTexture.use = Resources::TextureUse::Normal;
                     }
 
                     // TODO Parse other properties

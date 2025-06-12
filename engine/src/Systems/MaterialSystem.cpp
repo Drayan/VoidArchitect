@@ -87,8 +87,8 @@ namespace VoidArchitect
     Renderer::MaterialClass MaterialSystem::GetClass(const MaterialHandle handle) const
     {
         const auto& node = m_Materials[handle];
-        if (node.config.renderStateClass.empty() || node.config.renderStateClass != "UI") return
-            Renderer::MaterialClass::Standard;
+        if (node.config.renderStateClass.empty() || node.config.renderStateClass != "UI")
+            return Renderer::MaterialClass::Standard;
         else return Renderer::MaterialClass::UI;
     }
 
@@ -200,6 +200,7 @@ namespace VoidArchitect
         material->SetDiffuseColor(matTemplate.diffuseColor);
 
         // Load textures
+        //TODO: Same as the resourceBinding, we could do this a little bit more flexible
         if (!matTemplate.diffuseTexture.name.empty())
         {
             if (const auto texture = g_TextureSystem->GetHandleFor(matTemplate.diffuseTexture.name))
@@ -229,6 +230,23 @@ namespace VoidArchitect
                     "[MaterialSystem] Failed to load specular texture '{}' for material '{}', "
                     "using default.",
                     matTemplate.specularTexture.name,
+                    matTemplate.name);
+            }
+        }
+
+        if (!matTemplate.normalTexture.name.empty())
+        {
+            const auto texture = g_TextureSystem->GetHandleFor(matTemplate.normalTexture.name);
+            if (texture)
+            {
+                material->SetTexture(matTemplate.normalTexture.use, texture);
+            }
+            else
+            {
+                VA_ENGINE_WARN(
+                    "[MaterialSystem] Failed to load normal texture '{}' for material '{}', "
+                    "using default.",
+                    matTemplate.normalTexture.name,
                     matTemplate.name);
             }
         }

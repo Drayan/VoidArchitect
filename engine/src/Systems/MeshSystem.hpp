@@ -2,7 +2,6 @@
 // Created by Michael Desmedt on 01/06/2025.
 //
 #pragma once
-#include "Core/Uuid.hpp"
 #include "Resources/Mesh.hpp"
 
 namespace VoidArchitect
@@ -27,7 +26,11 @@ namespace VoidArchitect
             const VAArray<Resources::MeshVertex>& vertices,
             const VAArray<uint32_t>& indices);
 
-        uint32_t GetIndexCountFor(Resources::MeshHandle handle) const;
+        [[nodiscard]] uint32_t GetIndexCountFor(Resources::MeshHandle handle) const;
+
+        //==========================================================================================
+        // Basic shape procedural generators
+        //==========================================================================================
 
         Resources::MeshHandle CreateSphere(
             const std::string& name,
@@ -47,7 +50,18 @@ namespace VoidArchitect
             uint32_t widthSegments = 1,
             uint32_t heightSegments = 1);
 
-        Resources::IMesh* GetPointerFor(Resources::MeshHandle handle) const;
+        //==========================================================================================
+        // Math helpers specialized for meshes
+        //==========================================================================================
+
+        static void GenerateNormals(
+            VAArray<Resources::MeshVertex>& vertices,
+            const VAArray<uint32_t>& indices);
+        static void GenerateTangents(
+            VAArray<Resources::MeshVertex>& vertices,
+            const VAArray<uint32_t>& indices);
+
+        [[nodiscard]] Resources::IMesh* GetPointerFor(Resources::MeshHandle handle) const;
 
     private:
         uint32_t GetFreeMeshHandle();

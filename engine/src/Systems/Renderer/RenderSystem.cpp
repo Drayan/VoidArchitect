@@ -77,7 +77,7 @@ namespace VoidArchitect
             m_RenderGraph = {};
             if (!m_RHI->BeginFrame(frameTime))
             {
-                VA_ENGINE_ERROR("[RenderSystem] Failed to begin the frame.");
+                VA_ENGINE_DEBUG("[RenderSystem] Failed to begin the frame.");
                 return;
             }
 
@@ -144,6 +144,15 @@ namespace VoidArchitect
             }
 
             m_RHI->EndFrame(frameTime);
+        }
+
+        void RenderSystem::Resize(const uint32_t width, const uint32_t height)
+        {
+            m_Width = width;
+            m_Height = height;
+            m_MainCamera.SetAspectRatio(static_cast<float>(width) / static_cast<float>(height));
+
+            m_RHI->Resize(width, height);
         }
     } // Renderer
 } // VoidArchitect

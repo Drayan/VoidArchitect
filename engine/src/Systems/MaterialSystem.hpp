@@ -23,6 +23,7 @@ namespace VoidArchitect
 
         TextureConfig diffuseTexture;
         TextureConfig specularTexture;
+        TextureConfig normalTexture;
 
         [[nodiscard]] size_t GetHash() const;
         size_t GetBindingsHash() const;

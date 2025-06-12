@@ -5,6 +5,7 @@
 #include "Core/Math/Vec2.hpp"
 #include "Core/Math/Vec3.hpp"
 #include "Core/Uuid.hpp"
+#include "Core/Math/Vec4.hpp"
 
 namespace VoidArchitect
 {
@@ -27,6 +28,7 @@ namespace VoidArchitect
             Math::Vec3 Position;
             Math::Vec3 Normal;
             Math::Vec2 UV0;
+            Math::Vec4 Tangent;
         };
 
         using MeshHandle = uint32_t;

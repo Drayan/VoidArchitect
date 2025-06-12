@@ -6,7 +6,6 @@
 #include "Core/Logger.hpp"
 #include "Core/Math/Constants.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
-#include "Renderer/RenderCommand.hpp"
 #include "Renderer/RenderSystem.hpp"
 
 namespace VoidArchitect
@@ -129,6 +128,7 @@ namespace VoidArchitect
             }
         }
 
+        GenerateTangents(vertices, indices);
         return GetHandleFor(name, vertices, indices);
     }
 
@@ -288,6 +288,7 @@ namespace VoidArchitect
             indices.push_back(baseIndex + 3);
         }
 
+        GenerateTangents(vertices, indices);
         return GetHandleFor(name, vertices, indices);
     }
 
@@ -299,7 +300,7 @@ namespace VoidArchitect
         const float halfWidth = width * 0.5f;
         const float halfHeight = height * 0.5f;
 
-        const VAArray<Resources::MeshVertex> vertices{
+        VAArray<Resources::MeshVertex> vertices{
             {Math::Vec3(-halfWidth, -halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(0.0f, 0.0f)},
             {Math::Vec3(halfWidth, -halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(1.0f, 0.0f)},
             {Math::Vec3(halfWidth, halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(1.0f, 1.0f)},
@@ -307,6 +308,7 @@ namespace VoidArchitect
         };
         const VAArray<uint32_t> indices{0, 1, 2, 2, 3, 0};
 
+        GenerateTangents(vertices, indices);
         return GetHandleFor(name, vertices, indices);
     }
 
@@ -376,7 +378,70 @@ namespace VoidArchitect
             }
         }
 
+        GenerateTangents(vertices, indices);
         return GetHandleFor(name, vertices, indices);
+    }
+
+    void MeshSystem::GenerateNormals(
+        VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
+    {
+        for (uint32_t i = 0; i < indices.size(); i += 3)
+        {
+            const uint32_t index0 = indices[i + 0];
+            const uint32_t index1 = indices[i + 1];
+            const uint32_t index2 = indices[i + 2];
+
+            const Math::Vec3 edge0 = vertices[index1].Position - vertices[index0].Position;
+            const Math::Vec3 edge1 = vertices[index2].Position - vertices[index0].Position;
+
+            auto normal = Math::Vec3::Cross(edge0, edge1);
+            normal.Normalize();
+
+            // NOTE: This just generate a face normal, smoothing could be done in a separate pass.
+            vertices[index0].Normal = normal;
+            vertices[index1].Normal = normal;
+            vertices[index2].Normal = normal;
+        }
+    }
+
+    void MeshSystem::GenerateTangents(
+        VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
+    {
+        for (uint32_t i = 0; i < indices.size(); i += 3)
+        {
+            const uint32_t index0 = indices[i + 0];
+            const uint32_t index1 = indices[i + 1];
+            const uint32_t index2 = indices[i + 2];
+
+            const Math::Vec3 edge0 = vertices[index1].Position - vertices[index0].Position;
+            const Math::Vec3 edge1 = vertices[index2].Position - vertices[index0].Position;
+
+            const auto deltaU0 = vertices[index1].UV0.X() - vertices[index0].UV0.X();
+            const auto deltaU1 = vertices[index2].UV0.X() - vertices[index0].UV0.X();
+            const auto deltaV0 = vertices[index1].UV0.Y() - vertices[index0].UV0.Y();
+            const auto deltaV1 = vertices[index2].UV0.Y() - vertices[index0].UV0.Y();
+
+            const auto dividend = (deltaU0 * deltaV1) - (deltaU1 * deltaV0);
+            const auto fc = 1.0f / dividend;
+
+            auto tangent = (edge0 * deltaV1) - (edge1 * deltaV0);
+            tangent *= fc;
+            tangent.Normalize();
+
+            // Inverse tangent is normal are flipped, used in shader.
+            const auto sx = deltaU0;
+            const auto sy = deltaU1;
+            const auto tx = deltaV0;
+            const auto ty = deltaV1;
+            const auto handedness = ((tx * sy - ty * sx) < 0.0f) ? -1.0f : 1.0f;
+            const auto t4 = Math::Vec4(tangent, handedness);
+
+            vertices[index0].Tangent = t4;
+            vertices[index1].Tangent = t4;
+            vertices[index2].Tangent = t4;
+        }
     }
 
     Resources::IMesh* MeshSystem::GetPointerFor(const Resources::MeshHandle handle) const

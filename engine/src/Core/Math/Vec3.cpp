@@ -36,6 +36,12 @@ namespace VoidArchitect::Math
 
     Vec3 Vec3::operator/(const float scalar) const { return Vec3(m_Vector / scalar); }
 
+    Vec3& Vec3::operator*=(const float scalar)
+    {
+        m_Vector *= scalar;
+        return *this;
+    }
+
     Vec3& Vec3::operator+=(const Vec3& other)
     {
         m_Vector += other.m_Vector;

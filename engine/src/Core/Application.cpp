@@ -81,7 +81,7 @@ namespace VoidArchitect
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
         dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(OnWindowResized));
         // TEMP This should not stay here; it's just a convenience to hit ESC to quit the app for
-        // now.
+        //  now.
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyPressed));
 
         // Going through the layers backwards to propagate the event.
@@ -113,7 +113,7 @@ namespace VoidArchitect
     bool Application::OnWindowResized(WindowResizedEvent& e)
     {
         VA_ENGINE_TRACE("[Application] Window resized to {0}, {1}.", e.GetWidth(), e.GetHeight());
-        // Renderer::RenderCommand::Resize(e.GetWidth(), e.GetHeight());
+        Renderer::g_RenderSystem->Resize(e.GetWidth(), e.GetHeight());
         return true;
     }
 

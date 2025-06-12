@@ -192,7 +192,7 @@ namespace VoidArchitect
                         });
                     config.vertexAttributes.push_back(
                         Renderer::VertexAttribute{
-                            Renderer::AttributeType::Vec3,
+                            Renderer::AttributeType::Vec4,
                             Renderer::AttributeFormat::Float32
                         });
                 }
@@ -249,7 +249,7 @@ namespace VoidArchitect
 
         renderStateConfig.materialClass = Renderer::MaterialClass::Standard;
         renderStateConfig.passType = Renderer::RenderPassType::ForwardOpaque;
-        renderStateConfig.vertexFormat = Renderer::VertexFormat::PositionNormalUV;
+        renderStateConfig.vertexFormat = Renderer::VertexFormat::PositionNormalUVTangent;
 
         // Try to load the default shaders into the render state.
         auto vertexShader = g_ShaderSystem->GetHandleFor("BuiltinObject.vert");
@@ -273,6 +273,11 @@ namespace VoidArchitect
                 Renderer::ResourceBindingType::Texture2D,
                 2,
                 Resources::ShaderStage::Pixel
+            },
+            Renderer::ResourceBinding{
+                Renderer::ResourceBindingType::Texture2D,
+                3,
+                Resources::ShaderStage::Pixel
             }
         };
 
@@ -285,7 +290,7 @@ namespace VoidArchitect
 
         uiRenderStateConfig.materialClass = Renderer::MaterialClass::UI;
         uiRenderStateConfig.passType = Renderer::RenderPassType::UI;
-        uiRenderStateConfig.vertexFormat = Renderer::VertexFormat::PositionNormalUV;
+        uiRenderStateConfig.vertexFormat = Renderer::VertexFormat::PositionNormalUVTangent;
 
         // Try to load the default UI shaders into the render state.
         auto uiVertexShader = g_ShaderSystem->GetHandleFor("UI.vert");

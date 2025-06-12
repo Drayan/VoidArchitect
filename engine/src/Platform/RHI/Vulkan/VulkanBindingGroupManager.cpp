@@ -276,7 +276,15 @@ namespace VoidArchitect::Platform
         VAArray<VkWriteDescriptorSet> descriptorWrites;
         VkDescriptorBufferInfo bufferInfo;
         VAArray<VkDescriptorImageInfo> imageInfos;
-        imageInfos.reserve(2); // Diffuse and Specular for now
+        uint32_t imageCount = 0;
+        for (const auto& bindingConfig : materialConfig.resourceBindings)
+        {
+            if (bindingConfig.type == Renderer::ResourceBindingType::Texture2D)
+            {
+                imageCount++;
+            }
+        }
+        imageInfos.reserve(imageCount); // Diffuse, Specular and Normal for now
 
         for (const auto& bindingConfig : materialConfig.resourceBindings)
         {
@@ -302,6 +310,8 @@ namespace VoidArchitect::Platform
                 write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 
                 auto textureHandle = Resources::InvalidTextureHandle;
+                //TODO: We could probably refactor the way we define resource binding
+                //  to allow a more dynamic binding <=> texture use mapping.
                 switch (bindingConfig.binding)
                 {
                     case 1:
@@ -310,13 +320,17 @@ namespace VoidArchitect::Platform
                     case 2:
                         textureHandle = vkMat->GetTexture(Resources::TextureUse::Specular);
                         break;
+                    case 3:
+                        textureHandle = vkMat->GetTexture(Resources::TextureUse::Normal);
+                        break;
+                    //TODO: Add here other texture mapping if needed.
                     default: VA_ENGINE_WARN(
                             "[VulkanBindingGroupManager] Unsupported texture binding.");
                         break;
                 }
 
-                if (textureHandle == Resources::InvalidTextureHandle)
-                    textureHandle = g_TextureSystem->GetDefaultTextureHandle();
+                if (textureHandle == Resources::InvalidTextureHandle) textureHandle =
+                    g_TextureSystem->GetDefaultTextureHandle();
 
                 auto vkTexture = dynamic_cast<VulkanTexture2D*>(g_TextureSystem->GetPointerFor(
                     textureHandle));

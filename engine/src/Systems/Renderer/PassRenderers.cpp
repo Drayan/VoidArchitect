@@ -36,7 +36,7 @@ namespace VoidArchitect::Renderer
                 TextureFormat::SWAPCHAIN_FORMAT,
                 LoadOp::Clear,
                 StoreOp::Store,
-                Math::Vec4::One()
+                Math::Vec4(0.1f, 0.1f, 0.1f, 1.0f)
             },
             {"depth", TextureFormat::SWAPCHAIN_DEPTH, LoadOp::Clear, StoreOp::DontCare}
         };
@@ -66,7 +66,7 @@ namespace VoidArchitect::Renderer
         const RenderStateCacheKey key = {
             g_MaterialSystem->GetClass(testMat),
             RenderPassType::ForwardOpaque,
-            VertexFormat::PositionNormalUV,
+            VertexFormat::PositionNormalUVTangent,
             context.currentPassSignature
         };
         const auto stateHandle = g_RenderStateSystem->GetHandleFor(key, context.currentPassHandle);
@@ -128,7 +128,7 @@ namespace VoidArchitect::Renderer
         const RenderStateCacheKey key = {
             g_MaterialSystem->GetClass(uiMaterial),
             RenderPassType::UI,
-            VertexFormat::PositionNormalUV,
+            VertexFormat::PositionNormalUVTangent,
             context.currentPassSignature
         };
         const auto stateHandle = g_RenderStateSystem->GetHandleFor(key, context.currentPassHandle);

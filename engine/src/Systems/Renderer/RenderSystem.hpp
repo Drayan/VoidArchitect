@@ -27,7 +27,12 @@ namespace VoidArchitect
 
             void RenderFrame(float frameTime);
 
+            void Resize(uint32_t width, uint32_t height);
+
             std::unique_ptr<Platform::IRenderingHardware>& GetRHI() { return m_RHI; }
+            //TEMP I will expose a camera from here, for debugging purpose until we get a proper
+            //      scene management and we can remove this ugly hack.
+            Camera& GetMainCamera() { return m_MainCamera; }
 
         private:
             Platform::RHI_API_TYPE m_ApiType;

@@ -11,8 +11,12 @@ material:
     - binding: 2
       type: "Texture2D"
       stage: "pixel"
+    - binding: 3
+      type: "Texture2D"
+      stage: "pixel"
   properties:
     diffuse_color: [ 1.0, 1.0, 1.0, 1.0 ]
     specular: 64.0
-    diffuse_map: "wall3_color"
-    specular_map: "wall3_shga"
+    diffuse_map: "T_42_phongDiffuse"
+    specular_map: "T_42_phongSpecular"
+    normal_map: "T_42_Normal"

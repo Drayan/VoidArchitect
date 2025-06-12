@@ -3,11 +3,13 @@
 # Current
 
 - [x] Implement VulkanBindingGroupManager
-- [ ] Move RenderState logic creation into ResourceFactory
-- [ ] Bind everything into IRenderPass...
-- [ ] Refactor TextureSystem to use handle
-- [ ] Refactor ShaderSystem to use handle
+- [x] Move RenderState logic creation into ResourceFactory
+- [x] Bind everything into IRenderPass...
+- [x] Refactor TextureSystem to use handle
+- [x] Refactor ShaderSystem to use handle
 - [x] Refactor MeshSystem to use handle
+- [ ] Implement RenderState setup from file
+- [ ] Allow mesh generator to use a VertexFormat input
 
 ## Engine
 
@@ -18,10 +20,10 @@
 
 ### Rendering
 
-- [ ] Refactor the rendering engine to improve simplicity
+- [x] Refactor the rendering engine to improve simplicity
     - [x] Material refactor => Remove too much tying with RenderState and RenderPass
-    - [ ] RenderPass refactor
-    - [ ] RenderState refactor
-    - [ ] RenderGraph refactor
-    - [ ] Renderer creation
+    - [x] RenderPass refactor
+    - [x] RenderState refactor
+    - [x] RenderGraph refactor
+    - [x] Renderer creation
 - [ ] Normal mapping
