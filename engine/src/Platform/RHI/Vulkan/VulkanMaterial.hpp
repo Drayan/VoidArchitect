@@ -4,9 +4,10 @@
 #pragma once
 
 #include "Resources/Material.hpp"
-#include "Resources/RenderState.hpp"
 
 #include <vulkan/vulkan.h>
+
+#include "Systems/MaterialSystem.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -23,44 +24,25 @@ namespace VoidArchitect::Platform
     public:
         VulkanMaterial(
             const std::string& name,
-            const std::unique_ptr<VulkanDevice>& device,
-            VkAllocationCallbacks* allocator);
-        ~VulkanMaterial() override;
+            const MaterialTemplate& config);
+        ~VulkanMaterial() override = default;
 
-        void InitializeResources(
-            IRenderingHardware& rhi,
-            const Resources::RenderStatePtr& renderState) override;
+        void SetDiffuseColor(const Math::Vec4& color) override;
+        void SetTexture(Resources::TextureUse use, Resources::TextureHandle texture) override;
 
-        void Bind(IRenderingHardware& rhi, const Resources::RenderStatePtr& pipeline) override;
-        void SetModel(
-            IRenderingHardware& rhi,
-            const Math::Mat4& model,
-            const Resources::RenderStatePtr& pipeline) override;
+        const MaterialTemplate& GetTemplate() const { return m_Template; }
+        const Resources::MaterialUniformObject& GetUniformData() const { return m_UniformData; }
+        Resources::TextureHandle GetTexture(Resources::TextureUse use) const;
+        bool IsDirty() const { return m_IsDirty; }
+        void ClearDirtyFlag() { m_IsDirty = false; }
 
     private:
-        void ReleaseResources() override;
-        void UpdateDescriptorSets(VulkanRHI& rhi);
+        MaterialTemplate m_Template;
 
-        // Material description
-        VAArray<ResourceBinding> m_PipelineResourceBindings;
+        Resources::MaterialUniformObject m_UniformData;
+        //TODO: Replace this with handle when TextureSystem is refactored
+        VAHashMap<Resources::TextureUse, Resources::TextureHandle> m_Textures;
 
-        VkAllocationCallbacks* m_Allocator;
-        VkDevice m_Device;
-
-        uint32_t m_BufferSlot = std::numeric_limits<uint32_t>::max();
-
-        VkDescriptorPool m_MaterialDescriptorPool;
-        VkDescriptorSet m_MaterialDescriptorSets[3];
-
-        struct DescriptorState
-        {
-            uint32_t matGeneration = std::numeric_limits<uint32_t>::max();
-            uint32_t texGeneration = std::numeric_limits<uint32_t>::max();
-
-            std::vector<u_int32_t> resourcesGenerations;
-            std::vector<UUID> resourcesUUIDs;
-        };
-
-        std::array<DescriptorState, 3> m_MaterialDescriptorStates;
+        bool m_IsDirty = true;
     };
 } // namespace VoidArchitect::Platform

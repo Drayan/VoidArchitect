@@ -1,5 +1,13 @@
 material:
   name: "DefaultUI"
+  render_state_class: "UI"
+  bindings:
+    - binding: 0
+      type: "ConstantBuffer"
+      stage: "all"
+    - binding: 1
+      type: "Texture2D"
+      stage: "pixel"
   properties:
     diffuse_color: [ 1.0, 1.0, 1.0, 1.0 ]
     diffuse_map: "512X512"

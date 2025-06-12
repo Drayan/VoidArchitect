@@ -2,8 +2,8 @@
 // Created by Michael Desmedt on 19/05/2025.
 //
 #pragma once
-#include <vulkan/vulkan.h>
 
+#include "VulkanImage.hpp"
 #include "Resources/RenderTarget.hpp"
 
 namespace VoidArchitect::Renderer
@@ -13,49 +13,20 @@ namespace VoidArchitect::Renderer
 
 namespace VoidArchitect::Platform
 {
+    class VulkanImage;
     class VulkanDevice;
     class VulkanRenderPass;
 
     class VulkanRenderTarget : public Resources::IRenderTarget
     {
     public:
-        // Constructor for the main target (for the swapchain)
-        VulkanRenderTarget(
-            const Renderer::RenderTargetConfig& config,
-            VkDevice device,
-            VkAllocationCallbacks* allocator);
+        VulkanRenderTarget(const std::string& name, VulkanImage&& image);
+        ~VulkanRenderTarget() override = default;
 
-        // Constructor for a texture-based target
-        VulkanRenderTarget(
-            const Renderer::RenderTargetConfig& config,
-            VkDevice device,
-            VkAllocationCallbacks* allocator,
-            const VAArray<VkImageView>& attachments);
-        ~VulkanRenderTarget() override;
-
-        void Resize(uint32_t width, uint32_t height) override;
-
-        // Vulkan-specific methods
-        [[nodiscard]] bool HasValidFramebuffers() const;
-        void InvalidateFramebuffers();
-        void CreateFramebufferForImage(
-            VkRenderPass renderpass,
-            const VAArray<VkImageView>& attachments,
-            uint32_t imageIndex);
-
-        [[nodiscard]] VkFramebuffer GetFramebuffer(uint32_t imageIndex) const;
-
-    protected:
-        void Release() override;
+        VulkanImage& GetImage() { return m_Image; }
+        VkImageView GetImageView() const { return m_Image.GetView(); }
 
     private:
-        VkDevice m_Device;
-        VkAllocationCallbacks* m_Allocator;
-
-        VAArray<VkFramebuffer> m_Framebuffers;
-        VAArray<VkImageView> m_Attachments;
-
-        // For texture-based targets, we might own the image views.
-        bool m_OwnsAttachments = false;
+        VulkanImage m_Image;
     };
 } // namespace VoidArchitect::Platform

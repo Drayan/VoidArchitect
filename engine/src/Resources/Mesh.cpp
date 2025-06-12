@@ -7,5 +7,8 @@
 
 namespace VoidArchitect::Resources
 {
-    IMesh::IMesh(std::string name) : m_Name(std::move(name)), m_Handle{} {}
+    IMesh::IMesh(std::string name)
+        : m_Name(std::move(name))
+    {
+    }
 } // namespace VoidArchitect::Resources

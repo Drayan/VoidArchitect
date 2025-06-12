@@ -11,12 +11,10 @@ namespace VoidArchitect::Resources
         std::string name,
         const uint32_t width,
         const uint32_t height,
-        const Renderer::TextureFormat format,
-        const bool isMain)
+        const Renderer::TextureFormat format)
         : m_Name(std::move(name)),
           m_Width(width),
           m_Height(height),
-          m_IsMain(isMain),
           m_Format(format)
     {
     }

@@ -24,6 +24,6 @@ namespace VoidArchitect::Collections
 #include <unordered_map>
     }
 
-    template <typename K, typename V>
-    using VAHashMap = std::unordered_map<K, V>;
+    template <typename K, typename V, typename H = std::hash<K>>
+    using VAHashMap = std::unordered_map<K, V, H>;
 }

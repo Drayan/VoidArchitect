@@ -33,9 +33,18 @@ namespace VoidArchitect::Resources::Loaders
 
     std::shared_ptr<IResourceDefinition> ImageLoader::Load(const std::string& name)
     {
+        static const std::string extensions[] = {".png", ".tga"};
         std::stringstream ss;
-        ss << m_BaseAssetPath << name << ".png";
-        // TODO Try other formats like JPG, TGA, BMP, etc.
+        for (const auto& extension : extensions)
+        {
+            ss.str("");
+            ss << m_BaseAssetPath << name << extension;
+            VA_ENGINE_TRACE("Trygin to load image at path: {}", ss.str());
+            if (std::filesystem::exists(ss.str()))
+            {
+                break;
+            }
+        }
 
         int32_t width, height, channels;
         const auto rawData = stbi_load(ss.str().c_str(), &width, &height, &channels, 4);
@@ -62,8 +71,12 @@ namespace VoidArchitect::Resources::Loaders
             }
         }
 
-        auto imageDefinition =
-            new ImageDataDefinition(std::move(data), width, height, 4, hasTransparency);
+        auto imageDefinition = new ImageDataDefinition(
+            std::move(data),
+            width,
+            height,
+            4,
+            hasTransparency);
         return ImageDataDefinitionPtr(imageDefinition);
     }
 } // namespace VoidArchitect::Resources::Loaders

@@ -13,19 +13,21 @@ namespace VoidArchitect
         {
         public:
             VulkanMesh(
-                VulkanRHI& rhi,
+                const std::unique_ptr<VulkanDevice>& device,
                 VkAllocationCallbacks* allocator,
                 const std::string& name,
                 const VAArray<Resources::MeshVertex>& vertices,
                 const VAArray<uint32_t>& indices);
             ~VulkanMesh() override = default;
 
-            void Bind(Platform::IRenderingHardware& rhi) override;
             void Release() override;
 
-            uint32_t GetIndicesCount() override { return m_IndexBuffer->GetCount(); }
+            IBuffer* GetVertexBuffer() const override { return m_VertexBuffer.get(); };
+            IBuffer* GetIndexBuffer() const override { return m_IndexBuffer.get(); };
+            uint32_t GetIndicesCount() const override { return m_IndexBuffer->GetCount(); }
 
         private:
+            const std::unique_ptr<VulkanDevice>& m_Device;
             VkAllocationCallbacks* m_Allocator;
 
             std::unique_ptr<VulkanBuffer> m_VertexBuffer;

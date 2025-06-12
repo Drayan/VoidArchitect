@@ -3,26 +3,27 @@
 //
 #include "VulkanUtils.hpp"
 
-#include "Systems/RenderStateSystem.hpp"
+#include "Resources/Shader.hpp"
+#include "Systems/Renderer/RendererTypes.hpp"
 
 namespace VoidArchitect::Platform
 {
-    VkDescriptorType TranslateEngineResourceTypeToVulkan(const ResourceBindingType type)
+    VkDescriptorType TranslateEngineResourceTypeToVulkan(const Renderer::ResourceBindingType type)
     {
         // TODO These translation aren't probably the best, we should verify it as the engine grow.
         switch (type)
         {
-            case ResourceBindingType::ConstantBuffer:
+            case Renderer::ResourceBindingType::ConstantBuffer:
                 return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            case ResourceBindingType::Texture1D:
-            case ResourceBindingType::Texture2D:
-            case ResourceBindingType::Texture3D:
-            case ResourceBindingType::TextureCube:
+            case Renderer::ResourceBindingType::Texture1D:
+            case Renderer::ResourceBindingType::Texture2D:
+            case Renderer::ResourceBindingType::Texture3D:
+            case Renderer::ResourceBindingType::TextureCube:
                 return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-            case ResourceBindingType::Sampler:
+            case Renderer::ResourceBindingType::Sampler:
                 return VK_DESCRIPTOR_TYPE_SAMPLER;
-            case ResourceBindingType::StorageBuffer:
-            case ResourceBindingType::StorageTexture:
+            case Renderer::ResourceBindingType::StorageBuffer:
+            case Renderer::ResourceBindingType::StorageTexture:
                 return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
             default:
                 VA_ENGINE_WARN("[VulkanPipeline] Unknown resource type, defaulting to none.");

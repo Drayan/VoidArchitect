@@ -18,22 +18,17 @@
 
 namespace VoidArchitect::Renderer
 {
-    Resources::Texture2DPtr RenderCommand::s_TestTexture;
-    Resources::MaterialPtr RenderCommand::s_TestMaterial;
-    Resources::MaterialPtr RenderCommand::s_UIMaterial;
-    Resources::MeshPtr RenderCommand::s_TestMesh;
-    Resources::MeshPtr RenderCommand::s_UIMesh;
+    Math::Mat4 _RenderCommand::s_UIProjectionMatrix = Math::Mat4::Identity();
 
-    Math::Mat4 RenderCommand::s_UIProjectionMatrix = Math::Mat4::Identity();
+    Platform::RHI_API_TYPE _RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
+    Platform::IRenderingHardware* _RenderCommand::m_RenderingHardware = nullptr;
+    uint32_t _RenderCommand::m_Width = 0;
+    uint32_t _RenderCommand::m_Height = 0;
+    VAArray<Camera> _RenderCommand::m_Cameras;
 
-    Platform::RHI_API_TYPE RenderCommand::m_ApiType = Platform::RHI_API_TYPE::Vulkan;
-    Platform::IRenderingHardware* RenderCommand::m_RenderingHardware = nullptr;
-    uint32_t RenderCommand::m_Width = 0;
-    uint32_t RenderCommand::m_Height = 0;
-    VAArray<Camera> RenderCommand::m_Cameras;
-
-    void RenderCommand::Initialize(
-        const Platform::RHI_API_TYPE apiType, std::unique_ptr<Window>& window)
+    void _RenderCommand::Initialize(
+        const Platform::RHI_API_TYPE apiType,
+        std::unique_ptr<Window>& window)
     {
         m_ApiType = apiType;
 
@@ -42,51 +37,67 @@ namespace VoidArchitect::Renderer
 
         // Retrieve Pipeline's shared resources setup.
         // TODO This should be managed by the pipeline system.
-        const RenderStateInputLayout sharedInputLayout{VAArray{
-            // Global Space
-            SpaceLayout{
-                0,
-                VAArray{// Global UBO
-                        ResourceBinding{
-                            ResourceBindingType::ConstantBuffer,
-                            0,
-                            Resources::ShaderStage::All,
-                            std::vector{
-                                // Projection
-                                BufferBinding{0, AttributeType::Mat4, AttributeFormat::Float32},
-                                // View
-                                BufferBinding{1, AttributeType::Mat4, AttributeFormat::Float32},
-                                // UI Projection
-                                BufferBinding{2, AttributeType::Mat4, AttributeFormat::Float32},
-                                // Light Direction
-                                BufferBinding{3, AttributeType::Vec4, AttributeFormat::Float32},
-                                // Light Color
-                                BufferBinding{4, AttributeType::Vec4, AttributeFormat::Float32}},
-                        }},
-            },
-            // Material Space
-            SpaceLayout{
-                1,
-                VAArray{
-                    // Material UBO
-                    ResourceBinding{
-                        ResourceBindingType::ConstantBuffer,
-                        0,
-                        Resources::ShaderStage::Pixel,
-                        std::vector{
-                            // Diffuse Color
-                            BufferBinding{0, AttributeType::Vec4, AttributeFormat::Float32}}},
-                    // Diffuse Map
-                    ResourceBinding{
-                        ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel},
-                    // Specular Map
-                    ResourceBinding{
-                        ResourceBindingType::Texture2D, 2, Resources::ShaderStage::Pixel}}}}};
+        // const RenderStateInputLayout sharedInputLayout{
+        //     VAArray{
+        //         // Global Space
+        //         SpaceLayout{
+        //             0,
+        //             VAArray{
+        //                 // Global UBO
+        //                 ResourceBinding{
+        //                     ResourceBindingType::ConstantBuffer,
+        //                     0,
+        //                     Resources::ShaderStage::All,
+        //                     std::vector{
+        //                         // Projection
+        //                         BufferBinding{0, AttributeType::Mat4, AttributeFormat::Float32},
+        //                         // View
+        //                         BufferBinding{1, AttributeType::Mat4, AttributeFormat::Float32},
+        //                         // UI Projection
+        //                         BufferBinding{2, AttributeType::Mat4, AttributeFormat::Float32},
+        //                         // Light Direction
+        //                         BufferBinding{3, AttributeType::Vec4, AttributeFormat::Float32},
+        //                         // Light Color
+        //                         BufferBinding{4, AttributeType::Vec4, AttributeFormat::Float32}
+        //                     },
+        //                 }
+        //             },
+        //         },
+        //         // Material Space
+        //         SpaceLayout{
+        //             1,
+        //             VAArray{
+        //                 // Material UBO
+        //                 ResourceBinding{
+        //                     ResourceBindingType::ConstantBuffer,
+        //                     0,
+        //                     Resources::ShaderStage::Pixel,
+        //                     std::vector{
+        //                         // Diffuse Color
+        //                         BufferBinding{0, AttributeType::Vec4, AttributeFormat::Float32}
+        //                     }
+        //                 },
+        //                 // Diffuse Map
+        //                 ResourceBinding{
+        //                     ResourceBindingType::Texture2D,
+        //                     1,
+        //                     Resources::ShaderStage::Pixel
+        //                 },
+        //                 // Specular Map
+        //                 ResourceBinding{
+        //                     ResourceBindingType::Texture2D,
+        //                     2,
+        //                     Resources::ShaderStage::Pixel
+        //                 }
+        //             }
+        //         }
+        //     }
+        // };
 
         switch (apiType)
         {
             case Platform::RHI_API_TYPE::Vulkan:
-                m_RenderingHardware = new Platform::VulkanRHI(window, sharedInputLayout);
+                m_RenderingHardware = new Platform::VulkanRHI(window);
                 break;
             default:
                 break;
@@ -100,50 +111,38 @@ namespace VoidArchitect::Renderer
         g_MaterialSystem = std::make_unique<MaterialSystem>();
         g_MeshSystem = std::make_unique<MeshSystem>();
 
-        g_RenderGraph = std::make_unique<RenderGraph>(*m_RenderingHardware);
+        // g_RenderGraph = std::make_unique<RenderGraph>(*m_RenderingHardware);
 
-        g_MaterialSystem->LoadTemplate("TestMaterial");
-        g_MaterialSystem->LoadTemplate("DefaultUI");
-        g_RenderGraph->SetupForwardRenderer(m_Width, m_Height);
+        // g_RenderGraph->SetupForwardRenderer(m_Width, m_Height);
 
-        if (!g_RenderGraph->Compile())
-        {
-            VA_ENGINE_CRITICAL("[RenderCommand] Failed to compile render graph.");
-            return;
-        }
-
-        if (!g_RenderGraph)
-        {
-            VA_ENGINE_CRITICAL("[RenderCommand] Failed to setup render graph.");
-            return;
-        }
+        // if (!g_RenderGraph->Compile())
+        // {
+        //     VA_ENGINE_CRITICAL("[RenderCommand] Failed to compile render graph.");
+        //     return;
+        // }
+        //
+        // if (!g_RenderGraph)
+        // {
+        //     VA_ENGINE_CRITICAL("[RenderCommand] Failed to setup render graph.");
+        //     return;
+        // }
 
         const float aspectRatio = static_cast<float>(m_Width) / static_cast<float>(m_Height);
-        s_UIProjectionMatrix =
-            Math::Mat4::Orthographic(0.f, 1.0f, 0.f, 1.0f / aspectRatio, -1.0f, 1.0f);
-
-        // TEMP Create a test mesh.
-        s_TestMesh = g_MeshSystem->CreateCube("TestMesh");
-        s_UIMesh = g_MeshSystem->CreateQuad("UIMesh", 0.15f, 0.15f);
+        s_UIProjectionMatrix = Math::Mat4::Orthographic(
+            0.f,
+            1.0f,
+            0.f,
+            1.0f / aspectRatio,
+            -1.0f,
+            1.0f);
 
         CreatePerspectiveCamera(45.0f, 0.1f, 100.0f);
 
         // SwapTestTexture();
     }
 
-    void RenderCommand::Shutdown()
+    void _RenderCommand::Shutdown()
     {
-        // Wait that any pending operation is completed before beginning the shutdown procedure.
-        m_RenderingHardware->WaitIdle(0);
-
-        g_RenderGraph = nullptr;
-
-        s_UIMesh = nullptr;
-        s_TestMesh = nullptr;
-        s_UIMaterial = nullptr;
-        s_TestMaterial = nullptr;
-        s_TestTexture = nullptr;
-
         // Shutdown subsystems
         g_MeshSystem = nullptr;
         g_MaterialSystem = nullptr;
@@ -155,85 +154,93 @@ namespace VoidArchitect::Renderer
         delete m_RenderingHardware;
     }
 
-    void RenderCommand::Resize(const uint32_t width, const uint32_t height)
+    void _RenderCommand::Resize(const uint32_t width, const uint32_t height)
     {
         m_Width = width;
         m_Height = height;
 
         // Update all camera's aspect ratio
         float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-        for (auto& camera : m_Cameras)
-            camera.SetAspectRatio(aspectRatio);
+        for (auto& camera : m_Cameras) camera.SetAspectRatio(aspectRatio);
 
-        s_UIProjectionMatrix =
-            Math::Mat4::Orthographic(0.f, 1.0f, 0.f, 1.0f / aspectRatio, -1.0f, 1.0f);
+        s_UIProjectionMatrix = Math::Mat4::Orthographic(
+            0.f,
+            1.0f,
+            0.f,
+            1.0f / aspectRatio,
+            -1.0f,
+            1.0f);
 
-        g_RenderGraph->OnResize(width, height);
-        g_RenderGraph->Compile();
+        // g_RenderGraph->OnResize(width, height);
+        // g_RenderGraph->Compile();
     }
 
-    bool RenderCommand::BeginFrame(const float deltaTime)
+    bool _RenderCommand::BeginFrame(const float deltaTime)
     {
         // Render with the default camera.
         return BeginFrame(m_Cameras[0], deltaTime);
     }
 
-    bool RenderCommand::BeginFrame(Camera& camera, const float deltaTime)
+    bool _RenderCommand::BeginFrame(Camera& camera, const float deltaTime)
     {
-        if (!m_RenderingHardware->BeginFrame(deltaTime))
-            return false;
+        if (!m_RenderingHardware->BeginFrame(deltaTime)) return false;
 
-        if (g_RenderGraph)
-        {
-            camera.RecalculateView();
-
-            FrameData frameData;
-            frameData.deltaTime = deltaTime;
-            frameData.Projection = camera.GetProjection();
-            frameData.View = camera.GetView();
-
-            const Resources::GlobalUniformObject gUBO{
-                .View = frameData.View,
-                .Projection = frameData.Projection,
-                .UIProjection = s_UIProjectionMatrix,
-                .LightDirection = Math::Vec4::Zero() - Math::Vec4(0.f, 1.f, 1.f, 0.f),
-                .LightColor = Math::Vec4::One(),
-                .ViewPosition = Math::Vec4(camera.GetPosition(), 1.0f)};
-
-            // Update global state, might be moved elsewhere
-            m_RenderingHardware->UpdateGlobalState(gUBO);
-
-            g_RenderGraph->Execute(frameData);
-        }
-        else
-        {
-            VA_ENGINE_CRITICAL("[RenderCommand] Render graph is not initialized.");
-            return false;
-        }
+        // if (g_RenderGraph)
+        // {
+        //     camera.RecalculateView();
+        //
+        //     FrameData frameData;
+        //     frameData.deltaTime = deltaTime;
+        //     frameData.Projection = camera.GetProjection();
+        //     frameData.View = camera.GetView();
+        //
+        //     const Resources::GlobalUniformObject gUBO{
+        //         .View = frameData.View,
+        //         .Projection = frameData.Projection,
+        //         .UIProjection = s_UIProjectionMatrix,
+        //         .LightDirection = Math::Vec4::Zero() - Math::Vec4(0.f, 1.f, 1.f, 0.f),
+        //         .LightColor = Math::Vec4::One(),
+        //         .ViewPosition = Math::Vec4(camera.GetPosition(), 1.0f)
+        //     };
+        //
+        //     // Update global state, might be moved elsewhere
+        //     m_RenderingHardware->UpdateGlobalState(gUBO);
+        //
+        //     g_RenderGraph->Execute(frameData);
+        // }
+        // else
+        // {
+        //     VA_ENGINE_CRITICAL("[RenderCommand] Render graph is not initialized.");
+        //     return false;
+        // }
 
         return true;
     }
 
-    bool RenderCommand::EndFrame(const float deltaTime)
+    bool _RenderCommand::EndFrame(const float deltaTime)
     {
         return m_RenderingHardware->EndFrame(deltaTime);
     }
 
-    Camera& RenderCommand::CreatePerspectiveCamera(float fov, float near, float far)
+    Camera& _RenderCommand::CreatePerspectiveCamera(float fov, float near, float far)
     {
         auto aspect = m_Width / static_cast<float>(m_Height);
-        if (m_Width == 0 || m_Height == 0)
-            aspect = 1.0f;
+        if (m_Width == 0 || m_Height == 0) aspect = 1.0f;
         return m_Cameras.emplace_back(fov, aspect, near, far);
     }
 
-    Camera& RenderCommand::CreateOrthographicCamera(
-        float left, float right, float bottom, float top, float near, float far)
+    Camera& _RenderCommand::CreateOrthographicCamera(
+        float left,
+        float right,
+        float bottom,
+        float top,
+        float near,
+        float far)
     {
         return m_Cameras.emplace_back(top, bottom, left, right, near, far);
     }
 
-    void RenderCommand::SwapTestTexture()
+    void _RenderCommand::SwapTestTexture()
     {
         constexpr std::string textures[] = {
             "wall1_color",
@@ -247,16 +254,15 @@ namespace VoidArchitect::Renderer
             "wall3_shga",
             "wall4_color",
             "wall4_n",
-            "wall4_shga"};
+            "wall4_shga"
+        };
         static size_t index = std::size(textures) - 1;
         index = (index + 1) % std::size(textures);
 
-        s_TestTexture =
-            g_TextureSystem->LoadTexture2D(textures[index], Resources::TextureUse::Diffuse);
-        s_TestMaterial->SetTexture(/*Resources::TextureSlot::Diffuse*/ 0, s_TestTexture);
+        //s_TestMaterial->SetTexture(/*Resources::TextureSlot::Diffuse*/ 0, s_TestTexture);
     }
 
-    void RenderCommand::SwapColor()
+    void _RenderCommand::SwapColor()
     {
         const Math::Vec4 colors[] = {
             Math::Vec4(1.0f, 0.0f, 0.0f, 1.0f),
@@ -270,6 +276,6 @@ namespace VoidArchitect::Renderer
         static size_t index = std::size(colors) - 1;
         index = (index + 1) % std::size(colors);
 
-        s_TestMaterial->SetDiffuseColor(colors[index]);
+        //s_TestMaterial->SetDiffuseColor(colors[index]);
     }
 } // namespace VoidArchitect::Renderer

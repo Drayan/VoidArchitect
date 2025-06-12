@@ -5,16 +5,17 @@
 
 #include "Core/Logger.hpp"
 #include "Systems/Renderer/Camera.hpp"
-#include "Systems/Renderer/RenderCommand.hpp"
 
 #include <SDL3/SDL_keycode.h>
+
+#include "Systems/Renderer/RenderSystem.hpp"
 
 void TestLayer::OnAttach()
 {
     VA_APP_TRACE("[TestLayer] OnAttach.");
-    auto& camera = VoidArchitect::Renderer::RenderCommand::GetMainCamera();
-    m_DebugCameraController =
-        std::make_unique<VoidArchitect::Renderer::DebugCameraController>(camera);
+    auto& camera = VoidArchitect::Renderer::g_RenderSystem->GetMainCamera();
+    m_DebugCameraController = std::make_unique<VoidArchitect::Renderer::DebugCameraController>(
+        camera);
 
     camera.SetPosition({0.f, 0.f, 3.f});
 }
@@ -36,11 +37,11 @@ void TestLayer::OnEvent(VoidArchitect::Event& e)
         {
             if (e.GetKeyCode() == SDLK_T)
             {
-                VoidArchitect::Renderer::RenderCommand::SwapTestTexture();
+                // VoidArchitect::Renderer::RenderCommand::SwapTestTexture();
             }
             if (e.GetKeyCode() == SDLK_C)
             {
-                VoidArchitect::Renderer::RenderCommand::SwapColor();
+                // VoidArchitect::Renderer::RenderCommand::SwapColor();
             }
             return false;
         });

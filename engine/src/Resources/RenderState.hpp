@@ -4,7 +4,12 @@
 #pragma once
 
 #include "Core/Uuid.hpp"
-#include "Systems/RenderStateSystem.hpp"
+#include "Systems/Renderer/RendererTypes.hpp"
+
+namespace VoidArchitect
+{
+    class RenderStateSystem;
+}
 
 namespace VoidArchitect::Platform
 {
@@ -24,14 +29,12 @@ namespace VoidArchitect::Resources
         [[nodiscard]] std::string GetName() const { return m_Name; }
         [[nodiscard]] UUID GetUUID() const { return m_UUID; };
 
-        [[nodiscard]] const RenderStateInputLayout& GetInputLayout() const { return m_InputLayout; }
-
     protected:
-        explicit IRenderState(const std::string& name, const RenderStateInputLayout& inputLayout);
+        explicit IRenderState(
+            const std::string& name);
 
         UUID m_UUID;
         std::string m_Name;
-        RenderStateInputLayout m_InputLayout;
     };
 
     using RenderStatePtr = std::shared_ptr<IRenderState>;

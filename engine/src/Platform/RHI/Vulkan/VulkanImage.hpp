@@ -8,6 +8,8 @@
 
 namespace VoidArchitect::Platform
 {
+    class VulkanBuffer;
+    class VulkanCommandBuffer;
     class VulkanDevice;
 
     class VulkanImage
@@ -22,7 +24,6 @@ namespace VoidArchitect::Platform
             VkImageAspectFlags aspect,
             bool createImageView = true);
         VulkanImage(
-            const VulkanRHI& rhi,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
             uint32_t width,
@@ -49,10 +50,13 @@ namespace VoidArchitect::Platform
         void CopyFromBuffer(const VulkanCommandBuffer& cmdBuf, const VulkanBuffer& buffer) const;
 
         [[nodiscard]] VkImageView GetView() const { return m_ImageView; }
+        uint32_t GetWidth() const { return m_Width; }
+        uint32_t GetHeight() const { return m_Height; }
+        VkFormat GetFormat() const { return m_Format; }
 
     private:
         void CreateImage(
-            const VulkanRHI& rhi,
+            const std::unique_ptr<VulkanDevice>& device,
             uint32_t width,
             uint32_t height,
             VkFormat format,

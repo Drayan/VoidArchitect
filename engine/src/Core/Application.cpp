@@ -15,6 +15,7 @@
 #include <SDL3/SDL_timer.h>
 
 #include "Systems/ResourceSystem.hpp"
+#include "Systems/Renderer/RenderSystem.hpp"
 
 namespace VoidArchitect
 {
@@ -29,7 +30,11 @@ namespace VoidArchitect
         try
         {
             g_ResourceSystem = std::make_unique<ResourceSystem>();
-            Renderer::RenderCommand::Initialize(Platform::RHI_API_TYPE::Vulkan, m_MainWindow);
+            Renderer::g_RenderSystem = std::make_unique<Renderer::RenderSystem>(
+                Platform::RHI_API_TYPE::Vulkan,
+                m_MainWindow);
+
+            Renderer::g_RenderSystem->InitializeSubsystems();
         }
         catch (std::exception& e)
         {
@@ -40,7 +45,7 @@ namespace VoidArchitect
 
     Application::~Application()
     {
-        Renderer::RenderCommand::Shutdown();
+        Renderer::g_RenderSystem = nullptr;
         g_ResourceSystem = nullptr;
     }
 
@@ -59,16 +64,12 @@ namespace VoidArchitect
 
             while (accumulator >= FIXED_STEP)
             {
-                for (Layer* layer : m_LayerStack)
-                    layer->OnFixedUpdate(FIXED_STEP);
+                for (Layer* layer : m_LayerStack) layer->OnFixedUpdate(FIXED_STEP);
 
                 accumulator -= FIXED_STEP;
             }
 
-            if (Renderer::RenderCommand::BeginFrame(frameTime))
-            {
-                Renderer::RenderCommand::EndFrame(frameTime);
-            }
+            Renderer::g_RenderSystem->RenderFrame(frameTime);
 
             m_MainWindow->OnUpdate();
         }
@@ -80,15 +81,14 @@ namespace VoidArchitect
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
         dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(OnWindowResized));
         // TEMP This should not stay here; it's just a convenience to hit ESC to quit the app for
-        // now.
+        //  now.
         dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyPressed));
 
         // Going through the layers backwards to propagate the event.
         for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
         {
             (*--it)->OnEvent(e);
-            if (e.Handled)
-                break;
+            if (e.Handled) break;
         }
     }
 
@@ -113,7 +113,7 @@ namespace VoidArchitect
     bool Application::OnWindowResized(WindowResizedEvent& e)
     {
         VA_ENGINE_TRACE("[Application] Window resized to {0}, {1}.", e.GetWidth(), e.GetHeight());
-        Renderer::RenderCommand::Resize(e.GetWidth(), e.GetHeight());
+        Renderer::g_RenderSystem->Resize(e.GetWidth(), e.GetHeight());
         return true;
     }
 

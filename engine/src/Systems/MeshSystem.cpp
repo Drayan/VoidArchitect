@@ -6,74 +6,71 @@
 #include "Core/Logger.hpp"
 #include "Core/Math/Constants.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
-#include "Renderer/RenderCommand.hpp"
+#include "Renderer/RenderSystem.hpp"
 
 namespace VoidArchitect
 {
     MeshSystem::MeshSystem() { m_Meshes.reserve(1024); }
 
-    MeshSystem::~MeshSystem()
-    {
-        if (!m_MeshCache.empty())
-        {
-            VA_ENGINE_WARN(
-                "[MeshSystem] Mesh cache is not empty during destruction. This may indicate a "
-                "resource leak.");
-
-            for (const auto& [uuid, mesh] : m_MeshCache)
-            {
-                if (const auto msh = mesh.lock())
-                {
-                    VA_ENGINE_WARN(
-                        "[MeshSystem] Mesh '{}' with UUID {} was not released properly.",
-                        msh->m_Name,
-                        static_cast<uint64_t>(uuid));
-                    msh->Release();
-                }
-            }
-        }
-
-        m_MeshCache.clear();
-    }
-
-    Resources::MeshPtr MeshSystem::LoadMesh(const std::string& name)
+    Resources::MeshHandle MeshSystem::LoadMesh(const std::string& name)
     {
         // TODO Implement loading mesh from a file
-        return nullptr;
+        return Resources::InvalidMeshHandle;
     }
 
-    Resources::MeshPtr MeshSystem::CreateMesh(
+    Resources::MeshHandle MeshSystem::LoadMesh(
         const std::string& name,
         const VAArray<Resources::MeshVertex>& vertices,
         const VAArray<uint32_t>& indices)
     {
-        Resources::IMesh* mesh =
-            Renderer::RenderCommand::GetRHIRef().CreateMesh(name, vertices, indices);
+        //TODO Implement loading mesh from datas
+        return Resources::InvalidMeshHandle;
+    }
+
+    uint32_t MeshSystem::GetIndexCountFor(const Resources::MeshHandle handle) const
+    {
+        return m_Meshes[handle]->GetIndicesCount();
+    }
+
+    Resources::MeshHandle MeshSystem::GetHandleFor(
+        const std::string& name,
+        const VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
+    {
+        // Check if the mesh already exists
+        for (uint32_t i = 0; i < m_Meshes.size(); i++)
+        {
+            if (m_Meshes[i]->m_Name == name) return i;
+        }
+
+        // This is the first time the system is asked a handle for this Mesh.
+        const auto meshPtr = CreateMesh(name, vertices, indices);
+        const auto handle = GetFreeMeshHandle();
+        m_Meshes[handle] = std::unique_ptr<Resources::IMesh>(meshPtr);
+
+        return handle;
+    }
+
+    Resources::IMesh* MeshSystem::CreateMesh(
+        const std::string& name,
+        const VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
+    {
+        Resources::IMesh* mesh = Renderer::g_RenderSystem->GetRHI()->CreateMesh(
+            name,
+            vertices,
+            indices);
         if (!mesh)
         {
             VA_ENGINE_WARN("[MeshSystem] Failed to create mesh '{}'.", name);
             return nullptr;
         }
 
-        auto meshPtr = Resources::MeshPtr(mesh, MeshDeleter{this});
-        m_MeshCache[mesh->m_UUID] = meshPtr;
-
-        const auto handle = GetFreeMeshHandle();
-        mesh->m_Handle = handle;
-
-        m_Meshes[handle] = {
-            mesh->m_UUID,
-            vertices.size() * sizeof(Resources::MeshVertex) + indices.size() * sizeof(uint32_t)
-        };
-
-        m_TotalMemoryUsed += m_Meshes[handle].dataSize;
-        m_TotalMeshesLoaded++;
-
-        VA_ENGINE_TRACE("[MeshSystem] Mesh '{}' created with handle {}.", name, handle);
-        return meshPtr;
+        VA_ENGINE_TRACE("[MeshSystem] Created mesh '{}'.", name);
+        return mesh;
     }
 
-    Resources::MeshPtr MeshSystem::CreateSphere(
+    Resources::MeshHandle MeshSystem::CreateSphere(
         const std::string& name,
         const float radius,
         const uint32_t latitudeBands,
@@ -84,15 +81,15 @@ namespace VoidArchitect
 
         for (uint32_t lat = 0; lat <= latitudeBands; ++lat)
         {
-            const float theta =
-                static_cast<float>(lat) * Math::PI / static_cast<float>(latitudeBands);
+            const float theta = static_cast<float>(lat) * Math::PI / static_cast<float>(
+                latitudeBands);
             const float sinTheta = std::sin(theta);
             const float cosTheta = std::cos(theta);
 
             for (uint32_t lon = 0; lon <= longitudeBands; ++lon)
             {
-                const float phi =
-                    static_cast<float>(lon) * Math::PI * 2.0f / static_cast<float>(longitudeBands);
+                const float phi = static_cast<float>(lon) * Math::PI * 2.0f / static_cast<float>(
+                    longitudeBands);
                 const float sinPhi = std::sin(phi);
                 const float cosPhi = std::cos(phi);
 
@@ -131,10 +128,11 @@ namespace VoidArchitect
             }
         }
 
-        return CreateMesh(name, vertices, indices);
+        GenerateTangents(vertices, indices);
+        return GetHandleFor(name, vertices, indices);
     }
 
-    Resources::MeshPtr MeshSystem::CreateCube(const std::string& name, const float size)
+    Resources::MeshHandle MeshSystem::CreateCube(const std::string& name, const float size)
     {
         const float halfSize = size * 0.5f;
 
@@ -290,10 +288,11 @@ namespace VoidArchitect
             indices.push_back(baseIndex + 3);
         }
 
-        return CreateMesh(name, vertices, indices);
+        GenerateTangents(vertices, indices);
+        return GetHandleFor(name, vertices, indices);
     }
 
-    Resources::MeshPtr MeshSystem::CreateQuad(
+    Resources::MeshHandle MeshSystem::CreateQuad(
         const std::string& name,
         const float width,
         const float height)
@@ -301,8 +300,7 @@ namespace VoidArchitect
         const float halfWidth = width * 0.5f;
         const float halfHeight = height * 0.5f;
 
-        const VAArray<Resources::MeshVertex> vertices
-        {
+        VAArray<Resources::MeshVertex> vertices{
             {Math::Vec3(-halfWidth, -halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(0.0f, 0.0f)},
             {Math::Vec3(halfWidth, -halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(1.0f, 0.0f)},
             {Math::Vec3(halfWidth, halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(1.0f, 1.0f)},
@@ -310,10 +308,11 @@ namespace VoidArchitect
         };
         const VAArray<uint32_t> indices{0, 1, 2, 2, 3, 0};
 
-        return CreateMesh(name, vertices, indices);
+        GenerateTangents(vertices, indices);
+        return GetHandleFor(name, vertices, indices);
     }
 
-    Resources::MeshPtr MeshSystem::CreatePlane(
+    Resources::MeshHandle MeshSystem::CreatePlane(
         const std::string& name,
         float width,
         float height,
@@ -330,9 +329,9 @@ namespace VoidArchitect
         Math::Vec3 tangent, bitangent;
 
         auto reference = Math::Vec3::Up();
-        if (std::abs(Math::Vec3::Cross(n, reference).X()) < Math::EPSILON
-            && std::abs(Math::Vec3::Cross(n, reference).Y()) < Math::EPSILON
-            && std::abs(Math::Vec3::Cross(n, reference).Z()) < Math::EPSILON)
+        if (std::abs(Math::Vec3::Cross(n, reference).X()) < Math::EPSILON && std::abs(
+            Math::Vec3::Cross(n, reference).Y()) < Math::EPSILON && std::abs(
+            Math::Vec3::Cross(n, reference).Z()) < Math::EPSILON)
         {
             reference = Math::Vec3::Right();
         }
@@ -379,7 +378,75 @@ namespace VoidArchitect
             }
         }
 
-        return CreateMesh(name, vertices, indices);
+        GenerateTangents(vertices, indices);
+        return GetHandleFor(name, vertices, indices);
+    }
+
+    void MeshSystem::GenerateNormals(
+        VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
+    {
+        for (uint32_t i = 0; i < indices.size(); i += 3)
+        {
+            const uint32_t index0 = indices[i + 0];
+            const uint32_t index1 = indices[i + 1];
+            const uint32_t index2 = indices[i + 2];
+
+            const Math::Vec3 edge0 = vertices[index1].Position - vertices[index0].Position;
+            const Math::Vec3 edge1 = vertices[index2].Position - vertices[index0].Position;
+
+            auto normal = Math::Vec3::Cross(edge0, edge1);
+            normal.Normalize();
+
+            // NOTE: This just generate a face normal, smoothing could be done in a separate pass.
+            vertices[index0].Normal = normal;
+            vertices[index1].Normal = normal;
+            vertices[index2].Normal = normal;
+        }
+    }
+
+    void MeshSystem::GenerateTangents(
+        VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
+    {
+        for (uint32_t i = 0; i < indices.size(); i += 3)
+        {
+            const uint32_t index0 = indices[i + 0];
+            const uint32_t index1 = indices[i + 1];
+            const uint32_t index2 = indices[i + 2];
+
+            const Math::Vec3 edge0 = vertices[index1].Position - vertices[index0].Position;
+            const Math::Vec3 edge1 = vertices[index2].Position - vertices[index0].Position;
+
+            const auto deltaU0 = vertices[index1].UV0.X() - vertices[index0].UV0.X();
+            const auto deltaU1 = vertices[index2].UV0.X() - vertices[index0].UV0.X();
+            const auto deltaV0 = vertices[index1].UV0.Y() - vertices[index0].UV0.Y();
+            const auto deltaV1 = vertices[index2].UV0.Y() - vertices[index0].UV0.Y();
+
+            const auto dividend = (deltaU0 * deltaV1) - (deltaU1 * deltaV0);
+            const auto fc = 1.0f / dividend;
+
+            auto tangent = (edge0 * deltaV1) - (edge1 * deltaV0);
+            tangent *= fc;
+            tangent.Normalize();
+
+            // Inverse tangent is normal are flipped, used in shader.
+            const auto sx = deltaU0;
+            const auto sy = deltaU1;
+            const auto tx = deltaV0;
+            const auto ty = deltaV1;
+            const auto handedness = ((tx * sy - ty * sx) < 0.0f) ? -1.0f : 1.0f;
+            const auto t4 = Math::Vec4(tangent, handedness);
+
+            vertices[index0].Tangent = t4;
+            vertices[index1].Tangent = t4;
+            vertices[index2].Tangent = t4;
+        }
+    }
+
+    Resources::IMesh* MeshSystem::GetPointerFor(const Resources::MeshHandle handle) const
+    {
+        return m_Meshes[handle].get();
     }
 
     uint32_t MeshSystem::GetFreeMeshHandle()
@@ -402,23 +469,5 @@ namespace VoidArchitect
 
     void MeshSystem::ReleaseMesh(const Resources::IMesh* mesh)
     {
-        if (const auto it = m_MeshCache.find(mesh->m_UUID); it != m_MeshCache.end())
-        {
-            VA_ENGINE_TRACE("[MeshSystem] Releasing mesh '{}'.", mesh->m_Name);
-            // Release the mesh handle
-            m_FreeMeshHandles.push(mesh->m_Handle);
-            const auto size = m_Meshes[mesh->m_Handle].dataSize;
-            m_Meshes[mesh->m_Handle] = {InvalidUUID, 0};
-            m_MeshCache.erase(it);
-
-            m_TotalMemoryUsed -= size;
-            m_TotalMeshesLoaded--;
-        }
-    }
-
-    void MeshSystem::MeshDeleter::operator()(const Resources::IMesh* mesh) const
-    {
-        system->ReleaseMesh(mesh);
-        delete mesh;
     }
 } // namespace VoidArchitect

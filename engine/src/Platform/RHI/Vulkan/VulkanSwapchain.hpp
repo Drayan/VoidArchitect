@@ -4,12 +4,9 @@
 #pragma once
 
 #include "VulkanDevice.hpp"
+#include "VulkanImage.hpp"
 
 #include <vulkan/vulkan.h>
-
-#include "VulkanRenderTarget.hpp"
-#include "VulkanImage.hpp"
-#include "VulkanRhi.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -17,53 +14,55 @@ namespace VoidArchitect::Platform
     {
     public:
         VulkanSwapchain(
-            VulkanRHI& rhi,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
-            VkSurfaceFormatKHR format,
-            VkPresentModeKHR presentMode,
-            VkExtent2D extent,
-            VkFormat depthFormat);
+            uint32_t width,
+            uint32_t height);
         ~VulkanSwapchain();
 
-        bool AcquireNextImage(
+        void Recreate(uint32_t width, uint32_t height);
+
+        std::optional<uint32_t> AcquireNextImage(
             uint64_t timeout,
             VkSemaphore semaphore,
-            VkFence fence,
-            uint32_t& out_imageIndex) const;
+            VkFence fence) const;
         void Present(VkQueue graphicsQueue, VkSemaphore renderComplete, uint32_t imageIndex) const;
 
-        [[nodiscard]] const VulkanImage& GetSwapchainImage(uint32_t index) const
-        {
-            return m_SwapchainImages[index];
-        }
-
-        [[nodiscard]] const VulkanImage& GetDepthImage() const { return m_DepthImage; }
-
-        [[nodiscard]] VkFormat GetFormat() const { return m_Format.format; }
-        [[nodiscard]] VkFormat GetDepthFormat() const { return m_DepthFormat; }
-
-        [[nodiscard]] uint32_t GetImageCount() const
-        {
-            return static_cast<uint32_t>(m_SwapchainImages.size());
-        }
-
-        [[nodiscard]] uint32_t GetMaxFrameInFlight() const { return m_MaxFrameInFlight; }
-
-        void Recreate(VulkanRHI& rhi, VkExtent2D extents, VkFormat depthFormat);
+        Resources::RenderTargetHandle GetColorRenderTarget(uint32_t index) const;
+        Resources::RenderTargetHandle GetDepthRenderTarget() const;
+        uint32_t GetImageCount() const { return m_SwapchainImages.size(); }
+        VkFormat GetFormat() const { return m_Format.format; };
+        VkFormat GetDepthFormat() const { return m_DepthFormat; };
+        uint32_t GetMaxFrameInFlight() const { return m_MaxFrameInFlight; };
 
     private:
+        void Cleanup();
+        void Create(uint32_t width, uint32_t height);
+        void CreateRenderTargetViews();
+
+        void QuerySwapchainCapabilities();
+        [[nodiscard]] VkSurfaceFormatKHR ChooseSwapchainFormat() const;
+        [[nodiscard]] VkPresentModeKHR ChooseSwapchainPresentMode() const;
+        [[nodiscard]] VkExtent2D ChooseSwapchainExtent(uint32_t width, uint32_t height) const;
+        [[nodiscard]] VkFormat ChooseDepthFormat() const;
+
         const std::unique_ptr<VulkanDevice>& m_Device;
         VkAllocationCallbacks* m_Allocator;
         VkSwapchainKHR m_Swapchain;
+
+        VkSurfaceCapabilitiesKHR m_Capabilities;
+        VAArray<VkSurfaceFormatKHR> m_Formats;
+        VAArray<VkPresentModeKHR> m_PresentModes;
 
         VkSurfaceFormatKHR m_Format;
         VkPresentModeKHR m_PresentMode;
         VkExtent2D m_Extent;
         VkFormat m_DepthFormat;
 
-        VAArray<VulkanImage> m_SwapchainImages;
-        VulkanImage m_DepthImage;
+        VAArray<Resources::RenderTargetHandle> m_ColorRenderTargets;
+        Resources::RenderTargetHandle m_DepthRenderTarget;
+
+        VAArray<VkImage> m_SwapchainImages;
         uint32_t m_MaxFrameInFlight = 2; // Support triple-buffering by default
     };
 } // namespace VoidArchitect::Platform

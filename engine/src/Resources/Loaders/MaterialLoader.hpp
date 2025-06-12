@@ -19,12 +19,12 @@ namespace VoidArchitect
             public:
                 ~MaterialDataDefinition() override = default;
 
-                MaterialConfig& GetConfig() { return m_MaterialConfig; }
+                MaterialTemplate& GetConfig() { return m_MaterialConfig; }
 
             private:
-                explicit MaterialDataDefinition(const MaterialConfig& config);
+                explicit MaterialDataDefinition(const MaterialTemplate& config);
 
-                MaterialConfig m_MaterialConfig;
+                MaterialTemplate m_MaterialConfig;
             };
 
             using MaterialDataDefinitionPtr = std::shared_ptr<MaterialDataDefinition>;

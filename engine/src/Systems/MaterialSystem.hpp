@@ -1,15 +1,19 @@
 #pragma once
 
+#include "RenderStateSystem.hpp"
 #include "Resources/Material.hpp"
 #include "Resources/RenderState.hpp"
 
 namespace VoidArchitect
 {
-    struct MaterialConfig
+    struct MaterialTemplate
     {
         std::string name;
+        std::string renderStateClass;
 
         Math::Vec4 diffuseColor = Math::Vec4::One();
+
+        VAArray<Renderer::ResourceBinding> resourceBindings;
 
         struct TextureConfig
         {
@@ -19,113 +23,63 @@ namespace VoidArchitect
 
         TextureConfig diffuseTexture;
         TextureConfig specularTexture;
+        TextureConfig normalTexture;
 
-        std::string renderStateTemplate = "Default";
-        VAArray<Renderer::RenderPassType> compatiblePassTypes;
-
-        VAArray<ResourceBindingType> requiredBinding;
-        VAArray<AttributeType> requiredAttributes;
+        [[nodiscard]] size_t GetHash() const;
+        size_t GetBindingsHash() const;
     };
 
-    struct MaterialSignature
-    {
-        std::string templateName;
-        Renderer::RenderPassType passType;
-        UUID renderStateUUID;
-
-        bool operator==(const MaterialSignature&) const;
-        size_t GetHash() const;
-    };
-
-    struct MaterialCacheKey
-    {
-        std::string templateName;
-        MaterialSignature signature;
-
-        bool operator==(const MaterialCacheKey&) const;
-        size_t GetHash() const;
-    };
-}
-
-namespace std
-{
-    template <>
-    struct hash<VoidArchitect::MaterialSignature>
-    {
-        size_t operator()(const VoidArchitect::MaterialSignature& signature) const noexcept
-        {
-            return signature.GetHash();
-        }
-    };
-
-    template <>
-    struct hash<VoidArchitect::MaterialCacheKey>
-    {
-        size_t operator()(const VoidArchitect::MaterialCacheKey& key) const noexcept
-        {
-            return key.GetHash();
-        }
-    };
-}
-
-namespace VoidArchitect
-{
     class MaterialSystem
     {
     public:
         MaterialSystem();
         ~MaterialSystem();
-        void LoadTemplate(const std::string& name);
 
-        void RegisterMaterialTemplate(const std::string& name, const MaterialConfig& config);
+        MaterialHandle GetHandleFor(const std::string& name);
+        MaterialHandle GetHandleForDefaultMaterial() { return 0; }
+        Renderer::MaterialClass GetClass(MaterialHandle handle) const;
 
-        Resources::MaterialPtr CreateMaterial(
-            const std::string& templateName,
-            Renderer::RenderPassType passType,
-            const Resources::RenderStatePtr& renderState);
+        MaterialTemplate& GetTemplateFor(MaterialHandle handle);
+        Resources::IMaterial* GetPointerFor(MaterialHandle handle) const;;
 
-        const MaterialConfig& GetMaterialTemplate(const std::string& name) const;
-        Resources::MaterialPtr GetCachedMaterial(
-            const std::string& name,
-            Renderer::RenderPassType passType,
-            UUID renderStateUUID) const;
-        Resources::MaterialPtr GetDefaultMaterial() { return m_DefaultMaterial; }
+        // Interaction with Material
+        void Bind(MaterialHandle handle, RenderStateHandle stateHandle);
 
     private:
-        void GenerateDefaultMaterials();
-        uint32_t GetFreeMaterialHandle();
+        MaterialHandle LoadTemplate(const std::string& name);
+        MaterialHandle RegisterTemplate(const std::string& name, const MaterialTemplate& config);
+
+        void LoadMaterial(MaterialHandle handle);
+        //void UnloadMaterial(MaterialHandle handle);
+
+        void LoadDefaultMaterials();
+
+        MaterialHandle GetFreeMaterialHandle();
+
+        static Resources::IMaterial* CreateMaterial(const MaterialTemplate& matTemplate);
+
         void ReleaseMaterial(const Resources::IMaterial* material);
 
-        bool ValidateCompatibility(
-            const MaterialConfig& config,
-            Renderer::RenderPassType passType,
-            const Resources::RenderStatePtr& renderState);
-
-        MaterialSignature CreateSignature(
-            const std::string& templateName,
-            Renderer::RenderPassType passType,
-            const Resources::RenderStatePtr& renderState);
-
-        struct MaterialDeleter
+        enum class MaterialLoadingState
         {
-            MaterialSystem* system;
-            void operator()(const Resources::IMaterial* material) const;
+            Unloaded,
+            Loading,
+            Loaded
         };
 
         struct MaterialData
         {
             UUID uuid = InvalidUUID;
+            MaterialTemplate config;
+            MaterialLoadingState state = MaterialLoadingState::Unloaded;
+
+            Resources::IMaterial* materialPtr = nullptr;
         };
 
-        std::queue<uint32_t> m_FreeMaterialHandles;
-        uint32_t m_NextFreeMaterialHandle = 0;
+        std::queue<MaterialHandle> m_FreeMaterialHandles;
+        MaterialHandle m_NextFreeMaterialHandle = 0;
 
         VAArray<MaterialData> m_Materials;
-
-        VAHashMap<std::string, MaterialConfig> m_MaterialTemplates;
-        VAHashMap<MaterialCacheKey, std::weak_ptr<Resources::IMaterial>> m_MaterialCache;
-
-        Resources::MaterialPtr m_DefaultMaterial;
     };
 
     inline std::unique_ptr<MaterialSystem> g_MaterialSystem;

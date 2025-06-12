@@ -10,24 +10,17 @@ namespace VoidArchitect
     namespace Platform
     {
         VulkanMesh::VulkanMesh(
-            VulkanRHI& rhi,
+            const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
             const std::string& name,
             const VAArray<Resources::MeshVertex>& vertices,
             const VAArray<uint32_t>& indices)
             : IMesh(name),
+              m_Device(device),
               m_Allocator(allocator)
         {
-            m_VertexBuffer = std::make_unique<VulkanVertexBuffer>(
-                rhi, rhi.GetDeviceRef(), m_Allocator, vertices);
-            m_IndexBuffer =
-                std::make_unique<VulkanIndexBuffer>(rhi, rhi.GetDeviceRef(), m_Allocator, indices);
-        }
-
-        void VulkanMesh::Bind(Platform::IRenderingHardware& rhi)
-        {
-            m_VertexBuffer->Bind(rhi);
-            m_IndexBuffer->Bind(rhi);
+            m_VertexBuffer = std::make_unique<VulkanVertexBuffer>(m_Device, m_Allocator, vertices);
+            m_IndexBuffer = std::make_unique<VulkanIndexBuffer>(m_Device, m_Allocator, indices);
         }
 
         void VulkanMesh::Release()

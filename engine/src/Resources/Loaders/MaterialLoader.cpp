@@ -7,11 +7,12 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include "Systems/RenderStateSystem.hpp"
+#include "Resources/Shader.hpp"
+#include "Systems/Renderer/RendererTypes.hpp"
 
 namespace VoidArchitect::Resources::Loaders
 {
-    MaterialDataDefinition::MaterialDataDefinition(const MaterialConfig& config)
+    MaterialDataDefinition::MaterialDataDefinition(const MaterialTemplate& config)
         : m_MaterialConfig(config)
     {
     }
@@ -37,7 +38,7 @@ namespace VoidArchitect::Resources::Loaders
         try
         {
             auto configFile = YAML::LoadFile(materialPath);
-            MaterialConfig config;
+            MaterialTemplate config;
 
             if (configFile["material"])
             {
@@ -55,12 +56,36 @@ namespace VoidArchitect::Resources::Loaders
                     return nullptr;
                 }
 
-                // Pipeline (optional)
-                if (materialNode["pipeline"])
+                // RenderStateClass (required)
+                if (materialNode["render_state_class"])
                 {
-                    auto renderState = materialNode["pipeline"].as<std::string>();
+                    auto renderState = materialNode["render_state_class"].as<std::string>();
                     // TODO Retrieve the pipeline from the pipeline system
-                    config.renderStateTemplate = renderState;
+                    config.renderStateClass = renderState;
+                }
+
+                // Bindings (required)
+                if (materialNode["bindings"])
+                {
+                    auto bindingsNode = materialNode["bindings"];
+                    if (!bindingsNode.IsSequence())
+                    {
+                        VA_ENGINE_WARN(
+                            "[MaterialSystem] Material file '{}' is missing bindings.",
+                            config.name);
+                        return nullptr;
+                    }
+
+                    for (auto binding : bindingsNode)
+                    {
+                        auto bindingIndex = binding["binding"].as<uint32_t>();
+                        auto bindingTypeStr = binding["type"].as<std::string>();
+                        auto bindingType = Renderer::ResourceBindingTypeFromString(bindingTypeStr);
+                        auto stageStr = binding["stage"].as<std::string>();
+                        auto stage = ShaderStageFromString(stageStr);
+
+                        config.resourceBindings.push_back({bindingType, bindingIndex, stage, {}});
+                    }
                 }
 
                 // Properties (required)
@@ -84,8 +109,11 @@ namespace VoidArchitect::Resources::Loaders
                             VAArray<float> values;
                             for (auto val : propertiesNode["diffuse_color"])
                                 values.push_back(val.as<float>());
-                            config.diffuseColor =
-                                Math::Vec4(values[0], values[1], values[2], values[3]);
+                            config.diffuseColor = Math::Vec4(
+                                values[0],
+                                values[1],
+                                values[2],
+                                values[3]);
                         }
                     }
                     else
@@ -107,6 +135,14 @@ namespace VoidArchitect::Resources::Loaders
                         auto specularMapName = propertiesNode["specular_map"].as<std::string>();
                         config.specularTexture.name = specularMapName;
                         config.specularTexture.use = Resources::TextureUse::Specular;
+                    }
+
+                    // Normal map (optional)
+                    if (propertiesNode["normal_map"])
+                    {
+                        auto normalMapName = propertiesNode["normal_map"].as<std::string>();
+                        config.normalTexture.name = normalMapName;
+                        config.normalTexture.use = Resources::TextureUse::Normal;
                     }
 
                     // TODO Parse other properties

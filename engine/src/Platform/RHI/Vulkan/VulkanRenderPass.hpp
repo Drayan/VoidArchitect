@@ -10,6 +10,7 @@
 
 namespace VoidArchitect::Platform
 {
+    class VulkanExecutionContext;
     class VulkanSwapchain;
     class VulkanDevice;
 
@@ -25,10 +26,12 @@ namespace VoidArchitect::Platform
 
     class VulkanRenderPass : public Resources::IRenderPass
     {
+        friend class VoidArchitect::Platform::VulkanExecutionContext;
+
     public:
         // New constructor using RenderPassConfig (preferred)
         VulkanRenderPass(
-            const RenderPassConfig& config,
+            const Renderer::RenderPassConfig& config,
             const std::unique_ptr<VulkanDevice>& device,
             VkAllocationCallbacks* allocator,
             Renderer::PassPosition passPosition,
@@ -36,17 +39,6 @@ namespace VoidArchitect::Platform
             VkFormat depthFormat);
         ~VulkanRenderPass() override;
 
-        void Begin(IRenderingHardware& rhi, const Resources::RenderTargetPtr& target) override;
-        void End(IRenderingHardware& rhi) override;
-
-        [[nodiscard]] bool IsCompatibleWith(
-            const Resources::RenderTargetPtr& target) const override;
-
-        // Legacy vulkan-specific methods (for backward compatibility)
-        void Begin(VulkanCommandBuffer& cmdBuf, VkFramebuffer framebuffer) const;
-        void End(VulkanCommandBuffer& cmdBuf) const;
-
-        // Vulkan-specific getters
         VkRenderPass GetHandle() const { return m_Renderpass; }
 
         // Configuration access
@@ -63,12 +55,9 @@ namespace VoidArchitect::Platform
         void SetX(const uint32_t x) { m_x = x; };
         void SetY(const uint32_t y) { m_y = y; };
 
-    protected:
-        void Release() override;
-
     private:
         void CreateRenderPassFromConfig(
-            const RenderPassConfig& config,
+            const Renderer::RenderPassConfig& config,
             Renderer::PassPosition passPosition,
             VkFormat swapchainFormat,
             VkFormat depthFormat);
@@ -82,11 +71,5 @@ namespace VoidArchitect::Platform
         int32_t m_x, m_y;
         uint32_t m_w, m_h;
         VAArray<VkClearValue> m_ClearValues;
-
-        // Store config for compatibility checks
-        RenderPassConfig m_Config;
-        bool m_IsLegacy = false;
-
-        Resources::RenderTargetPtr m_CurrentTarget;
     };
 } // namespace VoidArchitect::Platform

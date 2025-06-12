@@ -2,271 +2,292 @@
 
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
-#include "RenderStateSystem.hpp"
-#include "Renderer/RenderCommand.hpp"
 #include "ResourceSystem.hpp"
 #include "Resources/Loaders/MaterialLoader.hpp"
 #include "Resources/Material.hpp"
 #include "TextureSystem.hpp"
-#include "Renderer/RenderGraph.hpp"
+#include "Renderer/RenderSystem.hpp"
+#include "Resources/Shader.hpp"
 
 namespace VoidArchitect
 {
+    size_t MaterialTemplate::GetHash() const
+    {
+        size_t seed = 0;
+        HashCombine(seed, name);
+        HashCombine(seed, diffuseColor.X());
+        HashCombine(seed, diffuseColor.Y());
+        HashCombine(seed, diffuseColor.Z());
+        HashCombine(seed, diffuseColor.W());
+        HashCombine(seed, GetBindingsHash());
+        HashCombine(seed, diffuseTexture.name);
+        HashCombine(seed, specularTexture.name);
+        HashCombine(seed, renderStateClass);
+        return seed;
+    }
+
+    size_t MaterialTemplate::GetBindingsHash() const
+    {
+        size_t seed = 0;
+
+        // Sort the bindings by their binding property
+        auto bindings = resourceBindings;
+        std::sort(bindings.begin(), bindings.end());
+        for (auto& binding : bindings)
+        {
+            HashCombine(seed, binding.binding);
+            HashCombine(seed, binding.type);
+            HashCombine(seed, binding.stage);
+        }
+
+        return seed;
+    }
+
     MaterialSystem::MaterialSystem()
     {
-        GenerateDefaultMaterials();
+        m_Materials.reserve(256); // Reserve some space for the material nodes
+        LoadDefaultMaterials();
     }
 
     MaterialSystem::~MaterialSystem()
     {
+        for (MaterialHandle handle = 0; handle < m_Materials.size(); ++handle)
+        {
+            if (m_Materials[handle].state == MaterialLoadingState::Loaded)
+            {
+                delete m_Materials[handle].materialPtr;
+            }
+        }
+        m_Materials.clear();
     }
 
-    void MaterialSystem::LoadTemplate(const std::string& name)
+    MaterialHandle MaterialSystem::GetHandleFor(const std::string& name)
     {
-        if (m_MaterialTemplates.contains(name))
+        // Check if the material is in the cache
+        for (MaterialHandle handle = 0; handle < m_Materials.size(); ++handle)
         {
-            VA_ENGINE_WARN("[MaterialSystem] Material template '{}' already exists.", name);
+            if (const auto& node = m_Materials[handle]; node.config.name == name)
+            {
+                if (node.state == MaterialLoadingState::Loaded) return handle;
+
+                // The material exist but is unloaded, we need to load it first.
+                LoadMaterial(handle);
+                return handle;
+            }
+        }
+
+        // This is the first time the system is asked an handle for this material,
+        // we have to load its config file from disk.
+        const auto handle = LoadTemplate(name);
+        LoadMaterial(handle);
+
+        return handle;
+    }
+
+    Renderer::MaterialClass MaterialSystem::GetClass(const MaterialHandle handle) const
+    {
+        const auto& node = m_Materials[handle];
+        if (node.config.renderStateClass.empty() || node.config.renderStateClass != "UI")
+            return Renderer::MaterialClass::Standard;
+        else return Renderer::MaterialClass::UI;
+    }
+
+    MaterialTemplate& MaterialSystem::GetTemplateFor(const MaterialHandle handle)
+    {
+        return m_Materials[handle].config;
+    }
+
+    Resources::IMaterial* MaterialSystem::GetPointerFor(const MaterialHandle handle) const
+    {
+        return m_Materials[handle].materialPtr;
+    }
+
+    void MaterialSystem::Bind(const MaterialHandle handle, const RenderStateHandle stateHandle)
+    {
+        // Is this handle valid?
+        if (handle >= m_Materials.size())
+        {
+            VA_ENGINE_ERROR("[MaterialSystem] Invalid material handle.");
             return;
         }
 
-        const auto materialData =
-            g_ResourceSystem->LoadResource<Resources::Loaders::MaterialDataDefinition>(
-                ResourceType::Material,
-                name);
+        // Is the material loaded?
+        if (m_Materials[handle].state != MaterialLoadingState::Loaded)
+        {
+            // This material is unloaded, load it now.
+            LoadMaterial(handle);
+        }
+
+        // Bind the material
+        Renderer::g_RenderSystem->GetRHI()->BindMaterial(handle, stateHandle);
+    }
+
+    MaterialHandle MaterialSystem::LoadTemplate(const std::string& name)
+    {
+        // Check if the material is already registered in the system, if so, return its handle.
+        for (MaterialHandle handle = 0; handle < m_Materials.size(); ++handle)
+        {
+            if (const auto& node = m_Materials[handle]; node.config.name == name)
+            {
+                VA_ENGINE_WARN("[MaterialSystem] Material template '{}' already exists.", name);
+                return handle;
+            }
+        }
+
+        // Load the MaterialTemplate from the disk
+        const auto materialData = g_ResourceSystem->LoadResource<
+            Resources::Loaders::MaterialDataDefinition>(ResourceType::Material, name);
         if (!materialData)
         {
             VA_ENGINE_ERROR("[MaterialSystem] Failed to load material template '{}'.", name);
+            return InvalidMaterialHandle;
         }
 
-        RegisterMaterialTemplate(name, materialData->GetConfig());
+        return RegisterTemplate(name, materialData->GetConfig());
     }
 
-    void MaterialSystem::RegisterMaterialTemplate(
+    MaterialHandle MaterialSystem::RegisterTemplate(
         const std::string& name,
-        const MaterialConfig& config)
+        const MaterialTemplate& config)
     {
-        if (m_MaterialTemplates.contains(name))
+        // Check if the material is already registered in the system, if so, return its handle.
+        for (MaterialHandle handle = 0; handle < m_Materials.size(); ++handle)
         {
-            VA_ENGINE_WARN(
-                "[MaterialSystem] Material template '{}' already exists. Overwriting.",
-                name);
+            if (const auto& node = m_Materials[handle]; node.config.name == name)
+            {
+                VA_ENGINE_WARN("[MaterialSystem] Material template '{}' already exists.", name);
+                return handle;
+            }
         }
 
-        m_MaterialTemplates[name] = config;
+        const MaterialData node{InvalidUUID, config, MaterialLoadingState::Unloaded, nullptr};
+        const MaterialHandle handle = GetFreeMaterialHandle();
+        m_Materials[handle] = node;
+
         VA_ENGINE_TRACE("[MaterialSystem] Registered material template '{}'.", name);
+        return handle;
     }
 
-    Resources::MaterialPtr MaterialSystem::CreateMaterial(
-        const std::string& templateName,
-        Renderer::RenderPassType passType,
-        const Resources::RenderStatePtr& renderState)
+    void MaterialSystem::LoadMaterial(const MaterialHandle handle)
     {
-        // Find the template
-        const auto templateIt = m_MaterialTemplates.find(templateName);
-        if (templateIt == m_MaterialTemplates.end())
-        {
-            VA_ENGINE_ERROR(
-                "[MaterialSystem] Failed to create material, template '{}' not found.",
-                templateName);
-            return nullptr;
-        }
+        auto node = m_Materials[handle];
+        if (node.state == MaterialLoadingState::Loaded) return;
 
-        const auto& materialTemplate = templateIt->second;
-
-        // Validate compatibility
-        if (!ValidateCompatibility(materialTemplate, passType, renderState))
-        {
-            VA_ENGINE_ERROR(
-                "[MaterialSystem] Failed to create material, template '{}' is not compatible "
-                "with render state '{}'.",
-                templateName,
-                renderState->GetName());
-            return nullptr;
-        }
-
-        // Create cache key and check cache
-        const auto signature = CreateSignature(templateName, passType, renderState);
-        const MaterialCacheKey cacheKey{templateName, signature};
-
-        if (const auto cacheIt = m_MaterialCache.find(cacheKey); cacheIt != m_MaterialCache.end())
-        {
-            if (auto cached = cacheIt->second.lock())
-            {
-                VA_ENGINE_TRACE(
-                    "[MaterialSystem] Reusing cached material '{}'.",
-                    cached->m_Name);
-                return cached;
-            }
-
-            // Remove expired weak pointers from the cache
-            m_MaterialCache.erase(cacheKey);
-        }
-
-        // Create new material instance
-        const auto material = Renderer::RenderCommand::GetRHIRef().CreateMaterial(
-            materialTemplate.name);
+        const auto material = CreateMaterial(node.config);
         if (!material)
         {
-            VA_ENGINE_ERROR(
-                "[MaterialSystem] Failed to create material '{}'.",
-                materialTemplate.name);
+            VA_ENGINE_ERROR("[MaterialSystem] Failed to load material '{}'.", node.config.name);
+        }
+
+        VA_ENGINE_TRACE("[MaterialSystem] Loaded material '{}'.", node.config.name);
+        m_Materials[handle].materialPtr = material;
+        m_Materials[handle].state = MaterialLoadingState::Loaded;
+    }
+
+    Resources::IMaterial* MaterialSystem::CreateMaterial(const MaterialTemplate& matTemplate)
+    {
+        // Ask the RHI to create the required data on the GPU.
+        const auto material = Renderer::g_RenderSystem->GetRHI()->CreateMaterial(
+            matTemplate.name,
+            matTemplate);
+        if (!material)
+        {
+            VA_ENGINE_ERROR("[MaterialSystem] Failed to create material '{}'.", matTemplate.name);
             return nullptr;
         }
 
-        // Set material properties from template
-        material->SetDiffuseColor(materialTemplate.diffuseColor);
+        // Set material properties from the template
+        material->SetDiffuseColor(matTemplate.diffuseColor);
 
         // Load textures
-        if (!materialTemplate.diffuseTexture.name.empty())
+        //TODO: Same as the resourceBinding, we could do this a little bit more flexible
+        if (!matTemplate.diffuseTexture.name.empty())
         {
-            const auto texture = g_TextureSystem->LoadTexture2D(
-                materialTemplate.diffuseTexture.name,
-                Resources::TextureUse::Diffuse);
-            if (texture)
+            if (const auto texture = g_TextureSystem->GetHandleFor(matTemplate.diffuseTexture.name))
             {
-                material->SetTexture(0, texture);
+                material->SetTexture(matTemplate.diffuseTexture.use, texture);
             }
             else
             {
                 VA_ENGINE_WARN(
                     "[MaterialSystem] Failed to load diffuse texture '{}' for material '{}', "
                     "using default.",
-                    materialTemplate.diffuseTexture.name,
-                    materialTemplate.name
-                );
+                    matTemplate.diffuseTexture.name,
+                    matTemplate.name);
             }
         }
 
-        if (!materialTemplate.specularTexture.name.empty())
+        if (!matTemplate.specularTexture.name.empty())
         {
-            const auto texture = g_TextureSystem->LoadTexture2D(
-                materialTemplate.specularTexture.name,
-                Resources::TextureUse::Specular);
+            const auto texture = g_TextureSystem->GetHandleFor(matTemplate.specularTexture.name);
             if (texture)
             {
-                material->SetTexture(1, texture);
+                material->SetTexture(matTemplate.specularTexture.use, texture);
             }
             else
             {
                 VA_ENGINE_WARN(
                     "[MaterialSystem] Failed to load specular texture '{}' for material '{}', "
                     "using default.",
-                    materialTemplate.specularTexture.name,
-                    materialTemplate.name);
+                    matTemplate.specularTexture.name,
+                    matTemplate.name);
+            }
+        }
+
+        if (!matTemplate.normalTexture.name.empty())
+        {
+            const auto texture = g_TextureSystem->GetHandleFor(matTemplate.normalTexture.name);
+            if (texture)
+            {
+                material->SetTexture(matTemplate.normalTexture.use, texture);
+            }
+            else
+            {
+                VA_ENGINE_WARN(
+                    "[MaterialSystem] Failed to load normal texture '{}' for material '{}', "
+                    "using default.",
+                    matTemplate.normalTexture.name,
+                    matTemplate.name);
             }
         }
 
         // TODO: Load other textures
 
-        // Initialize resources with RenderState
-        material->InitializeResources(Renderer::RenderCommand::GetRHIRef(), renderState);
-
-        // Cache the material
-        auto materialPtr = Resources::MaterialPtr(material);
-        m_MaterialCache[cacheKey] = materialPtr;
-
-        VA_ENGINE_TRACE(
-            "[MaterialSystem] Created material '{}' for pass type '{}'.",
-            material->m_Name,
-            Renderer::RenderPassTypeToString(passType));
-        return materialPtr;
+        return material;
     }
 
-    Resources::MaterialPtr MaterialSystem::GetCachedMaterial(
-        const std::string& name,
-        const Renderer::RenderPassType passType,
-        const UUID renderStateUUID) const
+    void MaterialSystem::LoadDefaultMaterials()
     {
-        const auto signature = MaterialSignature(name, passType, renderStateUUID);
-        const MaterialCacheKey cacheKey{name, signature};
-        if (const auto cacheIt = m_MaterialCache.find(cacheKey); cacheIt != m_MaterialCache.end())
-        {
-            if (auto cached = cacheIt->second.lock())
-            {
-                return cached;
-            }
-        }
-
-        return nullptr;
-    }
-
-    // Resources::MaterialPtr MaterialSystem::LoadMaterial(const std::string& name)
-    // {
-    //     // Check if the material is already loaded in the cache
-    //     for (auto& [uuid, material] : m_MaterialCache)
-    //     {
-    //         const auto& mat = material.lock();
-    //         if (mat && mat->m_Name == name)
-    //         {
-    //             // If the material is found in the cache, return it
-    //             return mat;
-    //         }
-    //
-    //         if (mat == nullptr)
-    //         {
-    //             // Remove expired weak pointers from the cache
-    //             m_MaterialCache.erase(uuid);
-    //         }
-    //     }
-    //
-    //     const auto materialData =
-    //         g_ResourceSystem->LoadResource<Resources::Loaders::MaterialDataDefinition>(
-    //             ResourceType::Material,
-    //             name);
-    //     // If we reach this point, something went wrong.
-    //     return CreateMaterial(materialData->GetConfig());
-    // }
-
-    bool MaterialSystem::ValidateCompatibility(
-        const MaterialConfig& config,
-        Renderer::RenderPassType passType,
-        const Resources::RenderStatePtr& renderState)
-    {
-        //TODO: Implement validation logic
-        //  Check if RenderState InputLayout contains required bindings
-        //  Check if RenderState InputLayout contains required attributes
-        const auto& compatiblePassTypes = config.compatiblePassTypes;
-        bool passTypeSupported = std::ranges::find(compatiblePassTypes, passType) !=
-            compatiblePassTypes.end();
-
-        if (!passTypeSupported)
-        {
-            VA_ENGINE_WARN(
-                "[MaterialSystem] Material template '{}' does not support pass type '{}'.",
-                config.name,
-                Renderer::RenderPassTypeToString(passType));
-        }
-
-        return true;
-    }
-
-    MaterialSignature MaterialSystem::CreateSignature(
-        const std::string& templateName,
-        Renderer::RenderPassType passType,
-        const Resources::RenderStatePtr& renderState)
-    {
-        return MaterialSignature(templateName, passType, renderState->GetUUID());
-    }
-
-    void MaterialSystem::GenerateDefaultMaterials()
-    {
-        MaterialConfig defaultTemplate;
+        MaterialTemplate defaultTemplate;
         defaultTemplate.name = "DefaultMaterial";
         defaultTemplate.diffuseColor = Math::Vec4::One();
-        defaultTemplate.renderStateTemplate = "Default";
-        defaultTemplate.compatiblePassTypes = {Renderer::RenderPassType::ForwardOpaque};
+        defaultTemplate.renderStateClass = "DefaultState";
 
-        RegisterMaterialTemplate("Default", defaultTemplate);
+        // Define the DefaultMaterial bindings
+        defaultTemplate.resourceBindings = {
+            {Renderer::ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::Pixel, {}},
+            // MaterialUBO
+            {Renderer::ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel, {}},
+            // DiffuseMap
+            {Renderer::ResourceBindingType::Texture2D, 2, Resources::ShaderStage::Pixel, {}},
+            // SpecularMap
+        };
 
-        MaterialConfig uiTemplate;
+        RegisterTemplate("DefaultMaterial", defaultTemplate);
+
+        MaterialTemplate uiTemplate;
         uiTemplate.name = "DefaultUIMaterial";
         uiTemplate.diffuseColor = Math::Vec4::One();
-        uiTemplate.renderStateTemplate = "UI";
-        uiTemplate.compatiblePassTypes = {Renderer::RenderPassType::UI};
+        uiTemplate.renderStateClass = "UIState";
 
-        RegisterMaterialTemplate("DefaultUIMaterial", uiTemplate);
+        uiTemplate.resourceBindings = {
+            // MaterialUBO
+            {Renderer::ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::Pixel, {}},
+            // DiffuseMap
+            {Renderer::ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel, {}},
+        };
 
-        VA_ENGINE_INFO("[MaterialSystem] Generated default materials.");
+        RegisterTemplate("DefaultUIMaterial", uiTemplate);
     }
 
     uint32_t MaterialSystem::GetFreeMaterialHandle()
@@ -288,33 +309,5 @@ namespace VoidArchitect
 
     void MaterialSystem::ReleaseMaterial(const Resources::IMaterial* material)
     {
-    }
-
-    void MaterialSystem::MaterialDeleter::operator()(const Resources::IMaterial* material) const
-    {
-        system->ReleaseMaterial(material);
-        delete material;
-    }
-
-    bool MaterialSignature::operator==(const MaterialSignature& other) const
-    {
-        return templateName == other.templateName && renderStateUUID == other.renderStateUUID &&
-            passType == other.passType;
-    }
-
-    size_t MaterialSignature::GetHash() const
-    {
-        return std::hash<std::string>{}(templateName) ^ std::hash<UUID>{}(renderStateUUID) ^
-            std::hash<Renderer::RenderPassType>{}(passType);
-    }
-
-    bool MaterialCacheKey::operator==(const MaterialCacheKey& other) const
-    {
-        return templateName == other.templateName && signature == other.signature;
-    }
-
-    size_t MaterialCacheKey::GetHash() const
-    {
-        return std::hash<std::string>{}(templateName) ^ signature.GetHash();
     }
 } // namespace VoidArchitect

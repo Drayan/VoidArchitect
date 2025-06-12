@@ -29,6 +29,9 @@ namespace VoidArchitect::Resources
         Depth = 1 << 7
     };
 
+    using TextureHandle = uint32_t;
+    static constexpr TextureHandle InvalidTextureHandle = std::numeric_limits<TextureHandle>::max();
+
     class ITexture
     {
         friend class VoidArchitect::TextureSystem;
@@ -58,8 +61,6 @@ namespace VoidArchitect::Resources
         TextureUse m_Use = TextureUse::None;
     };
 
-    using TexturePtr = std::shared_ptr<ITexture>;
-
     class Texture2D : public ITexture
     {
     protected:
@@ -70,6 +71,4 @@ namespace VoidArchitect::Resources
             uint8_t channelCount,
             bool hasTransparency);
     };
-
-    using Texture2DPtr = std::shared_ptr<Texture2D>;
 } // namespace VoidArchitect::Resources

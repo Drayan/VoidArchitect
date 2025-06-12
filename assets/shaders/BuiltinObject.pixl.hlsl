@@ -15,13 +15,28 @@ Texture2D<float4> l_texture : register(t1, space1);
 SamplerState m_specularMap : register(s2, space1);
 Texture2D<float4> m_specularMapTexture : register(t2, space1);
 
+SamplerState m_normalMap : register(s3, space1);
+Texture2D<float4> m_normalMapTexture : register(t3, space1);
+
+float4 calculateDirectionalLight(float4 lightColor, float3 lightDir, float3 normal, float3 viewDir);
+
 float4 main(PSInput input) : SV_Target
 {
-    float lightIntensity = max(dot(input.Normal, -g_ubo.LightDirection.xyz), 0.0f);
+    // Calculate TBN matrix
+    float3 normal = normalize(input.Normal);
+    float3 tangent = normalize(input.Tangent.xyz);
+    tangent = (tangent - dot(tangent, normal) * normal);
+    float3 bitangent = cross(normal, input.Tangent.xyz) * input.Tangent.w;
+    float3x3 TBN = float3x3(tangent, bitangent, normal);
+
+    // Update the normal to use the normal map
+    float3 localNormal = m_normalMapTexture.Sample(m_normalMap, input.UV0).rgb * 2.0f - 1.0f;
+    normal = normalize(mul(localNormal, TBN));
+    float lightIntensity = max(dot(normal, -g_ubo.LightDirection.xyz), 0.0f);
 
     float3 viewDir = normalize(g_ubo.ViewPosition - input.PixelPosition).xyz;
     float3 halfDir = normalize(viewDir - g_ubo.LightDirection.xyz);
-    float specularIntensity = pow(max(dot(input.Normal, halfDir), 0.0f), 64.0f);
+    float specularIntensity = pow(max(dot(normal, halfDir), 0.0f), 64.0f);
 
     float4 diffuseTexture = l_texture.Sample(l_sampler, input.UV0);
 

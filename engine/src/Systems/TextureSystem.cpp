@@ -7,153 +7,99 @@
 
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
-#include "Renderer/RenderCommand.hpp"
 #include "ResourceSystem.hpp"
+#include "Renderer/RenderSystem.hpp"
 #include "Resources/Loaders/ImageLoader.hpp"
-#include "Resources/Material.hpp"
 #include "Resources/Texture.hpp"
 
 namespace VoidArchitect
 {
     TextureSystem::TextureSystem()
     {
-        m_Textures.reserve(1024); // Reserve space for 1024 textures to avoid frequent reallocations
+        m_Textures.reserve(4096); // Reserve space for 1024 textures to avoid frequent reallocations
         GenerateDefaultTextures();
     }
 
     TextureSystem::~TextureSystem()
     {
-        Resources::IMaterial::SetDefaultDiffuseTexture(nullptr);
-        m_DefaultTexture = nullptr;
-
-        if (!m_TextureCache.empty())
-        {
-            VA_ENGINE_WARN(
-                "[TextureSystem] Texture cache is not empty during destruction. "
-                "This may indicate a resource leak.");
-
-            for (const auto& [uuid, texture] : m_TextureCache)
-            {
-                if (const auto tex = texture.lock())
-                {
-                    VA_ENGINE_WARN(
-                        "[TextureSystem] Texture '{}' with UUID {} was not released properly.",
-                        tex->m_Name,
-                        static_cast<uint64_t>(uuid));
-                    tex->Release();
-                }
-            }
-        }
-
-        m_TextureCache.clear();
     }
 
-    Resources::Texture2DPtr TextureSystem::LoadTexture2D(
-        const std::string& name, const Resources::TextureUse use)
+    Resources::TextureHandle TextureSystem::GetHandleFor(const std::string& name)
     {
         // Check if the texture is in the cache
-        for (auto& [uuid, texture] : m_TextureCache)
+        for (uint32_t i = 0; i < m_Textures.size(); i++)
         {
-            const auto& tex = texture.lock();
-            if (tex && tex->m_Name == name)
-            {
-                // If the texture is found in the cache, return it
-                return std::dynamic_pointer_cast<Resources::Texture2D>(tex);
-            }
-
-            if (tex == nullptr)
-            {
-                // Remove expired weak pointers from the cache
-                m_TextureCache.erase(uuid);
-            }
+            if (m_Textures[i]->m_Name == name) return i;
         }
 
         // If not found, load the texture from a file
-        const auto imageDefinition =
-            g_ResourceSystem->LoadResource<Resources::Loaders::ImageDataDefinition>(
-                ResourceType::Image, name);
-        // const auto data = LoadRawData(name, width, height, channels, hasTransparency);
+        const auto imageDefinition = g_ResourceSystem->LoadResource<
+            Resources::Loaders::ImageDataDefinition>(ResourceType::Image, name);
 
-        Resources::Texture2D* texture = nullptr;
-        switch (Renderer::RenderCommand::GetApiType())
-        {
-            case Platform::RHI_API_TYPE::Vulkan:
-            {
-                texture = Renderer::RenderCommand::GetRHIRef().CreateTexture2D(
-                    name,
-                    imageDefinition->GetWidth(),
-                    imageDefinition->GetHeight(),
-                    4,
-                    imageDefinition->HasTransparency(),
-                    imageDefinition->GetData());
-            }
-            default:
-                break;
-        }
+        Resources::Texture2D* rawPtr = Renderer::g_RenderSystem->GetRHI()->CreateTexture2D(
+            name,
+            imageDefinition->GetWidth(),
+            imageDefinition->GetHeight(),
+            4,
+            imageDefinition->HasTransparency(),
+            imageDefinition->GetData());
 
-        if (texture)
+        if (rawPtr)
         {
-            auto texturePtr = Resources::Texture2DPtr(texture, TextureDeleter{this});
             // Cache the texture
             const auto handle = GetFreeTextureHandle();
-            texture->m_Handle = handle;
-            texture->m_Use = use;
+            rawPtr->m_Handle = handle;
 
-            m_Textures[handle] = {texture->m_UUID, imageDefinition->GetData().size()};
-            m_TextureCache[texture->m_UUID] = texturePtr;
-
-            m_TotalMemoryUsed += imageDefinition->GetData().size();
-            m_TotalTexturesLoaded++;
+            m_Textures[handle] = std::unique_ptr<Resources::ITexture>(rawPtr);
 
             VA_ENGINE_TRACE(
-                "[TextureSystem] Created texture '{}' with handle {}.", texture->m_Name, handle);
-            return texturePtr;
+                "[TextureSystem] Created texture '{}' with handle {}.",
+                rawPtr->m_Name,
+                handle);
+            return handle;
         }
 
         VA_ENGINE_WARN("[RenderCommand] Failed to create a texture {}.", name);
-        return nullptr;
+        return Resources::InvalidTextureHandle;
     }
 
-    Resources::Texture2DPtr TextureSystem::CreateTexture2D(
+    Resources::ITexture* TextureSystem::GetPointerFor(const Resources::TextureHandle handle) const
+    {
+        return m_Textures[handle].get();
+    }
+
+    Resources::TextureHandle TextureSystem::CreateTexture2D(
         const std::string& name,
-        const Resources::TextureUse use,
         const uint32_t width,
         const uint32_t height,
         const uint8_t channels,
         const bool hasTransparency,
         const VAArray<uint8_t>& data)
     {
-        Resources::Texture2D* texture = nullptr;
-        switch (Renderer::RenderCommand::GetApiType())
-        {
-            case Platform::RHI_API_TYPE::Vulkan:
-                texture = Renderer::RenderCommand::GetRHIRef().CreateTexture2D(
-                    name, width, height, channels, hasTransparency, data);
-            default:
-                break;
-        }
-
+        Resources::Texture2D* texture = Renderer::g_RenderSystem->GetRHI()->CreateTexture2D(
+            name,
+            width,
+            height,
+            channels,
+            hasTransparency,
+            data);
         if (texture)
         {
-            auto texturePtr = Resources::Texture2DPtr(texture, TextureDeleter{this});
             // Cache the texture
             const auto handle = GetFreeTextureHandle();
             texture->m_Handle = handle;
-            texture->m_Use = use;
 
-            m_Textures[handle] = {texture->m_UUID, data.size()};
-            m_TextureCache[texture->m_UUID] = texturePtr;
-
-            m_TotalMemoryUsed += data.size();
-            m_TotalTexturesLoaded++;
+            m_Textures[handle] = std::unique_ptr<Resources::ITexture>(texture);
 
             VA_ENGINE_TRACE(
-                "[TextureSystem] Created texture '{}' with handle {}.", texture->m_Name, handle);
-            return texturePtr;
+                "[TextureSystem] Created texture '{}' with handle {}.",
+                texture->m_Name,
+                handle);
+            return handle;
         }
 
         VA_ENGINE_WARN("[RenderCommand] Failed to create a texture.");
-        return nullptr;
+        return Resources::InvalidTextureHandle;
     }
 
     void TextureSystem::GenerateDefaultTextures()
@@ -185,15 +131,13 @@ namespace VoidArchitect
             }
         }
 
-        m_DefaultTexture = CreateTexture2D(
+        m_DefaultTextureHandle = CreateTexture2D(
             "DefaultTexture",
-            Resources::TextureUse::Diffuse,
             texSize,
             texSize,
             texChannels,
             false,
             texData);
-        Resources::IMaterial::SetDefaultDiffuseTexture(m_DefaultTexture);
     }
 
     uint32_t TextureSystem::GetFreeTextureHandle()
@@ -216,23 +160,5 @@ namespace VoidArchitect
 
     void TextureSystem::ReleaseTexture(const Resources::ITexture* texture)
     {
-        if (const auto it = m_TextureCache.find(texture->m_UUID); it != m_TextureCache.end())
-        {
-            VA_ENGINE_TRACE("[TextureSystem] Releasing texture {}.", texture->m_Name);
-            // Release the texture handle
-            m_FreeTextureHandles.push(texture->m_Handle);
-            const auto size = m_Textures[texture->m_Handle].dataSize;
-            m_Textures[texture->m_Handle] = {InvalidUUID, 0};
-            m_TextureCache.erase(it);
-
-            m_TotalMemoryUsed -= size;
-            m_TotalTexturesLoaded--;
-        }
-    }
-
-    void TextureSystem::TextureDeleter::operator()(const Resources::ITexture* texture) const
-    {
-        system->ReleaseTexture(texture);
-        delete texture;
     }
 } // namespace VoidArchitect

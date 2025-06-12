@@ -7,6 +7,8 @@ struct VSInput
     float3 Normal : NORMAL;
     [[vk::location(2)]]
     float2 UV0 : TEXCOORD0;
+    [[vk::location(3)]]
+    float4 Tangent : TANGENT;
 };
 
 struct PSInput
@@ -18,6 +20,8 @@ struct PSInput
     [[vk::location(2)]]
     float2 UV0 : TEXCOORD0;
     [[vk::location(3)]]
+    float4 Tangent : TANGENT;
+    [[vk::location(4)]]
     float4 PixelPosition : POSITION;
 };
 

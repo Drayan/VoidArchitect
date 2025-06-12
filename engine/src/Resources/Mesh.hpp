@@ -5,6 +5,12 @@
 #include "Core/Math/Vec2.hpp"
 #include "Core/Math/Vec3.hpp"
 #include "Core/Uuid.hpp"
+#include "Core/Math/Vec4.hpp"
+
+namespace VoidArchitect
+{
+    class IBuffer;
+}
 
 namespace VoidArchitect
 {
@@ -22,7 +28,11 @@ namespace VoidArchitect
             Math::Vec3 Position;
             Math::Vec3 Normal;
             Math::Vec2 UV0;
+            Math::Vec4 Tangent;
         };
+
+        using MeshHandle = uint32_t;
+        static constexpr MeshHandle InvalidMeshHandle = std::numeric_limits<uint32_t>::max();
 
         class IMesh
         {
@@ -31,19 +41,15 @@ namespace VoidArchitect
         public:
             virtual ~IMesh() = default;
 
-            virtual void Bind(Platform::IRenderingHardware& rhi) = 0;
-
-            virtual uint32_t GetIndicesCount() = 0;
+            virtual IBuffer* GetVertexBuffer() const = 0;
+            virtual IBuffer* GetIndexBuffer() const = 0;
+            virtual uint32_t GetIndicesCount() const = 0;
 
         protected:
             explicit IMesh(std::string name);
             virtual void Release() = 0;
 
             std::string m_Name;
-            uint32_t m_Handle;
-            UUID m_UUID;
         };
-
-        using MeshPtr = std::shared_ptr<IMesh>;
     } // namespace Resources
 } // namespace VoidArchitect

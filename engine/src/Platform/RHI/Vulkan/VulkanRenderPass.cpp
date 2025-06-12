@@ -11,154 +11,50 @@
 namespace VoidArchitect::Platform
 {
     VulkanRenderPass::VulkanRenderPass(
-        const RenderPassConfig& config,
+        const Renderer::RenderPassConfig& config,
         const std::unique_ptr<VulkanDevice>& device,
         VkAllocationCallbacks* allocator,
         Renderer::PassPosition passPosition,
         VkFormat swapchainFormat,
         VkFormat depthFormat)
-        : IRenderPass(config.Name),
+        : IRenderPass(config.name, {}),
           m_Device(device->GetLogicalDeviceHandle()),
           m_Allocator(allocator),
-          m_Config(config),
           m_x(0),
           m_y(0),
           m_w(0),
           m_h(0)
 
     {
+        VAArray<Renderer::TextureFormat> colorAttachmentFormats;
+        std::optional<Renderer::TextureFormat> depthAttachmentFormat;
+        for (auto attachment : config.attachments)
+        {
+            if (attachment.name == "color")
+            {
+                colorAttachmentFormats.push_back(attachment.format);
+            }
+            else if (attachment.name == "depth")
+            {
+                depthAttachmentFormat = attachment.format;
+            }
+        }
+        m_Signature = {colorAttachmentFormats, depthAttachmentFormat};
+
         CreateRenderPassFromConfig(config, passPosition, swapchainFormat, depthFormat);
     }
 
-    VulkanRenderPass::~VulkanRenderPass() { Release(); }
-
-    void VulkanRenderPass::Begin(IRenderingHardware& rhi, const Resources::RenderTargetPtr& target)
-    {
-        auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
-        const auto vulkanTarget = std::dynamic_pointer_cast<VulkanRenderTarget>(target);
-
-        if (!vulkanTarget)
-        {
-            VA_ENGINE_ERROR(
-                "[VulkanRenderpass] Invalid render target for renderpass '{}'.",
-                m_Name);
-            return;
-        }
-
-        // Store current target for End() and compatibility checks
-        m_CurrentTarget = vulkanTarget;
-
-        // Update dimensions from target if not legacy
-        if (!m_IsLegacy)
-        {
-            m_w = vulkanTarget->GetWidth();
-            m_h = vulkanTarget->GetHeight();
-        }
-
-        // Call legacy Begin() method
-        const auto imageIndex = vulkanTarget->IsMainTarget() ? vulkanRhi.GetImageIndex() : 0;
-
-        if (!vulkanTarget->HasValidFramebuffers() && vulkanTarget->IsMainTarget())
-        {
-            // For main targets, we need to create framebuffers
-            const auto& swapchain = vulkanRhi.GetSwapchainRef();
-            const auto imageCount = swapchain->GetImageCount();
-
-            VA_ENGINE_TRACE(
-                "[VulkanRenderpass] Creating {} framebuffers for main target '{}'.",
-                imageCount,
-                vulkanTarget->GetName());
-
-            for (uint32_t i = 0; i < imageCount; i++)
-            {
-                const VAArray attachments = {
-                    swapchain->GetSwapchainImage(i).GetView(),
-                    swapchain->GetDepthImage().GetView()
-                };
-
-                vulkanTarget->CreateFramebufferForImage(m_Renderpass, attachments, i);
-            }
-        }
-
-        Begin(vulkanRhi.GetCurrentCommandBuffer(), vulkanTarget->GetFramebuffer(imageIndex));
-    }
-
-    void VulkanRenderPass::Begin(VulkanCommandBuffer& cmdBuf, const VkFramebuffer framebuffer) const
-    {
-        auto beginInfo = VkRenderPassBeginInfo{};
-        beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        beginInfo.renderPass = m_Renderpass;
-        beginInfo.framebuffer = framebuffer;
-        beginInfo.renderArea.offset = {m_x, m_y};
-        beginInfo.renderArea.extent = {m_w, m_h};
-        beginInfo.clearValueCount = m_ClearValues.size();
-        beginInfo.pClearValues = m_ClearValues.data();
-
-        vkCmdBeginRenderPass(cmdBuf.GetHandle(), &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
-        cmdBuf.SetState(CommandBufferState::InRenderpass);
-    }
-
-    void VulkanRenderPass::End(IRenderingHardware& rhi)
-    {
-        auto& vulkanRhi = dynamic_cast<VulkanRHI&>(rhi);
-
-        End(vulkanRhi.GetCurrentCommandBuffer());
-
-        m_CurrentTarget = nullptr;
-    }
-
-    void VulkanRenderPass::End(VulkanCommandBuffer& cmdBuf) const
-    {
-        vkCmdEndRenderPass(cmdBuf.GetHandle());
-        cmdBuf.SetState(CommandBufferState::Recording);
-    }
-
-    bool VulkanRenderPass::IsCompatibleWith(const Resources::RenderTargetPtr& target) const
-    {
-        if (!target)
-            return false;
-
-        // For legacy render passes, always compatible for backwards compatibility
-        if (m_IsLegacy)
-            return true;
-
-        auto vulkanTarget = std::dynamic_pointer_cast<VulkanRenderTarget>(target);
-        if (!vulkanTarget)
-            return false;
-
-        // Check dimensions (could be relaxed in the future)
-        if (m_w > 0 && m_h > 0)
-        {
-            if (vulkanTarget->GetWidth() != m_w || vulkanTarget->GetHeight() != m_h)
-            {
-                VA_ENGINE_DEBUG(
-                    "[VulkanRenderPass] Dimensions mismatch: {}x{} vs {}x{}.",
-                    vulkanTarget->GetWidth(),
-                    vulkanTarget->GetHeight(),
-                    m_w,
-                    m_h);
-                return false;
-            }
-        }
-
-        // TODO: Add format compatibility checks when we store expected formats
-        //  For now, assume compatibility if dimensions match;
-
-        return true;
-    }
-
-    void VulkanRenderPass::Release()
+    VulkanRenderPass::~VulkanRenderPass()
     {
         if (m_Renderpass != VK_NULL_HANDLE)
         {
             vkDestroyRenderPass(m_Device, m_Renderpass, m_Allocator);
-            m_Renderpass = VK_NULL_HANDLE;
-            VA_ENGINE_TRACE("[VulkanRenderPass] Renderpass '{}' released.", m_Name);
+            VA_ENGINE_TRACE("[VulkanRenderpass] Renderpass destroyed.");
         }
     }
 
     void VulkanRenderPass::CreateRenderPassFromConfig(
-        const RenderPassConfig& config,
+        const Renderer::RenderPassConfig& config,
         Renderer::PassPosition passPosition,
         VkFormat swapchainFormat,
         VkFormat depthFormat)
@@ -168,38 +64,38 @@ namespace VoidArchitect::Platform
         std::optional<VkAttachmentReference> depthRef;
 
         // Create attachments from config
-        for (size_t i = 0; i < config.Attachments.size(); i++)
+        for (size_t i = 0; i < config.attachments.size(); i++)
         {
-            const auto& attachmentConfig = config.Attachments[i];
+            const auto& attachmentConfig = config.attachments[i];
 
             VkAttachmentDescription attachment = {};
             attachment.flags = 0;
 
             // Translate format, with special handling for swapchain/depth
-            if (attachmentConfig.Format == Renderer::TextureFormat::SWAPCHAIN_FORMAT)
+            if (attachmentConfig.format == Renderer::TextureFormat::SWAPCHAIN_FORMAT)
             {
                 attachment.format = swapchainFormat;
             }
-            else if (attachmentConfig.Format == Renderer::TextureFormat::SWAPCHAIN_DEPTH)
+            else if (attachmentConfig.format == Renderer::TextureFormat::SWAPCHAIN_DEPTH)
             {
                 attachment.format = depthFormat;
             }
             else
             {
-                attachment.format = TranslateEngineTextureFormatToVulkan(attachmentConfig.Format);
+                attachment.format = TranslateEngineTextureFormatToVulkan(attachmentConfig.format);
             }
 
             attachment.samples = VK_SAMPLE_COUNT_1_BIT;
-            attachment.loadOp = TranslateEngineLoadOpToVulkan(attachmentConfig.LoadOp);
-            attachment.storeOp = TranslateEngineStoreOpToVulkan(attachmentConfig.StoreOp);
+            attachment.loadOp = TranslateEngineLoadOpToVulkan(attachmentConfig.loadOp);
+            attachment.storeOp = TranslateEngineStoreOpToVulkan(attachmentConfig.storeOp);
             attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
             attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
             bool isDepthAttachment = false;
 
-            if (attachmentConfig.Name == "depth"
-                || attachmentConfig.Format == Renderer::TextureFormat::SWAPCHAIN_DEPTH
-                || attachmentConfig.Format == Renderer::TextureFormat::D32_SFLOAT
-                || attachmentConfig.Format == Renderer::TextureFormat::D24_UNORM_S8_UINT)
+            if (attachmentConfig.name == "depth" || attachmentConfig.format ==
+                Renderer::TextureFormat::SWAPCHAIN_DEPTH || attachmentConfig.format ==
+                Renderer::TextureFormat::D32_SFLOAT || attachmentConfig.format ==
+                Renderer::TextureFormat::D24_UNORM_S8_UINT)
             {
                 isDepthAttachment = true;
                 depthRef = {
@@ -220,9 +116,8 @@ namespace VoidArchitect::Platform
                         break;
                 }
             }
-            else if (
-                attachmentConfig.Name == "color"
-                || attachmentConfig.Format == Renderer::TextureFormat::SWAPCHAIN_FORMAT)
+            else if (attachmentConfig.name == "color" || attachmentConfig.format ==
+                Renderer::TextureFormat::SWAPCHAIN_FORMAT)
             {
                 colorRefs.push_back(
                     {static_cast<uint32_t>(i), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL});
@@ -257,24 +152,24 @@ namespace VoidArchitect::Platform
             attachments.push_back(attachment);
 
             // Setup clear values
-            if (attachmentConfig.LoadOp == Renderer::LoadOp::Clear)
+            if (attachmentConfig.loadOp == Renderer::LoadOp::Clear)
             {
                 VkClearValue clearValue = {};
                 if (isDepthAttachment)
                 {
                     clearValue.depthStencil = {
-                        attachmentConfig.ClearDepth,
-                        attachmentConfig.ClearStencil
+                        attachmentConfig.clearDepth,
+                        attachmentConfig.clearStencil
                     };
                 }
                 else
                 {
                     clearValue.color = {
                         {
-                            attachmentConfig.ClearColor.X(),
-                            attachmentConfig.ClearColor.Y(),
-                            attachmentConfig.ClearColor.Z(),
-                            attachmentConfig.ClearColor.W()
+                            attachmentConfig.clearColor.X(),
+                            attachmentConfig.clearColor.Y(),
+                            attachmentConfig.clearColor.Z(),
+                            attachmentConfig.clearColor.W()
                         }
                     };
                 }
@@ -291,15 +186,30 @@ namespace VoidArchitect::Platform
         subpass.pDepthStencilAttachment = depthRef.has_value() ? &depthRef.value() : nullptr;
 
         // Subpass dependencies
+        VAArray<VkSubpassDependency> dependencies;
         VkSubpassDependency dependency{};
         dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
         dependency.dstSubpass = 0;
         dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
         dependency.srcAccessMask = 0;
         dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependency.dstAccessMask =
-            VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        dependency.dependencyFlags = 0;
+
+        dependencies.push_back(dependency);
+
+        VkSubpassDependency dependency2{};
+        dependency2.srcSubpass = 0;
+        dependency2.dstSubpass = VK_SUBPASS_EXTERNAL;
+        dependency2.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dependency2.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        dependency2.dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+        dependency2.dstAccessMask = 0;
+        dependency2.dependencyFlags = 0;
+
+        dependencies.push_back(dependency2);
 
         // if (depthRef.has_value())
         // {
@@ -315,8 +225,8 @@ namespace VoidArchitect::Platform
         renderPassInfo.pAttachments = attachments.data();
         renderPassInfo.subpassCount = 1;
         renderPassInfo.pSubpasses = &subpass;
-        renderPassInfo.dependencyCount = 1;
-        renderPassInfo.pDependencies = &dependency;
+        renderPassInfo.dependencyCount = dependencies.size();
+        renderPassInfo.pDependencies = dependencies.data();
 
         VA_VULKAN_CHECK_RESULT_CRITICAL(
             vkCreateRenderPass(m_Device, &renderPassInfo, m_Allocator, &m_Renderpass));
@@ -324,7 +234,7 @@ namespace VoidArchitect::Platform
         VA_ENGINE_TRACE(
             "[VulkanRenderpass] Renderpass '{}' created from config, with {} color attachments and "
             "{} depth attachment.",
-            config.Name,
+            config.name,
             colorRefs.size(),
             depthRef.has_value() ? 1 : 0);
     }

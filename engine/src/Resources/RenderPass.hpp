@@ -3,51 +3,50 @@
 //
 #pragma once
 
-#include "Core/Uuid.hpp"
-
 namespace VoidArchitect
 {
     namespace Renderer
     {
-        class RenderGraph;
-    }
-
-    namespace Platform
-    {
-        class IRenderingHardware;
+        enum class TextureFormat;
     }
 
     namespace Resources
     {
-        class IRenderTarget;
-        using RenderTargetPtr = std::shared_ptr<IRenderTarget>;
+        struct RenderPassSignature
+        {
+            VAArray<Renderer::TextureFormat> colorAttachmentFormats;
+            std::optional<Renderer::TextureFormat> depthAttachmentFormat;
+
+            bool operator==(const RenderPassSignature& rhs) const;
+            size_t GetHash() const;
+        };
 
         class IRenderPass
         {
-            friend class VoidArchitect::Renderer::RenderGraph;
-
         public:
             virtual ~IRenderPass() = default;
 
-            [[nodiscard]] UUID GetUUID() const { return m_UUID; }
             [[nodiscard]] const std::string& GetName() const { return m_Name; }
-
-            virtual void Begin(
-                Platform::IRenderingHardware& rhi,
-                const RenderTargetPtr& target) = 0;
-            virtual void End(Platform::IRenderingHardware& rhi) = 0;
-
-            [[nodiscard]] virtual bool IsCompatibleWith(const RenderTargetPtr& target) const = 0;
+            [[nodiscard]] const RenderPassSignature& GetSignature() const { return m_Signature; }
 
         protected:
-            IRenderPass(const std::string& name);
+            IRenderPass(const std::string& name, const RenderPassSignature& signature);
 
-            virtual void Release() = 0;
-
-            UUID m_UUID;
             std::string m_Name;
+            RenderPassSignature m_Signature;
         };
-
-        using RenderPassPtr = std::shared_ptr<IRenderPass>;
     } // namespace Resources
 } // namespace VoidArchitect
+
+namespace std
+{
+    template <>
+    struct hash<VoidArchitect::Resources::RenderPassSignature>
+    {
+        size_t operator()(
+            const VoidArchitect::Resources::RenderPassSignature& signature) const noexcept
+        {
+            return signature.GetHash();
+        }
+    };
+}

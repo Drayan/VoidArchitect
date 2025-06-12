@@ -5,9 +5,11 @@
 
 #include "RenderCommand.hpp"
 #include "RenderGraph.hpp"
+#include "RenderGraphBuilder.hpp"
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Systems/MaterialSystem.hpp"
+#include "Systems/MeshSystem.hpp"
 #include "Systems/RenderPassSystem.hpp"
 
 namespace VoidArchitect::Renderer
@@ -19,75 +21,98 @@ namespace VoidArchitect::Renderer
     // ForwardOpaquePassRenderer Implementation
     // =============================================================================================
 
-    void ForwardOpaquePassRenderer::Execute(
-        const RenderContext& context)
+    void ForwardOpaquePassRenderer::Setup(RenderGraphBuilder& builder)
     {
-        if (!context.RenderState)
+        g_MeshSystem->CreateCube("TestCube");
+        builder.ReadsFrom("TestMaterial").WritesToColorBuffer().WritesToDepthBuffer();
+    }
+
+    Renderer::RenderPassConfig ForwardOpaquePassRenderer::GetRenderPassConfig() const
+    {
+        RenderPassConfig config;
+        config.attachments = {
+            {
+                "color",
+                TextureFormat::SWAPCHAIN_FORMAT,
+                LoadOp::Clear,
+                StoreOp::Store,
+                Math::Vec4(0.1f, 0.1f, 0.1f, 1.0f)
+            },
+            {"depth", TextureFormat::SWAPCHAIN_DEPTH, LoadOp::Clear, StoreOp::DontCare}
+        };
+        config.type = RenderPassType::ForwardOpaque;
+        config.name = m_Name;
+        return config;
+    }
+
+    void ForwardOpaquePassRenderer::Execute(const RenderContext& context)
+    {
+        const auto testMat = g_MaterialSystem->GetHandleFor("TestMaterial");
+        if (testMat == InvalidMaterialHandle)
         {
-            VA_ENGINE_ERROR(
-                "[ForwardOpaquePassRenderer] No render state provided by the RenderGraph.");
+            VA_ENGINE_ERROR("[ForwardOpaquePassRenderer] Failed to get test material.");
             return;
         }
 
         // Render test geometry
-        auto defaultMat = g_MaterialSystem->GetCachedMaterial(
-            "TestMaterial",
-            RenderPassType::ForwardOpaque,
-            context.RenderState->GetUUID());
-
-        if (!defaultMat)
-        {
-            VA_ENGINE_WARN("[ForwardOpaquePassRenderer] No default material found.");
-            return;
-        }
-
         static float angle = 0.f;
-        angle += (0.5f * context.FrameData.deltaTime);
+        angle += (0.5f * context.frameData.deltaTime);
+        auto handle = g_MeshSystem->GetHandleFor("TestCube");
         const auto geometry = Resources::GeometryRenderData(
             Math::Mat4::Rotate(angle, Math::Vec3::Up()),
-            defaultMat,
-            RenderCommand::s_TestMesh);
+            testMat,
+            handle);
 
-        defaultMat->Bind(context.Rhi, context.RenderState);
-        context.Rhi.DrawMesh(geometry, context.RenderState);
-    }
+        const RenderStateCacheKey key = {
+            g_MaterialSystem->GetClass(testMat),
+            RenderPassType::ForwardOpaque,
+            VertexFormat::PositionNormalUVTangent,
+            context.currentPassSignature
+        };
+        const auto stateHandle = g_RenderStateSystem->GetHandleFor(key, context.currentPassHandle);
+        context.rhi.BindRenderState(stateHandle);
+        context.rhi.BindMaterial(geometry.Material, stateHandle);
 
-    std::string ForwardOpaquePassRenderer::GetCompatibleRenderState() const
-    {
-        return "Default";
-    }
-
-    bool ForwardOpaquePassRenderer::IsCompatibleWith(const RenderPassType passType) const
-    {
-        return passType == RenderPassType::ForwardOpaque;
+        context.rhi.PushConstants(
+            Resources::ShaderStage::Vertex,
+            sizeof(Math::Mat4),
+            &geometry.Model);
+        context.rhi.BindMesh(geometry.Mesh);
+        context.rhi.DrawIndexed(g_MeshSystem->GetIndexCountFor(handle));
     }
 
     //==============================================================================================
     // UIPassRenderer Implementation
     //==============================================================================================
 
+    void UIPassRenderer::Setup(RenderGraphBuilder& builder)
+    {
+        g_MeshSystem->CreateQuad("UIQuad", 0.15f, 0.15f);
+        builder.ReadsFromColorBuffer().WritesToColorBuffer();
+    }
+
+    Renderer::RenderPassConfig UIPassRenderer::GetRenderPassConfig() const
+    {
+        RenderPassConfig config;
+        config.attachments = {
+            {"color", TextureFormat::SWAPCHAIN_FORMAT, LoadOp::Load, StoreOp::Store,}
+        };
+        config.type = RenderPassType::UI;
+        config.name = m_Name;
+        return config;
+    }
+
     void UIPassRenderer::Execute(const RenderContext& context)
     {
-        if (!context.RenderState)
-        {
-            VA_ENGINE_ERROR("[UIPassRenderer] No render state provided by the RenderGraph.");
-            return;
-        }
-
         // Create a simple UI quad in normalized coordinates (-1 to +1)
-        auto uiMesh = RenderCommand::s_UIMesh;
-        if (!uiMesh)
-        {
-            VA_ENGINE_ERROR("[UIPassRenderer] Failed to create UI mesh.");
-            return;
-        }
-
-        // Use default material for now
-        auto uiMaterial = g_MaterialSystem->GetCachedMaterial(
-            "DefaultUI",
-            RenderPassType::UI,
-            context.RenderState->GetUUID());
-        if (!uiMaterial)
+        // auto uiMesh = RenderCommand::s_UIMesh;
+        // if (!uiMesh)
+        // {
+        //     VA_ENGINE_ERROR("[UIPassRenderer] Failed to create UI mesh.");
+        //     return;
+        // }
+        const auto uiMaterial = g_MaterialSystem->GetHandleFor("DefaultUI");
+        if (uiMaterial == InvalidMaterialHandle)
         {
             VA_ENGINE_ERROR("[UIPassRenderer] Failed to get default material.");
             return;
@@ -97,20 +122,24 @@ namespace VoidArchitect::Renderer
         const auto uiGeometry = Resources::GeometryRenderData(
             Math::Mat4::Translate(0.15f * 0.5f, 0.15f * 0.5f, 0.f),
             uiMaterial,
-            uiMesh);
+            g_MeshSystem->GetHandleFor("UIQuad"));
 
-        // Render the UI quad
-        uiMaterial->Bind(context.Rhi, context.RenderState);
-        context.Rhi.DrawMesh(uiGeometry, context.RenderState);
-    }
+        // // Render the UI quad
+        const RenderStateCacheKey key = {
+            g_MaterialSystem->GetClass(uiMaterial),
+            RenderPassType::UI,
+            VertexFormat::PositionNormalUVTangent,
+            context.currentPassSignature
+        };
+        const auto stateHandle = g_RenderStateSystem->GetHandleFor(key, context.currentPassHandle);
+        context.rhi.BindRenderState(stateHandle);
+        context.rhi.BindMaterial(uiGeometry.Material, stateHandle);
 
-    std::string UIPassRenderer::GetCompatibleRenderState() const
-    {
-        return "UI";
-    }
-
-    bool UIPassRenderer::IsCompatibleWith(const RenderPassType passType) const
-    {
-        return passType == RenderPassType::UI;
+        context.rhi.PushConstants(
+            Resources::ShaderStage::Vertex,
+            sizeof(Math::Mat4),
+            &uiGeometry.Model);
+        context.rhi.BindMesh(uiGeometry.Mesh);
+        context.rhi.DrawIndexed(g_MeshSystem->GetIndexCountFor(uiGeometry.Mesh));
     }
 }

@@ -8,21 +8,25 @@
 
 namespace VoidArchitect::Resources
 {
-    Texture2DPtr IMaterial::s_DefaultDiffuseTexture;
-
     GeometryRenderData::GeometryRenderData()
         : Model(Math::Mat4::Identity()),
-          Material(g_MaterialSystem->GetDefaultMaterial())
+          Material(g_MaterialSystem->GetHandleForDefaultMaterial())
     {
     }
 
     GeometryRenderData::GeometryRenderData(
-        const Math::Mat4& model, const MaterialPtr& material, const MeshPtr& mesh)
+        const Math::Mat4& model,
+        MaterialHandle material,
+        const MeshHandle mesh)
         : Model(model),
           Mesh(mesh),
           Material(material)
     {
     }
 
-    IMaterial::IMaterial(const std::string& name) : m_Name(name), m_Generation(0) {}
+    IMaterial::IMaterial(const std::string& name)
+        : m_Name(name),
+          m_Generation(0)
+    {
+    }
 } // namespace VoidArchitect::Resources
