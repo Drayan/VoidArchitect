@@ -2,10 +2,6 @@
 // Created by Michael Desmedt on 31/05/2025.
 //
 #pragma once
-#include "Core/Math/Vec2.hpp"
-#include "Core/Math/Vec3.hpp"
-#include "Core/Uuid.hpp"
-#include "Core/Math/Vec4.hpp"
 
 namespace VoidArchitect
 {
@@ -23,14 +19,10 @@ namespace VoidArchitect
 
     namespace Resources
     {
-        struct MeshVertex
-        {
-            Math::Vec3 Position;
-            Math::Vec3 Normal;
-            Math::Vec2 UV0;
-            Math::Vec4 Tangent;
-        };
+        struct SubMeshDescriptor;
+        class MeshData;
 
+        using MaterialHandle = uint32_t;
         using MeshHandle = uint32_t;
         static constexpr MeshHandle InvalidMeshHandle = std::numeric_limits<uint32_t>::max();
 
@@ -41,15 +33,29 @@ namespace VoidArchitect
         public:
             virtual ~IMesh() = default;
 
-            virtual IBuffer* GetVertexBuffer() const = 0;
-            virtual IBuffer* GetIndexBuffer() const = 0;
-            virtual uint32_t GetIndicesCount() const = 0;
+            virtual void UpdateSubmeshMaterial(uint32_t index, MaterialHandle newMaterial) = 0;
+
+            [[nodiscard]] virtual IBuffer* GetVertexBuffer() = 0;
+            [[nodiscard]] virtual IBuffer* GetIndexBuffer() = 0;
+            [[nodiscard]] virtual uint32_t GetIndicesCount() const = 0;
+
+            [[nodiscard]] virtual uint32_t GetSubMeshCount() const = 0;
+            [[nodiscard]] virtual const SubMeshDescriptor& GetSubMesh(uint32_t index) const = 0;
+            [[nodiscard]] virtual const VAArray<SubMeshDescriptor>& GetAllSubMeshes() const = 0;
+
+            [[nodiscard]] virtual std::shared_ptr<MeshData> GetMeshData() const = 0;
+            [[nodiscard]] virtual uint32_t GetDataGeneration() const = 0;
 
         protected:
-            explicit IMesh(std::string name);
-            virtual void Release() = 0;
+            explicit IMesh(
+                std::string name,
+                std::shared_ptr<MeshData> data,
+                const VAArray<SubMeshDescriptor>& submeshes);
 
             std::string m_Name;
+
+            std::shared_ptr<MeshData> m_Data;
+            VAArray<SubMeshDescriptor> m_Submeshes;
         };
     } // namespace Resources
 } // namespace VoidArchitect

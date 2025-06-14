@@ -3,11 +3,8 @@
 //
 #pragma once
 
-#include <memory>
-
 #include "Core/Math/Mat4.hpp"
 #include "Core/Math/Vec4.hpp"
-#include "Mesh.hpp"
 #include "Resources/Texture.hpp"
 
 namespace VoidArchitect::Platform
@@ -23,6 +20,8 @@ namespace VoidArchitect
 
     namespace Resources
     {
+        using MeshHandle = uint32_t;
+
         class ITexture;
         class Texture2D;
         class IMaterial;
@@ -41,9 +40,9 @@ namespace VoidArchitect
         struct MaterialUniformObject
         {
             Math::Vec4 DiffuseColor; // 16 bytes
-            Math::Vec4 Reserved0;    // 16 bytes
-            Math::Vec4 Reserved1;    // 16 bytes
-            Math::Vec4 Reserved2;    // 16 bytes
+            Math::Vec4 Reserved0; // 16 bytes
+            Math::Vec4 Reserved1; // 16 bytes
+            Math::Vec4 Reserved2; // 16 bytes
         };
 
         struct GeometryRenderData
@@ -67,7 +66,8 @@ namespace VoidArchitect
 
             virtual void SetDiffuseColor(const Math::Vec4& color) = 0;
             virtual void SetTexture(
-                Resources::TextureUse use, Resources::TextureHandle texture) = 0;
+                Resources::TextureUse use,
+                Resources::TextureHandle texture) = 0;
 
             [[nodiscard]] uint32_t GetGeneration() const { return m_Generation; }
 

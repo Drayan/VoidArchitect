@@ -3,6 +3,7 @@
 //
 #pragma once
 #include "VulkanDevice.hpp"
+#include "Resources/SubMesh.hpp"
 #include "Systems/MaterialSystem.hpp"
 #include "Systems/RenderPassSystem.hpp"
 
@@ -64,8 +65,8 @@ namespace VoidArchitect
 
             Resources::IMesh* CreateMesh(
                 const std::string& name,
-                const VAArray<Resources::MeshVertex>& vertices,
-                const VAArray<uint32_t>& indices) const;
+                const std::shared_ptr<Resources::MeshData>& data,
+                const VAArray<Resources::SubMeshDescriptor>& submeshes) const;
 
             Resources::IRenderTarget* CreateRenderTarget(
                 const Renderer::RenderTargetConfig& config) const;

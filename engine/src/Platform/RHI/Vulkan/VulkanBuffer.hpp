@@ -3,11 +3,13 @@
 //
 #pragma once
 
-#include <vulkan/vulkan.h>
-
 #include "Platform/RHI/Buffer.hpp"
-#include "Platform/RHI/IRenderingHardware.hpp"
 #include "VulkanUtils.hpp"
+
+namespace VoidArchitect::Resources
+{
+    struct MeshVertex;
+}
 
 namespace VoidArchitect::Platform
 {

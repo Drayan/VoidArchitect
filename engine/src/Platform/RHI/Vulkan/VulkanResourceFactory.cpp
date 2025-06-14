@@ -17,7 +17,8 @@
 namespace VoidArchitect::Platform
 {
     VkFormat TranslateEngineAttributeFormatToVulkan(
-        const Renderer::AttributeType type, const Renderer::AttributeFormat format)
+        const Renderer::AttributeType type,
+        const Renderer::AttributeFormat format)
     {
         auto vulkanFormat = VK_FORMAT_UNDEFINED;
         switch (type)
@@ -74,7 +75,8 @@ namespace VoidArchitect::Platform
     }
 
     uint32_t GetEngineAttributeSize(
-        const Renderer::AttributeType type, const Renderer::AttributeFormat format)
+        const Renderer::AttributeType type,
+        const Renderer::AttributeFormat format)
     {
         auto size = 0;
         switch (format)
@@ -110,7 +112,8 @@ namespace VoidArchitect::Platform
     }
 
     VulkanResourceFactory::VulkanResourceFactory(
-        const std::unique_ptr<VulkanDevice>& device, VkAllocationCallbacks* allocator)
+        const std::unique_ptr<VulkanDevice>& device,
+        VkAllocationCallbacks* allocator)
         : m_Device(device),
           m_Allocator(allocator)
     {
@@ -125,11 +128,19 @@ namespace VoidArchitect::Platform
         const VAArray<uint8_t>& data) const
     {
         return new VulkanTexture2D(
-            m_Device, m_Allocator, name, width, height, channels, hasTransparency, data);
+            m_Device,
+            m_Allocator,
+            name,
+            width,
+            height,
+            channels,
+            hasTransparency,
+            data);
     }
 
     Resources::IRenderState* VulkanResourceFactory::CreateRenderState(
-        const RenderStateConfig& config, const RenderPassHandle passHandle) const
+        const RenderStateConfig& config,
+        const RenderPassHandle passHandle) const
     {
         // === 0. Gather dependencies ===
         // Ask the RenderPassSystem for the IRenderPass*
@@ -189,8 +200,8 @@ namespace VoidArchitect::Platform
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
         vertexInputInfo.vertexBindingDescriptionCount = 1;
         vertexInputInfo.pVertexBindingDescriptions = &bindingDesc;
-        vertexInputInfo.vertexAttributeDescriptionCount =
-            static_cast<uint32_t>(attributeDescs.size());
+        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescs.
+            size());
         vertexInputInfo.pVertexAttributeDescriptions = attributeDescs.data();
 
         // === 3. Construct the Pipeline Layout ===
@@ -203,7 +214,8 @@ namespace VoidArchitect::Platform
         descriptorSetLayouts.push_back(g_VkBindingGroupManager->GetLayoutFor(config));
 
         if (std::ranges::any_of(
-                descriptorSetLayouts, [](const auto& val) { return val == VK_NULL_HANDLE; }))
+            descriptorSetLayouts,
+            [](const auto& val) { return val == VK_NULL_HANDLE; }))
         {
             VA_ENGINE_CRITICAL(
                 "[VulkanResourceFactory] Invalid descriptor set layout. Application cannot "
@@ -228,16 +240,17 @@ namespace VoidArchitect::Platform
         pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
         VkPipelineLayout pipelineLayout;
-        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreatePipelineLayout(
-            m_Device->GetLogicalDeviceHandle(), &pipelineLayoutInfo, m_Allocator, &pipelineLayout));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreatePipelineLayout( m_Device->GetLogicalDeviceHandle(), &pipelineLayoutInfo,
+                m_Allocator, &pipelineLayout));
 
         // === 4. Avenger assemble ! ===
         VAArray<VkPipelineShaderStageCreateInfo> shaderStages;
         shaderStages.reserve(config.shaders.size());
         for (const auto& shaderHandle : config.shaders)
         {
-            const auto& shader =
-                dynamic_cast<VulkanShader*>(g_ShaderSystem->GetPointerFor(shaderHandle));
+            const auto& shader = dynamic_cast<VulkanShader*>(g_ShaderSystem->GetPointerFor(
+                shaderHandle));
             auto shaderStageInfo = shader->GetShaderStageInfo();
             shaderStages.push_back(shaderStageInfo);
         }
@@ -259,13 +272,9 @@ namespace VoidArchitect::Platform
         pipelineCreateInfo.subpass = 0;
 
         VkPipeline pipeline;
-        VA_VULKAN_CHECK_RESULT_CRITICAL(vkCreateGraphicsPipelines(
-            m_Device->GetLogicalDeviceHandle(),
-            VK_NULL_HANDLE,
-            1,
-            &pipelineCreateInfo,
-            m_Allocator,
-            &pipeline));
+        VA_VULKAN_CHECK_RESULT_CRITICAL(
+            vkCreateGraphicsPipelines( m_Device->GetLogicalDeviceHandle(), VK_NULL_HANDLE, 1, &
+                pipelineCreateInfo, m_Allocator, &pipeline));
 
         // === 5. Return the Pipeline ===
         return new VulkanPipeline(config.name, m_Device, m_Allocator, pipeline, pipelineLayout);
@@ -307,8 +316,8 @@ namespace VoidArchitect::Platform
     VulkanResourceFactory::CreateColorBlendState(const RenderStateConfig& stateConfig) const
     {
         // TODO: Pull this from config.
-        auto retVlt =
-            std::pair<VkPipelineColorBlendStateCreateInfo, VkPipelineColorBlendAttachmentState>{};
+        auto retVlt = std::pair<VkPipelineColorBlendStateCreateInfo,
+                                VkPipelineColorBlendAttachmentState>{};
         auto& colorBlendAttachment = retVlt.second;
         colorBlendAttachment.blendEnable = VK_TRUE;
         colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
@@ -318,8 +327,8 @@ namespace VoidArchitect::Platform
         colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
         colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
-        colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT
-                                              | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+            VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 
         auto& colorBlendInfo = retVlt.first;
         colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
@@ -360,23 +369,26 @@ namespace VoidArchitect::Platform
     }
 
     Resources::IMaterial* VulkanResourceFactory::CreateMaterial(
-        const std::string& name, const MaterialTemplate& templ) const
+        const std::string& name,
+        const MaterialTemplate& templ) const
     {
         return new VulkanMaterial(name, templ);
     }
 
     Resources::IShader* VulkanResourceFactory::CreateShader(
-        const std::string& name, const ShaderConfig& config, const VAArray<uint8_t>& data) const
+        const std::string& name,
+        const ShaderConfig& config,
+        const VAArray<uint8_t>& data) const
     {
         return new VulkanShader(m_Device, m_Allocator, name, config, data);
     }
 
     Resources::IMesh* VulkanResourceFactory::CreateMesh(
         const std::string& name,
-        const VAArray<Resources::MeshVertex>& vertices,
-        const VAArray<uint32_t>& indices) const
+        const std::shared_ptr<Resources::MeshData>& data,
+        const VAArray<Resources::SubMeshDescriptor>& submeshes) const
     {
-        return new VulkanMesh(m_Device, m_Allocator, name, vertices, indices);
+        return new VulkanMesh(m_Device, m_Allocator, name, data, submeshes);
     }
 
     Resources::IRenderTarget* VulkanResourceFactory::CreateRenderTarget(
@@ -385,20 +397,20 @@ namespace VoidArchitect::Platform
         VkImageUsageFlags usageFlags = 0;
         VkImageAspectFlags aspectFlags = 0;
 
-        if (static_cast<uint32_t>(config.usage)
-            & static_cast<uint32_t>(Renderer::RenderTargetUsage::ColorAttachment))
+        if (static_cast<uint32_t>(config.usage) & static_cast<uint32_t>(
+            Renderer::RenderTargetUsage::ColorAttachment))
         {
             usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
             aspectFlags |= VK_IMAGE_ASPECT_COLOR_BIT;
         }
-        if (static_cast<uint32_t>(config.usage)
-            & static_cast<uint32_t>(Renderer::RenderTargetUsage::DepthStencilAttachment))
+        if (static_cast<uint32_t>(config.usage) & static_cast<uint32_t>(
+            Renderer::RenderTargetUsage::DepthStencilAttachment))
         {
             usageFlags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
             aspectFlags |= VK_IMAGE_ASPECT_DEPTH_BIT;
         }
-        if (static_cast<uint32_t>(config.usage)
-            & static_cast<uint32_t>(Renderer::RenderTargetUsage::RenderTexture))
+        if (static_cast<uint32_t>(config.usage) & static_cast<uint32_t>(
+            Renderer::RenderTargetUsage::RenderTexture))
         {
             usageFlags |= VK_IMAGE_USAGE_SAMPLED_BIT;
         }
@@ -428,10 +440,16 @@ namespace VoidArchitect::Platform
     }
 
     Resources::IRenderTarget* VulkanResourceFactory::CreateRenderTarget(
-        const std::string& name, const VkImage nativeImage, const VkFormat format) const
+        const std::string& name,
+        const VkImage nativeImage,
+        const VkFormat format) const
     {
-        auto image =
-            VulkanImage(m_Device, m_Allocator, nativeImage, format, VK_IMAGE_ASPECT_COLOR_BIT);
+        auto image = VulkanImage(
+            m_Device,
+            m_Allocator,
+            nativeImage,
+            format,
+            VK_IMAGE_ASPECT_COLOR_BIT);
 
         return new VulkanRenderTarget(name, std::move(image));
     }
@@ -443,6 +461,11 @@ namespace VoidArchitect::Platform
         const VkFormat depthFormat) const
     {
         return new VulkanRenderPass(
-            config, m_Device, m_Allocator, passPosition, swapchainFormat, depthFormat);
+            config,
+            m_Device,
+            m_Allocator,
+            passPosition,
+            swapchainFormat,
+            depthFormat);
     }
 } // namespace VoidArchitect::Platform

@@ -3,9 +3,16 @@
 //
 #pragma once
 #include "Resources/Mesh.hpp"
+#include "Resources/MeshData.hpp"
+#include "Resources/SubMesh.hpp"
 
 namespace VoidArchitect
 {
+    namespace Resources
+    {
+        struct MeshVertex;
+    }
+
     class MeshSystem
     {
     public:
@@ -18,15 +25,32 @@ namespace VoidArchitect
         Resources::MeshHandle GetHandleFor(
             const std::string& name,
             const VAArray<Resources::MeshVertex>& vertices = {},
-            const VAArray<uint32_t>& indices = {});
+            const VAArray<uint32_t>& indices = {},
+            const VAArray<Resources::SubMeshDescriptor>& submeshes = {});
 
         Resources::MeshHandle LoadMesh(const std::string& name);
-        Resources::MeshHandle LoadMesh(
-            const std::string& name,
+
+        void AddSubMeshTo(
+            Resources::MeshHandle handle,
+            const std::string& submeshName,
+            MaterialHandle material,
             const VAArray<Resources::MeshVertex>& vertices,
-            const VAArray<uint32_t>& indices);
+            const VAArray<uint32_t>& indices) const;
+        void RemoveSubMeshFrom(Resources::MeshHandle handle, uint32_t submeshIndex) const;
+
+        void UpdateSubMeshMaterial(
+            Resources::MeshHandle handle,
+            uint32_t submeshIndex,
+            MaterialHandle material) const;
 
         [[nodiscard]] uint32_t GetIndexCountFor(Resources::MeshHandle handle) const;
+        [[nodiscard]] uint32_t GetSubMeshCountFor(Resources::MeshHandle handle) const;
+        [[nodiscard]] const Resources::SubMeshDescriptor& GetSubMesh(
+            Resources::MeshHandle handle,
+            uint32_t submeshIndex) const;
+        [[nodiscard]] MaterialHandle GetSubMeshMaterial(
+            Resources::MeshHandle handle,
+            uint32_t submeshIndex) const;
 
         //==========================================================================================
         // Basic shape procedural generators
@@ -67,9 +91,8 @@ namespace VoidArchitect
         uint32_t GetFreeMeshHandle();
         static Resources::IMesh* CreateMesh(
             const std::string& name,
-            const VAArray<Resources::MeshVertex>& vertices,
-            const VAArray<uint32_t>& indices);
-        void ReleaseMesh(const Resources::IMesh* mesh);
+            std::shared_ptr<Resources::MeshData> data,
+            const VAArray<Resources::SubMeshDescriptor>& submeshes);
 
         std::queue<Resources::MeshHandle> m_FreeMeshHandles;
         Resources::MeshHandle m_NextMeshHandle = 0;

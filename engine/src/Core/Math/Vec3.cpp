@@ -20,7 +20,16 @@ namespace VoidArchitect::Math
     {
     }
 
-    void Vec3::Normalize() { m_Vector = impl::glm::normalize(m_Vector); }
+    Vec3& Vec3::Normalize()
+    {
+        m_Vector = impl::glm::normalize(m_Vector);
+        return *this;
+    }
+
+    Vec3 Vec3::Normalized()
+    {
+        return Normalize();
+    }
 
     bool Vec3::IsZero() const { return m_Vector == impl::glm::vec3(0.f); }
 
@@ -79,5 +88,10 @@ namespace VoidArchitect::Math
     Vec3 Vec3::Cross(const Vec3& v1, const Vec3& v2)
     {
         return Vec3(impl::glm::cross(v1.m_Vector, v2.m_Vector));
+    }
+
+    float Vec3::Dot(const Vec3& v1, const Vec3& v2)
+    {
+        return impl::glm::dot(v1.m_Vector, v2.m_Vector);
     }
 } // namespace VoidArchitect::Math

@@ -27,11 +27,13 @@ namespace VoidArchitect::Math
         static Vec3 Back();
 
         static Vec3 Cross(const Vec3& v1, const Vec3& v2);
+        static float Dot(const Vec3& v1, const Vec3& v2);
 
         Vec3();
         Vec3(float x, float y, float z);
 
-        void Normalize();
+        Vec3& Normalize();
+        Vec3 Normalized();
         bool IsZero() const;
 
         Vec3 operator+(const Vec3& other) const;

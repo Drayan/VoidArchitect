@@ -104,8 +104,8 @@ namespace VoidArchitect::Platform
 
         virtual Resources::IMesh* CreateMesh(
             const std::string& name,
-            const VAArray<Resources::MeshVertex>& vertices,
-            const VAArray<uint32_t>& indices) = 0;
+            const std::shared_ptr<Resources::MeshData>& data,
+            const VAArray<Resources::SubMeshDescriptor>& submeshes) = 0;
 
         virtual Resources::RenderTargetHandle CreateRenderTarget(
             const Renderer::RenderTargetConfig& config) = 0;

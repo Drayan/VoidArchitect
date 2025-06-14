@@ -29,6 +29,11 @@ namespace VoidArchitect::Platform
     Renderer::LoadOp TranslateVulkanLoadOpToEngine(VkAttachmentLoadOp op);
     Renderer::StoreOp TranslateVulkanStoreOpToEngine(VkAttachmentStoreOp op);
 
+    constexpr size_t AlignUp(const size_t value, const size_t alignment)
+    {
+        return (value + alignment - 1) & ~(alignment - 1);
+    }
+
     std::string VulkanGetResultString(VkResult result, bool extended = true);
 
     bool VulkanCheckResult(VkResult result);

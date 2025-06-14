@@ -3,6 +3,7 @@
 //
 #include "MeshSystem.hpp"
 
+#include "MaterialSystem.hpp"
 #include "Core/Logger.hpp"
 #include "Core/Math/Constants.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
@@ -18,55 +19,199 @@ namespace VoidArchitect
         return Resources::InvalidMeshHandle;
     }
 
-    Resources::MeshHandle MeshSystem::LoadMesh(
-        const std::string& name,
-        const VAArray<Resources::MeshVertex>& vertices,
-        const VAArray<uint32_t>& indices)
-    {
-        // TODO Implement loading mesh from datas
-        return Resources::InvalidMeshHandle;
-    }
-
     uint32_t MeshSystem::GetIndexCountFor(const Resources::MeshHandle handle) const
     {
         return m_Meshes[handle]->GetIndicesCount();
     }
 
+    uint32_t MeshSystem::GetSubMeshCountFor(const Resources::MeshHandle handle) const
+    {
+        VA_ENGINE_ASSERT(handle < m_Meshes.size() && m_Meshes[handle], "Invalid mesh handle");
+        return m_Meshes[handle]->GetSubMeshCount();
+    }
+
+    const Resources::SubMeshDescriptor& MeshSystem::GetSubMesh(
+        const Resources::MeshHandle handle,
+        const uint32_t submeshIndex) const
+    {
+        VA_ENGINE_ASSERT(handle < m_Meshes.size() && m_Meshes[handle], "Invalid mesh handle");
+        return m_Meshes[handle]->GetSubMesh(submeshIndex);
+    }
+
+    MaterialHandle MeshSystem::GetSubMeshMaterial(
+        const Resources::MeshHandle handle,
+        const uint32_t submeshIndex) const
+    {
+        VA_ENGINE_ASSERT(handle < m_Meshes.size() && m_Meshes[handle], "Invalid mesh handle");
+        return m_Meshes[handle]->GetSubMesh(submeshIndex).material;
+    }
+
     Resources::MeshHandle MeshSystem::GetHandleFor(
         const std::string& name,
         const VAArray<Resources::MeshVertex>& vertices,
-        const VAArray<uint32_t>& indices)
+        const VAArray<uint32_t>& indices,
+        const VAArray<Resources::SubMeshDescriptor>& submeshes)
     {
         // Check if the mesh already exists
         for (uint32_t i = 0; i < m_Meshes.size(); i++)
         {
-            if (m_Meshes[i]->m_Name == name)
-                return i;
+            if (m_Meshes[i]->m_Name == name) return i;
+        }
+
+        if (vertices.empty() || indices.empty())
+        {
+            VA_ENGINE_WARN(
+                "[MeshSystem] Mesh '{}' wasn't in the cache, and no vertices or indices were provided.",
+                name);
+            return Resources::InvalidMeshHandle;
+        }
+
+        // If no submeshes are provided, this is a single submesh mesh, we create one.
+        if (submeshes.empty())
+        {
+            // TODO: Let the user provide a material
+            Resources::SubMeshDescriptor singleSubmesh{
+                name,
+                g_MaterialSystem->GetHandleForDefaultMaterial(),
+                0,
+                static_cast<uint32_t>(indices.size()),
+                0,
+                static_cast<uint32_t>(vertices.size())
+            };
+            return GetHandleFor(name, vertices, indices, {singleSubmesh});
         }
 
         // This is the first time the system is asked a handle for this Mesh.
-        const auto meshPtr = CreateMesh(name, vertices, indices);
+        const auto meshData = std::make_shared<Resources::MeshData>(vertices, indices);
+
+        // Validate all submeshes
+        for (const auto& submesh : submeshes)
+        {
+            if (!submesh.IsValid(*meshData))
+            {
+                VA_ENGINE_ERROR(
+                    "[MeshSystem] Submesh '{}' for mesh '{}' is invalid.",
+                    submesh.name,
+                    name);
+                return Resources::InvalidMeshHandle;
+            }
+        }
+
+        const auto meshPtr = CreateMesh(name, meshData, submeshes);
         const auto handle = GetFreeMeshHandle();
         m_Meshes[handle] = std::unique_ptr<Resources::IMesh>(meshPtr);
+
+        VA_ENGINE_TRACE(
+            "[MeshSystem] Mesh '{}' created with handle {} and {} submeshes.",
+            name,
+            handle,
+            submeshes.size());
 
         return handle;
     }
 
     Resources::IMesh* MeshSystem::CreateMesh(
         const std::string& name,
-        const VAArray<Resources::MeshVertex>& vertices,
-        const VAArray<uint32_t>& indices)
+        std::shared_ptr<Resources::MeshData> data,
+        const VAArray<Resources::SubMeshDescriptor>& submeshes)
     {
-        Resources::IMesh* mesh =
-            Renderer::g_RenderSystem->GetRHI()->CreateMesh(name, vertices, indices);
+        Resources::IMesh* mesh = Renderer::g_RenderSystem->GetRHI()->CreateMesh(
+            name,
+            data,
+            submeshes);
         if (!mesh)
         {
             VA_ENGINE_WARN("[MeshSystem] Failed to create mesh '{}'.", name);
             return nullptr;
         }
 
-        VA_ENGINE_TRACE("[MeshSystem] Created mesh '{}'.", name);
         return mesh;
+    }
+
+    void MeshSystem::AddSubMeshTo(
+        const Resources::MeshHandle handle,
+        const std::string& submeshName,
+        const MaterialHandle material,
+        const VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices) const
+    {
+        VA_ENGINE_ASSERT(handle < m_Meshes.size() && m_Meshes[handle], "Invalid mesh handle");
+
+        auto* mesh = m_Meshes[handle].get();
+        auto meshData = mesh->GetMeshData();
+
+        const uint32_t vertexOffset = static_cast<uint32_t>(meshData->vertices.size());
+        const uint32_t indexOffset = static_cast<uint32_t>(meshData->indices.size());
+
+        // Add geometry to mesh data
+        meshData->AddSubmesh(vertices, indices);
+
+        // Create new submesh descriptor
+        const Resources::SubMeshDescriptor submesh{
+            submeshName,
+            material,
+            indexOffset,
+            static_cast<uint32_t>(indices.size()),
+            vertexOffset,
+            static_cast<uint32_t>(vertices.size())
+        };
+
+        // Add submesh to mesh (this will trigger GPU buffer update)
+        mesh->m_Submeshes.push_back(submesh);
+
+        VA_ENGINE_TRACE("[MeshSystem] Add submesh '{}' to mesh '{}'.", submeshName, mesh->m_Name);
+    }
+
+    void MeshSystem::RemoveSubMeshFrom(
+        const Resources::MeshHandle handle,
+        const uint32_t submeshIndex) const
+    {
+        VA_ENGINE_ASSERT(handle < m_Meshes.size() && m_Meshes[handle], "Invalid mesh handle");
+
+        auto* mesh = m_Meshes[handle].get();
+        VA_ENGINE_ASSERT(submeshIndex < mesh->m_Submeshes.size(), "Submesh index out of range");
+
+        const auto& submesh = mesh->m_Submeshes[submeshIndex];
+        auto meshData = mesh->GetMeshData();
+
+        // Remove geometry from mesh data
+        meshData->RemoveSubmesh(
+            submesh.vertexOffset,
+            submesh.vertexCount,
+            submesh.indexOffset,
+            submesh.indexCount);
+
+        // Remove submesh descriptor
+        mesh->m_Submeshes.erase(mesh->m_Submeshes.begin() + submeshIndex);
+
+        // Update offsets for subsequent submeshes
+        for (uint32_t i = submeshIndex; i < mesh->m_Submeshes.size(); ++i)
+        {
+            auto& desc = mesh->m_Submeshes[i];
+            if (desc.vertexOffset >= submesh.vertexOffset + submesh.vertexCount)
+            {
+                desc.vertexOffset -= submesh.vertexCount;
+            }
+            if (desc.indexOffset >= submesh.indexOffset + submesh.indexCount)
+            {
+                desc.indexOffset -= submesh.indexCount;
+            }
+        }
+
+        VA_ENGINE_TRACE(
+            "[MeshSystem] Removed submesh '{}' from mesh '{}'.",
+            submesh.name,
+            mesh->m_Name);
+    }
+
+    void MeshSystem::UpdateSubMeshMaterial(
+        const Resources::MeshHandle handle,
+        const uint32_t submeshIndex,
+        const MaterialHandle material) const
+    {
+        VA_ENGINE_ASSERT(handle < m_Meshes.size() && m_Meshes[handle], "Invalid mesh handle");
+
+        m_Meshes[handle]->UpdateSubmeshMaterial(submeshIndex, material);
     }
 
     Resources::MeshHandle MeshSystem::CreateSphere(
@@ -80,21 +225,23 @@ namespace VoidArchitect
 
         for (uint32_t lat = 0; lat <= latitudeBands; ++lat)
         {
-            const float theta =
-                static_cast<float>(lat) * Math::PI / static_cast<float>(latitudeBands);
+            const float theta = static_cast<float>(lat) * Math::PI / static_cast<float>(
+                latitudeBands);
             const float sinTheta = std::sin(theta);
             const float cosTheta = std::cos(theta);
 
             for (uint32_t lon = 0; lon <= longitudeBands; ++lon)
             {
-                const float phi =
-                    static_cast<float>(lon) * Math::PI * 2.0f / static_cast<float>(longitudeBands);
+                const float phi = static_cast<float>(lon) * Math::PI * 2.0f / static_cast<float>(
+                    longitudeBands);
                 const float sinPhi = std::sin(phi);
                 const float cosPhi = std::cos(phi);
 
                 // Position
                 const Math::Vec3 position(
-                    radius * sinTheta * cosPhi, radius * cosTheta, radius * sinTheta * sinPhi);
+                    radius * sinTheta * cosPhi,
+                    radius * cosTheta,
+                    radius * sinTheta * sinPhi);
 
                 Math::Vec3 normal = position;
                 normal.Normalize();
@@ -138,73 +285,103 @@ namespace VoidArchitect
 
         // Front face
         vertices.push_back(
-            {Math::Vec3(-halfSize, -halfSize, halfSize),
-             Math::Vec3::Back(),
-             Math::Vec2(0.0f, 0.0f)});
+            {
+                Math::Vec3(-halfSize, -halfSize, halfSize),
+                Math::Vec3::Back(),
+                Math::Vec2(0.0f, 0.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(halfSize, -halfSize, halfSize),
-             Math::Vec3::Back(),
-             Math::Vec2(1.0f, 0.0f)});
+            {
+                Math::Vec3(halfSize, -halfSize, halfSize),
+                Math::Vec3::Back(),
+                Math::Vec2(1.0f, 0.0f)
+            });
         vertices.push_back(
             {Math::Vec3(halfSize, halfSize, halfSize), Math::Vec3::Back(), Math::Vec2(1.0f, 1.0f)});
         vertices.push_back(
-            {Math::Vec3(-halfSize, halfSize, halfSize),
-             Math::Vec3::Back(),
-             Math::Vec2(0.0f, 1.0f)});
+            {
+                Math::Vec3(-halfSize, halfSize, halfSize),
+                Math::Vec3::Back(),
+                Math::Vec2(0.0f, 1.0f)
+            });
 
         // Back face
         vertices.push_back(
-            {Math::Vec3(halfSize, -halfSize, -halfSize),
-             Math::Vec3::Forward(),
-             Math::Vec2(0.0f, 0.0f)});
+            {
+                Math::Vec3(halfSize, -halfSize, -halfSize),
+                Math::Vec3::Forward(),
+                Math::Vec2(0.0f, 0.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(-halfSize, -halfSize, -halfSize),
-             Math::Vec3::Forward(),
-             Math::Vec2(1.0f, 0.0f)});
+            {
+                Math::Vec3(-halfSize, -halfSize, -halfSize),
+                Math::Vec3::Forward(),
+                Math::Vec2(1.0f, 0.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(-halfSize, halfSize, -halfSize),
-             Math::Vec3::Forward(),
-             Math::Vec2(1.0f, 1.0f)});
+            {
+                Math::Vec3(-halfSize, halfSize, -halfSize),
+                Math::Vec3::Forward(),
+                Math::Vec2(1.0f, 1.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(halfSize, halfSize, -halfSize),
-             Math::Vec3::Forward(),
-             Math::Vec2(0.0f, 1.0f)});
+            {
+                Math::Vec3(halfSize, halfSize, -halfSize),
+                Math::Vec3::Forward(),
+                Math::Vec2(0.0f, 1.0f)
+            });
 
         // Right face
         vertices.push_back(
-            {Math::Vec3(halfSize, -halfSize, halfSize),
-             Math::Vec3::Right(),
-             Math::Vec2(0.0f, 0.0f)});
+            {
+                Math::Vec3(halfSize, -halfSize, halfSize),
+                Math::Vec3::Right(),
+                Math::Vec2(0.0f, 0.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(halfSize, -halfSize, -halfSize),
-             Math::Vec3::Right(),
-             Math::Vec2(1.0f, 0.0f)});
+            {
+                Math::Vec3(halfSize, -halfSize, -halfSize),
+                Math::Vec3::Right(),
+                Math::Vec2(1.0f, 0.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(halfSize, halfSize, -halfSize),
-             Math::Vec3::Right(),
-             Math::Vec2(1.0f, 1.0f)});
+            {
+                Math::Vec3(halfSize, halfSize, -halfSize),
+                Math::Vec3::Right(),
+                Math::Vec2(1.0f, 1.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(halfSize, halfSize, halfSize),
-             Math::Vec3::Right(),
-             Math::Vec2(0.0f, 1.0f)});
+            {
+                Math::Vec3(halfSize, halfSize, halfSize),
+                Math::Vec3::Right(),
+                Math::Vec2(0.0f, 1.0f)
+            });
 
         // Left face
         vertices.push_back(
-            {Math::Vec3(-halfSize, -halfSize, -halfSize),
-             Math::Vec3::Left(),
-             Math::Vec2(0.0f, 0.0f)});
+            {
+                Math::Vec3(-halfSize, -halfSize, -halfSize),
+                Math::Vec3::Left(),
+                Math::Vec2(0.0f, 0.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(-halfSize, -halfSize, halfSize),
-             Math::Vec3::Left(),
-             Math::Vec2(1.0f, 0.0f)});
+            {
+                Math::Vec3(-halfSize, -halfSize, halfSize),
+                Math::Vec3::Left(),
+                Math::Vec2(1.0f, 0.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(-halfSize, halfSize, halfSize),
-             Math::Vec3::Left(),
-             Math::Vec2(1.0f, 1.0f)});
+            {
+                Math::Vec3(-halfSize, halfSize, halfSize),
+                Math::Vec3::Left(),
+                Math::Vec2(1.0f, 1.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(-halfSize, halfSize, -halfSize),
-             Math::Vec3::Left(),
-             Math::Vec2(0.0f, 1.0f)});
+            {
+                Math::Vec3(-halfSize, halfSize, -halfSize),
+                Math::Vec3::Left(),
+                Math::Vec2(0.0f, 1.0f)
+            });
 
         // Up face
         vertices.push_back(
@@ -218,21 +395,29 @@ namespace VoidArchitect
 
         // Down face
         vertices.push_back(
-            {Math::Vec3(-halfSize, -halfSize, -halfSize),
-             Math::Vec3::Down(),
-             Math::Vec2(0.0f, 0.0f)});
+            {
+                Math::Vec3(-halfSize, -halfSize, -halfSize),
+                Math::Vec3::Down(),
+                Math::Vec2(0.0f, 0.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(halfSize, -halfSize, -halfSize),
-             Math::Vec3::Down(),
-             Math::Vec2(1.0f, 0.0f)});
+            {
+                Math::Vec3(halfSize, -halfSize, -halfSize),
+                Math::Vec3::Down(),
+                Math::Vec2(1.0f, 0.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(halfSize, -halfSize, halfSize),
-             Math::Vec3::Down(),
-             Math::Vec2(1.0f, 1.0f)});
+            {
+                Math::Vec3(halfSize, -halfSize, halfSize),
+                Math::Vec3::Down(),
+                Math::Vec2(1.0f, 1.0f)
+            });
         vertices.push_back(
-            {Math::Vec3(-halfSize, -halfSize, halfSize),
-             Math::Vec3::Down(),
-             Math::Vec2(0.0f, 1.0f)});
+            {
+                Math::Vec3(-halfSize, -halfSize, halfSize),
+                Math::Vec3::Down(),
+                Math::Vec2(0.0f, 1.0f)
+            });
 
         for (uint32_t face = 0; face < 6; ++face)
         {
@@ -252,7 +437,9 @@ namespace VoidArchitect
     }
 
     Resources::MeshHandle MeshSystem::CreateQuad(
-        const std::string& name, const float width, const float height)
+        const std::string& name,
+        const float width,
+        const float height)
     {
         const float halfWidth = width * 0.5f;
         const float halfHeight = height * 0.5f;
@@ -261,7 +448,8 @@ namespace VoidArchitect
             {Math::Vec3(-halfWidth, -halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(0.0f, 0.0f)},
             {Math::Vec3(halfWidth, -halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(1.0f, 0.0f)},
             {Math::Vec3(halfWidth, halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(1.0f, 1.0f)},
-            {Math::Vec3(-halfWidth, halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(0.0f, 1.0f)}};
+            {Math::Vec3(-halfWidth, halfHeight, 0.0f), Math::Vec3::Back(), Math::Vec2(0.0f, 1.0f)}
+        };
         const VAArray<uint32_t> indices{0, 1, 2, 2, 3, 0};
 
         GenerateTangents(vertices, indices);
@@ -285,9 +473,9 @@ namespace VoidArchitect
         Math::Vec3 tangent, bitangent;
 
         auto reference = Math::Vec3::Up();
-        if (std::abs(Math::Vec3::Cross(n, reference).X()) < Math::EPSILON
-            && std::abs(Math::Vec3::Cross(n, reference).Y()) < Math::EPSILON
-            && std::abs(Math::Vec3::Cross(n, reference).Z()) < Math::EPSILON)
+        if (std::abs(Math::Vec3::Cross(n, reference).X()) < Math::EPSILON && std::abs(
+            Math::Vec3::Cross(n, reference).Y()) < Math::EPSILON && std::abs(
+            Math::Vec3::Cross(n, reference).Z()) < Math::EPSILON)
         {
             reference = Math::Vec3::Right();
         }
@@ -339,7 +527,8 @@ namespace VoidArchitect
     }
 
     void MeshSystem::GenerateNormals(
-        VAArray<Resources::MeshVertex>& vertices, const VAArray<uint32_t>& indices)
+        VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
     {
         for (uint32_t i = 0; i < indices.size(); i += 3)
         {
@@ -361,7 +550,8 @@ namespace VoidArchitect
     }
 
     void MeshSystem::GenerateTangents(
-        VAArray<Resources::MeshVertex>& vertices, const VAArray<uint32_t>& indices)
+        VAArray<Resources::MeshVertex>& vertices,
+        const VAArray<uint32_t>& indices)
     {
         for (uint32_t i = 0; i < indices.size(); i += 3)
         {
@@ -420,6 +610,4 @@ namespace VoidArchitect
         }
         return m_NextMeshHandle++;
     }
-
-    void MeshSystem::ReleaseMesh(const Resources::IMesh* mesh) {}
 } // namespace VoidArchitect

@@ -194,10 +194,10 @@ namespace VoidArchitect::Platform
 
     Resources::IMesh* VulkanRHI::CreateMesh(
         const std::string& name,
-        const VAArray<Resources::MeshVertex>& vertices,
-        const VAArray<uint32_t>& indices)
+        const std::shared_ptr<Resources::MeshData>& data,
+        const VAArray<Resources::SubMeshDescriptor>& submeshes)
     {
-        return g_VkResourceFactory->CreateMesh(name, vertices, indices);
+        return g_VkResourceFactory->CreateMesh(name, data, submeshes);
     }
 
     Resources::RenderTargetHandle VulkanRHI::CreateRenderTarget(

@@ -245,14 +245,26 @@ namespace VoidArchitect::Platform
 
     void VulkanExecutionContext::UpdateGlobalState(const Resources::GlobalUniformObject& gUBO) const
     {
-        auto data = VAArray{gUBO, gUBO, gUBO};
-        m_GlobalUniformBuffer->LoadData(data);
+        const auto& deviceProps = m_Device->GetProperties();
+        const auto minAlign = deviceProps.limits.minUniformBufferOffsetAlignment;
+
+        constexpr auto uniformObjectSize = sizeof(Resources::GlobalUniformObject);
+        const size_t alignedSize = AlignUp(uniformObjectSize, minAlign);
+        VAArray<uint8_t> alignedData(alignedSize * 3);
+
+        // Pad the data if it's not aligned.
+        for (uint32_t i = 0; i < 3; i++)
+        {
+            std::memcpy(alignedData.data() + i * alignedSize, &gUBO, uniformObjectSize);
+            // Remaining is padded with zeroes.
+        }
+        m_GlobalUniformBuffer->LoadData(alignedData);
 
         // Update the descriptor set for the current frame
         VkDescriptorBufferInfo bufferInfo{};
         bufferInfo.buffer = m_GlobalUniformBuffer->GetHandle();
-        bufferInfo.offset = sizeof(Resources::GlobalUniformObject) * m_ImageIndex;
-        bufferInfo.range = sizeof(Resources::GlobalUniformObject);
+        bufferInfo.offset = alignedSize * m_ImageIndex;
+        bufferInfo.range = uniformObjectSize;
 
         VkWriteDescriptorSet writeDescriptorSet{};
         writeDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -306,7 +318,7 @@ namespace VoidArchitect::Platform
     void VulkanExecutionContext::BindMesh(const Resources::MeshHandle meshHandle)
     {
         const auto& cmdBuf = GetCurrentCommandBuffer();
-        const auto* vkMesh = dynamic_cast<VulkanMesh*>(g_MeshSystem->GetPointerFor(meshHandle));
+        auto* vkMesh = dynamic_cast<VulkanMesh*>(g_MeshSystem->GetPointerFor(meshHandle));
         const auto* vkVertices = dynamic_cast<VulkanVertexBuffer*>(vkMesh->GetVertexBuffer());
         const auto* vkIndices = dynamic_cast<VulkanIndexBuffer*>(vkMesh->GetIndexBuffer());
 
@@ -460,10 +472,16 @@ namespace VoidArchitect::Platform
             vkCreateDescriptorPool( m_Device->GetLogicalDeviceHandle(), &globalPoolInfo, m_Allocator
                 , &m_GlobalDescriptorPool));
 
+        const auto& deviceProps = m_Device->GetProperties();
+        const auto minAlign = deviceProps.limits.minUniformBufferOffsetAlignment;
+
+        constexpr auto uniformObjectSize = sizeof(Resources::GlobalUniformObject);
+        const size_t alignedSize = AlignUp(uniformObjectSize, minAlign);
+
         m_GlobalUniformBuffer = std::make_unique<VulkanBuffer>(
             m_Device,
             m_Allocator,
-            sizeof(Resources::GlobalUniformObject) * 3,
+            alignedSize * 3,
             VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 

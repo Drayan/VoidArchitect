@@ -8,7 +8,6 @@
 #include "VulkanBindingGroupManager.hpp"
 #include "VulkanCommandBuffer.hpp"
 #include "Resources/Material.hpp"
-#include "Resources/RenderState.hpp"
 #include "Resources/RenderTarget.hpp"
 #include "Systems/RenderPassSystem.hpp"
 #include "Systems/RenderStateSystem.hpp"

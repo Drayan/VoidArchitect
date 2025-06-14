@@ -72,8 +72,8 @@ namespace VoidArchitect::Platform
 
         Resources::IMesh* CreateMesh(
             const std::string& name,
-            const VAArray<Resources::MeshVertex>& vertices,
-            const VAArray<uint32_t>& indices) override;
+            const std::shared_ptr<Resources::MeshData>& data,
+            const VAArray<Resources::SubMeshDescriptor>& submeshes) override;
 
         Resources::RenderTargetHandle CreateRenderTarget(
             const Renderer::RenderTargetConfig& config) override;

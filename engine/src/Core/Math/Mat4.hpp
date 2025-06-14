@@ -10,6 +10,7 @@ namespace VoidArchitect::Math
 
     namespace impl
     {
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
     } // namespace impl

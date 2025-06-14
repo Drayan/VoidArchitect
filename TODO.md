@@ -17,7 +17,7 @@
 
 - [ ] Asset UUID => Currently `UUID` is usable at runtime (it uniquely identify an INSTANCE)
   but it can not be used to reference an asset. We will need this kind of system
-- [ ] Implement missing method on `Mat4` for `Transform`
+- [x] Implement missing method on `Mat4` for `Transform`
 - [ ] Implement base `GameObject` with a `Transform` and a simple `MeshComponent`
 
 ### Rendering
