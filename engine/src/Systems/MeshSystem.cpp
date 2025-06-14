@@ -276,7 +276,10 @@ namespace VoidArchitect
         return GetHandleFor(name, vertices, indices);
     }
 
-    Resources::MeshHandle MeshSystem::CreateCube(const std::string& name, const float size)
+    Resources::MeshHandle MeshSystem::CreateCube(
+        const std::string& name,
+        const std::string& material,
+        const float size)
     {
         const float halfSize = size * 0.5f;
 
@@ -433,6 +436,21 @@ namespace VoidArchitect
         }
 
         GenerateTangents(vertices, indices);
+
+        if (material != "DefaultMaterial")
+        {
+            const auto materialHandle = g_MaterialSystem->GetHandleFor(material);
+            const Resources::SubMeshDescriptor subMeshDescriptor{
+                "Cube",
+                materialHandle,
+                0,
+                static_cast<uint32_t>(indices.size()),
+                0,
+                static_cast<uint32_t>(vertices.size())
+            };
+
+            return GetHandleFor(name, vertices, indices, {subMeshDescriptor});
+        }
         return GetHandleFor(name, vertices, indices);
     }
 

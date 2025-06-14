@@ -99,6 +99,9 @@ namespace VoidArchitect
 
     Resources::IMaterial* MaterialSystem::GetPointerFor(const MaterialHandle handle) const
     {
+        const auto& node = m_Materials[handle];
+        if (node.state != MaterialLoadingState::Loaded) return nullptr;
+
         return m_Materials[handle].materialPtr;
     }
 
@@ -261,19 +264,22 @@ namespace VoidArchitect
         MaterialTemplate defaultTemplate;
         defaultTemplate.name = "DefaultMaterial";
         defaultTemplate.diffuseColor = Math::Vec4::One();
-        defaultTemplate.renderStateClass = "DefaultState";
+        defaultTemplate.renderStateClass = "Opaque";
 
         // Define the DefaultMaterial bindings
         defaultTemplate.resourceBindings = {
-            {Renderer::ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::Pixel, {}},
             // MaterialUBO
-            {Renderer::ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel, {}},
+            {Renderer::ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::All, {}},
             // DiffuseMap
-            {Renderer::ResourceBindingType::Texture2D, 2, Resources::ShaderStage::Pixel, {}},
+            {Renderer::ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel, {}},
             // SpecularMap
+            {Renderer::ResourceBindingType::Texture2D, 2, Resources::ShaderStage::Pixel, {}},
+            // NormalMap
+            {Renderer::ResourceBindingType::Texture2D, 3, Resources::ShaderStage::Pixel, {}}
         };
 
         RegisterTemplate("DefaultMaterial", defaultTemplate);
+        GetHandleFor("DefaultMaterial");
 
         MaterialTemplate uiTemplate;
         uiTemplate.name = "DefaultUIMaterial";
@@ -288,6 +294,7 @@ namespace VoidArchitect
         };
 
         RegisterTemplate("DefaultUIMaterial", uiTemplate);
+        GetHandleFor("DefaultUIMaterial");
     }
 
     uint32_t MaterialSystem::GetFreeMaterialHandle()

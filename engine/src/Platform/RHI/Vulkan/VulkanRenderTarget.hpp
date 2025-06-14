@@ -27,6 +27,8 @@ namespace VoidArchitect::Platform
         VkImageView GetImageView() const { return m_Image.GetView(); }
 
     private:
+        bool IsDepthTarget(VkFormat format) const;
+
         VulkanImage m_Image;
     };
 } // namespace VoidArchitect::Platform

@@ -23,8 +23,9 @@ namespace VoidArchitect::Renderer
     void ForwardOpaquePassRenderer::Setup(RenderGraphBuilder& builder)
     {
         // TEMP We create the mesh here only for testing purposes.
-        g_MeshSystem->CreateCube("TestCube");
-        builder.ReadsFrom("TestMaterial").WritesToColorBuffer().WritesToDepthBuffer();
+        g_MeshSystem->CreateCube("TestCube", "TestMaterial");
+        builder.ReadsFrom("TestCube").ReadsFrom("TestMaterial").WritesToColorBuffer().
+                WritesToDepthBuffer();
     }
 
     Renderer::RenderPassConfig ForwardOpaquePassRenderer::GetRenderPassConfig() const
@@ -54,34 +55,53 @@ namespace VoidArchitect::Renderer
             return;
         }
 
+        const auto testMesh = g_MeshSystem->GetHandleFor("TestCube");
+        if (testMesh == Resources::InvalidMeshHandle)
+        {
+            VA_ENGINE_ERROR("[ForwardOpaquePassRenderer] Failed to get test mesh.");
+            return;
+        }
+
         // Render test geometry
         static float angle = 0.f;
         angle += (0.2f * context.frameData.deltaTime);
-        auto handle = g_MeshSystem->GetHandleFor("TestCube");
-        const auto geometry = Resources::GeometryRenderData(
-            Math::Mat4::Rotate(angle, Math::Vec3::Up()),
-            testMat,
-            handle);
+        const auto transformMatrix = Math::Mat4::Rotate(angle, Math::Vec3::Up());
 
-        //TODO: Get materials from submeshes
-        const RenderStateCacheKey key = {
-            g_MaterialSystem->GetClass(testMat),
-            RenderPassType::ForwardOpaque,
-            VertexFormat::PositionNormalUVTangent,
-            context.currentPassSignature
-        };
-        const auto stateHandle = g_RenderStateSystem->GetHandleFor(key, context.currentPassHandle);
-        context.rhi.BindRenderState(stateHandle);
-        context.rhi.BindMaterial(geometry.Material, stateHandle);
+        context.rhi.BindMesh(testMesh);
 
-        //TODO: Implement Transform and get worldTransform from there = modelMatrix
-        context.rhi.PushConstants(
-            Resources::ShaderStage::Vertex,
-            sizeof(Math::Mat4),
-            &geometry.Model);
-        context.rhi.BindMesh(geometry.Mesh);
-        //TODO: Draw each submeshes sorted by material handle
-        context.rhi.DrawIndexed(g_MeshSystem->GetIndexCountFor(handle));
+        for (uint32_t i = 0; i < g_MeshSystem->GetSubMeshCountFor(testMesh); i++)
+        {
+            const auto& submesh = g_MeshSystem->GetSubMesh(testMesh, i);
+            const auto materialToUse = (submesh.material != InvalidMaterialHandle)
+                ? submesh.material
+                : testMat;
+
+            // NOTE: Currently we just use the same renderState for submeshes, we will need
+            //      to filter submeshes at some point, e.g. transparent vs opaque submeshes.
+            const RenderStateCacheKey key = {
+                g_MaterialSystem->GetClass(materialToUse),
+                RenderPassType::ForwardOpaque,
+                VertexFormat::PositionNormalUVTangent,
+                context.currentPassSignature
+            };
+            const auto stateHandle = g_RenderStateSystem->GetHandleFor(
+                key,
+                context.currentPassHandle);
+
+            context.rhi.BindRenderState(stateHandle);
+
+            //NOTE: We don't need to push constant everytime as only one transform exist currently
+            //TODO: Implement Transform and get worldTransform from there = modelMatrix
+            context.rhi.PushConstants(
+                Resources::ShaderStage::Vertex,
+                sizeof(Math::Mat4),
+                &transformMatrix);
+
+            context.rhi.BindMaterial(materialToUse, stateHandle);
+
+            //TODO: Draw each submeshes sorted by material handle
+            context.rhi.DrawIndexed(submesh.indexCount, submesh.indexOffset, submesh.vertexOffset);
+        }
     }
 
     //==============================================================================================

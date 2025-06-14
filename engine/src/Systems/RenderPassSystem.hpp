@@ -88,6 +88,7 @@ namespace VoidArchitect
         RenderPassHandle GetHandleFor(
             const Renderer::RenderPassConfig& config,
             Renderer::PassPosition position);
+        const Renderer::RenderPassConfig& GetConfigFor(RenderPassHandle handle) const;
 
         void ReleasePass(RenderPassHandle handle);
 
@@ -102,6 +103,7 @@ namespace VoidArchitect
 
         VAArray<std::unique_ptr<Resources::IRenderPass>> m_RenderPasses;
         VAHashMap<RenderPassCacheKey, RenderPassHandle> m_RenderPassCache;
+        VAHashMap<RenderPassHandle, Renderer::RenderPassConfig> m_ConfigCache;
 
         std::queue<RenderPassHandle> m_FreeRenderPassHandles;
         RenderPassHandle m_NextFreeRenderPassHandle = 0;

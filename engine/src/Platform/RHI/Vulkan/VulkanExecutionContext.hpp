@@ -88,6 +88,22 @@ namespace VoidArchitect::Platform
 
         void DestroySyncObjects();
 
+        struct AttachmentDescriptor
+        {
+            std::string name;
+            VkFormat resolvedFormat;
+            bool isDepthAttachment;
+            uint32_t configIndex;
+        };
+
+        VAArray<VkImageView> SortAttachmentsToMatchRenderPassOrder(
+            const Renderer::RenderPassConfig& config,
+            const VAArray<Resources::RenderTargetHandle>& targetHandles) const;
+        VkFormat ResolveAttachmentFormat(Renderer::TextureFormat engineFormat) const;
+        void ValidateAttachmentCompatibility(
+            const AttachmentDescriptor& expected,
+            const Resources::IRenderTarget* renderTarget) const;
+
         const std::unique_ptr<VulkanDevice>& m_Device;
         VkAllocationCallbacks* m_Allocator;
 

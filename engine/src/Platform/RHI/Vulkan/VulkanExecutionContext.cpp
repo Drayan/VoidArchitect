@@ -157,20 +157,17 @@ namespace VoidArchitect::Platform
         const RenderPassHandle passHandle,
         const VAArray<Resources::RenderTargetHandle>& targetHandles)
     {
-        VAArray<VkImageView> attachments;
-        attachments.reserve(targetHandles.size());
-        for (auto& target : targetHandles)
-        {
-            const auto vkTarget = dynamic_cast<VulkanRenderTarget*>(g_VkRenderTargetSystem->
-                GetPointerFor(target));
-            attachments.push_back(vkTarget->GetImageView());
-        }
+        const auto& passConfig = g_RenderPassSystem->GetConfigFor(passHandle);
+        const auto sortedAttachments = SortAttachmentsToMatchRenderPassOrder(
+            passConfig,
+            targetHandles);
 
         const auto vulkanPass = dynamic_cast<VulkanRenderPass*>(g_RenderPassSystem->GetPointerFor(
             passHandle));
+
         const auto framebuffer = m_FramebufferCache->GetHandleFor(
             vulkanPass->GetHandle(),
-            attachments,
+            sortedAttachments,
             m_CurrentWidth,
             m_CurrentHeight);
 
@@ -202,8 +199,8 @@ namespace VoidArchitect::Platform
 
         cmdBuf.End();
 
-        if (m_ImagesInFlight[m_ImageIndex] != nullptr)
-            m_ImagesInFlight[m_ImageIndex]->Wait(std::numeric_limits<uint64_t>::max());
+        if (m_ImagesInFlight[m_ImageIndex] != nullptr) m_ImagesInFlight[m_ImageIndex]->Wait(
+            std::numeric_limits<uint64_t>::max());
 
         // Mark the image fence as in use by this frame.
         m_ImagesInFlight[m_ImageIndex] = &m_InFlightFences[m_CurrentIndex];
@@ -531,6 +528,157 @@ namespace VoidArchitect::Platform
         m_InFlightFences.clear();
         m_ImagesInFlight.clear();
         m_ImageAcquisitionFences.clear();
+    }
+
+    VAArray<VkImageView> VulkanExecutionContext::SortAttachmentsToMatchRenderPassOrder(
+        const Renderer::RenderPassConfig& config,
+        const VAArray<Resources::RenderTargetHandle>& targetHandles) const
+    {
+        VAArray<VkImageView> sortedAttachments;
+        sortedAttachments.reserve(config.attachments.size());
+
+        // Build descriptors for expected attachments in config order
+        VAArray<AttachmentDescriptor> expectedAttachments;
+        expectedAttachments.reserve(config.attachments.size());
+
+        for (uint32_t i = 0; i < config.attachments.size(); i++)
+        {
+            const auto& attachmentConfig = config.attachments[i];
+
+            AttachmentDescriptor descriptor{};
+            descriptor.name = attachmentConfig.name;
+            descriptor.resolvedFormat = ResolveAttachmentFormat(attachmentConfig.format);
+            descriptor.isDepthAttachment = (attachmentConfig.name == "depth" || attachmentConfig.
+                format == Renderer::TextureFormat::SWAPCHAIN_DEPTH || attachmentConfig.format ==
+                Renderer::TextureFormat::D32_SFLOAT || attachmentConfig.format ==
+                Renderer::TextureFormat::D24_UNORM_S8_UINT);
+            descriptor.configIndex = i;
+
+            expectedAttachments.push_back(descriptor);
+        }
+
+        // For each expected attachment (in config order), find matching RenderTarget
+        for (const auto& expectedAttachment : expectedAttachments)
+        {
+            bool found = false;
+
+            for (const auto& targetHandle : targetHandles)
+            {
+                const auto renderTarget = g_VkRenderTargetSystem->GetPointerFor(targetHandle);
+                if (!renderTarget)
+                {
+                    VA_ENGINE_CRITICAL(
+                        "[VulkanExecutionContext] Invalid RenderTarget handle during attachment sorting.");
+                    throw std::runtime_error(
+                        "Invalid RenderTarget handle during attachment sorting.");
+                }
+
+                // Try matching by name first
+                if (renderTarget->GetName() == expectedAttachment.name)
+                {
+                    ValidateAttachmentCompatibility(expectedAttachment, renderTarget);
+
+                    const auto vkTarget = dynamic_cast<VulkanRenderTarget*>(renderTarget);
+                    sortedAttachments.push_back(vkTarget->GetImageView());
+                    found = true;
+                    break;
+                }
+            }
+
+            // If name matching failed, try format + type matching
+            if (!found)
+            {
+                for (const auto& targetHandle : targetHandles)
+                {
+                    const auto renderTarget = g_VkRenderTargetSystem->GetPointerFor(targetHandle);
+                    const VkFormat targetFormat = TranslateEngineTextureFormatToVulkan(
+                        renderTarget->GetFormat());
+
+                    // Check format compatibility and depth/color type
+                    bool formatMatches = (targetFormat == expectedAttachment.resolvedFormat);
+                    bool typeMatches = expectedAttachment.isDepthAttachment
+                        ? renderTarget->IsDepth()
+                        : renderTarget->IsColor();
+
+                    if (formatMatches && typeMatches)
+                    {
+                        ValidateAttachmentCompatibility(expectedAttachment, renderTarget);
+
+                        const auto vkTarget = dynamic_cast<VulkanRenderTarget*>(renderTarget);
+                        sortedAttachments.push_back(vkTarget->GetImageView());
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            // Critical error if attachment not found at this point.
+            if (!found)
+            {
+                VA_ENGINE_CRITICAL(
+                    "[VulkanExecutionContext] Required attachment '{}' (format: {}, depth: {}) not found in RenderTarget list.",
+                    expectedAttachment.name,
+                    static_cast<int>(expectedAttachment.resolvedFormat),
+                    expectedAttachment.isDepthAttachment);
+                throw std::runtime_error(
+                    "Attachment " + expectedAttachment.name + " not found in RenderTarget list.");
+            }
+        }
+
+        // Ensure we have the expected number of attachments
+        if (sortedAttachments.size() != config.attachments.size())
+        {
+            VA_ENGINE_CRITICAL(
+                "[VulkanExecutionContext] Attachment count mismatch: expected {}, got {}.",
+                config.attachments.size(),
+                sortedAttachments.size());
+            throw std::runtime_error(
+                "Expected " + std::to_string(config.attachments.size()) + " attachments, got " +
+                std::to_string(sortedAttachments.size()) + ".");
+        }
+
+        return sortedAttachments;
+    }
+
+    VkFormat VulkanExecutionContext::ResolveAttachmentFormat(
+        Renderer::TextureFormat engineFormat) const
+    {
+        switch (engineFormat)
+        {
+            case Renderer::TextureFormat::SWAPCHAIN_FORMAT:
+                return m_Swapchain->GetFormat();
+            case Renderer::TextureFormat::SWAPCHAIN_DEPTH:
+                return m_Swapchain->GetDepthFormat();
+            default:
+                return TranslateEngineTextureFormatToVulkan(engineFormat);
+        }
+    }
+
+    void VulkanExecutionContext::ValidateAttachmentCompatibility(
+        const AttachmentDescriptor& expected,
+        const Resources::IRenderTarget* renderTarget) const
+    {
+        const VkFormat targetFormat = TranslateEngineTextureFormatToVulkan(
+            renderTarget->GetFormat());
+
+        if (targetFormat != expected.resolvedFormat)
+        {
+            VA_ENGINE_WARN(
+                "[VulkanExecutionContext] Format mismatch for attachment '{}': expected {}, got {}.",
+                expected.name,
+                static_cast<int>(expected.resolvedFormat),
+                static_cast<int>(targetFormat));
+        }
+
+        bool isDepthTarget = renderTarget->IsDepth();
+        if (isDepthTarget != expected.isDepthAttachment)
+        {
+            VA_ENGINE_WARN(
+                "[VulkanExecutionContext] Depth/color mismatch for attachment '{}': expected {}, got {}.",
+                expected.name,
+                expected.isDepthAttachment,
+                isDepthTarget);
+        }
     }
 
     Resources::RenderTargetHandle VulkanExecutionContext::GetCurrentColorRenderTargetHandle() const

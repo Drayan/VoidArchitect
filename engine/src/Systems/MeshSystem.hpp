@@ -61,7 +61,10 @@ namespace VoidArchitect
             float radius = 0.5f,
             uint32_t latitudeBands = 8,
             uint32_t longitudeBands = 8);
-        Resources::MeshHandle CreateCube(const std::string& name, float size = 1.0f);
+        Resources::MeshHandle CreateCube(
+            const std::string& name,
+            const std::string& material = "DefaultMaterial",
+            float size = 1.0f);
         Resources::MeshHandle CreateQuad(
             const std::string& name,
             float width = 1.0f,

@@ -40,8 +40,23 @@ namespace VoidArchitect
         const auto handle = GetFreeHandle();
         m_RenderPasses[handle] = std::unique_ptr<Resources::IRenderPass>(renderPassPtr);
         m_RenderPassCache[key] = handle;
+        m_ConfigCache[handle] = config;
 
         return handle;
+    }
+
+    const Renderer::RenderPassConfig& RenderPassSystem::GetConfigFor(RenderPassHandle handle) const
+    {
+        VA_ENGINE_ASSERT(handle != InvalidRenderPassHandle, "Invalid render pass handle.");
+
+        const auto it = m_ConfigCache.find(handle);
+        if (it == m_ConfigCache.end())
+        {
+            VA_ENGINE_CRITICAL("[RenderPassSystem] Invalid render pass handle.");
+            throw std::runtime_error("Invalid render pass handle.");
+        }
+
+        return it->second;
     }
 
     Resources::IRenderPass* RenderPassSystem::CreateRenderPass(
