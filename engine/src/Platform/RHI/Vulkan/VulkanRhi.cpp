@@ -140,9 +140,19 @@ namespace VoidArchitect::Platform
         g_VkExecutionContext->BindMesh(meshHandle);
     }
 
-    void VulkanRHI::DrawIndexed(uint32_t indexCount)
+    auto VulkanRHI::DrawIndexed(
+        const uint32_t indexCount,
+        const uint32_t indexOffset,
+        const uint32_t vertexOffset,
+        const uint32_t instanceCount,
+        const uint32_t firstInstance) -> void
     {
-        g_VkExecutionContext->DrawIndexed(indexCount);
+        g_VkExecutionContext->DrawIndexed(
+            indexCount,
+            indexOffset,
+            vertexOffset,
+            instanceCount,
+            firstInstance);
     }
 
     void VulkanRHI::PushConstants(

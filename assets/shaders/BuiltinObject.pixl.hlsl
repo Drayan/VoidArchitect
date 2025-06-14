@@ -39,7 +39,7 @@ float4 main(PSInput input) : SV_Target
     {
         // Do the normal lighting calculation
         float3 viewDir = normalize(g_ubo.ViewPosition - input.PixelPosition).xyz;
-        // finalColor = calculateDirectionalLight(input, g_ubo.LightColor, g_ubo.LightDirection.xyz, normal, viewDir);
+        finalColor = calculateDirectionalLight(input, g_ubo.LightColor, g_ubo.LightDirection.xyz, normal, viewDir);
 
         finalColor += calculatePointLight(g_PointLights[0], input, normal, viewDir);
         finalColor += calculatePointLight(g_PointLights[1], input, normal, viewDir);

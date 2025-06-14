@@ -58,7 +58,12 @@ namespace VoidArchitect::Platform
         void BindMaterialGroup(MaterialHandle materialHandle, RenderStateHandle stateHandle);
         void BindMesh(Resources::MeshHandle meshHandle);
         void PushConstants(Resources::ShaderStage stage, uint32_t size, const void* data);
-        void DrawIndexed(uint32_t indexCount);
+        void DrawIndexed(
+            uint32_t indexCount,
+            uint32_t indexOffset = 0,
+            uint32_t vertexOffset = 0,
+            uint32_t instanceCount = 1,
+            uint32_t firstInstance = 0);
 
         void RequestResize(const uint32_t width, const uint32_t height);
 

@@ -343,10 +343,23 @@ namespace VoidArchitect::Platform
             data);
     }
 
-    void VulkanExecutionContext::DrawIndexed(const uint32_t indexCount)
+    void VulkanExecutionContext::DrawIndexed(
+        const uint32_t indexCount,
+        const uint32_t indexOffset,
+        const uint32_t vertexOffset,
+        const uint32_t instanceCount,
+        const uint32_t firstInstance)
     {
         const auto& cmdBuf = GetCurrentCommandBuffer();
-        vkCmdDrawIndexed(cmdBuf.GetHandle(), indexCount, 1, 0, 0, 0);
+        VA_ENGINE_ASSERT(cmdBuf.GetHandle() != VK_NULL_HANDLE, "No current command buffer");
+
+        vkCmdDrawIndexed(
+            cmdBuf.GetHandle(),
+            indexCount,
+            instanceCount,
+            indexOffset,
+            vertexOffset,
+            firstInstance);
     }
 
     void VulkanExecutionContext::RequestResize(const uint32_t width, const uint32_t height)

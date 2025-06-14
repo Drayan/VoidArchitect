@@ -43,7 +43,12 @@ namespace VoidArchitect::Platform
         void BindRenderState(RenderStateHandle stateHandle) override;
         void BindMaterial(MaterialHandle materialHandle, RenderStateHandle stateHandle) override;
         void BindMesh(Resources::MeshHandle meshHandle) override;
-        void DrawIndexed(uint32_t indexCount) override;
+        void DrawIndexed(
+            uint32_t indexCount,
+            uint32_t indexOffset = 0,
+            uint32_t vertexOffset = 0,
+            uint32_t instanceCount = 1,
+            uint32_t firstInstance = 0) override;
         void PushConstants(Resources::ShaderStage stage, uint32_t size, const void* data) override;
 
         ///////////////////////////////////////////////////////////////////////

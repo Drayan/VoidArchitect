@@ -76,7 +76,12 @@ namespace VoidArchitect::Platform
             Resources::ShaderStage stage,
             uint32_t size,
             const void* data) = 0;
-        virtual void DrawIndexed(uint32_t indexCount) = 0;
+        virtual void DrawIndexed(
+            uint32_t indexCount,
+            uint32_t indexOffset = 0,
+            uint32_t vertexOffset = 0,
+            uint32_t instanceCount = 1,
+            uint32_t firstInstance = 0) = 0;
 
         ///////////////////////////////////////////////////////////////////////
         //// Resources ////////////////////////////////////////////////////////

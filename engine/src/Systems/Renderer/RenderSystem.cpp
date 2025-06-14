@@ -83,13 +83,15 @@ namespace VoidArchitect
 
             // --- Import persistent resources ---
             m_RenderGraph.ImportRenderTarget(
-                WELL_KNOWN_RT_VIEWPORT_COLOR, m_RHI->GetCurrentColorRenderTargetHandle());
+                WELL_KNOWN_RT_VIEWPORT_COLOR,
+                m_RHI->GetCurrentColorRenderTargetHandle());
             m_RenderGraph.ImportRenderTarget(
-                WELL_KNOWN_RT_VIEWPORT_DEPTH, m_RHI->GetDepthRenderTargetHandle());
+                WELL_KNOWN_RT_VIEWPORT_DEPTH,
+                m_RHI->GetDepthRenderTargetHandle());
 
             // --- Add passes to the graph. ---
             m_RenderGraph.AddPass("ForwardOpaque", &m_ForwardOpaquePassRenderer);
-            m_RenderGraph.AddPass("UI", &m_UIPassRenderer);
+            // m_RenderGraph.AddPass("UI", &m_UIPassRenderer);
 
             // --- Set up the graph. ---
             m_RenderGraph.Setup();
@@ -109,8 +111,13 @@ namespace VoidArchitect
 
             m_MainCamera.RecalculateView();
             const auto aspectRatio = static_cast<float>(m_Width) / static_cast<float>(m_Height);
-            const auto UIProjectionMatrix =
-                Math::Mat4::Orthographic(0.f, 1.0f, 0.f, 1.0f / aspectRatio, -1.0f, 1.0f);
+            const auto UIProjectionMatrix = Math::Mat4::Orthographic(
+                0.f,
+                1.0f,
+                0.f,
+                1.0f / aspectRatio,
+                -1.0f,
+                1.0f);
 
             Resources::GlobalUniformObject ubo{};
             ubo.View = m_MainCamera.GetView();
@@ -125,8 +132,9 @@ namespace VoidArchitect
             for (const auto& step : executionPlan)
             {
                 // Ask the RenderPassSystem the handle for the config of this pass.
-                const RenderPassHandle passHandle =
-                    g_RenderPassSystem->GetHandleFor(step.passConfig, step.passPosition);
+                const RenderPassHandle passHandle = g_RenderPassSystem->GetHandleFor(
+                    step.passConfig,
+                    step.passPosition);
 
                 const auto& passSignature = g_RenderPassSystem->GetSignatureFor(passHandle);
                 RenderContext context{*m_RHI.get(), {frameTime}, passHandle, passSignature};

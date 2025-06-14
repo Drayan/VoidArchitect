@@ -6,7 +6,6 @@
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "RenderCommand.hpp"
-#include "RenderGraph.hpp"
 #include "RenderGraphBuilder.hpp"
 #include "Systems/MaterialSystem.hpp"
 #include "Systems/MeshSystem.hpp"
@@ -32,12 +31,15 @@ namespace VoidArchitect::Renderer
     {
         RenderPassConfig config;
         config.attachments = {
-            {"color",
-             TextureFormat::SWAPCHAIN_FORMAT,
-             LoadOp::Clear,
-             StoreOp::Store,
-             Math::Vec4(0.1f, 0.1f, 0.1f, 1.0f)},
-            {"depth", TextureFormat::SWAPCHAIN_DEPTH, LoadOp::Clear, StoreOp::DontCare}};
+            {
+                "color",
+                TextureFormat::SWAPCHAIN_FORMAT,
+                LoadOp::Clear,
+                StoreOp::Store,
+                Math::Vec4(0.1f, 0.1f, 0.1f, 1.0f)
+            },
+            {"depth", TextureFormat::SWAPCHAIN_DEPTH, LoadOp::Clear, StoreOp::DontCare}
+        };
         config.type = RenderPassType::ForwardOpaque;
         config.name = m_Name;
         return config;
@@ -57,20 +59,28 @@ namespace VoidArchitect::Renderer
         angle += (0.2f * context.frameData.deltaTime);
         auto handle = g_MeshSystem->GetHandleFor("TestCube");
         const auto geometry = Resources::GeometryRenderData(
-            Math::Mat4::Rotate(angle, Math::Vec3::Up()), testMat, handle);
+            Math::Mat4::Rotate(angle, Math::Vec3::Up()),
+            testMat,
+            handle);
 
+        //TODO: Get materials from submeshes
         const RenderStateCacheKey key = {
             g_MaterialSystem->GetClass(testMat),
             RenderPassType::ForwardOpaque,
             VertexFormat::PositionNormalUVTangent,
-            context.currentPassSignature};
+            context.currentPassSignature
+        };
         const auto stateHandle = g_RenderStateSystem->GetHandleFor(key, context.currentPassHandle);
         context.rhi.BindRenderState(stateHandle);
         context.rhi.BindMaterial(geometry.Material, stateHandle);
 
+        //TODO: Implement Transform and get worldTransform from there = modelMatrix
         context.rhi.PushConstants(
-            Resources::ShaderStage::Vertex, sizeof(Math::Mat4), &geometry.Model);
+            Resources::ShaderStage::Vertex,
+            sizeof(Math::Mat4),
+            &geometry.Model);
         context.rhi.BindMesh(geometry.Mesh);
+        //TODO: Draw each submeshes sorted by material handle
         context.rhi.DrawIndexed(g_MeshSystem->GetIndexCountFor(handle));
     }
 
@@ -87,12 +97,9 @@ namespace VoidArchitect::Renderer
     Renderer::RenderPassConfig UIPassRenderer::GetRenderPassConfig() const
     {
         RenderPassConfig config;
-        config.attachments = {{
-            "color",
-            TextureFormat::SWAPCHAIN_FORMAT,
-            LoadOp::Load,
-            StoreOp::Store,
-        }};
+        config.attachments = {
+            {"color", TextureFormat::SWAPCHAIN_FORMAT, LoadOp::Load, StoreOp::Store,}
+        };
         config.type = RenderPassType::UI;
         config.name = m_Name;
         return config;
@@ -118,13 +125,16 @@ namespace VoidArchitect::Renderer
             g_MaterialSystem->GetClass(uiMaterial),
             RenderPassType::UI,
             VertexFormat::PositionNormalUVTangent,
-            context.currentPassSignature};
+            context.currentPassSignature
+        };
         const auto stateHandle = g_RenderStateSystem->GetHandleFor(key, context.currentPassHandle);
         context.rhi.BindRenderState(stateHandle);
         context.rhi.BindMaterial(uiGeometry.Material, stateHandle);
 
         context.rhi.PushConstants(
-            Resources::ShaderStage::Vertex, sizeof(Math::Mat4), &uiGeometry.Model);
+            Resources::ShaderStage::Vertex,
+            sizeof(Math::Mat4),
+            &uiGeometry.Model);
         context.rhi.BindMesh(uiGeometry.Mesh);
         context.rhi.DrawIndexed(g_MeshSystem->GetIndexCountFor(uiGeometry.Mesh));
     }
