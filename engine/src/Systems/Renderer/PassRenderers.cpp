@@ -3,11 +3,11 @@
 //
 #include "PassRenderers.hpp"
 
+#include "Core/Logger.hpp"
+#include "Platform/RHI/IRenderingHardware.hpp"
 #include "RenderCommand.hpp"
 #include "RenderGraph.hpp"
 #include "RenderGraphBuilder.hpp"
-#include "Core/Logger.hpp"
-#include "Platform/RHI/IRenderingHardware.hpp"
 #include "Systems/MaterialSystem.hpp"
 #include "Systems/MeshSystem.hpp"
 #include "Systems/RenderPassSystem.hpp"
@@ -23,6 +23,7 @@ namespace VoidArchitect::Renderer
 
     void ForwardOpaquePassRenderer::Setup(RenderGraphBuilder& builder)
     {
+        // TEMP We create the mesh here only for testing purposes.
         g_MeshSystem->CreateCube("TestCube");
         builder.ReadsFrom("TestMaterial").WritesToColorBuffer().WritesToDepthBuffer();
     }
@@ -31,15 +32,12 @@ namespace VoidArchitect::Renderer
     {
         RenderPassConfig config;
         config.attachments = {
-            {
-                "color",
-                TextureFormat::SWAPCHAIN_FORMAT,
-                LoadOp::Clear,
-                StoreOp::Store,
-                Math::Vec4(0.1f, 0.1f, 0.1f, 1.0f)
-            },
-            {"depth", TextureFormat::SWAPCHAIN_DEPTH, LoadOp::Clear, StoreOp::DontCare}
-        };
+            {"color",
+             TextureFormat::SWAPCHAIN_FORMAT,
+             LoadOp::Clear,
+             StoreOp::Store,
+             Math::Vec4(0.1f, 0.1f, 0.1f, 1.0f)},
+            {"depth", TextureFormat::SWAPCHAIN_DEPTH, LoadOp::Clear, StoreOp::DontCare}};
         config.type = RenderPassType::ForwardOpaque;
         config.name = m_Name;
         return config;
@@ -56,27 +54,22 @@ namespace VoidArchitect::Renderer
 
         // Render test geometry
         static float angle = 0.f;
-        angle += (0.5f * context.frameData.deltaTime);
+        angle += (0.2f * context.frameData.deltaTime);
         auto handle = g_MeshSystem->GetHandleFor("TestCube");
         const auto geometry = Resources::GeometryRenderData(
-            Math::Mat4::Rotate(angle, Math::Vec3::Up()),
-            testMat,
-            handle);
+            Math::Mat4::Rotate(angle, Math::Vec3::Up()), testMat, handle);
 
         const RenderStateCacheKey key = {
             g_MaterialSystem->GetClass(testMat),
             RenderPassType::ForwardOpaque,
             VertexFormat::PositionNormalUVTangent,
-            context.currentPassSignature
-        };
+            context.currentPassSignature};
         const auto stateHandle = g_RenderStateSystem->GetHandleFor(key, context.currentPassHandle);
         context.rhi.BindRenderState(stateHandle);
         context.rhi.BindMaterial(geometry.Material, stateHandle);
 
         context.rhi.PushConstants(
-            Resources::ShaderStage::Vertex,
-            sizeof(Math::Mat4),
-            &geometry.Model);
+            Resources::ShaderStage::Vertex, sizeof(Math::Mat4), &geometry.Model);
         context.rhi.BindMesh(geometry.Mesh);
         context.rhi.DrawIndexed(g_MeshSystem->GetIndexCountFor(handle));
     }
@@ -94,9 +87,12 @@ namespace VoidArchitect::Renderer
     Renderer::RenderPassConfig UIPassRenderer::GetRenderPassConfig() const
     {
         RenderPassConfig config;
-        config.attachments = {
-            {"color", TextureFormat::SWAPCHAIN_FORMAT, LoadOp::Load, StoreOp::Store,}
-        };
+        config.attachments = {{
+            "color",
+            TextureFormat::SWAPCHAIN_FORMAT,
+            LoadOp::Load,
+            StoreOp::Store,
+        }};
         config.type = RenderPassType::UI;
         config.name = m_Name;
         return config;
@@ -104,13 +100,6 @@ namespace VoidArchitect::Renderer
 
     void UIPassRenderer::Execute(const RenderContext& context)
     {
-        // Create a simple UI quad in normalized coordinates (-1 to +1)
-        // auto uiMesh = RenderCommand::s_UIMesh;
-        // if (!uiMesh)
-        // {
-        //     VA_ENGINE_ERROR("[UIPassRenderer] Failed to create UI mesh.");
-        //     return;
-        // }
         const auto uiMaterial = g_MaterialSystem->GetHandleFor("DefaultUI");
         if (uiMaterial == InvalidMaterialHandle)
         {
@@ -124,22 +113,19 @@ namespace VoidArchitect::Renderer
             uiMaterial,
             g_MeshSystem->GetHandleFor("UIQuad"));
 
-        // // Render the UI quad
+        // Render the UI quad
         const RenderStateCacheKey key = {
             g_MaterialSystem->GetClass(uiMaterial),
             RenderPassType::UI,
             VertexFormat::PositionNormalUVTangent,
-            context.currentPassSignature
-        };
+            context.currentPassSignature};
         const auto stateHandle = g_RenderStateSystem->GetHandleFor(key, context.currentPassHandle);
         context.rhi.BindRenderState(stateHandle);
         context.rhi.BindMaterial(uiGeometry.Material, stateHandle);
 
         context.rhi.PushConstants(
-            Resources::ShaderStage::Vertex,
-            sizeof(Math::Mat4),
-            &uiGeometry.Model);
+            Resources::ShaderStage::Vertex, sizeof(Math::Mat4), &uiGeometry.Model);
         context.rhi.BindMesh(uiGeometry.Mesh);
         context.rhi.DrawIndexed(g_MeshSystem->GetIndexCountFor(uiGeometry.Mesh));
     }
-}
+} // namespace VoidArchitect::Renderer

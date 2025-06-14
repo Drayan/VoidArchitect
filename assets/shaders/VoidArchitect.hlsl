@@ -56,6 +56,6 @@ struct PointLight
 
 // TODO: Implement a proper lighting system that will provide these
 static PointLight g_PointLights[3] = {
-    {float3(0.0f, 1.2f, 0.0f), float4(0.0f, 1.0f, 0.0f, 1.0f), 1.0f, 0.35f, 0.032f},
-    {float3(1.2f, 0.0f, 0.0f), float4(1.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0.35f, 0.032f},
+    {float3(0.0f, 1.5f, 0.0f), float4(0.0f, 1.0f, 0.0f, 1.0f), 1.0f, 0.35f, 0.032f},
+    {float3(0.0f, 0.0f, -1.2f), float4(1.0f, 0.0f, 0.0f, 1.0f), 1.0f, 0.35f, 0.032f},
     {float3(-1.2f, 0.0f, 0.0f), float4(0.0f, 0.0f, 1.0f, 1.0f), 1.0f, 0.35f, 0.032f}};

@@ -15,6 +15,8 @@ namespace VoidArchitect::Math
 
     class Quat
     {
+        friend class Mat4;
+
     public:
         static Quat Identity();
 

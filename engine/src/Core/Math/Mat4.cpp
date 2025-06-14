@@ -60,6 +60,14 @@ namespace VoidArchitect::Math
         return Mat4(impl::glm::rotate(impl::glm::mat4(1.0f), angle, impl::glm::vec3(x, y, z)));
     }
 
+    Mat4 Mat4::FromTRS(const Vec3& translation, const Quat& rotation, const Vec3& scale)
+    {
+        const auto scaleMat = Scale(scale.X(), scale.Y(), scale.Z());
+        const auto rotMat = rotation.ToMat4();
+        const auto transMat = Translate(translation.X(), translation.Y(), translation.Z());
+        return transMat * rotMat * scaleMat;
+    }
+
     Mat4 Mat4::FromQuaternion(const Quat& quat) { return quat.ToMat4(); }
 
     Mat4 Mat4::Scale(const float x, const float y, const float z)
@@ -77,5 +85,51 @@ namespace VoidArchitect::Math
     {
         m_Matrix *= other.m_Matrix;
         return *this;
+    }
+
+    Mat4& Mat4::Inverse()
+    {
+        m_Matrix = impl::glm::inverse(m_Matrix);
+        return *this;
+    }
+
+    bool Mat4::ToTRS(Vec3& translation, Quat& rotation, Vec3& scale) const
+    {
+        impl::glm::vec3 skew;
+        impl::glm::vec4 perspective;
+
+        const bool success = impl::glm::decompose(
+            m_Matrix,
+            scale.m_Vector,
+            rotation.m_Quaternion,
+            translation.m_Vector,
+            skew,
+            perspective);
+
+        return success;
+    }
+
+    Vec3 Mat4::GetTranslation() const
+    {
+        return {m_Matrix[3][0], m_Matrix[3][1], m_Matrix[3][2]};
+    }
+
+    Quat Mat4::GetRotation() const
+    {
+        const auto scale = GetScale();
+        impl::glm::mat3 rotMat;
+        rotMat[0] = m_Matrix[0] / scale.X();
+        rotMat[1] = m_Matrix[1] / scale.Y();
+        rotMat[2] = m_Matrix[2] / scale.Z();
+        return Quat(impl::glm::quat_cast(rotMat));
+    }
+
+    Vec3 Mat4::GetScale() const
+    {
+        return {
+            impl::glm::length(m_Matrix[0]),
+            impl::glm::length(m_Matrix[1]),
+            impl::glm::length(m_Matrix[2])
+        };
     }
 } // namespace VoidArchitect::Math

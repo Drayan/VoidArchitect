@@ -17,6 +17,6 @@ material:
   properties:
     diffuse_color: [ 1.0, 1.0, 1.0, 1.0 ]
     specular: 64.0
-    diffuse_map: "T_42_phongDiffuse"
-    specular_map: "T_42_phongSpecular"
-    normal_map: "T_42_Normal"
+    diffuse_map: "wall4_color"
+    specular_map: "wall4_shga"
+    normal_map: "wall4_n"

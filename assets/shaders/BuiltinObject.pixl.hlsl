@@ -39,7 +39,7 @@ float4 main(PSInput input) : SV_Target
     {
         // Do the normal lighting calculation
         float3 viewDir = normalize(g_ubo.ViewPosition - input.PixelPosition).xyz;
-        finalColor = calculateDirectionalLight(input, g_ubo.LightColor, g_ubo.LightDirection.xyz, normal, viewDir);
+        // finalColor = calculateDirectionalLight(input, g_ubo.LightColor, g_ubo.LightDirection.xyz, normal, viewDir);
 
         finalColor += calculatePointLight(g_PointLights[0], input, normal, viewDir);
         finalColor += calculatePointLight(g_PointLights[1], input, normal, viewDir);
@@ -60,11 +60,11 @@ float4 calculateDirectionalLight(PSInput input, float4 lightColor, float3 lightD
     float lightIntensity = max(dot(normal, -lightDir), 0.0f);
 
     float3 halfDir = normalize(viewDir - lightDir);
-    float specularIntensity = pow(max(dot(normal, halfDir), 0.0f), 64.0f);
+    float specularIntensity = pow(max(dot(normal, halfDir), 0.0f), 256.0f);
 
     float4 rawDiff = l_texture.Sample(l_sampler, input.UV0);
     float4 diffuseColor = float4(lightColor.rgb * lightIntensity, rawDiff.a);
-    float4 ambientColor = float4(float3(0.1, 0.1, 0.1) * diffuseColor.rgb, rawDiff.a); // Ambient light color
+    float4 ambientColor = float4(float3(0.02, 0.02, 0.02) * diffuseColor.rgb, rawDiff.a); // Ambient light color
     float4 specularColor = float4(lightColor.rgb * specularIntensity, rawDiff.a);
 
     if (g_ubo.DebugMode == 0)
@@ -83,13 +83,13 @@ float4 calculatePointLight(PointLight light, PSInput input, float3 normal, float
     float diff = max(dot(normal, lightDir), 0.0f);
 
     float3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0f), 64.0f);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0f), 256.0f);
 
     float distance = length(light.Position - input.PixelPosition.xyz);
     float attenuation = 1.0f / (light.Constant + light.Linear * distance + light.Quadratic * distance * distance);
 
     float4 diffuseColor = light.Color * diff;
-    float4 ambientColor = float4(0.1, 0.1, 0.1, 1.0); // Ambient light color
+    float4 ambientColor = float4(0.02, 0.02, 0.02, 1.0); // Ambient light color
     float4 specularColor = light.Color * spec;
 
     if (g_ubo.DebugMode == 0)

@@ -10,9 +10,8 @@ namespace VoidArchitect::Math
 
     namespace impl
     {
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
 #include <glm/glm.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
     } // namespace impl
 
     class Mat4
@@ -27,7 +26,12 @@ namespace VoidArchitect::Math
         static Mat4 Zero();
         static Mat4 Perspective(float fov, float aspect, float near, float far);
         static Mat4 Orthographic(
-            float left, float right, float bottom, float top, float near, float far);
+            float left,
+            float right,
+            float bottom,
+            float top,
+            float near,
+            float far);
         static Mat4 Translate(float x, float y, float z);
         static Mat4 Translate(const Vec3& translation);
         static Mat4 Rotate(float angle, const Vec3& axis);
@@ -36,9 +40,16 @@ namespace VoidArchitect::Math
         static Mat4 Scale(float x, float y, float z);
         static Mat4 Inverse(const Mat4& matrix);
         static Mat4 Transpose(const Mat4& matrix);
+        static Mat4 FromTRS(const Vec3& translation, const Quat& rotation, const Vec3& scale);
 
         Mat4 operator*(const Mat4& other) const;
         Mat4& operator*=(const Mat4& other);
+
+        Mat4& Inverse();
+        bool ToTRS(Vec3& translation, Quat& rotation, Vec3& scale) const;
+        Vec3 GetTranslation() const;
+        Quat GetRotation() const;
+        Vec3 GetScale() const;
 
     private:
         explicit Mat4(const impl::glm::mat4& matrix);
