@@ -41,7 +41,7 @@ namespace VoidArchitect
         MaterialHandle RegisterTemplate(const std::string& name, const MaterialTemplate& config);
 
         MaterialTemplate& GetTemplateFor(MaterialHandle handle);
-        Resources::IMaterial* GetPointerFor(MaterialHandle handle) const;;
+        Resources::IMaterial* GetPointerFor(MaterialHandle handle);;
 
         // Interaction with Material
         void Bind(MaterialHandle handle, RenderStateHandle stateHandle);
@@ -57,8 +57,6 @@ namespace VoidArchitect
         MaterialHandle GetFreeMaterialHandle();
 
         static Resources::IMaterial* CreateMaterial(const MaterialTemplate& matTemplate);
-
-        void ReleaseMaterial(const Resources::IMaterial* material);
 
         enum class MaterialLoadingState
         {

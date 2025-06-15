@@ -51,11 +51,11 @@ namespace VoidArchitect
 
     MaterialSystem::~MaterialSystem()
     {
-        for (MaterialHandle handle = 0; handle < m_Materials.size(); ++handle)
+        for (const auto& m_Material : m_Materials)
         {
-            if (m_Materials[handle].state == MaterialLoadingState::Loaded)
+            if (m_Material.state == MaterialLoadingState::Loaded)
             {
-                delete m_Materials[handle].materialPtr;
+                delete m_Material.materialPtr;
             }
         }
         m_Materials.clear();
@@ -76,8 +76,8 @@ namespace VoidArchitect
             }
         }
 
-        // This is the first time the system is asked an handle for this material,
-        // we have to load its config file from disk.
+        // This is the first time the system is asked a handle for this material.
+        // We have to load its config file from the disk.
         const auto handle = LoadTemplate(name);
         LoadMaterial(handle);
 
@@ -87,8 +87,8 @@ namespace VoidArchitect
     Renderer::MaterialClass MaterialSystem::GetClass(const MaterialHandle handle) const
     {
         const auto& node = m_Materials[handle];
-        if (node.config.renderStateClass.empty() || node.config.renderStateClass != "UI") return
-            Renderer::MaterialClass::Standard;
+        if (node.config.renderStateClass.empty() || node.config.renderStateClass != "UI")
+            return Renderer::MaterialClass::Standard;
         else return Renderer::MaterialClass::UI;
     }
 
@@ -97,10 +97,20 @@ namespace VoidArchitect
         return m_Materials[handle].config;
     }
 
-    Resources::IMaterial* MaterialSystem::GetPointerFor(const MaterialHandle handle) const
+    Resources::IMaterial* MaterialSystem::GetPointerFor(const MaterialHandle handle)
     {
         const auto& node = m_Materials[handle];
-        if (node.state != MaterialLoadingState::Loaded) return nullptr;
+        if (node.state != MaterialLoadingState::Loaded)
+        {
+            // We should load the material
+            LoadMaterial(handle);
+        }
+
+        if (node.state != MaterialLoadingState::Loaded)
+        {
+            VA_ENGINE_ERROR("[MaterialSystem] Failed to load material.");
+            return nullptr;
+        }
 
         return m_Materials[handle].materialPtr;
     }
@@ -230,8 +240,8 @@ namespace VoidArchitect
 
         if (!matTemplate.specularTexture.name.empty())
         {
-            const auto texture = g_TextureSystem->GetHandleFor(matTemplate.specularTexture.name);
-            if (texture)
+            if (const auto texture = g_TextureSystem->GetHandleFor(
+                matTemplate.specularTexture.name))
             {
                 material->SetTexture(matTemplate.specularTexture.use, texture);
             }
@@ -256,8 +266,7 @@ namespace VoidArchitect
 
         if (!matTemplate.normalTexture.name.empty())
         {
-            const auto texture = g_TextureSystem->GetHandleFor(matTemplate.normalTexture.name);
-            if (texture)
+            if (const auto texture = g_TextureSystem->GetHandleFor(matTemplate.normalTexture.name))
             {
                 material->SetTexture(matTemplate.normalTexture.use, texture);
             }
@@ -325,7 +334,7 @@ namespace VoidArchitect
 
     uint32_t MaterialSystem::GetFreeMaterialHandle()
     {
-        // First check if we have a free handle in queue.
+        // First, check if we have a free handle in the queue.
         if (!m_FreeMaterialHandles.empty())
         {
             const auto handle = m_FreeMaterialHandles.front();
@@ -338,9 +347,5 @@ namespace VoidArchitect
             m_Materials.resize(m_NextFreeMaterialHandle + 1);
         }
         return m_NextFreeMaterialHandle++;
-    }
-
-    void MaterialSystem::ReleaseMaterial(const Resources::IMaterial* material)
-    {
     }
 } // namespace VoidArchitect

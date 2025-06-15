@@ -223,7 +223,7 @@ namespace VoidArchitect::Resources::Loaders
         }
 
         // Ensure the loading.
-        materialHandle = g_MaterialSystem->GetHandleFor(materialName);
+        // materialHandle = g_MaterialSystem->GetHandleFor(materialName);
 
         VA_ENGINE_TRACE(
             "[MeshLoader] Successfully imported and registered material '{}' with handle {}.",
@@ -285,7 +285,7 @@ namespace VoidArchitect::Resources::Loaders
         return v;
     }
 
-    void ProcessFace(const aiFace& face, VAArray<uint32_t>& indices, uint32_t vertexOffset)
+    void ProcessFace(const aiFace& face, VAArray<uint32_t>& indices)
     {
         for (uint32_t i = 0; i < face.mNumIndices; ++i)
         {
@@ -333,7 +333,7 @@ namespace VoidArchitect::Resources::Loaders
         for (uint32_t i = 0; i < mesh->mNumFaces; ++i)
         {
             auto face = mesh->mFaces[i];
-            ProcessFace(face, indices, submeshVertexOffset);
+            ProcessFace(face, indices);
         }
 
         auto materialHandle = ImportAssimpMaterial(mesh, scene, meshName);
@@ -430,7 +430,7 @@ namespace VoidArchitect::Resources::Loaders
         }
 
         Assimp::Importer importer;
-        importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 0.01f);
+        importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, .01f);
         const auto scene = importer.ReadFile(
             ss.str(),
             aiProcess_GlobalScale | aiProcess_CalcTangentSpace | aiProcess_Triangulate |
