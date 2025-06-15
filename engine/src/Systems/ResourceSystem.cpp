@@ -7,8 +7,8 @@
 #include "Resources/Loaders/ImageLoader.hpp"
 #include "Resources/Loaders/Loader.hpp"
 #include "Resources/Loaders/MaterialLoader.hpp"
-#include "Resources/Loaders/MeshLoader.hpp"
 #include "Resources/Loaders/ShaderLoader.hpp"
+#include "Resources/Loaders/VamLoader.hpp"
 
 namespace VoidArchitect
 {
@@ -27,7 +27,7 @@ namespace VoidArchitect
             ResourceType::Material,
             new Resources::Loaders::MaterialLoader(MATERIAL_PATH));
         RegisterLoader(ResourceType::Shader, new Resources::Loaders::ShaderLoader(SHADER_PATH));
-        RegisterLoader(ResourceType::Mesh, new Resources::Loaders::MeshLoader(MESH_PATH));
+        RegisterLoader(ResourceType::Mesh, new Resources::Loaders::VAMLoader(MESH_PATH));
     }
 
     void ResourceSystem::RegisterLoader(ResourceType type, Resources::Loaders::ILoader* loader)

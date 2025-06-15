@@ -41,6 +41,10 @@ if (NOT TARGET glm)
     find_package(glm REQUIRED CONFIG)
 endif ()
 
+if (NOT TARGET lz4)
+    find_package(lz4 CONFIG REQUIRED)
+endif ()
+
 add_library(stb_image INTERFACE)
 target_include_directories(stb_image INTERFACE ${stb_SOURCE_DIR})
 
@@ -49,7 +53,7 @@ add_library(VoidArchitect_Engine
         ${ENGINE_SOURCES}
         ${ENGINE_HEADERS}
 )
-target_link_libraries(VoidArchitect_Engine PUBLIC spdlog::spdlog SDL3::SDL3 stb_image assimp::assimp yaml-cpp::yaml-cpp Vulkan::Vulkan Vulkan::MoltenVK glm::glm)
+target_link_libraries(VoidArchitect_Engine PUBLIC spdlog::spdlog SDL3::SDL3 stb_image assimp::assimp lz4::lz4 yaml-cpp::yaml-cpp Vulkan::Vulkan Vulkan::MoltenVK glm::glm)
 
 # If the compiler support PCH, use it.
 target_precompile_headers(VoidArchitect_Engine PRIVATE "src/va.pch.hpp")

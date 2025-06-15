@@ -9,7 +9,7 @@
 #include "Core/Math/Constants.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Renderer/RenderSystem.hpp"
-#include "Resources/Loaders/MeshLoader.hpp"
+#include "Resources/Loaders/RawMeshLoader.hpp"
 
 namespace VoidArchitect
 {

@@ -1,7 +1,7 @@
 //
 // Created by Michael Desmedt on 15/06/2025.
 //
-#include "MeshLoader.hpp"
+#include "RawMeshLoader.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -409,12 +409,12 @@ namespace VoidArchitect::Resources::Loaders
         }
     }
 
-    MeshLoader::MeshLoader(const std::string& baseAssetPath)
+    RawMeshLoader::RawMeshLoader(const std::string& baseAssetPath)
         : ILoader(baseAssetPath)
     {
     }
 
-    std::shared_ptr<IResourceDefinition> MeshLoader::Load(const std::string& name)
+    std::shared_ptr<IResourceDefinition> RawMeshLoader::Load(const std::string& name)
     {
         static constexpr std::string extensions[] = {".gltf", ".fbx", ".obj"};
         std::stringstream ss;
