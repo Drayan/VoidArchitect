@@ -11,7 +11,8 @@ namespace VoidArchitect
     {
         Image,
         Material,
-        Shader
+        Shader,
+        Mesh
     };
 
     class ResourceSystem

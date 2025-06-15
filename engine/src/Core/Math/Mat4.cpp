@@ -13,6 +13,42 @@ namespace VoidArchitect::Math
     {
     }
 
+    Mat4::Mat4(
+        float m00,
+        float m01,
+        float m02,
+        float m03,
+        float m10,
+        float m11,
+        float m12,
+        float m13,
+        float m20,
+        float m21,
+        float m22,
+        float m23,
+        float m30,
+        float m31,
+        float m32,
+        float m33)
+    {
+        m_Matrix[0][0] = m00;
+        m_Matrix[0][1] = m01;
+        m_Matrix[0][2] = m02;
+        m_Matrix[0][3] = m03;
+        m_Matrix[1][0] = m10;
+        m_Matrix[1][1] = m11;
+        m_Matrix[1][2] = m12;
+        m_Matrix[1][3] = m13;
+        m_Matrix[2][0] = m20;
+        m_Matrix[2][1] = m21;
+        m_Matrix[2][2] = m22;
+        m_Matrix[2][3] = m23;
+        m_Matrix[3][0] = m30;
+        m_Matrix[3][1] = m31;
+        m_Matrix[3][2] = m32;
+        m_Matrix[3][3] = m33;
+    }
+
     Mat4::Mat4(const impl::glm::mat4& matrix)
         : m_Matrix(matrix)
     {
@@ -85,6 +121,11 @@ namespace VoidArchitect::Math
     {
         m_Matrix *= other.m_Matrix;
         return *this;
+    }
+
+    Vec4 Mat4::operator*(const Vec4& other) const
+    {
+        return Vec4{m_Matrix * other.m_Vector};
     }
 
     Mat4& Mat4::Inverse()

@@ -20,6 +20,10 @@ if (NOT TARGET stb)
     FetchContent_MakeAvailable(stb)
 endif ()
 
+if (NOT TARGET assimp)
+    find_package(assimp CONFIG REQUIRED)
+endif ()
+
 if (NOT TARGET yaml-cpp)
     FetchContent_Declare(
             yaml-cpp
@@ -45,7 +49,7 @@ add_library(VoidArchitect_Engine
         ${ENGINE_SOURCES}
         ${ENGINE_HEADERS}
 )
-target_link_libraries(VoidArchitect_Engine PUBLIC spdlog::spdlog SDL3::SDL3 stb_image yaml-cpp::yaml-cpp Vulkan::Vulkan Vulkan::MoltenVK glm::glm)
+target_link_libraries(VoidArchitect_Engine PUBLIC spdlog::spdlog SDL3::SDL3 stb_image assimp::assimp yaml-cpp::yaml-cpp Vulkan::Vulkan Vulkan::MoltenVK glm::glm)
 
 # If the compiler support PCH, use it.
 target_precompile_headers(VoidArchitect_Engine PRIVATE "src/va.pch.hpp")

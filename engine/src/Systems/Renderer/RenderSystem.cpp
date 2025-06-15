@@ -91,7 +91,7 @@ namespace VoidArchitect
 
             // --- Add passes to the graph. ---
             m_RenderGraph.AddPass("ForwardOpaque", &m_ForwardOpaquePassRenderer);
-            // m_RenderGraph.AddPass("UI", &m_UIPassRenderer);
+            m_RenderGraph.AddPass("UI", &m_UIPassRenderer);
 
             // --- Set up the graph. ---
             m_RenderGraph.Setup();

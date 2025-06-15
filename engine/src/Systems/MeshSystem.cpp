@@ -4,10 +4,12 @@
 #include "MeshSystem.hpp"
 
 #include "MaterialSystem.hpp"
+#include "ResourceSystem.hpp"
 #include "Core/Logger.hpp"
 #include "Core/Math/Constants.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "Renderer/RenderSystem.hpp"
+#include "Resources/Loaders/MeshLoader.hpp"
 
 namespace VoidArchitect
 {
@@ -15,8 +17,16 @@ namespace VoidArchitect
 
     Resources::MeshHandle MeshSystem::LoadMesh(const std::string& name)
     {
-        // TODO Implement loading mesh from a file
-        return Resources::InvalidMeshHandle;
+        const auto meshData = g_ResourceSystem->LoadResource<
+            Resources::Loaders::MeshDataDefinition>(ResourceType::Mesh, name);
+
+        if (!meshData || (meshData->GetVertices().empty() || meshData->GetIndices().empty()))
+        {
+            VA_ENGINE_ERROR("[MeshSystem] Failed to load mesh '{}'.", name);
+            return Resources::InvalidMeshHandle;
+        }
+
+        return GetHandleFor(name, meshData->GetVertices(), meshData->GetIndices());
     }
 
     uint32_t MeshSystem::GetIndexCountFor(const Resources::MeshHandle handle) const
@@ -58,12 +68,14 @@ namespace VoidArchitect
             if (m_Meshes[i]->m_Name == name) return i;
         }
 
-        if (vertices.empty() || indices.empty())
+        if (vertices.empty() && indices.empty())
         {
-            VA_ENGINE_WARN(
-                "[MeshSystem] Mesh '{}' wasn't in the cache, and no vertices or indices were provided.",
-                name);
-            return Resources::InvalidMeshHandle;
+            // VA_ENGINE_WARN(
+            //     "[MeshSystem] Mesh '{}' wasn't in the cache, and no vertices or indices were provided.",
+            //     name);
+            // return Resources::InvalidMeshHandle;
+
+            return LoadMesh(name);
         }
 
         // If no submeshes are provided, this is a single submesh mesh, we create one.

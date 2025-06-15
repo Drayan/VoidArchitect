@@ -2,6 +2,7 @@
 // Created by Michael Desmedt on 20/05/2025.
 //
 #pragma once
+#include "Vec4.hpp"
 
 namespace VoidArchitect::Math
 {
@@ -22,6 +23,23 @@ namespace VoidArchitect::Math
 
     public:
         Mat4();
+        Mat4(
+            float m00,
+            float m01,
+            float m02,
+            float m03,
+            float m10,
+            float m11,
+            float m12,
+            float m13,
+            float m20,
+            float m21,
+            float m22,
+            float m23,
+            float m30,
+            float m31,
+            float m32,
+            float m33);
 
         static Mat4 Identity();
         static Mat4 Zero();
@@ -45,6 +63,8 @@ namespace VoidArchitect::Math
 
         Mat4 operator*(const Mat4& other) const;
         Mat4& operator*=(const Mat4& other);
+
+        Vec4 operator*(const Vec4& other) const;
 
         Mat4& Inverse();
         bool ToTRS(Vec3& translation, Quat& rotation, Vec3& scale) const;

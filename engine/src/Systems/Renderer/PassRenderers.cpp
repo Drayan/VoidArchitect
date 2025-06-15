@@ -55,7 +55,7 @@ namespace VoidArchitect::Renderer
             return;
         }
 
-        const auto testMesh = g_MeshSystem->GetHandleFor("TestCube");
+        const auto testMesh = g_MeshSystem->GetHandleFor("sponza");
         if (testMesh == Resources::InvalidMeshHandle)
         {
             VA_ENGINE_ERROR("[ForwardOpaquePassRenderer] Failed to get test mesh.");
@@ -64,8 +64,9 @@ namespace VoidArchitect::Renderer
 
         // Render test geometry
         static float angle = 0.f;
-        angle += (0.2f * context.frameData.deltaTime);
-        const auto transformMatrix = Math::Mat4::Rotate(angle, Math::Vec3::Up());
+        //angle += (0.2f * context.frameData.deltaTime);
+        const auto transformMatrix = Math::Mat4::Translate({0.0f, std::sinf(angle), 0.0f}) *
+            Math::Mat4::Rotate(angle, Math::Vec3::Up());
 
         context.rhi.BindMesh(testMesh);
 

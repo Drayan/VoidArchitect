@@ -7,6 +7,7 @@
 #include "Resources/Loaders/ImageLoader.hpp"
 #include "Resources/Loaders/Loader.hpp"
 #include "Resources/Loaders/MaterialLoader.hpp"
+#include "Resources/Loaders/MeshLoader.hpp"
 #include "Resources/Loaders/ShaderLoader.hpp"
 
 namespace VoidArchitect
@@ -18,12 +19,15 @@ namespace VoidArchitect
         const std::string IMAGE_PATH = BASE_ASSET_DIR + "textures/";
         const std::string MATERIAL_PATH = BASE_ASSET_DIR + "materials/";
         const std::string SHADER_PATH = BASE_ASSET_DIR + "shaders/";
+        const std::string MESH_PATH = BASE_ASSET_DIR + "meshes/";
 
         // Initialize default loaders
         RegisterLoader(ResourceType::Image, new Resources::Loaders::ImageLoader(IMAGE_PATH));
         RegisterLoader(
-            ResourceType::Material, new Resources::Loaders::MaterialLoader(MATERIAL_PATH));
+            ResourceType::Material,
+            new Resources::Loaders::MaterialLoader(MATERIAL_PATH));
         RegisterLoader(ResourceType::Shader, new Resources::Loaders::ShaderLoader(SHADER_PATH));
+        RegisterLoader(ResourceType::Mesh, new Resources::Loaders::MeshLoader(MESH_PATH));
     }
 
     void ResourceSystem::RegisterLoader(ResourceType type, Resources::Loaders::ILoader* loader)
@@ -41,7 +45,8 @@ namespace VoidArchitect
 
         m_Loaders[type] = std::unique_ptr<Resources::Loaders::ILoader>(loader);
         VA_ENGINE_DEBUG(
-            "[ResourceSystem] Registered loader for type: {}.", ResourceTypeToString(type));
+            "[ResourceSystem] Registered loader for type: {}.",
+            ResourceTypeToString(type));
     }
 
     void ResourceSystem::UnregisterLoader(const ResourceType type) { m_Loaders.erase(type); }
@@ -66,7 +71,8 @@ namespace VoidArchitect
 
     template <typename T>
     std::shared_ptr<T> ResourceSystem::LoadResource(
-        const ResourceType type, const std::string& path)
+        const ResourceType type,
+        const std::string& path)
     {
         if (m_Loaders.contains(type))
         {
@@ -74,7 +80,8 @@ namespace VoidArchitect
         }
 
         VA_ENGINE_WARN(
-            "[ResourceSystem] No loader registered for type: {}.", ResourceTypeToString(type));
+            "[ResourceSystem] No loader registered for type: {}.",
+            ResourceTypeToString(type));
         return nullptr;
     }
 
@@ -88,8 +95,12 @@ namespace VoidArchitect
 
     template Resources::Loaders::MaterialDataDefinitionPtr ResourceSystem::LoadResource<
         Resources::Loaders::MaterialDataDefinition>(
-        const ResourceType type, const std::string& name);
+        const ResourceType type,
+        const std::string& name);
 
     template Resources::Loaders::ShaderDataDefinitionPtr ResourceSystem::LoadResource<
         Resources::Loaders::ShaderDataDefinition>(const ResourceType type, const std::string& name);
+
+    template Resources::Loaders::MeshDataDefinitionPtr ResourceSystem::LoadResource<
+        Resources::Loaders::MeshDataDefinition>(const ResourceType type, const std::string& name);
 } // namespace VoidArchitect
