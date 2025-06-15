@@ -70,7 +70,8 @@ namespace VoidArchitect::Renderer
 
         context.rhi.BindMesh(testMesh);
 
-        for (uint32_t i = 0; i < g_MeshSystem->GetSubMeshCountFor(testMesh); i++)
+        const auto submeshesCount = g_MeshSystem->GetSubMeshCountFor(testMesh);
+        for (uint32_t i = 0; i < submeshesCount; i++)
         {
             const auto& submesh = g_MeshSystem->GetSubMesh(testMesh, i);
             const auto materialToUse = (submesh.material != InvalidMaterialHandle)

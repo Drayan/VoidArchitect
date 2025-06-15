@@ -38,6 +38,7 @@ namespace VoidArchitect
         MaterialHandle GetHandleFor(const std::string& name);
         MaterialHandle GetHandleForDefaultMaterial() { return GetHandleFor("DefaultMaterial"); }
         Renderer::MaterialClass GetClass(MaterialHandle handle) const;
+        MaterialHandle RegisterTemplate(const std::string& name, const MaterialTemplate& config);
 
         MaterialTemplate& GetTemplateFor(MaterialHandle handle);
         Resources::IMaterial* GetPointerFor(MaterialHandle handle) const;;
@@ -47,7 +48,6 @@ namespace VoidArchitect
 
     private:
         MaterialHandle LoadTemplate(const std::string& name);
-        MaterialHandle RegisterTemplate(const std::string& name, const MaterialTemplate& config);
 
         void LoadMaterial(MaterialHandle handle);
         //void UnloadMaterial(MaterialHandle handle);

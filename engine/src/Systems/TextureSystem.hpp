@@ -16,7 +16,16 @@ namespace VoidArchitect
         Resources::TextureHandle GetHandleFor(const std::string& name);
 
         Resources::ITexture* GetPointerFor(Resources::TextureHandle handle) const;
-        Resources::TextureHandle GetDefaultTextureHandle() const { return m_DefaultTextureHandle; };
+
+        Resources::TextureHandle GetDefaultDiffuseHandle() const { return m_DefaultDiffuseHandle; }
+        Resources::TextureHandle GetDefaultNormalHandle() const { return m_DefaultNormalHandle; }
+
+        Resources::TextureHandle GetDefaultSpecularHandle() const
+        {
+            return m_DefaultSpecularHandle;
+        }
+
+        Resources::TextureHandle GetErrorTextureHandle() const { return m_ErrorTextureHandle; }
 
     private:
         Resources::TextureHandle CreateTexture2D(
@@ -34,7 +43,11 @@ namespace VoidArchitect
         uint32_t m_NextTextureHandle = 0;
 
         VAArray<std::unique_ptr<Resources::ITexture>> m_Textures;
-        Resources::TextureHandle m_DefaultTextureHandle;
+
+        Resources::TextureHandle m_DefaultDiffuseHandle;
+        Resources::TextureHandle m_DefaultNormalHandle;
+        Resources::TextureHandle m_DefaultSpecularHandle;
+        Resources::TextureHandle m_ErrorTextureHandle;
     };
 
     inline std::unique_ptr<TextureSystem> g_TextureSystem;

@@ -87,8 +87,8 @@ namespace VoidArchitect
     Renderer::MaterialClass MaterialSystem::GetClass(const MaterialHandle handle) const
     {
         const auto& node = m_Materials[handle];
-        if (node.config.renderStateClass.empty() || node.config.renderStateClass != "UI")
-            return Renderer::MaterialClass::Standard;
+        if (node.config.renderStateClass.empty() || node.config.renderStateClass != "UI") return
+            Renderer::MaterialClass::Standard;
         else return Renderer::MaterialClass::UI;
     }
 
@@ -158,7 +158,6 @@ namespace VoidArchitect
         {
             if (const auto& node = m_Materials[handle]; node.config.name == name)
             {
-                VA_ENGINE_WARN("[MaterialSystem] Material template '{}' already exists.", name);
                 return handle;
             }
         }
@@ -219,6 +218,15 @@ namespace VoidArchitect
                     matTemplate.name);
             }
         }
+        else
+        {
+            material->SetTexture(
+                Resources::TextureUse::Diffuse,
+                g_TextureSystem->GetDefaultDiffuseHandle());
+            VA_ENGINE_TRACE(
+                "[MaterialSystem] Default diffuse texture used for '{}'.",
+                matTemplate.name);
+        }
 
         if (!matTemplate.specularTexture.name.empty())
         {
@@ -236,6 +244,15 @@ namespace VoidArchitect
                     matTemplate.name);
             }
         }
+        else
+        {
+            material->SetTexture(
+                Resources::TextureUse::Specular,
+                g_TextureSystem->GetDefaultSpecularHandle());
+            VA_ENGINE_TRACE(
+                "[MaterialSystem] Default specular texture used for '{}'.",
+                matTemplate.name);
+        }
 
         if (!matTemplate.normalTexture.name.empty())
         {
@@ -252,6 +269,15 @@ namespace VoidArchitect
                     matTemplate.normalTexture.name,
                     matTemplate.name);
             }
+        }
+        else
+        {
+            material->SetTexture(
+                Resources::TextureUse::Normal,
+                g_TextureSystem->GetDefaultNormalHandle());
+            VA_ENGINE_TRACE(
+                "[MaterialSystem] Default normal texture used for '{}'.",
+                matTemplate.name);
         }
 
         // TODO: Load other textures

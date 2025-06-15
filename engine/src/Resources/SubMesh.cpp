@@ -59,15 +59,15 @@ bool VoidArchitect::Resources::SubMeshDescriptor::IsValid(const MeshData& data) 
     for (uint32_t i = indexOffset; i < indexOffset + indexCount; i++)
     {
         const uint32_t index = data.indices[i];
-        if (index < vertexOffset || index >= vertexOffset + vertexCount)
+        if (index >= vertexCount)
         {
             VA_ENGINE_ERROR(
                 "[SubMesh] Submesh '{}' contains index {} at position {} that references vertex outside submesh range [{}, {}].",
                 name,
                 index,
                 i,
-                vertexOffset,
-                vertexOffset + vertexCount - 1);
+                vertexCount,
+                vertexCount - 1);
             return false;
         }
     }

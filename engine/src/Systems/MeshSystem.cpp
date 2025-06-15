@@ -26,7 +26,11 @@ namespace VoidArchitect
             return Resources::InvalidMeshHandle;
         }
 
-        return GetHandleFor(name, meshData->GetVertices(), meshData->GetIndices());
+        return GetHandleFor(
+            name,
+            meshData->GetVertices(),
+            meshData->GetIndices(),
+            meshData->GetSubmeshes());
     }
 
     uint32_t MeshSystem::GetIndexCountFor(const Resources::MeshHandle handle) const

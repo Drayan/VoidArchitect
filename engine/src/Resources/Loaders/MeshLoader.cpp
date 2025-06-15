@@ -11,6 +11,7 @@
 #include "Core/Math/Constants.hpp"
 #include "Core/Math/Math.hpp"
 #include "Resources/MeshData.hpp"
+#include "Systems/MaterialSystem.hpp"
 
 namespace VoidArchitect::Resources::Loaders
 {
@@ -65,6 +66,171 @@ namespace VoidArchitect::Resources::Loaders
         if (totalMeshes == 1) return baseName;
 
         return baseName + "_" + std::to_string(meshIndex);
+    }
+
+    Resources::TextureUse MapAssimpTextureType(const aiTextureType type)
+    {
+        switch (type)
+        {
+            case aiTextureType_DIFFUSE:
+                return Resources::TextureUse::Diffuse;
+            case aiTextureType_SPECULAR:
+                return Resources::TextureUse::Specular;
+            case aiTextureType_NORMALS:
+                return Resources::TextureUse::Normal;
+            default:
+                return Resources::TextureUse::Diffuse;
+        }
+    }
+
+    std::string ExtractTextureName(const std::string& texturePath)
+    {
+        if (texturePath.empty())
+        {
+            return "";
+        }
+
+        const std::filesystem::path path(texturePath);
+        return path.stem().string();
+    }
+
+    std::string CreateMaterialName(
+        const std::string& meshName,
+        const aiMaterial* material,
+        const uint32_t materialIndex)
+    {
+        aiString matName;
+        if (material->Get(AI_MATKEY_NAME, matName) == AI_SUCCESS && matName.length > 0)
+        {
+            return meshName + "_" + std::string(matName.C_Str());
+        }
+
+        // Fallback to index-based naming
+        return meshName + "_" + std::to_string(materialIndex);
+    }
+
+    MaterialTemplate ImportAssimpMaterialTemplate(
+        const aiMaterial* material,
+        const std::string& materialName)
+    {
+        MaterialTemplate templateData;
+        templateData.name = materialName;
+        templateData.renderStateClass = "Opaque"; // Default for now
+
+        // Import diffuse color
+        aiColor3D diffuseColor;
+        if (material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor) == AI_SUCCESS)
+        {
+            templateData.diffuseColor = Math::Vec4(
+                diffuseColor.r,
+                diffuseColor.g,
+                diffuseColor.b,
+                1.0f);
+        }
+        else
+        {
+            templateData.diffuseColor = Math::Vec4::One();
+        }
+
+        // Import textures - just extract names, let MaterialSystem handle the loading
+        auto importTexture = [&](aiTextureType assimpType, MaterialTemplate::TextureConfig& config)
+        {
+            if (material->GetTextureCount(assimpType) > 0)
+            {
+                aiString texPath;
+                if (material->GetTexture(assimpType, 0, &texPath) == AI_SUCCESS)
+                {
+                    std::string texturePath(texPath.C_Str());
+                    std::string textureName = ExtractTextureName(texturePath);
+
+                    if (!textureName.empty())
+                    {
+                        config.use = MapAssimpTextureType(assimpType);
+                        config.name = textureName;
+
+                        VA_ENGINE_TRACE(
+                            "[MeshLoader] Material '{}' - Found {} texture: '{}'.",
+                            materialName,
+                            static_cast<int>(assimpType),
+                            textureName);
+                    }
+                }
+            }
+        };
+
+        // Import all supported texture types
+        // TODO: Add other texture types
+        importTexture(aiTextureType_DIFFUSE, templateData.diffuseTexture);
+        importTexture(aiTextureType_SPECULAR, templateData.specularTexture);
+        importTexture(aiTextureType_NORMALS, templateData.normalTexture);
+
+        templateData.resourceBindings = {
+            // MaterialUBO
+            {Renderer::ResourceBindingType::ConstantBuffer, 0, Resources::ShaderStage::All, {}},
+            // DiffuseMap
+            {Renderer::ResourceBindingType::Texture2D, 1, Resources::ShaderStage::Pixel, {}},
+            // SpecularMap
+            {Renderer::ResourceBindingType::Texture2D, 2, Resources::ShaderStage::Pixel, {}},
+            // NormalMap
+            {Renderer::ResourceBindingType::Texture2D, 3, Resources::ShaderStage::Pixel, {}}
+        };
+
+        VA_ENGINE_TRACE("[MeshLoader] Created MaterialTemplate '{}'.", materialName);
+
+        return templateData;
+    }
+
+    MaterialHandle ImportAssimpMaterial(
+        const aiMesh* mesh,
+        const aiScene* scene,
+        const std::string& meshName)
+    {
+        // Check if mesh has a material
+        if (mesh->mMaterialIndex >= scene->mNumMaterials)
+        {
+            VA_ENGINE_WARN(
+                "[MeshLoader] Mesh '{}' has invalid material index {}, using default material.",
+                meshName,
+                mesh->mMaterialIndex);
+
+            return g_MaterialSystem->GetHandleForDefaultMaterial();
+        }
+
+        // Get the assimp material
+        const auto* assimpMaterial = scene->mMaterials[mesh->mMaterialIndex];
+        if (!assimpMaterial)
+        {
+            VA_ENGINE_WARN(
+                "[MeshLoader] Mesh '{}' has null material, using default material.",
+                meshName);
+            return g_MaterialSystem->GetHandleForDefaultMaterial();
+        }
+
+        // Create a unique material name
+        auto materialName = CreateMaterialName(meshName, assimpMaterial, mesh->mMaterialIndex);
+
+        // Create MaterialTemplate from assimp
+        auto matTemplate = ImportAssimpMaterialTemplate(assimpMaterial, materialName);
+
+        // Register the material template in MaterialSystem
+        auto materialHandle = g_MaterialSystem->RegisterTemplate(materialName, matTemplate);
+        if (materialHandle == InvalidMaterialHandle)
+        {
+            VA_ENGINE_ERROR(
+                "[MeshLoader] Failed to register material '{}', using default material.",
+                materialName);
+            return g_MaterialSystem->GetHandleForDefaultMaterial();
+        }
+
+        // Ensure the loading.
+        materialHandle = g_MaterialSystem->GetHandleFor(materialName);
+
+        VA_ENGINE_TRACE(
+            "[MeshLoader] Successfully imported and registered material '{}' with handle {}.",
+            materialName,
+            materialHandle);
+
+        return materialHandle;
     }
 
     MeshVertex ProcessVertex(const aiMesh* mesh, uint32_t vertexIndex, const Math::Mat4& transform)
@@ -123,7 +289,7 @@ namespace VoidArchitect::Resources::Loaders
     {
         for (uint32_t i = 0; i < face.mNumIndices; ++i)
         {
-            indices.push_back(face.mIndices[i] + vertexOffset);
+            indices.push_back(face.mIndices[i]);
         }
     }
 
@@ -132,6 +298,7 @@ namespace VoidArchitect::Resources::Loaders
         const aiNode* node,
         uint32_t meshIndex,
         const aiScene* scene,
+        const std::string& meshName,
         VAArray<MeshVertex>& vertices,
         VAArray<uint32_t>& indices,
         VAArray<Resources::SubMeshDescriptor>& submeshes,
@@ -169,11 +336,13 @@ namespace VoidArchitect::Resources::Loaders
             ProcessFace(face, indices, submeshVertexOffset);
         }
 
+        auto materialHandle = ImportAssimpMaterial(mesh, scene, meshName);
+
         // Create SubMeshDescriptor
         auto submeshName = BuildSubMeshName(node, meshIndex, scene->mNumMeshes);
         submeshes.emplace_back(
             submeshName,
-            InvalidMaterialHandle,
+            materialHandle,
             submeshIndexOffset,
             mesh->mNumFaces * 3,
             submeshVertexOffset,
@@ -193,6 +362,7 @@ namespace VoidArchitect::Resources::Loaders
     void ProcessNode(
         const aiNode* node,
         const aiScene* scene,
+        const std::string& meshName,
         VAArray<MeshVertex>& vertices,
         VAArray<uint32_t>& indices,
         VAArray<Resources::SubMeshDescriptor>& submeshes,
@@ -213,6 +383,7 @@ namespace VoidArchitect::Resources::Loaders
                 node,
                 i,
                 scene,
+                meshName,
                 vertices,
                 indices,
                 submeshes,
@@ -228,6 +399,7 @@ namespace VoidArchitect::Resources::Loaders
             ProcessNode(
                 child,
                 scene,
+                meshName,
                 vertices,
                 indices,
                 submeshes,
@@ -287,6 +459,7 @@ namespace VoidArchitect::Resources::Loaders
         ProcessNode(
             scene->mRootNode,
             scene,
+            name,
             meshData->m_Vertices,
             meshData->m_Indices,
             meshData->m_Submeshes,

@@ -61,6 +61,8 @@ namespace VoidArchitect
                 return "Material";
             case ResourceType::Shader:
                 return "Shader";
+            case ResourceType::Mesh:
+                return "Mesh";
             default:
                 break;
         }

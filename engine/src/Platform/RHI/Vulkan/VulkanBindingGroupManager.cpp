@@ -329,8 +329,11 @@ namespace VoidArchitect::Platform
                         break;
                 }
 
-                if (textureHandle == Resources::InvalidTextureHandle) textureHandle =
-                    g_TextureSystem->GetDefaultTextureHandle();
+                if (textureHandle == Resources::InvalidTextureHandle)
+                {
+                    VA_ENGINE_ERROR("[VulkanBindingGroupManager] Invalid texture handle.");
+                    textureHandle = g_TextureSystem->GetErrorTextureHandle();
+                }
 
                 auto vkTexture = dynamic_cast<VulkanTexture2D*>(g_TextureSystem->GetPointerFor(
                     textureHandle));
@@ -338,7 +341,7 @@ namespace VoidArchitect::Platform
                 {
                     VA_ENGINE_ERROR("[VulkanBindingGroupManager] Invalid texture.");
                     vkTexture = dynamic_cast<VulkanTexture2D*>(g_TextureSystem->GetPointerFor(
-                        g_TextureSystem->GetDefaultTextureHandle()));
+                        g_TextureSystem->GetErrorTextureHandle()));
                     if (!vkTexture)
                     {
                         VA_ENGINE_CRITICAL(
