@@ -65,7 +65,7 @@ set_target_properties(VoidArchitect_Engine PROPERTIES LINKER_LANGUAGE CXX)
 # Platform-specific configuration
 if (APPLE)
     # macOS settings
-    target_compile_definitions(VoidArchitect_Engine PRIVATE "VOID_ARCH_MACOS")
+    #    target_compile_definitions(VoidArchitect_Engine PRIVATE "VOID_ARCH_PLATFORM_MACOS")
 
     get_filename_component(VULKAN_LIBRARY_PATH "${Vulkan_LIBRARY}" DIRECTORY)
     set_target_properties(VoidArchitect_Engine PROPERTIES
@@ -74,10 +74,10 @@ if (APPLE)
     )
 elseif (WIN32)
     # Windows settings
-    target_compile_definitions(VoidArchitect_Engine PRIVATE "VOID_ARCH_WINDOWS")
+    #    target_compile_definitions(VoidArchitect_Engine PRIVATE "VOID_ARCH_PLATFORM_WINDOWS")
 elseif (UNIX AND NOT APPLE)
     # Linux settings
-    target_compile_definitions(VoidArchitect_Engine PRIVATE "VOID_ARCH_LINUX")
+    #    target_compile_definitions(VoidArchitect_Engine PRIVATE "VOID_ARCH_PLATFORM_LINUX")
     set_target_properties(VoidArchitect_Engine PROPERTIES
             INSTALL_RPATH "$ORIGIN/../../lib/${CMAKE_SYSTEM_NAME}"
             BUILD_WITH_INSTALL_RPATH TRUE

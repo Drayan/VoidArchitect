@@ -25,5 +25,4 @@ using namespace VoidArchitect::Collections;
 #include <Windows.h>
 #elifdef VOID_ARCH_PLATFORM_LINUX
 #elifdef VOID_ARCH_PLATFORM_MACOS
-#include <>
 #endif

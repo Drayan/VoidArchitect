@@ -14,12 +14,20 @@
 #include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_timer.h>
 
+#include "Platform/Threading/Thread.hpp"
+#include "Platform/Threading/ThreadFactory.hpp"
 #include "Systems/Renderer/RenderSystem.hpp"
 #include "Systems/ResourceSystem.hpp"
 
 namespace VoidArchitect
 {
 #define BIND_EVENT_FN(x) [this](auto&& PH1) { return this->x(std::forward<decltype(PH1)>(PH1)); }
+
+    void TestThreadMain()
+    {
+        while (!Platform::Thread::ShouldCurrentThreadStop())
+            VA_ENGINE_TRACE("[TestThread] IsRunning.");
+    }
 
     Application::Application()
     {
@@ -31,7 +39,8 @@ namespace VoidArchitect
         {
             g_ResourceSystem = std::make_unique<ResourceSystem>();
             Renderer::g_RenderSystem = std::make_unique<Renderer::RenderSystem>(
-                Platform::RHI_API_TYPE::Vulkan, m_MainWindow);
+                Platform::RHI_API_TYPE::Vulkan,
+                m_MainWindow);
 
             Renderer::g_RenderSystem->InitializeSubsystems();
         }
@@ -40,10 +49,17 @@ namespace VoidArchitect
             VA_ENGINE_CRITICAL("[Application] Failed to initialize subsystem: {0}", e.what());
             exit(-1);
         }
+
+        m_TestThread = Platform::ThreadFactory::CreateThread();
+        m_TestThread->Start(TestThreadMain, "TestThread");
     }
 
     Application::~Application()
     {
+        m_TestThread->RequestStop();
+        m_TestThread->Join();
+
+        m_TestThread = nullptr;
         Renderer::g_RenderSystem = nullptr;
         g_ResourceSystem = nullptr;
     }
@@ -63,8 +79,7 @@ namespace VoidArchitect
 
             while (accumulator >= FIXED_STEP)
             {
-                for (Layer* layer : m_LayerStack)
-                    layer->OnFixedUpdate(FIXED_STEP);
+                for (Layer* layer : m_LayerStack) layer->OnFixedUpdate(FIXED_STEP);
 
                 accumulator -= FIXED_STEP;
             }
@@ -88,8 +103,7 @@ namespace VoidArchitect
         for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
         {
             (*--it)->OnEvent(e);
-            if (e.Handled)
-                break;
+            if (e.Handled) break;
         }
     }
 

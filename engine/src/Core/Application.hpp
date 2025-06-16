@@ -11,6 +11,11 @@
 
 #include <memory>
 
+namespace VoidArchitect::Platform
+{
+    class IThread;
+}
+
 namespace VoidArchitect
 {
     class Event;
@@ -38,6 +43,8 @@ namespace VoidArchitect
 
         std::unique_ptr<Window> m_MainWindow;
         bool m_Running = true;
+
+        std::unique_ptr<Platform::IThread> m_TestThread;
 
         LayerStack m_LayerStack;
     };

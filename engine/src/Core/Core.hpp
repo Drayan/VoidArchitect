@@ -4,11 +4,11 @@
 #pragma once
 
 // Platform detection
-#if defined(_MSC_VER) || defined(WIN32) || defined(_WIN32)
+#if (defined(_MSC_VER) || defined(WIN32) || defined(_WIN32)) && !defined(VOID_ARCH_PLATFORM_WINDOWS)
 #define VOID_ARCH_PLATFORM_WINDOWS
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) && !defined(VOID_ARCH_PLATFORM_MACOS)
 #define VOID_ARCH_PLATFORM_MACOS
-#elif defined(__linux__)
+#elif defined(__linux__) && !defined(VOID_ARCH_PLATFORM_LINUX)
 #define VOID_ARCH_PLATFORM_LINUX
 #else
 #error "Unsupported platform!"
