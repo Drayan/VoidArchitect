@@ -6,6 +6,7 @@
 #include "VulkanBuffer.hpp"
 #include "VulkanCommandBuffer.hpp"
 #include "VulkanDevice.hpp"
+#include "VulkanUtils.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -39,8 +40,8 @@ namespace VoidArchitect::Platform
             imageFormat,
             VK_IMAGE_ASPECT_COLOR_BIT,
             VK_IMAGE_TILING_OPTIMAL,
-            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
-            | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT |
+            VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
         // Load the data from the staging buffer to the image.
@@ -65,11 +66,11 @@ namespace VoidArchitect::Platform
         auto samplerInfo = VkSamplerCreateInfo{};
         // TODO Make this configurable.
         samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-        samplerInfo.magFilter = VK_FILTER_LINEAR;
-        samplerInfo.minFilter = VK_FILTER_LINEAR;
-        samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        samplerInfo.magFilter = TranslateEngineTextureFilterToVulkan(m_FilterModeMag);
+        samplerInfo.minFilter = TranslateEngineTextureFilterToVulkan(m_FilterModeMin);
+        samplerInfo.addressModeU = TranslateEngineTextureRepeatToVulkan(m_RepeatModeU);
+        samplerInfo.addressModeV = TranslateEngineTextureRepeatToVulkan(m_RepeatModeV);
+        samplerInfo.addressModeW = TranslateEngineTextureRepeatToVulkan(m_RepeatModeW);
         samplerInfo.anisotropyEnable = VK_TRUE;
         samplerInfo.maxAnisotropy = 16;
         samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;

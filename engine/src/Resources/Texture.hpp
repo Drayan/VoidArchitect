@@ -29,6 +29,20 @@ namespace VoidArchitect::Resources
         Depth = 1 << 7
     };
 
+    enum class TextureFilterMode
+    {
+        Nearest,
+        Linear,
+    };
+
+    enum class TextureRepeatMode
+    {
+        Repeat,
+        ClampToEdge,
+        ClampToBorder,
+        MirroredRepeat,
+    };
+
     using TextureHandle = uint32_t;
     static constexpr TextureHandle InvalidTextureHandle = std::numeric_limits<TextureHandle>::max();
 
@@ -57,6 +71,14 @@ namespace VoidArchitect::Resources
         uint32_t m_Width, m_Height;
         uint8_t m_ChannelCount;
         bool m_HasTransparency;
+        bool m_IsWritable = false;
+
+        TextureFilterMode m_FilterModeMin = TextureFilterMode::Linear;
+        TextureFilterMode m_FilterModeMag = TextureFilterMode::Linear;
+
+        TextureRepeatMode m_RepeatModeU = TextureRepeatMode::Repeat;
+        TextureRepeatMode m_RepeatModeV = TextureRepeatMode::Repeat;
+        TextureRepeatMode m_RepeatModeW = TextureRepeatMode::Repeat;
 
         TextureUse m_Use = TextureUse::None;
     };

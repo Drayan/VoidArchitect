@@ -12,6 +12,8 @@ namespace VoidArchitect
     namespace Resources
     {
         enum class ShaderStage;
+        enum class TextureFilterMode;
+        enum class TextureRepeatMode;
     }
 } // namespace VoidArchitect
 
@@ -23,6 +25,8 @@ namespace VoidArchitect::Platform
     VkFormat TranslateEngineTextureFormatToVulkan(Renderer::TextureFormat format);
     VkAttachmentLoadOp TranslateEngineLoadOpToVulkan(Renderer::LoadOp op);
     VkAttachmentStoreOp TranslateEngineStoreOpToVulkan(Renderer::StoreOp op);
+    VkFilter TranslateEngineTextureFilterToVulkan(Resources::TextureFilterMode mode);
+    VkSamplerAddressMode TranslateEngineTextureRepeatToVulkan(Resources::TextureRepeatMode mode);
 
     // === Vulkan -> Engine translation functions ===
     Renderer::TextureFormat TranslateVulkanTextureFormatToEngine(VkFormat format);
