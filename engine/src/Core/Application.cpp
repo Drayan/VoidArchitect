@@ -3,7 +3,6 @@
 //
 #include "Application.hpp"
 
-#include "../Systems/Renderer/RenderCommand.hpp"
 #include "Events/ApplicationEvent.hpp"
 #include "Events/KeyEvent.hpp"
 #include "Logger.hpp"
@@ -19,6 +18,9 @@
 #include "Systems/Renderer/RenderSystem.hpp"
 #include "Systems/ResourceSystem.hpp"
 
+// TEMP Ugly temp test
+#include "Core/Collections/Tests.hpp"
+
 namespace VoidArchitect
 {
 #define BIND_EVENT_FN(x) [this](auto&& PH1) { return this->x(std::forward<decltype(PH1)>(PH1)); }
@@ -26,7 +28,10 @@ namespace VoidArchitect
     void TestThreadMain()
     {
         while (!Platform::Thread::ShouldCurrentThreadStop())
+        {
             VA_ENGINE_TRACE("[TestThread] IsRunning.");
+            Platform::Thread::Sleep(100);
+        }
     }
 
     Application::Application()
@@ -52,6 +57,8 @@ namespace VoidArchitect
 
         m_TestThread = Platform::ThreadFactory::CreateThread();
         m_TestThread->Start(TestThreadMain, "TestThread");
+
+        RunAllTests();
     }
 
     Application::~Application()
