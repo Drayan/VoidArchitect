@@ -216,6 +216,8 @@ compile_hlsl_shaders()
 add_subdirectory(engine)
 add_subdirectory(client)
 
+add_subdirectory(tests)
+
 # Make the client depend on our asset compilation
 add_dependencies(VoidArchitect_Client compile_shaders)
 
