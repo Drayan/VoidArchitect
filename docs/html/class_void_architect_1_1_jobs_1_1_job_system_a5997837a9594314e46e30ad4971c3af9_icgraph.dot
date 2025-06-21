@@ -1,0 +1,13 @@
+digraph "VoidArchitect::Jobs::JobSystem::IsSignaled"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="RL";
+  Node1 [id="Node000001",label="VoidArchitect::Jobs\l::JobSystem::IsSignaled",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="Check if SyncPoint is signaled."];
+  Node1 -> Node2 [id="edge1_Node000001_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="VoidArchitect::Jobs\l::JobSystem::GetJobResult",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_void_architect_1_1_jobs_1_1_job_system.html#a103705afbfdf73f8281c879ef319cdec",tooltip="Get result of a completed job."];
+  Node1 -> Node3 [id="edge2_Node000001_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="VoidArchitect::Jobs\l::JobSystem::IsJobCompleted",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_void_architect_1_1_jobs_1_1_job_system.html#a559d3a14372a4cb612132119a672aa13",tooltip="Check if a job has completed."];
+}

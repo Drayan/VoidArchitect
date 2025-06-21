@@ -1,0 +1,243 @@
+\doxysection{Void\+Architect\+::Resources\+::Loaders\+::VAMHeader Struct Reference}
+\hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header}{}\label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+
+
+{\ttfamily \#include $<$VAMFormat.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ad11789bc91ea6c40162909b57ea287ce}{Is\+Valid}} () const
+\item 
+bool \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ab2c5f36660f71c66da563530766cc69b}{Is\+Compressed}} () const
+\item 
+float \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ad42e27b4347363115096bf35e58d68e7}{Get\+Compression\+Ratio}} () const
+\item 
+void \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a2f5de6e38fa3e86b47c81336822acf2c}{Set\+Compression\+Ratio}} (const float ratio)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_aa91bf980eb08a64193aad65126132578}{magic}} \mbox{[}4\mbox{]}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_afa3fca9905b39b86e82f5b7ec222d18d}{version}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a7edd675bbeb56dac84354305b49abed2}{flags}}
+\item 
+uint64\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a9f2bef32e183899f6cd1eee835f48c07}{source\+Timestamp}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a3ab3c587efa7dd038725093da7261599}{vertex\+Count}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a34c44ad181875e717269dd9fe3e4abf2}{index\+Count}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a19f5778ad42c980a3de7975135f16a71}{submesh\+Count}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_afe40ff3488c5cf05dd11cd173ba8b86a}{material\+Count}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a4a6e78618f8f8616d8cca72a205a55fb}{string\+Table\+Size}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_abd17e35efe59da62ce91397284b20305}{string\+Table\+Offset}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ac9e753cb24ca1d9c817adc7ce86d6fe8}{vertices\+Offset}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a1cffe8bbaaa84a34a4b3dd88842649f2}{indices\+Offset}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ace9cb26b0899ae07497b7f9c31631e9c}{submeshes\+Offset}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_acba3f29b8a1828d2bb895ba85ef509e2}{materials\+Offset}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a60772aebee9376408594fa8b6a2505c3}{uncompressed\+Size}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a50269491d647379252e893e73b9ed3aa}{compression\+Ratio}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_aa1f296f2c241c7c759ff52c0f31444b5}{original\+String\+Table\+Size}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a2a229832597c655039f645dc8f212a59}{original\+Vertices\+Size}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ad6ae0ec4255d75754f24c7c622aafc65}{original\+Indices\+Size}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a89f3fe8fcf19cb31748600d046f2aa22}{original\+Submeshes\+Size}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a51dd0d162ef1a5d786cc91c7e417adcb}{original\+Materials\+Size}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ac0e556554d20b514aab7e05487866817}{original\+Bindings\+Size}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ad42e27b4347363115096bf35e58d68e7}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!GetCompressionRatio@{GetCompressionRatio}}
+\index{GetCompressionRatio@{GetCompressionRatio}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{GetCompressionRatio()}{GetCompressionRatio()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ad42e27b4347363115096bf35e58d68e7} 
+float Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::\+Get\+Compression\+Ratio (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+Here is the caller graph for this function\+:
+% FIG 0
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ab2c5f36660f71c66da563530766cc69b}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!IsCompressed@{IsCompressed}}
+\index{IsCompressed@{IsCompressed}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{IsCompressed()}{IsCompressed()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ab2c5f36660f71c66da563530766cc69b} 
+bool Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::\+Is\+Compressed (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+Here is the caller graph for this function\+:
+% FIG 1
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ad11789bc91ea6c40162909b57ea287ce}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!IsValid@{IsValid}}
+\index{IsValid@{IsValid}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{IsValid()}{IsValid()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ad11789bc91ea6c40162909b57ea287ce} 
+bool Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::\+Is\+Valid (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a2f5de6e38fa3e86b47c81336822acf2c}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!SetCompressionRatio@{SetCompressionRatio}}
+\index{SetCompressionRatio@{SetCompressionRatio}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{SetCompressionRatio()}{SetCompressionRatio()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a2f5de6e38fa3e86b47c81336822acf2c} 
+void Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::\+Set\+Compression\+Ratio (\begin{DoxyParamCaption}\item[{const float}]{ratio}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Here is the caller graph for this function\+:
+% FIG 3
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a50269491d647379252e893e73b9ed3aa}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!compressionRatio@{compressionRatio}}
+\index{compressionRatio@{compressionRatio}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{compressionRatio}{compressionRatio}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a50269491d647379252e893e73b9ed3aa} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::compression\+Ratio}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a7edd675bbeb56dac84354305b49abed2}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!flags@{flags}}
+\index{flags@{flags}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{flags}{flags}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a7edd675bbeb56dac84354305b49abed2} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::flags}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a34c44ad181875e717269dd9fe3e4abf2}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!indexCount@{indexCount}}
+\index{indexCount@{indexCount}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{indexCount}{indexCount}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a34c44ad181875e717269dd9fe3e4abf2} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::index\+Count}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a1cffe8bbaaa84a34a4b3dd88842649f2}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!indicesOffset@{indicesOffset}}
+\index{indicesOffset@{indicesOffset}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{indicesOffset}{indicesOffset}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a1cffe8bbaaa84a34a4b3dd88842649f2} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::indices\+Offset}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_aa91bf980eb08a64193aad65126132578}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!magic@{magic}}
+\index{magic@{magic}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{magic}{magic}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_aa91bf980eb08a64193aad65126132578} 
+uint8\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::magic\mbox{[}4\mbox{]}}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_afe40ff3488c5cf05dd11cd173ba8b86a}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!materialCount@{materialCount}}
+\index{materialCount@{materialCount}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{materialCount}{materialCount}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_afe40ff3488c5cf05dd11cd173ba8b86a} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::material\+Count}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_acba3f29b8a1828d2bb895ba85ef509e2}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!materialsOffset@{materialsOffset}}
+\index{materialsOffset@{materialsOffset}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{materialsOffset}{materialsOffset}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_acba3f29b8a1828d2bb895ba85ef509e2} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::materials\+Offset}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ac0e556554d20b514aab7e05487866817}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!originalBindingsSize@{originalBindingsSize}}
+\index{originalBindingsSize@{originalBindingsSize}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{originalBindingsSize}{originalBindingsSize}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ac0e556554d20b514aab7e05487866817} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::original\+Bindings\+Size}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ad6ae0ec4255d75754f24c7c622aafc65}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!originalIndicesSize@{originalIndicesSize}}
+\index{originalIndicesSize@{originalIndicesSize}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{originalIndicesSize}{originalIndicesSize}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ad6ae0ec4255d75754f24c7c622aafc65} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::original\+Indices\+Size}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a51dd0d162ef1a5d786cc91c7e417adcb}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!originalMaterialsSize@{originalMaterialsSize}}
+\index{originalMaterialsSize@{originalMaterialsSize}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{originalMaterialsSize}{originalMaterialsSize}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a51dd0d162ef1a5d786cc91c7e417adcb} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::original\+Materials\+Size}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_aa1f296f2c241c7c759ff52c0f31444b5}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!originalStringTableSize@{originalStringTableSize}}
+\index{originalStringTableSize@{originalStringTableSize}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{originalStringTableSize}{originalStringTableSize}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_aa1f296f2c241c7c759ff52c0f31444b5} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::original\+String\+Table\+Size}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a89f3fe8fcf19cb31748600d046f2aa22}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!originalSubmeshesSize@{originalSubmeshesSize}}
+\index{originalSubmeshesSize@{originalSubmeshesSize}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{originalSubmeshesSize}{originalSubmeshesSize}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a89f3fe8fcf19cb31748600d046f2aa22} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::original\+Submeshes\+Size}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a2a229832597c655039f645dc8f212a59}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!originalVerticesSize@{originalVerticesSize}}
+\index{originalVerticesSize@{originalVerticesSize}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{originalVerticesSize}{originalVerticesSize}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a2a229832597c655039f645dc8f212a59} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::original\+Vertices\+Size}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a9f2bef32e183899f6cd1eee835f48c07}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!sourceTimestamp@{sourceTimestamp}}
+\index{sourceTimestamp@{sourceTimestamp}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{sourceTimestamp}{sourceTimestamp}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a9f2bef32e183899f6cd1eee835f48c07} 
+uint64\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::source\+Timestamp}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_abd17e35efe59da62ce91397284b20305}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!stringTableOffset@{stringTableOffset}}
+\index{stringTableOffset@{stringTableOffset}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{stringTableOffset}{stringTableOffset}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_abd17e35efe59da62ce91397284b20305} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::string\+Table\+Offset}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a4a6e78618f8f8616d8cca72a205a55fb}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!stringTableSize@{stringTableSize}}
+\index{stringTableSize@{stringTableSize}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{stringTableSize}{stringTableSize}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a4a6e78618f8f8616d8cca72a205a55fb} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::string\+Table\+Size}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a19f5778ad42c980a3de7975135f16a71}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!submeshCount@{submeshCount}}
+\index{submeshCount@{submeshCount}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{submeshCount}{submeshCount}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a19f5778ad42c980a3de7975135f16a71} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::submesh\+Count}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ace9cb26b0899ae07497b7f9c31631e9c}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!submeshesOffset@{submeshesOffset}}
+\index{submeshesOffset@{submeshesOffset}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{submeshesOffset}{submeshesOffset}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ace9cb26b0899ae07497b7f9c31631e9c} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::submeshes\+Offset}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a60772aebee9376408594fa8b6a2505c3}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!uncompressedSize@{uncompressedSize}}
+\index{uncompressedSize@{uncompressedSize}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{uncompressedSize}{uncompressedSize}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a60772aebee9376408594fa8b6a2505c3} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::uncompressed\+Size}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_afa3fca9905b39b86e82f5b7ec222d18d}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!version@{version}}
+\index{version@{version}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{version}{version}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_afa3fca9905b39b86e82f5b7ec222d18d} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::version}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a3ab3c587efa7dd038725093da7261599}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!vertexCount@{vertexCount}}
+\index{vertexCount@{vertexCount}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{vertexCount}{vertexCount}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a3ab3c587efa7dd038725093da7261599} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::vertex\+Count}
+
+\Hypertarget{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ac9e753cb24ca1d9c817adc7ce86d6fe8}\index{VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}!verticesOffset@{verticesOffset}}
+\index{verticesOffset@{verticesOffset}!VoidArchitect::Resources::Loaders::VAMHeader@{VoidArchitect::Resources::Loaders::VAMHeader}}
+\doxysubsubsection{\texorpdfstring{verticesOffset}{verticesOffset}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ac9e753cb24ca1d9c817adc7ce86d6fe8} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMHeader\+::vertices\+Offset}
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Resources/\+Loaders/\mbox{\hyperlink{_v_a_m_format_8hpp}{VAMFormat.\+hpp}}\end{DoxyCompactItemize}

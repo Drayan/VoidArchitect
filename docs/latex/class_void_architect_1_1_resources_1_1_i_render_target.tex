@@ -1,0 +1,172 @@
+\doxysection{Void\+Architect\+::Resources\+::IRender\+Target Class Reference}
+\hypertarget{class_void_architect_1_1_resources_1_1_i_render_target}{}\label{class_void_architect_1_1_resources_1_1_i_render_target}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+
+
+{\ttfamily \#include $<$Render\+Target.\+hpp$>$}
+
+
+
+Inheritance diagram for Void\+Architect\+::Resources\+::IRender\+Target\+:
+% FIG 0
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_a48de2d23e15c08697ea76b1451477326}{\texorpdfstring{$\sim$}{\string~}\+IRender\+Target}} ()=default
+\item 
+const std\+::string \& \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_af6deb097983f6551a77b129b2a71a776}{Get\+Name}} () const
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_afca9257cc7008481a456781f4c1542f6}{Get\+Width}} () const
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_aab83270d9cef5a8520b291fcb1f52b6d}{Get\+Height}} () const
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Renderer\+::\+Texture\+Format}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_ad835ec084c3820a1b0e981638cc4b4a0}{Get\+Format}} () const
+\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_a99557c1ca99be79d34fe773f479c98b7}{Is\+Depth}} () const
+\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_abb5bc40f5184d5d620af87857730d357}{Is\+Color}} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_aad41e7f1f755ffb436f64de81307c6ff}{IRender\+Target}} (std\+::string name, uint32\+\_\+t width, uint32\+\_\+t height, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Renderer\+::\+Texture\+Format}} format, bool is\+Depth)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_afa077f0712ee813beca6fa95936d4d16}{m\+\_\+\+Name}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_a229169710bbb80ebd01393603e6aeab5}{m\+\_\+\+Width}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_a78a28c356fbd5f2ff96a4df9909358e7}{m\+\_\+\+Height}}
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Renderer\+::\+Texture\+Format}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_a8308b8a0ed419c21b652da181bd5436b}{m\+\_\+\+Format}}
+\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_a1979ab38131cca1f6a1d535abd2b1fbd}{m\+\_\+\+Is\+Depth}} = false
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target_aa0c3eb85915794e8e36d208de3832d59}{Void\+Architect\+::\+Renderer\+::\+Render\+Graph}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_a48de2d23e15c08697ea76b1451477326}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!````~IRenderTarget@{\texorpdfstring{$\sim$}{\string~}IRenderTarget}}
+\index{````~IRenderTarget@{\texorpdfstring{$\sim$}{\string~}IRenderTarget}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}IRenderTarget()}{\string~IRenderTarget()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_a48de2d23e15c08697ea76b1451477326} 
+virtual Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::\texorpdfstring{$\sim$}{\string~}\+IRender\+Target (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_aad41e7f1f755ffb436f64de81307c6ff}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!IRenderTarget@{IRenderTarget}}
+\index{IRenderTarget@{IRenderTarget}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{IRenderTarget()}{IRenderTarget()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_aad41e7f1f755ffb436f64de81307c6ff} 
+Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::\+IRender\+Target (\begin{DoxyParamCaption}\item[{std\+::string}]{name}{, }\item[{uint32\+\_\+t}]{width}{, }\item[{uint32\+\_\+t}]{height}{, }\item[{\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Renderer\+::\+Texture\+Format}}}]{format}{, }\item[{bool}]{is\+Depth}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Here is the caller graph for this function\+:
+% FIG 1
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_ad835ec084c3820a1b0e981638cc4b4a0}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!GetFormat@{GetFormat}}
+\index{GetFormat@{GetFormat}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{GetFormat()}{GetFormat()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_ad835ec084c3820a1b0e981638cc4b4a0} 
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Renderer\+::\+Texture\+Format}} Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::\+Get\+Format (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_aab83270d9cef5a8520b291fcb1f52b6d}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!GetHeight@{GetHeight}}
+\index{GetHeight@{GetHeight}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{GetHeight()}{GetHeight()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_aab83270d9cef5a8520b291fcb1f52b6d} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::\+Get\+Height (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+Here is the caller graph for this function\+:
+% FIG 3
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_af6deb097983f6551a77b129b2a71a776}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!GetName@{GetName}}
+\index{GetName@{GetName}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{GetName()}{GetName()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_af6deb097983f6551a77b129b2a71a776} 
+const std\+::string \& Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::\+Get\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_afca9257cc7008481a456781f4c1542f6}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!GetWidth@{GetWidth}}
+\index{GetWidth@{GetWidth}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{GetWidth()}{GetWidth()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_afca9257cc7008481a456781f4c1542f6} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::\+Get\+Width (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+Here is the caller graph for this function\+:
+% FIG 4
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_abb5bc40f5184d5d620af87857730d357}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!IsColor@{IsColor}}
+\index{IsColor@{IsColor}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{IsColor()}{IsColor()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_abb5bc40f5184d5d620af87857730d357} 
+bool Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::\+Is\+Color (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Here is the call graph for this function\+:
+% FIG 5
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_a99557c1ca99be79d34fe773f479c98b7}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!IsDepth@{IsDepth}}
+\index{IsDepth@{IsDepth}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{IsDepth()}{IsDepth()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_a99557c1ca99be79d34fe773f479c98b7} 
+bool Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::\+Is\+Depth (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Here is the caller graph for this function\+:
+% FIG 6
+
+
+\label{doc-related-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_doc-related-members}
+\doxysubsection{Friends And Related Symbol Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_aa0c3eb85915794e8e36d208de3832d59}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}}
+\index{VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{VoidArchitect::Renderer::RenderGraph}{VoidArchitect::Renderer::RenderGraph}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_aa0c3eb85915794e8e36d208de3832d59} 
+friend class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph}{Void\+Architect\+::\+Renderer\+::\+Render\+Graph}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_a8308b8a0ed419c21b652da181bd5436b}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!m\_Format@{m\_Format}}
+\index{m\_Format@{m\_Format}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{m\_Format}{m\_Format}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_a8308b8a0ed419c21b652da181bd5436b} 
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Renderer\+::\+Texture\+Format}} Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::m\+\_\+\+Format\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_a78a28c356fbd5f2ff96a4df9909358e7}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!m\_Height@{m\_Height}}
+\index{m\_Height@{m\_Height}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{m\_Height}{m\_Height}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_a78a28c356fbd5f2ff96a4df9909358e7} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::m\+\_\+\+Height\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_a1979ab38131cca1f6a1d535abd2b1fbd}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!m\_IsDepth@{m\_IsDepth}}
+\index{m\_IsDepth@{m\_IsDepth}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{m\_IsDepth}{m\_IsDepth}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_a1979ab38131cca1f6a1d535abd2b1fbd} 
+bool Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::m\+\_\+\+Is\+Depth = false\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_afa077f0712ee813beca6fa95936d4d16}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!m\_Name@{m\_Name}}
+\index{m\_Name@{m\_Name}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{m\_Name}{m\_Name}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_afa077f0712ee813beca6fa95936d4d16} 
+std\+::string Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::m\+\_\+\+Name\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_render_target_a229169710bbb80ebd01393603e6aeab5}\index{VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}!m\_Width@{m\_Width}}
+\index{m\_Width@{m\_Width}!VoidArchitect::Resources::IRenderTarget@{VoidArchitect::Resources::IRenderTarget}}
+\doxysubsubsection{\texorpdfstring{m\_Width}{m\_Width}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_render_target_a229169710bbb80ebd01393603e6aeab5} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+IRender\+Target\+::m\+\_\+\+Width\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Resources/\mbox{\hyperlink{_render_target_8hpp}{Render\+Target.\+hpp}}\item 
+engine/src/\+Resources/\mbox{\hyperlink{_render_target_8cpp}{Render\+Target.\+cpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,91 @@
+\doxysection{Void\+Architect\+::Renderer\+::Render\+Graph Class Reference}
+\hypertarget{class_void_architect_1_1_renderer_1_1_render_graph}{}\label{class_void_architect_1_1_renderer_1_1_render_graph}\index{VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}}
+
+
+{\ttfamily \#include $<$Render\+Graph.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_a093ec4381c7c45f86ecbaa7cc7b5d353}{Render\+Graph}} ()=default
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_a785c9aede62d200368d2680852b1c36d}{\texorpdfstring{$\sim$}{\string~}\+Render\+Graph}} ()=default
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_a75de1f0f49a56ccd9a66757a4895424d}{Add\+Pass}} (const std\+::string \&name, \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_i_pass_renderer}{IPass\+Renderer}} \texorpdfstring{$\ast$}{*}pass\+Renderer)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_a173c06d985324904a919b2db27139991}{Import\+Render\+Target}} (const std\+::string \&name, \mbox{\hyperlink{namespace_void_architect_1_1_resources_a70654e196db7bdb28268393361536f4b}{Resources\+::\+Render\+Target\+Handle}} handle)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_a1c3c077bc5346e2775e51eaeab95ae3a}{Setup}} ()
+\item 
+\mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_graph_execution_plan}{Render\+Graph\+Execution\+Plan}} \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_a5bfde7ce8f3e1da0e053b21ee2ead262}{Compile}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_a1df598451abe1aebf6631eaa2d0be93d}{Render\+Graph\+Builder}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_graph_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_graph_a093ec4381c7c45f86ecbaa7cc7b5d353}\index{VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}!RenderGraph@{RenderGraph}}
+\index{RenderGraph@{RenderGraph}!VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}}
+\doxysubsubsection{\texorpdfstring{RenderGraph()}{RenderGraph()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_graph_a093ec4381c7c45f86ecbaa7cc7b5d353} 
+Void\+Architect\+::\+Renderer\+::\+Render\+Graph\+::\+Render\+Graph (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_graph_a785c9aede62d200368d2680852b1c36d}\index{VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}!````~RenderGraph@{\texorpdfstring{$\sim$}{\string~}RenderGraph}}
+\index{````~RenderGraph@{\texorpdfstring{$\sim$}{\string~}RenderGraph}!VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}RenderGraph()}{\string~RenderGraph()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_graph_a785c9aede62d200368d2680852b1c36d} 
+Void\+Architect\+::\+Renderer\+::\+Render\+Graph\+::\texorpdfstring{$\sim$}{\string~}\+Render\+Graph (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_graph_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_graph_a75de1f0f49a56ccd9a66757a4895424d}\index{VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}!AddPass@{AddPass}}
+\index{AddPass@{AddPass}!VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}}
+\doxysubsubsection{\texorpdfstring{AddPass()}{AddPass()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_graph_a75de1f0f49a56ccd9a66757a4895424d} 
+void Void\+Architect\+::\+Renderer\+::\+Render\+Graph\+::\+Add\+Pass (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{, }\item[{\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_i_pass_renderer}{IPass\+Renderer}} \texorpdfstring{$\ast$}{*}}]{pass\+Renderer}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_graph_a5bfde7ce8f3e1da0e053b21ee2ead262}\index{VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}!Compile@{Compile}}
+\index{Compile@{Compile}!VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}}
+\doxysubsubsection{\texorpdfstring{Compile()}{Compile()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_graph_a5bfde7ce8f3e1da0e053b21ee2ead262} 
+\mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_graph_execution_plan}{Render\+Graph\+Execution\+Plan}} Void\+Architect\+::\+Renderer\+::\+Render\+Graph\+::\+Compile (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_graph_a173c06d985324904a919b2db27139991}\index{VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}!ImportRenderTarget@{ImportRenderTarget}}
+\index{ImportRenderTarget@{ImportRenderTarget}!VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}}
+\doxysubsubsection{\texorpdfstring{ImportRenderTarget()}{ImportRenderTarget()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_graph_a173c06d985324904a919b2db27139991} 
+void Void\+Architect\+::\+Renderer\+::\+Render\+Graph\+::\+Import\+Render\+Target (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{, }\item[{\mbox{\hyperlink{namespace_void_architect_1_1_resources_a70654e196db7bdb28268393361536f4b}{Resources\+::\+Render\+Target\+Handle}}}]{handle}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_graph_a1c3c077bc5346e2775e51eaeab95ae3a}\index{VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}!Setup@{Setup}}
+\index{Setup@{Setup}!VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}}
+\doxysubsubsection{\texorpdfstring{Setup()}{Setup()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_graph_a1c3c077bc5346e2775e51eaeab95ae3a} 
+void Void\+Architect\+::\+Renderer\+::\+Render\+Graph\+::\+Setup (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 0
+
+
+\label{doc-related-members}
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_graph_doc-related-members}
+\doxysubsection{Friends And Related Symbol Documentation}
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_graph_a1df598451abe1aebf6631eaa2d0be93d}\index{VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}!RenderGraphBuilder@{RenderGraphBuilder}}
+\index{RenderGraphBuilder@{RenderGraphBuilder}!VoidArchitect::Renderer::RenderGraph@{VoidArchitect::Renderer::RenderGraph}}
+\doxysubsubsection{\texorpdfstring{RenderGraphBuilder}{RenderGraphBuilder}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_graph_a1df598451abe1aebf6631eaa2d0be93d} 
+friend class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder}{Render\+Graph\+Builder}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Systems/\+Renderer/\mbox{\hyperlink{_render_graph_8hpp}{Render\+Graph.\+hpp}}\item 
+engine/src/\+Systems/\+Renderer/\mbox{\hyperlink{_render_graph_8cpp}{Render\+Graph.\+cpp}}\end{DoxyCompactItemize}

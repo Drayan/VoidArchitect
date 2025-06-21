@@ -1,0 +1,74 @@
+\doxysection{Vulkan\+Swapchain.\+hpp}
+\hypertarget{_vulkan_swapchain_8hpp_source}{}\label{_vulkan_swapchain_8hpp_source}\index{engine/src/Platform/RHI/Vulkan/VulkanSwapchain.hpp@{engine/src/Platform/RHI/Vulkan/VulkanSwapchain.hpp}}
+\mbox{\hyperlink{_vulkan_swapchain_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 17/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vulkan_device_8hpp}{VulkanDevice.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vulkan_image_8hpp}{VulkanImage.hpp}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <vulkan/vulkan.h>}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a8ce2177b85c8c335d94b58f20b5d353a}{VulkanSwapchain}}}
+\DoxyCodeLine{00014\ \ \ \ \ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a8ce2177b85c8c335d94b58f20b5d353a}{VulkanSwapchain}}(}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::unique\_ptr<VulkanDevice>\&\ device,}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ VkAllocationCallbacks*\ allocator,}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ width,}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ height);}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_aa9bef21ab1e304d58885f1e20f324d3a}{\string~VulkanSwapchain}}();}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_aaa80fa627f7c539dd0952ae32f72df6f}{Recreate}}(uint32\_t\ width,\ uint32\_t\ height);}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ std::optional<uint32\_t>\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a50b6360d8a501996e5b39f93eb7bcffe}{AcquireNextImage}}(}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ uint64\_t\ timeout,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ VkSemaphore\ semaphore,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ VkFence\ fence)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a3cdf51954fb3479480de9cb2b502ed6d}{Present}}(VkQueue\ graphicsQueue,\ VkSemaphore\ renderComplete,\ uint32\_t\ imageIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a70654e196db7bdb28268393361536f4b}{Resources::RenderTargetHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a5552db4b36c12c6aa07190f379ece5a4}{GetColorRenderTarget}}(uint32\_t\ index)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a70654e196db7bdb28268393361536f4b}{Resources::RenderTargetHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_aa18cce309fd886d2731071f4a23390b5}{GetDepthRenderTarget}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a8bfc55ae0cf165bab9b3e8b7b30b6776}{GetImageCount}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_SwapchainImages.size();\ \}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ VkFormat\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a7aa8c0d328543489b6cf7a5f3b8e62ef}{GetFormat}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Format.format;\ \};}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ VkFormat\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_ae11ea0d8580f90ffcf3e2bb9db2394eb}{GetDepthFormat}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_DepthFormat;\ \};}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a0f9dbdcd09e11fd44d495cef830bcd8b}{GetMaxFrameInFlight}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_MaxFrameInFlight;\ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Cleanup();}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Create(uint32\_t\ width,\ uint32\_t\ height);}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ CreateRenderTargetViews();}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ QuerySwapchainCapabilities();}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ [[nodiscard]]\ VkSurfaceFormatKHR\ ChooseSwapchainFormat()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ [[nodiscard]]\ VkPresentModeKHR\ ChooseSwapchainPresentMode()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ [[nodiscard]]\ VkExtent2D\ ChooseSwapchainExtent(uint32\_t\ width,\ uint32\_t\ height)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ [[nodiscard]]\ VkFormat\ ChooseDepthFormat()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::unique\_ptr<VulkanDevice>\&\ m\_Device;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ VkAllocationCallbacks*\ m\_Allocator;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ VkSwapchainKHR\ m\_Swapchain;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ VkSurfaceCapabilitiesKHR\ m\_Capabilities;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ VAArray<VkSurfaceFormatKHR>\ m\_Formats;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ VAArray<VkPresentModeKHR>\ m\_PresentModes;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ VkSurfaceFormatKHR\ m\_Format;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ VkPresentModeKHR\ m\_PresentMode;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ VkExtent2D\ m\_Extent;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ VkFormat\ m\_DepthFormat;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ VAArray<Resources::RenderTargetHandle>\ m\_ColorRenderTargets;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a70654e196db7bdb28268393361536f4b}{Resources::RenderTargetHandle}}\ m\_DepthRenderTarget;}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ VAArray<VkImage>\ m\_SwapchainImages;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ uint32\_t\ m\_MaxFrameInFlight\ =\ 2;\ \textcolor{comment}{//\ Support\ triple-\/buffering\ by\ default}}
+\DoxyCodeLine{00067\ \ \ \ \ \};}
+\DoxyCodeLine{00068\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect::Platform}}
+
+\end{DoxyCode}

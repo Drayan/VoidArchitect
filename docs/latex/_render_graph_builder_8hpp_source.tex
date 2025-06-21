@@ -1,0 +1,37 @@
+\doxysection{Render\+Graph\+Builder.\+hpp}
+\hypertarget{_render_graph_builder_8hpp_source}{}\label{_render_graph_builder_8hpp_source}\index{engine/src/Systems/Renderer/RenderGraphBuilder.hpp@{engine/src/Systems/Renderer/RenderGraphBuilder.hpp}}
+\mbox{\hyperlink{_render_graph_builder_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 07/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_render_graph_8hpp}{RenderGraph.hpp}}"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00008\ \{}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_renderer}{Renderer}}}
+\DoxyCodeLine{00010\ \ \ \ \ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder_a40af6ac6f24899bca6d38fff2a0809d5}{RenderGraphBuilder}}}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder_a40af6ac6f24899bca6d38fff2a0809d5}{RenderGraphBuilder}}(\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph}{RenderGraph}}*\ renderGraph);}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder_a141ff059172c8e946a291ed089aa017e}{SetCurrentPass}}(RenderGraph::PassNode*\ pass)\ \{\ m\_CurrentPass\ =\ pass;\ \};}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder}{RenderGraphBuilder}}\&\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder_a47e76d9e38755bb0f4a96910294b5c2f}{ReadsFrom}}(\textcolor{keyword}{const}\ std::string\&\ name);}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder}{RenderGraphBuilder}}\&\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder_a9a2d7216299d95e55d28fd5ad6612d43}{WritesTo}}(\textcolor{keyword}{const}\ std::string\&\ name);}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder}{RenderGraphBuilder}}\&\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder_a36d0fb4e8501778ef73e0633ef288e8e}{ReadsFromColorBuffer}}();}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder}{RenderGraphBuilder}}\&\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder_a7aba84ccb2a526765b4539e4b4e90d19}{WritesToColorBuffer}}();}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder}{RenderGraphBuilder}}\&\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder_a0b5e91083b103b9782dd0368f690fe22}{ReadsFromDepthBuffer}}();}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder}{RenderGraphBuilder}}\&\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder_a6eecd7b8edf0d018b6d052835716c3a9}{WritesToDepthBuffer}}();}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph}{RenderGraph}}*\ m\_RenderGraph;}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ RenderGraph::PassNode*\ m\_CurrentPass\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00030\ \ \ \ \ \}\ \textcolor{comment}{//\ Renderer}}
+\DoxyCodeLine{00031\ \}\ \textcolor{comment}{//\ VoidArchitect}}
+
+\end{DoxyCode}

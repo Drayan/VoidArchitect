@@ -1,0 +1,11 @@
+digraph "VoidArchitect::Jobs::JobSystem::JobBatch::JobBatch"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node1 [id="Node000001",label="VoidArchitect::Jobs\l::JobSystem::JobBatch\l::JobBatch",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [id="edge2_Node000001_Node000002",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="VoidArchitect::Jobs\l::JobSystem::JobBatch\l::JobBatch",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch.html#a47f733b535ca165335bb3529765337ad",tooltip="Constructor creates empty job batch."];
+}

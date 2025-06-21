@@ -1,0 +1,162 @@
+\doxysection{Void\+Architect\+::Renderer\+::\+\_\+\+Render\+Command Class Reference}
+\hypertarget{class_void_architect_1_1_renderer_1_1___render_command}{}\label{class_void_architect_1_1_renderer_1_1___render_command}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+
+
+{\ttfamily \#include $<$Render\+Command.\+hpp$>$}
+
+
+
+Collaboration diagram for Void\+Architect\+::Renderer\+::\+\_\+\+Render\+Command\+:
+% FIG 0
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_a77001681bbf3cb7a36fdf5eb10122898}{Initialize}} (\mbox{\hyperlink{namespace_void_architect_1_1_platform_ab80bb8b5b54632dd84f0b96426032e7a}{Platform\+::\+RHI\+\_\+\+API\+\_\+\+TYPE}} api\+Type, std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_window}{Window}} $>$ \&window)
+\item 
+static void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_a2613516f3a161db9a6225a5638660897}{Shutdown}} ()
+\item 
+static void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_a6c2f2c5391c2d012e643c3e1fb4ed141}{Resize}} (uint32\+\_\+t width, uint32\+\_\+t height)
+\item 
+static bool \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_a03492a01a6387276099dab8bf00f0c72}{Begin\+Frame}} (float delta\+Time)
+\item 
+static bool \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_aeddc392d4c6d0ff36090b36858ee4e72}{Begin\+Frame}} (\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera}{Camera}} \&camera, float delta\+Time)
+\item 
+static bool \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_a0bcdce5177f95d752a98bc52d62cdf96}{End\+Frame}} (float delta\+Time)
+\item 
+static void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_a039249423b1d21a0b08ba8eb27401166}{Draw\+Packet}} (const \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_packet}{Render\+Packet}} \&packet)
+\item 
+static \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera}{Camera}} \& \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_afccaa483d73a088f4029a6d59192255c}{Create\+Perspective\+Camera}} (float fov, float near, float far)
+\item 
+static \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera}{Camera}} \& \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_a5b4230eb5f79d60ef5fcb764949f4059}{Create\+Orthographic\+Camera}} (float left, float right, float bottom, float top, float near, float far)
+\item 
+static \mbox{\hyperlink{namespace_void_architect_1_1_platform_ab80bb8b5b54632dd84f0b96426032e7a}{Platform\+::\+RHI\+\_\+\+API\+\_\+\+TYPE}} \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_ae32db70824ea8cd1091f308def4932e5}{Get\+Api\+Type}} ()
+\item 
+static \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera}{Camera}} \& \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_adddacb39fd035c60f28d6920b74c53fa}{Get\+Main\+Camera}} ()
+\item 
+static void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_a58a2a610fb5868565fcdd72ba30608b1}{Swap\+Test\+Texture}} ()
+\item 
+static void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_a56ff5f6bbbc4cf4609847fb32a7480bb}{Swap\+Color}} ()
+\item 
+static \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_i_rendering_hardware}{Platform\+::\+IRendering\+Hardware}} \& \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_a904d419f3fabe45b03b2721a76eb7887}{Get\+RHIRef}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math\+::\+Mat4}} \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command_a2f38888f398aadc2b9f7d6d6db907a4f}{s\+\_\+\+UIProjection\+Matrix}} = \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4_af6326eb56d7471686040300fb3db12ee}{Math\+::\+Mat4\+::\+Identity}}()
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_aeddc392d4c6d0ff36090b36858ee4e72}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!BeginFrame@{BeginFrame}}
+\index{BeginFrame@{BeginFrame}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{BeginFrame()}{BeginFrame()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_aeddc392d4c6d0ff36090b36858ee4e72} 
+bool Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Begin\+Frame (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera}{Camera}} \&}]{camera}{, }\item[{float}]{delta\+Time}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_a03492a01a6387276099dab8bf00f0c72}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!BeginFrame@{BeginFrame}}
+\index{BeginFrame@{BeginFrame}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{BeginFrame()}{BeginFrame()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_a03492a01a6387276099dab8bf00f0c72} 
+bool Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Begin\+Frame (\begin{DoxyParamCaption}\item[{float}]{delta\+Time}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+% FIG 1
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_a5b4230eb5f79d60ef5fcb764949f4059}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!CreateOrthographicCamera@{CreateOrthographicCamera}}
+\index{CreateOrthographicCamera@{CreateOrthographicCamera}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{CreateOrthographicCamera()}{CreateOrthographicCamera()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_a5b4230eb5f79d60ef5fcb764949f4059} 
+\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera}{Camera}} \& Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Create\+Orthographic\+Camera (\begin{DoxyParamCaption}\item[{float}]{left}{, }\item[{float}]{right}{, }\item[{float}]{bottom}{, }\item[{float}]{top}{, }\item[{float}]{near}{, }\item[{float}]{far}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_afccaa483d73a088f4029a6d59192255c}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!CreatePerspectiveCamera@{CreatePerspectiveCamera}}
+\index{CreatePerspectiveCamera@{CreatePerspectiveCamera}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{CreatePerspectiveCamera()}{CreatePerspectiveCamera()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_afccaa483d73a088f4029a6d59192255c} 
+\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera}{Camera}} \& Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Create\+Perspective\+Camera (\begin{DoxyParamCaption}\item[{float}]{fov}{, }\item[{float}]{near}{, }\item[{float}]{far}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the caller graph for this function\+:
+% FIG 3
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_a039249423b1d21a0b08ba8eb27401166}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!DrawPacket@{DrawPacket}}
+\index{DrawPacket@{DrawPacket}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{DrawPacket()}{DrawPacket()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_a039249423b1d21a0b08ba8eb27401166} 
+void Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Draw\+Packet (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_packet}{Render\+Packet}} \&}]{packet}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_a0bcdce5177f95d752a98bc52d62cdf96}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!EndFrame@{EndFrame}}
+\index{EndFrame@{EndFrame}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{EndFrame()}{EndFrame()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_a0bcdce5177f95d752a98bc52d62cdf96} 
+bool Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+End\+Frame (\begin{DoxyParamCaption}\item[{float}]{delta\+Time}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_ae32db70824ea8cd1091f308def4932e5}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!GetApiType@{GetApiType}}
+\index{GetApiType@{GetApiType}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{GetApiType()}{GetApiType()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_ae32db70824ea8cd1091f308def4932e5} 
+\mbox{\hyperlink{namespace_void_architect_1_1_platform_ab80bb8b5b54632dd84f0b96426032e7a}{Platform\+::\+RHI\+\_\+\+API\+\_\+\+TYPE}} Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Get\+Api\+Type (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_adddacb39fd035c60f28d6920b74c53fa}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!GetMainCamera@{GetMainCamera}}
+\index{GetMainCamera@{GetMainCamera}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{GetMainCamera()}{GetMainCamera()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_adddacb39fd035c60f28d6920b74c53fa} 
+\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera}{Camera}} \& Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Get\+Main\+Camera (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_a904d419f3fabe45b03b2721a76eb7887}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!GetRHIRef@{GetRHIRef}}
+\index{GetRHIRef@{GetRHIRef}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{GetRHIRef()}{GetRHIRef()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_a904d419f3fabe45b03b2721a76eb7887} 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_i_rendering_hardware}{Platform\+::\+IRendering\+Hardware}} \& Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Get\+RHIRef (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_a77001681bbf3cb7a36fdf5eb10122898}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!Initialize@{Initialize}}
+\index{Initialize@{Initialize}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{Initialize()}{Initialize()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_a77001681bbf3cb7a36fdf5eb10122898} 
+void Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Initialize (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_void_architect_1_1_platform_ab80bb8b5b54632dd84f0b96426032e7a}{Platform\+::\+RHI\+\_\+\+API\+\_\+\+TYPE}}}]{api\+Type}{, }\item[{std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_window}{Window}} $>$ \&}]{window}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+% FIG 4
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_a6c2f2c5391c2d012e643c3e1fb4ed141}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!Resize@{Resize}}
+\index{Resize@{Resize}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{Resize()}{Resize()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_a6c2f2c5391c2d012e643c3e1fb4ed141} 
+void Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Resize (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{width}{, }\item[{uint32\+\_\+t}]{height}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+% FIG 5
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_a2613516f3a161db9a6225a5638660897}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!Shutdown@{Shutdown}}
+\index{Shutdown@{Shutdown}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{Shutdown()}{Shutdown()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_a2613516f3a161db9a6225a5638660897} 
+void Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Shutdown (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_a56ff5f6bbbc4cf4609847fb32a7480bb}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!SwapColor@{SwapColor}}
+\index{SwapColor@{SwapColor}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{SwapColor()}{SwapColor()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_a56ff5f6bbbc4cf4609847fb32a7480bb} 
+void Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Swap\+Color (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_a58a2a610fb5868565fcdd72ba30608b1}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!SwapTestTexture@{SwapTestTexture}}
+\index{SwapTestTexture@{SwapTestTexture}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{SwapTestTexture()}{SwapTestTexture()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_a58a2a610fb5868565fcdd72ba30608b1} 
+void Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::\+Swap\+Test\+Texture (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_void_architect_1_1_renderer_1_1___render_command_a2f38888f398aadc2b9f7d6d6db907a4f}\index{VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}!s\_UIProjectionMatrix@{s\_UIProjectionMatrix}}
+\index{s\_UIProjectionMatrix@{s\_UIProjectionMatrix}!VoidArchitect::Renderer::\_RenderCommand@{VoidArchitect::Renderer::\_RenderCommand}}
+\doxysubsubsection{\texorpdfstring{s\_UIProjectionMatrix}{s\_UIProjectionMatrix}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1___render_command_a2f38888f398aadc2b9f7d6d6db907a4f} 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math\+::\+Mat4}} Void\+Architect\+::\+Renderer\+::\+\_\+\+Render\+Command\+::s\+\_\+\+UIProjection\+Matrix = \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4_af6326eb56d7471686040300fb3db12ee}{Math\+::\+Mat4\+::\+Identity}}()\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Systems/\+Renderer/\mbox{\hyperlink{_render_command_8hpp}{Render\+Command.\+hpp}}\item 
+engine/src/\+Systems/\+Renderer/\mbox{\hyperlink{_render_command_8cpp}{Render\+Command.\+cpp}}\end{DoxyCompactItemize}

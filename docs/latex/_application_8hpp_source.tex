@@ -1,0 +1,59 @@
+\doxysection{Application.\+hpp}
+\hypertarget{_application_8hpp_source}{}\label{_application_8hpp_source}\index{engine/src/Core/Application.hpp@{engine/src/Core/Application.hpp}}
+\mbox{\hyperlink{_application_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 12/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_core_8hpp}{Core.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_layer_stack_8hpp}{LayerStack.hpp}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ NOTE\ Currently\ the\ client\ application\ doesn't\ use\ PCH,\ therefore\ it\ need\ memory.}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_key_event_8hpp}{Events/KeyEvent.hpp}}"{}}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00015\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_i_thread}{IThread}};}
+\DoxyCodeLine{00017\ \}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00020\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_event}{Event}};}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_window_close_event}{WindowCloseEvent}};}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_window_resized_event}{WindowResizedEvent}};}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_window}{Window}};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{_core_8hpp_a1544ebd09cc85a3f956cf4351eceb9c4}{VA\_API}}\ \mbox{\hyperlink{class_void_architect_1_1_application_a6ea044a7ddd8c1f0fe14abe8619e4564}{Application}}}
+\DoxyCodeLine{00027\ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_application_a6ea044a7ddd8c1f0fe14abe8619e4564}{Application}}();}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_void_architect_1_1_application_a6ea044a7ddd8c1f0fe14abe8619e4564}{\string~Application}}();}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_application_a1d0a450386c19338f171e756f028dc4e}{Run}}();}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_application_a65347fa36063a0ff39a964ecf1257b05}{OnEvent}}(\mbox{\hyperlink{class_void_architect_1_1_event}{Event}}\&\ e);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_application_a57a6b5cf026c6ffc899139b59fb02199}{PushLayer}}(\mbox{\hyperlink{class_void_architect_1_1_layer}{Layer}}*\ layer);}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_application_a572298b4e98aedb2ed7de3afd1a23f68}{PushOverlay}}(\mbox{\hyperlink{class_void_architect_1_1_layer}{Layer}}*\ layer);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ OnWindowClose(\mbox{\hyperlink{class_void_architect_1_1_window_close_event}{WindowCloseEvent}}\&\ e);}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ OnWindowResized(\mbox{\hyperlink{class_void_architect_1_1_window_resized_event}{WindowResizedEvent}}\&\ e);}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ OnKeyPressed(\mbox{\hyperlink{class_void_architect_1_1_key_pressed_event}{KeyPressedEvent}}\&\ e);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ std::unique\_ptr<Window>\ m\_MainWindow;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_Running\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ std::unique\_ptr<Platform::IThread>\ m\_TestThread;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_layer_stack}{LayerStack}}\ m\_LayerStack;}
+\DoxyCodeLine{00050\ \ \ \ \ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_application}{Application}}*\ \mbox{\hyperlink{namespace_void_architect_a942ddbffafb9914b27ae17344df8be5b}{CreateApplication}}();}
+\DoxyCodeLine{00053\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect}}
+
+\end{DoxyCode}

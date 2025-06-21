@@ -1,0 +1,38 @@
+\doxysection{Layer.\+hpp}
+\hypertarget{_layer_8hpp_source}{}\label{_layer_8hpp_source}\index{engine/src/Core/Layer.hpp@{engine/src/Core/Layer.hpp}}
+\mbox{\hyperlink{_layer_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 14/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_core_8hpp}{Core/Core.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_event_8hpp}{Events/Event.hpp}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{_core_8hpp_a1544ebd09cc85a3f956cf4351eceb9c4}{VA\_API}}\ \mbox{\hyperlink{class_void_architect_1_1_layer_a98740f9db2405bc160f7c67d212da7b8}{Layer}}}
+\DoxyCodeLine{00012\ \ \ \ \ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_layer_a98740f9db2405bc160f7c67d212da7b8}{Layer}}(\textcolor{keyword}{const}\ std::string\&\ name\ =\ \textcolor{stringliteral}{"{}Layer"{}});}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_void_architect_1_1_layer_a98740f9db2405bc160f7c67d212da7b8}{\string~Layer}}();}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_layer_afc7b38adf776884fb18006742824c43a}{OnAttach}}()\ \{\}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_layer_adc16928c5cacb0728f65143bf3af1b44}{OnDetach}}()\ \{\}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_layer_a6cb379e04ae66a30e303a495e20875b0}{OnFixedUpdate}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ fixedTimestep)\ \{\}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_layer_aad87785d3e9f620e3c328d2805caa351}{OnUpdate}}(\textcolor{keywordtype}{float}\ deltaTime)\ \{\}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_layer_a2bba5dceecd925bde57b0e04e5fa7e82}{OnEvent}}(\mbox{\hyperlink{class_void_architect_1_1_event}{Event}}\&\ e)\ \{\}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ std::string\&\ \mbox{\hyperlink{class_void_architect_1_1_layer_aa3b4e82e63707afd43987f72203cd8ba}{GetName}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_void_architect_1_1_layer_a112bb0d5731051f6e31d78dadda44d5a}{m\_DebugName}};\ \}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_void_architect_1_1_layer_a112bb0d5731051f6e31d78dadda44d5a}{m\_DebugName}};}
+\DoxyCodeLine{00031\ \ \ \ \ \};}
+\DoxyCodeLine{00032\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect}}
+
+\end{DoxyCode}

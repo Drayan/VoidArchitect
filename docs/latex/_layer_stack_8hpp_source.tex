@@ -1,0 +1,33 @@
+\doxysection{Layer\+Stack.\+hpp}
+\hypertarget{_layer_stack_8hpp_source}{}\label{_layer_stack_8hpp_source}\index{engine/src/Core/LayerStack.hpp@{engine/src/Core/LayerStack.hpp}}
+\mbox{\hyperlink{_layer_stack_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 14/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_layer_8hpp}{Layer.hpp}}"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00008\ \{}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_layer_stack_a5386b9dff4e8ed74054deacebedeb55c}{LayerStack}}}
+\DoxyCodeLine{00010\ \ \ \ \ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_layer_stack_a5386b9dff4e8ed74054deacebedeb55c}{LayerStack}}();}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_layer_stack_aa6cd972a424eb527f6dd22e9c699436e}{\string~LayerStack}}();}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_layer_stack_aa0eb2ec85a62564a8efa7fb411a8f16b}{PushLayer}}(\mbox{\hyperlink{class_void_architect_1_1_layer}{Layer}}*\ layer);}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_layer_stack_a2b34dc55ff2083db7e3d5db9e8ee1264}{PushOverlay}}(\mbox{\hyperlink{class_void_architect_1_1_layer}{Layer}}*\ layer);}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_layer_stack_a9835cd96e39f700b846cf1fb3dc3d739}{PopLayer}}(\mbox{\hyperlink{class_void_architect_1_1_layer}{Layer}}*\ layer);}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_layer_stack_a179b1cc5975b996715b325b15a05a00c}{PopOverlay}}(\mbox{\hyperlink{class_void_architect_1_1_layer}{Layer}}*\ layer);}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ VAArray<Layer*>::iterator\ \mbox{\hyperlink{class_void_architect_1_1_layer_stack_a1dbc3574af8f0b26f1e70c6ff2d983ea}{begin}}()\ \{\ \textcolor{keywordflow}{return}\ m\_Layers.begin();\ \}}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ VAArray<Layer*>::iterator\ \mbox{\hyperlink{class_void_architect_1_1_layer_stack_ad3c8c5dba181ee5e80eac6f58a976206}{end}}()\ \{\ \textcolor{keywordflow}{return}\ m\_Layers.end();\ \}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ VAArray<Layer*>\ m\_Layers;}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ VAArray<Layer*>::iterator\ m\_LayerInsert;}
+\DoxyCodeLine{00026\ \ \ \ \ \};}
+\DoxyCodeLine{00027\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect}}
+
+\end{DoxyCode}

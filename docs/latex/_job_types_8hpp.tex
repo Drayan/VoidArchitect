@@ -1,0 +1,78 @@
+\doxysection{engine/src/\+Systems/\+Jobs/\+Job\+Types.hpp File Reference}
+\hypertarget{_job_types_8hpp}{}\label{_job_types_8hpp}\index{engine/src/Systems/Jobs/JobTypes.hpp@{engine/src/Systems/Jobs/JobTypes.hpp}}
+{\ttfamily \#include "{}Core/\+Handle.\+hpp"{}}\newline
+{\ttfamily \#include "{}Platform/\+Threading/\+Thread.\+hpp"{}}\newline
+{\ttfamily \#include "{}Platform/\+Threading/\+Thread\+Factory.\+hpp"{}}\newline
+Include dependency graph for Job\+Types.\+hpp\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result}{Void\+Architect\+::\+Jobs\+::\+Job\+Result}}
+\begin{DoxyCompactList}\small\item\em Result structure returned by job execution. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job}{Void\+Architect\+::\+Jobs\+::\+Job}}
+\begin{DoxyCompactList}\small\item\em Core job structure containing execution data and metadata. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespace_void_architect}{Void\+Architect}}
+\item 
+namespace \mbox{\hyperlink{namespace_void_architect_1_1_jobs}{Void\+Architect\+::\+Jobs}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{Void\+Architect\+::\+Jobs\+::\+Job\+Handle}} = \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}}$<$\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job}{Job}}$>$
+\begin{DoxyCompactList}\small\item\em \doxylink{struct_void_architect_1_1_handle}{Handle} for referencing jobs with generation-\/based validation. \end{DoxyCompactList}\item 
+using \mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+Handle}} = \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}}$<$\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}}$>$
+\begin{DoxyCompactList}\small\item\em \doxylink{struct_void_architect_1_1_handle}{Handle} for referencing \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} with generation-\/based validation. \end{DoxyCompactList}\item 
+using \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{Void\+Architect\+::\+Jobs\+::\+Job\+Function}} = std\+::function$<$\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result}}()$>$
+\begin{DoxyCompactList}\small\item\em Function signature for job execution. \end{DoxyCompactList}\item 
+using \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a59226f9e84f6ef6b505f8cc614a9cba3}{Void\+Architect\+::\+Jobs\+::\+Void\+Job\+Function}} = std\+::function$<$void()$>$
+\begin{DoxyCompactList}\small\item\em Function signature for void jobs (convenience) \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52}{Void\+Architect\+::\+Jobs\+::\+Job\+Priority}} \+: uint8\+\_\+t \{ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52a28d0edd045e05cf5af64e35ae0c4c6ef}{Void\+Architect\+::\+Jobs\+::\+Low}} = 0
+, \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52a960b44c579bc2f6818d2daaf9e4c16f0}{Void\+Architect\+::\+Jobs\+::\+Normal}} = 1
+, \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52a655d20c1ca69519ca647684edbb2db35}{Void\+Architect\+::\+Jobs\+::\+High}} = 2
+, \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52a278d01e5af56273bae1bb99a98b370cd}{Void\+Architect\+::\+Jobs\+::\+Critical}} = 3
+ \}
+\begin{DoxyCompactList}\small\item\em Job execution priority levels. \end{DoxyCompactList}\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a841c31c520af596ddeb461f4ca831147}{Void\+Architect\+::\+Jobs\+::\+Job\+State}} \+: uint8\+\_\+t \{ \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_jobs_a841c31c520af596ddeb461f4ca831147a2d13df6f8b5e4c5af9f87e0dc39df69d}{Void\+Architect\+::\+Jobs\+::\+Pending}} = 0
+, \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a841c31c520af596ddeb461f4ca831147ae7d31fc0602fb2ede144d18cdffd816b}{Void\+Architect\+::\+Jobs\+::\+Ready}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a841c31c520af596ddeb461f4ca831147a63c4cc5944eb60b1969f2333ead70fc9}{Void\+Architect\+::\+Jobs\+::\+Executing}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a841c31c520af596ddeb461f4ca831147a07ca5050e697392c9ed47e6453f1453f}{Void\+Architect\+::\+Jobs\+::\+Completed}}
+, \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_jobs_a841c31c520af596ddeb461f4ca831147aa149e85a44aeec9140e92733d9ed694e}{Void\+Architect\+::\+Jobs\+::\+Cancelled}}
+ \}
+\begin{DoxyCompactList}\small\item\em Atomic job execution state for thread-\/safe status tracking. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a604862d04da6e541e063ccfedaeff385}{Void\+Architect\+::\+Jobs\+::\+Get\+Priority\+String}} (const \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52}{Job\+Priority}} priority)
+\begin{DoxyCompactList}\small\item\em Get a human-\/readable priority name. \end{DoxyCompactList}\item 
+const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{namespace_void_architect_1_1_jobs_ae700c49d9918448ec4101db43c754e01}{Void\+Architect\+::\+Jobs\+::\+Get\+Job\+State\+String}} (const \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a841c31c520af596ddeb461f4ca831147}{Job\+State}} state)
+\begin{DoxyCompactList}\small\item\em Get human-\/readable state string. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename F$>$ }\\\mbox{\hyperlink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{Job\+Function}} \mbox{\hyperlink{namespace_void_architect_1_1_jobs_aa96eb84f9c38319d0241728af2ebc6c3}{Void\+Architect\+::\+Jobs\+::\+Make\+Job\+Function}} (F \&\&func)
+\begin{DoxyCompactList}\small\item\em Create a \doxylink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{Job\+Function} from a void lambda for convenience. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{Job\+Function}} \mbox{\hyperlink{namespace_void_architect_1_1_jobs_ac9c7d73a3c2d4a328751d534c61e2bde}{Void\+Architect\+::\+Jobs\+::\+Make\+Failing\+Job}} (const char \texorpdfstring{$\ast$}{*}error\+Message)
+\begin{DoxyCompactList}\small\item\em Create a failing \doxylink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{Job\+Function} for testing purposes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+constexpr size\+\_\+t \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a16346309054560dcf7469f3381e7ba76}{Void\+Architect\+::\+Jobs\+::\+MAX\+\_\+\+JOBS}} = 8192
+\begin{DoxyCompactList}\small\item\em Maximum number of jobs that can exist simultaneously in the system. \end{DoxyCompactList}\item 
+constexpr size\+\_\+t \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a20c4414148c1d92525ca7e60e4932da6}{Void\+Architect\+::\+Jobs\+::\+MAX\+\_\+\+WORKERS}} = 32
+\begin{DoxyCompactList}\small\item\em Maximum number of worker threads supported by the job system. \end{DoxyCompactList}\item 
+constexpr size\+\_\+t \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a42176716e51988cd737d460a8d8bf544}{Void\+Architect\+::\+Jobs\+::\+DEFAULT\+\_\+\+DEPENDENCY\+\_\+\+CAPACITY}} = 4
+\begin{DoxyCompactList}\small\item\em Default number of dependency slots per job for optimal memory layout. \end{DoxyCompactList}\item 
+constexpr size\+\_\+t \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a4393af728aa4294ab57c1f2f72d33f03}{Void\+Architect\+::\+Jobs\+::\+MAX\+\_\+\+SYNCPOINTS}} = 4096
+\begin{DoxyCompactList}\small\item\em Maximum number of \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} that can exist simultaneously in the system. \end{DoxyCompactList}\item 
+constexpr \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{Job\+Handle}} \mbox{\hyperlink{namespace_void_architect_1_1_jobs_adf5696707a9a295075dd46a5ab1f7313}{Void\+Architect\+::\+Jobs\+::\+Invalid\+Job\+Handle}} = \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{Job\+Handle}}\{\}
+\begin{DoxyCompactList}\small\item\em Invalid job handle constant for convenience. \end{DoxyCompactList}\item 
+constexpr \mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{Sync\+Point\+Handle}} \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a5b992b472700b1b0aa0c40ca95fc925d}{Void\+Architect\+::\+Jobs\+::\+Invalid\+Sync\+Point\+Handle}} = \mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{Sync\+Point\+Handle}}\{\}
+\begin{DoxyCompactList}\small\item\em Invalid \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} handle constant for convenience. \end{DoxyCompactList}\end{DoxyCompactItemize}

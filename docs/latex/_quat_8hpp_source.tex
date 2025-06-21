@@ -1,0 +1,50 @@
+\doxysection{Quat.\+hpp}
+\hypertarget{_quat_8hpp_source}{}\label{_quat_8hpp_source}\index{engine/src/Core/Math/Quat.hpp@{engine/src/Core/Math/Quat.hpp}}
+\mbox{\hyperlink{_quat_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 21/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vec3_8hpp}{Vec3.hpp}}"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_math}{VoidArchitect::Math}}}
+\DoxyCodeLine{00008\ \{}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Mat4}};}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_math_1_1impl}{impl}}}
+\DoxyCodeLine{00012\ \ \ \ \ \{}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <glm/gtc/quaternion.hpp>}}
+\DoxyCodeLine{00014\ \ \ \ \ \}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}}}
+\DoxyCodeLine{00017\ \ \ \ \ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_ab22666e92ed99d4c504e684d717e98f1}{Mat4}};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a485cf11356a0e4ca1e9ee12a7ade3725}{Identity}}();}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}}();}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}}(\textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y,\ \textcolor{keywordtype}{float}\ z,\ \textcolor{keywordtype}{float}\ w);}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Vec3}}\&\ axis,\ \textcolor{keywordtype}{float}\ angle);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a8a54023ef4373ee7ff1ebf1da2098787}{operator*}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}}\&\ other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}}\&\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a67005f06a0f6e075ca5043bef82f734b}{operator*=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}}\&\ other);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a27bfb6b79f033e5b66c21257ced1b266}{FromEuler}}(\textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y,\ \textcolor{keywordtype}{float}\ z);}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Vec3}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a34686438ee48b38d5a2fb332b51d47f2}{ToEuler}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Vec3}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_ab07a89f587c83cd267ec7e73ab0ff7a3}{RotateVector}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Vec3}}\&\ vector)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a77ddb8827e6f414598898183965731ee}{Normalize}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_ab22666e92ed99d4c504e684d717e98f1}{Mat4}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a76cddec8b162e593aff5d4f5ef0c9689}{ToMat4}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}}(\textcolor{keyword}{const}\ impl::glm::quat\&\ quaternion);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ impl::glm::quat\ m\_Quaternion;}
+\DoxyCodeLine{00043\ \ \ \ \ \};}
+\DoxyCodeLine{00044\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect::Math}}
+
+\end{DoxyCode}

@@ -1,0 +1,145 @@
+\doxysection{Void\+Architect\+::Resources\+::IMaterial Class Reference}
+\hypertarget{class_void_architect_1_1_resources_1_1_i_material}{}\label{class_void_architect_1_1_resources_1_1_i_material}\index{VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}}
+
+
+{\ttfamily \#include $<$Material.\+hpp$>$}
+
+
+
+Inheritance diagram for Void\+Architect\+::Resources\+::IMaterial\+:
+% FIG 0
+
+
+Collaboration diagram for Void\+Architect\+::Resources\+::IMaterial\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material_a67d1dce0d974d0f19c093001e368f241}{\texorpdfstring{$\sim$}{\string~}\+IMaterial}} ()=default
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material_a18d7bba9eb96a3a0d838cd3fc1c4732c}{Set\+Diffuse\+Color}} (const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec4}{Math\+::\+Vec4}} \&color)=0
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material_a376909e68ceaa680731a214a6ccc79cb}{Set\+Texture}} (\mbox{\hyperlink{namespace_void_architect_1_1_resources_a0263236753eb0716db01d7a5a0f9ae98}{Resources\+::\+Texture\+Use}} use, \mbox{\hyperlink{namespace_void_architect_1_1_resources_a8c9721a4a6e450038e8583515af75b2d}{Resources\+::\+Texture\+Handle}} texture)=0
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material_a84f7862139142fac0a48db4c76da8914}{Get\+Generation}} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr size\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material_aec342fb15e2a29cf7e817a639ccb2d02}{MAX\+\_\+\+TEXTURES}} = 4
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material_a7428cd3e22b95ce09543755fc91812ab}{IMaterial}} (const std\+::string \&name)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material_afde1bab649a1be78e74e9af983096954}{m\+\_\+\+Name}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material_a4ee6db17e5e41bb218d8ccbcb95ba065}{m\+\_\+\+Generation}} = std\+::numeric\+\_\+limits$<$uint32\+\_\+t$>$\+::max()
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec4}{Math\+::\+Vec4}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material_ae99a698254875f649374872bea02cfa8}{m\+\_\+\+Diffuse\+Color}} = \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec4_ab4d0f561521eb905d16805f3992d4aee}{Math\+::\+Vec4\+::\+One}}()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material_ad0153b176e94656bcb3f5160c1c4f45c}{Void\+Architect\+::\+Material\+System}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_a67d1dce0d974d0f19c093001e368f241}\index{VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}!````~IMaterial@{\texorpdfstring{$\sim$}{\string~}IMaterial}}
+\index{````~IMaterial@{\texorpdfstring{$\sim$}{\string~}IMaterial}!VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}IMaterial()}{\string~IMaterial()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_material_a67d1dce0d974d0f19c093001e368f241} 
+virtual Void\+Architect\+::\+Resources\+::\+IMaterial\+::\texorpdfstring{$\sim$}{\string~}\+IMaterial (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_a7428cd3e22b95ce09543755fc91812ab}\index{VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}!IMaterial@{IMaterial}}
+\index{IMaterial@{IMaterial}!VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}}
+\doxysubsubsection{\texorpdfstring{IMaterial()}{IMaterial()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_material_a7428cd3e22b95ce09543755fc91812ab} 
+Void\+Architect\+::\+Resources\+::\+IMaterial\+::\+IMaterial (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}, {\ttfamily [protected]}}
+
+Here is the caller graph for this function\+:
+% FIG 2
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_a84f7862139142fac0a48db4c76da8914}\index{VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}!GetGeneration@{GetGeneration}}
+\index{GetGeneration@{GetGeneration}!VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}}
+\doxysubsubsection{\texorpdfstring{GetGeneration()}{GetGeneration()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_material_a84f7862139142fac0a48db4c76da8914} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+IMaterial\+::\+Get\+Generation (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_a18d7bba9eb96a3a0d838cd3fc1c4732c}\index{VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}!SetDiffuseColor@{SetDiffuseColor}}
+\index{SetDiffuseColor@{SetDiffuseColor}!VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}}
+\doxysubsubsection{\texorpdfstring{SetDiffuseColor()}{SetDiffuseColor()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_material_a18d7bba9eb96a3a0d838cd3fc1c4732c} 
+virtual void Void\+Architect\+::\+Resources\+::\+IMaterial\+::\+Set\+Diffuse\+Color (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec4}{Math\+::\+Vec4}} \&}]{color}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_material_a469a905be3287bd086e20f01b7e788a4}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Material}}.
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_a376909e68ceaa680731a214a6ccc79cb}\index{VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}!SetTexture@{SetTexture}}
+\index{SetTexture@{SetTexture}!VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}}
+\doxysubsubsection{\texorpdfstring{SetTexture()}{SetTexture()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_material_a376909e68ceaa680731a214a6ccc79cb} 
+virtual void Void\+Architect\+::\+Resources\+::\+IMaterial\+::\+Set\+Texture (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_void_architect_1_1_resources_a0263236753eb0716db01d7a5a0f9ae98}{Resources\+::\+Texture\+Use}}}]{use}{, }\item[{\mbox{\hyperlink{namespace_void_architect_1_1_resources_a8c9721a4a6e450038e8583515af75b2d}{Resources\+::\+Texture\+Handle}}}]{texture}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_material_aa6b993140ece2373a4b831064d344ceb}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Material}}.
+
+
+
+\label{doc-related-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_doc-related-members}
+\doxysubsection{Friends And Related Symbol Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_ad0153b176e94656bcb3f5160c1c4f45c}\index{VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}!VoidArchitect::MaterialSystem@{VoidArchitect::MaterialSystem}}
+\index{VoidArchitect::MaterialSystem@{VoidArchitect::MaterialSystem}!VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}}
+\doxysubsubsection{\texorpdfstring{VoidArchitect::MaterialSystem}{VoidArchitect::MaterialSystem}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_material_ad0153b176e94656bcb3f5160c1c4f45c} 
+friend class \mbox{\hyperlink{class_void_architect_1_1_material_system}{Void\+Architect\+::\+Material\+System}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_ae99a698254875f649374872bea02cfa8}\index{VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}!m\_DiffuseColor@{m\_DiffuseColor}}
+\index{m\_DiffuseColor@{m\_DiffuseColor}!VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}}
+\doxysubsubsection{\texorpdfstring{m\_DiffuseColor}{m\_DiffuseColor}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_material_ae99a698254875f649374872bea02cfa8} 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec4}{Math\+::\+Vec4}} Void\+Architect\+::\+Resources\+::\+IMaterial\+::m\+\_\+\+Diffuse\+Color = \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec4_ab4d0f561521eb905d16805f3992d4aee}{Math\+::\+Vec4\+::\+One}}()\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_a4ee6db17e5e41bb218d8ccbcb95ba065}\index{VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}!m\_Generation@{m\_Generation}}
+\index{m\_Generation@{m\_Generation}!VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}}
+\doxysubsubsection{\texorpdfstring{m\_Generation}{m\_Generation}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_material_a4ee6db17e5e41bb218d8ccbcb95ba065} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+IMaterial\+::m\+\_\+\+Generation = std\+::numeric\+\_\+limits$<$uint32\+\_\+t$>$\+::max()\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_afde1bab649a1be78e74e9af983096954}\index{VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}!m\_Name@{m\_Name}}
+\index{m\_Name@{m\_Name}!VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}}
+\doxysubsubsection{\texorpdfstring{m\_Name}{m\_Name}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_material_afde1bab649a1be78e74e9af983096954} 
+std\+::string Void\+Architect\+::\+Resources\+::\+IMaterial\+::m\+\_\+\+Name\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_material_aec342fb15e2a29cf7e817a639ccb2d02}\index{VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}!MAX\_TEXTURES@{MAX\_TEXTURES}}
+\index{MAX\_TEXTURES@{MAX\_TEXTURES}!VoidArchitect::Resources::IMaterial@{VoidArchitect::Resources::IMaterial}}
+\doxysubsubsection{\texorpdfstring{MAX\_TEXTURES}{MAX\_TEXTURES}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_material_aec342fb15e2a29cf7e817a639ccb2d02} 
+size\+\_\+t Void\+Architect\+::\+Resources\+::\+IMaterial\+::\+MAX\+\_\+\+TEXTURES = 4\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Resources/\mbox{\hyperlink{_material_8hpp}{Material.\+hpp}}\item 
+engine/src/\+Resources/\mbox{\hyperlink{_material_8cpp}{Material.\+cpp}}\end{DoxyCompactItemize}

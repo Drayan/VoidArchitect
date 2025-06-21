@@ -1,0 +1,29 @@
+\doxysection{Entry.\+hpp}
+\hypertarget{_entry_8hpp_source}{}\label{_entry_8hpp_source}\index{engine/src/Core/Entry.hpp@{engine/src/Core/Entry.hpp}}
+\mbox{\hyperlink{_entry_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 12/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{class_void_architect_1_1_application}{VoidArchitect::Application}}*\ \mbox{\hyperlink{namespace_void_architect_a942ddbffafb9914b27ae17344df8be5b}{VoidArchitect::CreateApplication}}();}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ ReSharper\ disable\ once\ CppNonInlineFunctionDefinitionInHeaderFile}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ NOTE\ :\ The\ main\ function\ cannot\ be\ defined\ as\ inline.}}
+\DoxyCodeLine{00010\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{_entry_8hpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}}()}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_logger_ae6e791a16befc05da12a2272b3f1d05d}{VoidArchitect::Logger::Initialize}}();}
+\DoxyCodeLine{00013\ \ \ \ \ \mbox{\hyperlink{_logger_8hpp_ac45f682bb601bf12ae8cb8174803284b}{VA\_ENGINE\_INFO}}(\textcolor{stringliteral}{"{}Logging\ system\ initialized."{}});}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{_logger_8hpp_ac45f682bb601bf12ae8cb8174803284b}{VA\_ENGINE\_INFO}}(\textcolor{stringliteral}{"{}Starting\ application..."{}});}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ app\ =\ \mbox{\hyperlink{namespace_void_architect_a942ddbffafb9914b27ae17344df8be5b}{VoidArchitect::CreateApplication}}();}
+\DoxyCodeLine{00017\ \ \ \ \ app-\/>Run();}
+\DoxyCodeLine{00018\ \ \ \ \ \mbox{\hyperlink{_logger_8hpp_ac45f682bb601bf12ae8cb8174803284b}{VA\_ENGINE\_INFO}}(\textcolor{stringliteral}{"{}Application\ ended.\ Shutting\ down..."{}});}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{delete}\ app;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \mbox{\hyperlink{_logger_8hpp_ac45f682bb601bf12ae8cb8174803284b}{VA\_ENGINE\_INFO}}(\textcolor{stringliteral}{"{}Shutting\ down\ logging\ system..."{}});}
+\DoxyCodeLine{00022\ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_logger_a1e3f159728192fb6c760166d4e42cda5}{VoidArchitect::Logger::Shutdown}}();}
+\DoxyCodeLine{00023\ \}}
+
+\end{DoxyCode}

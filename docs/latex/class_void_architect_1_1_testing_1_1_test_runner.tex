@@ -1,0 +1,220 @@
+\doxysection{Void\+Architect\+::Testing\+::Test\+Runner Class Reference}
+\hypertarget{class_void_architect_1_1_testing_1_1_test_runner}{}\label{class_void_architect_1_1_testing_1_1_test_runner}\index{VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}}
+
+
+Simple test runner for \doxylink{namespace_void_architect}{Void\+Architect} engine components.  
+
+
+
+
+{\ttfamily \#include $<$Test\+Runner.\+hpp$>$}
+
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner_afe447b3f486a41621540956562af2bc4}{Register\+Test}} (const char \texorpdfstring{$\ast$}{*}test\+Name, \mbox{\hyperlink{namespace_void_architect_1_1_testing_a6a7d9554eddbb42a25df59c164ce5557}{Test\+Function}} test\+Func)
+\begin{DoxyCompactList}\small\item\em Register a test function with the runner. \end{DoxyCompactList}\item 
+static int \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner_a9a6692cade07c4e2bace4cd351edec92}{Run\+All\+Tests}} (bool verbose\+Output=true)
+\begin{DoxyCompactList}\small\item\em Execute all registered tests. \end{DoxyCompactList}\item 
+static int \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner_a999a6ad2bcf7a3124d2d166b55c827c6}{Run\+Specific\+Test}} (const char \texorpdfstring{$\ast$}{*}test\+Name, bool verbose\+Output=true)
+\begin{DoxyCompactList}\small\item\em Execute a specific test by name. \end{DoxyCompactList}\item 
+static int \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner_a657d89ba442f7303bc13379ff01bd546}{Run\+Tests\+Matching}} (const char \texorpdfstring{$\ast$}{*}pattern, bool verbose\+Output=true)
+\begin{DoxyCompactList}\small\item\em Execute tests matching a pattern. \end{DoxyCompactList}\item 
+static std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner_a075b7ed5879ea653b389281dafe6c73c}{Get\+Registered\+Test\+Names}} ()
+\begin{DoxyCompactList}\small\item\em Get list of all registered test names. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner_a5ad7ddbe6b8b0e91f61c2defb877378a}{Is\+Test\+Registered}} (const char \texorpdfstring{$\ast$}{*}test\+Name)
+\begin{DoxyCompactList}\small\item\em Check if a test with given name is registered. \end{DoxyCompactList}\item 
+static size\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner_ad5f79c66fa4aa94aa3b44a9bf7bc218d}{Get\+Test\+Count}} ()
+\begin{DoxyCompactList}\small\item\em Get number of registered tests. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_run_summary}{Test\+Run\+Summary}} \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner_aa4d02c5ec6ab47e1fa52db69732b19c2}{Execute\+Tests}} (const std\+::vector$<$ std\+::string $>$ \&test\+Names=\{\}, bool verbose\+Output=true)
+\begin{DoxyCompactList}\small\item\em Execute tests and return detailed summary. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Simple test runner for \doxylink{namespace_void_architect}{Void\+Architect} engine components. 
+
+\doxylink{class_void_architect_1_1_testing_1_1_test_runner}{Test\+Runner} provides a lightweight framework for registering and executing unit tests throughout the engine. Tests are automatically discovered and can be run individually or as a complete suite.
+
+Key features\+:
+\begin{DoxyItemize}
+\item Automatic test registration using macros
+\item Individual or batch test execution
+\item Timing and performance measurement
+\item CMake integration ready
+\item CI/\+CD friendly output formatting
+\end{DoxyItemize}
+
+Usage example\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ Register\ a\ test\ (usually\ at\ file\ scope)}}
+\DoxyCodeLine{\mbox{\hyperlink{_test_runner_8hpp_ab43056375391b6b078d1937efc132a33}{VA\_REGISTER\_TEST}}(MyComponentBasics,\ []()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ MyComponent\ comp;}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ comp.IsValid()\ \&\&\ comp.DoSomething();}
+\DoxyCodeLine{\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Run\ all\ tests}}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ \mbox{\hyperlink{_entry_8hpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}}()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner_a9a6692cade07c4e2bace4cd351edec92}{TestRunner::RunAllTests}}();}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_runner_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_runner_aa4d02c5ec6ab47e1fa52db69732b19c2}\index{VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}!ExecuteTests@{ExecuteTests}}
+\index{ExecuteTests@{ExecuteTests}!VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}}
+\doxysubsubsection{\texorpdfstring{ExecuteTests()}{ExecuteTests()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_runner_aa4d02c5ec6ab47e1fa52db69732b19c2} 
+\mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_run_summary}{Test\+Run\+Summary}} Void\+Architect\+::\+Testing\+::\+Test\+Runner\+::\+Execute\+Tests (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ std\+::string $>$ \&}]{test\+Names}{ = {\ttfamily \{\}}, }\item[{bool}]{verbose\+Output}{ = {\ttfamily true}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Execute tests and return detailed summary. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em test\+Names} & Vector of test names to execute (empty = all tests) \\
+\hline
+{\em verbose\+Output} & If true, print progress during execution \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_void_architect_1_1_testing_1_1_test_run_summary}{Test\+Run\+Summary} with detailed results 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+% FIG 0
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_runner_a075b7ed5879ea653b389281dafe6c73c}\index{VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}!GetRegisteredTestNames@{GetRegisteredTestNames}}
+\index{GetRegisteredTestNames@{GetRegisteredTestNames}!VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}}
+\doxysubsubsection{\texorpdfstring{GetRegisteredTestNames()}{GetRegisteredTestNames()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_runner_a075b7ed5879ea653b389281dafe6c73c} 
+std\+::vector$<$ std\+::string $>$ Void\+Architect\+::\+Testing\+::\+Test\+Runner\+::\+Get\+Registered\+Test\+Names (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get list of all registered test names. 
+
+\begin{DoxyReturn}{Returns}
+Vector of test names 
+\end{DoxyReturn}
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_runner_ad5f79c66fa4aa94aa3b44a9bf7bc218d}\index{VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}!GetTestCount@{GetTestCount}}
+\index{GetTestCount@{GetTestCount}!VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}}
+\doxysubsubsection{\texorpdfstring{GetTestCount()}{GetTestCount()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_runner_ad5f79c66fa4aa94aa3b44a9bf7bc218d} 
+size\+\_\+t Void\+Architect\+::\+Testing\+::\+Test\+Runner\+::\+Get\+Test\+Count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get number of registered tests. 
+
+\begin{DoxyReturn}{Returns}
+Total number of tests available 
+\end{DoxyReturn}
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_runner_a5ad7ddbe6b8b0e91f61c2defb877378a}\index{VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}!IsTestRegistered@{IsTestRegistered}}
+\index{IsTestRegistered@{IsTestRegistered}!VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}}
+\doxysubsubsection{\texorpdfstring{IsTestRegistered()}{IsTestRegistered()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_runner_a5ad7ddbe6b8b0e91f61c2defb877378a} 
+bool Void\+Architect\+::\+Testing\+::\+Test\+Runner\+::\+Is\+Test\+Registered (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{test\+Name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Check if a test with given name is registered. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em test\+Name} & Name to check \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if test exists 
+\end{DoxyReturn}
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_runner_afe447b3f486a41621540956562af2bc4}\index{VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}!RegisterTest@{RegisterTest}}
+\index{RegisterTest@{RegisterTest}!VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}}
+\doxysubsubsection{\texorpdfstring{RegisterTest()}{RegisterTest()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_runner_afe447b3f486a41621540956562af2bc4} 
+void Void\+Architect\+::\+Testing\+::\+Test\+Runner\+::\+Register\+Test (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{test\+Name}{, }\item[{\mbox{\hyperlink{namespace_void_architect_1_1_testing_a6a7d9554eddbb42a25df59c164ce5557}{Test\+Function}}}]{test\+Func}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Register a test function with the runner. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em test\+Name} & Unique name for the test (should be descriptive) \\
+\hline
+{\em test\+Func} & Function to execute for this test\\
+\hline
+\end{DoxyParams}
+This method is typically called via the VA\+\_\+\+REGISTER\+\_\+\+TEST macro rather that directly. \Hypertarget{class_void_architect_1_1_testing_1_1_test_runner_a9a6692cade07c4e2bace4cd351edec92}\index{VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}!RunAllTests@{RunAllTests}}
+\index{RunAllTests@{RunAllTests}!VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}}
+\doxysubsubsection{\texorpdfstring{RunAllTests()}{RunAllTests()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_runner_a9a6692cade07c4e2bace4cd351edec92} 
+int Void\+Architect\+::\+Testing\+::\+Test\+Runner\+::\+Run\+All\+Tests (\begin{DoxyParamCaption}\item[{bool}]{verbose\+Output}{ = {\ttfamily true}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Execute all registered tests. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em verbose\+Output} & If true, print detailled output for each test \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 if all tests passed, 1 if any tests failed
+\end{DoxyReturn}
+Executes all tests that have been registered with \doxylink{class_void_architect_1_1_testing_1_1_test_runner_afe447b3f486a41621540956562af2bc4}{Register\+Test()}. Results are printed to stdout in a format suitable for CI/\+CD systems. Here is the call graph for this function\+:
+% FIG 1
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_runner_a999a6ad2bcf7a3124d2d166b55c827c6}\index{VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}!RunSpecificTest@{RunSpecificTest}}
+\index{RunSpecificTest@{RunSpecificTest}!VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}}
+\doxysubsubsection{\texorpdfstring{RunSpecificTest()}{RunSpecificTest()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_runner_a999a6ad2bcf7a3124d2d166b55c827c6} 
+int Void\+Architect\+::\+Testing\+::\+Test\+Runner\+::\+Run\+Specific\+Test (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{test\+Name}{, }\item[{bool}]{verbose\+Output}{ = {\ttfamily true}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Execute a specific test by name. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em test\+Name} & Name of test to execute \\
+\hline
+{\em verbose\+Output} & If true, print detailed output \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 if test passed, 1 is test failed or not found 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_runner_a657d89ba442f7303bc13379ff01bd546}\index{VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}!RunTestsMatching@{RunTestsMatching}}
+\index{RunTestsMatching@{RunTestsMatching}!VoidArchitect::Testing::TestRunner@{VoidArchitect::Testing::TestRunner}}
+\doxysubsubsection{\texorpdfstring{RunTestsMatching()}{RunTestsMatching()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_runner_a657d89ba442f7303bc13379ff01bd546} 
+int Void\+Architect\+::\+Testing\+::\+Test\+Runner\+::\+Run\+Tests\+Matching (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{pattern}{, }\item[{bool}]{verbose\+Output}{ = {\ttfamily true}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Execute tests matching a pattern. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pattern} & Substring that test names must contain \\
+\hline
+{\em verbose\+Output} & If true, print detailed output \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 if all matching tests passed, 1 if any failed 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+% FIG 3
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+tests/src/\+Core/\mbox{\hyperlink{_test_runner_8hpp}{Test\+Runner.\+hpp}}\item 
+tests/src/\+Core/\mbox{\hyperlink{_test_runner_8cpp}{Test\+Runner.\+cpp}}\end{DoxyCompactItemize}

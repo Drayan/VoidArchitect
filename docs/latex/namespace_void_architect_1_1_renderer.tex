@@ -1,0 +1,544 @@
+\doxysection{Void\+Architect\+::Renderer Namespace Reference}
+\hypertarget{namespace_void_architect_1_1_renderer}{}\label{namespace_void_architect_1_1_renderer}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1___render_command}{\+\_\+\+Render\+Command}}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_buffer_binding}{Buffer\+Binding}}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera}{Camera}}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_depth_prepass_pass_renderer}{Depth\+Prepass\+Pass\+Renderer}}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_forward_opaque_pass_renderer}{Forward\+Opaque\+Pass\+Renderer}}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_forward_transparent_pass_renderer}{Forward\+Transparent\+Pass\+Renderer}}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_frame_data}{Frame\+Data}}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_i_pass_renderer}{IPass\+Renderer}}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_post_process_pass_renderer}{Post\+Process\+Pass\+Renderer}}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_context}{Render\+Context}}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph}{Render\+Graph}}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_graph_builder}{Render\+Graph\+Builder}}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_graph_execution_plan}{Render\+Graph\+Execution\+Plan}}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_packet}{Render\+Packet}}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_pass_config}{Render\+Pass\+Config}}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_pass_step}{Render\+Pass\+Step}}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_system}{Render\+System}}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_target_config}{Render\+Target\+Config}}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_resource_binding}{Resource\+Binding}}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_shadow_pass_renderer}{Shadow\+Pass\+Renderer}}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_u_i_pass_renderer}{UIPass\+Renderer}}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_vertex_attribute}{Vertex\+Attribute}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a058791001562a11a2e2d2315a9702009}{Pass\+Renderer\+Ptr}} = std\+::shared\+\_\+ptr$<$\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_i_pass_renderer}{IPass\+Renderer}}$>$
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96}{Camera\+Type}} \{ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96aa80420eef88d11f77532f1b9cb467fa3}{Perspective}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96a03424250432f2aa71de95579d2c0eaeb}{Orthographic}}
+ \}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587f}{Load\+Op}} \{ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587faf19dbf2edb3a0bd74b0524d960ff21eb}{Load}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587fadc30bc0c7914db5918da4263fce93ad2}{Clear}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587fa60a3629ef6a8f991f45d7a85f2458544}{Dont\+Care}}
+ \}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717da}{Store\+Op}} \{ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717daafdb0c388de01d545017cdf9ccf00eb72}{Store}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717daa60a3629ef6a8f991f45d7a85f2458544}{Dont\+Care}}
+ \}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Texture\+Format}} \{ \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5a909cc8c5cc8fe4f16bec84a291aadbdb}{RGBA8\+\_\+\+UNORM}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5ac92b6e890fda6825792eea67e53c5b73}{BGRA8\+\_\+\+UNORM}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5ae5a76309919d3c679c642c13125eb930}{RGBA8\+\_\+\+SRGB}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5af4a701ac1b36032e705eb34a8283e7e8}{BGRA8\+\_\+\+SRGB}}
+, \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5a23a4ce33815655871d103d3071d91072}{D32\+\_\+\+SFLOAT}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5aa6dc4e4319b85984a4ab81ae89949f88}{D24\+\_\+\+UNORM\+\_\+\+S8\+\_\+\+UINT}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5a2e925ee72558fb34b9f031d5327d7a0f}{SWAPCHAIN\+\_\+\+FORMAT}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5aaa1fd18fe622a0223be390454559a814}{SWAPCHAIN\+\_\+\+DEPTH}}
+ \}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8}{Render\+Pass\+Type}} \{ \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a38338c1dd70867eb56e1c5d5d3a8aff5}{Forward\+Opaque}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8ade412f4cbd2391f51a235cc6a313c98a}{Forward\+Transparent}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a3f39588bb19e28051d9aedfbb170025c}{Shadow}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a05b58800e662769613ca6ff2502828c2}{Depth\+Prepass}}
+, \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a98fc75810211c3727af6e79b639514d8}{Post\+Process}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a71ff71526d15db86eb50fcac245d183b}{UI}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a88183b946cc5f0e8c96b2e66e1c74a7e}{Unknown}}
+ \}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5f}{Pass\+Position}} \{ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5fa7fb55ed0b7a30342ba6da306428cae04}{First}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5fab1ca34f82e83c52b010f86955f264e05}{Middle}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5fad55b30607c2a9a2616347d6edb789f6b}{Last}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5fa5c80f101108a356211fcb26b3f83eabb}{Standalone}}
+ \}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cad}{Vertex\+Format}} \{ \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada52f5e0bc3859bc5f5e25130b6c7e8881}{Position}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada701c91e0f3b59db5b0b7b8c85a4654de}{Position\+Color}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada3dcfb2f05273c5690c591a77258b0206}{Position\+UV}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada55dbaff27dd527020dc9ba52bf7f0ab5}{Position\+Normal}}
+, \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cadabc88bb30d1476c11a7e12967340bd4cf}{Position\+Normal\+UV}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada79ff0818716262ece8c228de39898b59}{Position\+Normal\+UVTangent}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada90589c47f06eb971d548591f23c285af}{Custom}}
+ \}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ac272c9b57e66b1f1999a115bb372893e}{Attribute\+Format}} \{ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ac272c9b57e66b1f1999a115bb372893ea166495adc0d0f53bee6baecc577f5204}{Float32}}
+ \}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287}{Attribute\+Type}} \{ \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287a22ae0e2b89e5e3d477f988cc36d3272b}{Float}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287afe98032d4f1c52a2f0b617f9205d5f80}{Vec2}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287a01b2dc1a2922d9be9e12ef0709600977}{Vec3}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287af67402842935c0240e8109e7312def66}{Vec4}}
+, \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287a80f7408b0a5b5d78c26adae9f6f420f9}{Mat4}}
+ \}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94d}{Resource\+Binding\+Type}} \{ \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94daf09d0dd3c08eeabc5b432609f31d0a8c}{Constant\+Buffer}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94dadc7f989aa32631adaea4eb6a609b0de4}{Texture1D}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94daa6e2bae752d3bf4e34cb392bca789995}{Texture2D}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da89c915587e16bcf8963be7cf41a0d9fd}{Texture3D}}
+, \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da0a152d9f3e1df14068c5857fb3352505}{Texture\+Cube}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da5bca2f066df1fe641b2b779db2a63c0a}{Sampler}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da439f57c2c466c89db942b3de48298b2b}{Storage\+Buffer}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da92b182c3f00e8fc4a07b157ed553ab41}{Storage\+Texture}}
+ \}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0}{Render\+Target\+Usage}} \+: uint32\+\_\+t \{ \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0a6adf97f83acf6453d4a6a4b1070f3754}{None}} = 0
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0afddd0a8661f380ee89f529eff813b03d}{Color\+Attachment}} = BIT(0)
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0a652fd1408b3de263e32147770a48931e}{Depth\+Stencil\+Attachment}} = BIT(1)
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0a6ac5af02730d4c87bdc2257d00090333}{Render\+Texture}} = BIT(2)
+, \newline
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0a8c4aa541ee911e8d80451ef8cc304806}{Storage}} = BIT(3)
+ \}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab154e56c191434ffea69c1b02796319a}{Material\+Class}} \{ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab154e56c191434ffea69c1b02796319aaeb6d8ae6f20283755b339c0dc273988b}{Standard}}
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab154e56c191434ffea69c1b02796319aa71ff71526d15db86eb50fcac245d183b}{UI}}
+ \}
+\item 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440}{Render\+System\+Debug\+Mode}} \{ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440a6adf97f83acf6453d4a6a4b1070f3754}{None}} = 0
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440a2e4b97fde8cf63085ec969fcc7e490c0}{Lighting}} = 1
+, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440a4ab971a51f0335cbf8d9c2c65d379e99}{Normals}} = 2
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94d}{Resource\+Binding\+Type}} \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a609de8882c9f7013f401d4cd9c3a3c0d}{Resource\+Binding\+Type\+From\+String}} (const std\+::string \&str)
+\item 
+const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a0e83dd5526e4d3712010f0fe2084b8b9}{Render\+Pass\+Type\+To\+String}} (const \mbox{\hyperlink{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8}{Render\+Pass\+Type}} type)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_system}{Render\+System}} $>$ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a919f2d8df5cf43e15e8cf5da8a39a422}{g\+\_\+\+Render\+System}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-typedef-members}
+\Hypertarget{namespace_void_architect_1_1_renderer_doc-typedef-members}
+\doxysubsection{Typedef Documentation}
+\Hypertarget{namespace_void_architect_1_1_renderer_a058791001562a11a2e2d2315a9702009}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!PassRendererPtr@{PassRendererPtr}}
+\index{PassRendererPtr@{PassRendererPtr}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{PassRendererPtr}{PassRendererPtr}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_a058791001562a11a2e2d2315a9702009} 
+using \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a058791001562a11a2e2d2315a9702009}{Void\+Architect\+::\+Renderer\+::\+Pass\+Renderer\+Ptr}} = std\+::shared\+\_\+ptr$<$\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_i_pass_renderer}{IPass\+Renderer}}$>$}
+
+
+
+\label{doc-enum-members}
+\Hypertarget{namespace_void_architect_1_1_renderer_doc-enum-members}
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{namespace_void_architect_1_1_renderer_ac272c9b57e66b1f1999a115bb372893e}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!AttributeFormat@{AttributeFormat}}
+\index{AttributeFormat@{AttributeFormat}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{AttributeFormat}{AttributeFormat}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_ac272c9b57e66b1f1999a115bb372893e} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ac272c9b57e66b1f1999a115bb372893e}{Void\+Architect\+::\+Renderer\+::\+Attribute\+Format}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Float32@{Float32}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Float32@{Float32}}}\Hypertarget{namespace_void_architect_1_1_renderer_ac272c9b57e66b1f1999a115bb372893ea166495adc0d0f53bee6baecc577f5204}\label{namespace_void_architect_1_1_renderer_ac272c9b57e66b1f1999a115bb372893ea166495adc0d0f53bee6baecc577f5204} 
+Float32&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!AttributeType@{AttributeType}}
+\index{AttributeType@{AttributeType}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{AttributeType}{AttributeType}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287}{Void\+Architect\+::\+Renderer\+::\+Attribute\+Type}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Float@{Float}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Float@{Float}}}\Hypertarget{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287a22ae0e2b89e5e3d477f988cc36d3272b}\label{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287a22ae0e2b89e5e3d477f988cc36d3272b} 
+Float&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Vec2@{Vec2}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Vec2@{Vec2}}}\Hypertarget{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287afe98032d4f1c52a2f0b617f9205d5f80}\label{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287afe98032d4f1c52a2f0b617f9205d5f80} 
+Vec2&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Vec3@{Vec3}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Vec3@{Vec3}}}\Hypertarget{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287a01b2dc1a2922d9be9e12ef0709600977}\label{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287a01b2dc1a2922d9be9e12ef0709600977} 
+Vec3&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Vec4@{Vec4}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Vec4@{Vec4}}}\Hypertarget{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287af67402842935c0240e8109e7312def66}\label{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287af67402842935c0240e8109e7312def66} 
+Vec4&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Mat4@{Mat4}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Mat4@{Mat4}}}\Hypertarget{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287a80f7408b0a5b5d78c26adae9f6f420f9}\label{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287a80f7408b0a5b5d78c26adae9f6f420f9} 
+Mat4&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!CameraType@{CameraType}}
+\index{CameraType@{CameraType}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{CameraType}{CameraType}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96}{Void\+Architect\+::\+Renderer\+::\+Camera\+Type}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Perspective@{Perspective}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Perspective@{Perspective}}}\Hypertarget{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96aa80420eef88d11f77532f1b9cb467fa3}\label{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96aa80420eef88d11f77532f1b9cb467fa3} 
+Perspective&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Orthographic@{Orthographic}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Orthographic@{Orthographic}}}\Hypertarget{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96a03424250432f2aa71de95579d2c0eaeb}\label{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96a03424250432f2aa71de95579d2c0eaeb} 
+Orthographic&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587f}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!LoadOp@{LoadOp}}
+\index{LoadOp@{LoadOp}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{LoadOp}{LoadOp}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587f} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587f}{Void\+Architect\+::\+Renderer\+::\+Load\+Op}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Load@{Load}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Load@{Load}}}\Hypertarget{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587faf19dbf2edb3a0bd74b0524d960ff21eb}\label{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587faf19dbf2edb3a0bd74b0524d960ff21eb} 
+Load&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Clear@{Clear}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Clear@{Clear}}}\Hypertarget{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587fadc30bc0c7914db5918da4263fce93ad2}\label{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587fadc30bc0c7914db5918da4263fce93ad2} 
+Clear&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DontCare@{DontCare}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!DontCare@{DontCare}}}\Hypertarget{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587fa60a3629ef6a8f991f45d7a85f2458544}\label{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587fa60a3629ef6a8f991f45d7a85f2458544} 
+Dont\+Care&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespace_void_architect_1_1_renderer_ab154e56c191434ffea69c1b02796319a}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!MaterialClass@{MaterialClass}}
+\index{MaterialClass@{MaterialClass}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{MaterialClass}{MaterialClass}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_ab154e56c191434ffea69c1b02796319a} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab154e56c191434ffea69c1b02796319a}{Void\+Architect\+::\+Renderer\+::\+Material\+Class}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Standard@{Standard}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Standard@{Standard}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab154e56c191434ffea69c1b02796319aaeb6d8ae6f20283755b339c0dc273988b}\label{namespace_void_architect_1_1_renderer_ab154e56c191434ffea69c1b02796319aaeb6d8ae6f20283755b339c0dc273988b} 
+Standard&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UI@{UI}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!UI@{UI}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab154e56c191434ffea69c1b02796319aa71ff71526d15db86eb50fcac245d183b}\label{namespace_void_architect_1_1_renderer_ab154e56c191434ffea69c1b02796319aa71ff71526d15db86eb50fcac245d183b} 
+UI&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5f}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!PassPosition@{PassPosition}}
+\index{PassPosition@{PassPosition}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{PassPosition}{PassPosition}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5f} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5f}{Void\+Architect\+::\+Renderer\+::\+Pass\+Position}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{First@{First}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!First@{First}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5fa7fb55ed0b7a30342ba6da306428cae04}\label{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5fa7fb55ed0b7a30342ba6da306428cae04} 
+First&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Middle@{Middle}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Middle@{Middle}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5fab1ca34f82e83c52b010f86955f264e05}\label{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5fab1ca34f82e83c52b010f86955f264e05} 
+Middle&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Last@{Last}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Last@{Last}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5fad55b30607c2a9a2616347d6edb789f6b}\label{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5fad55b30607c2a9a2616347d6edb789f6b} 
+Last&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Standalone@{Standalone}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Standalone@{Standalone}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5fa5c80f101108a356211fcb26b3f83eabb}\label{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5fa5c80f101108a356211fcb26b3f83eabb} 
+Standalone&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!RenderPassType@{RenderPassType}}
+\index{RenderPassType@{RenderPassType}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{RenderPassType}{RenderPassType}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8}{Void\+Architect\+::\+Renderer\+::\+Render\+Pass\+Type}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ForwardOpaque@{ForwardOpaque}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!ForwardOpaque@{ForwardOpaque}}}\Hypertarget{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a38338c1dd70867eb56e1c5d5d3a8aff5}\label{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a38338c1dd70867eb56e1c5d5d3a8aff5} 
+Forward\+Opaque&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ForwardTransparent@{ForwardTransparent}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!ForwardTransparent@{ForwardTransparent}}}\Hypertarget{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8ade412f4cbd2391f51a235cc6a313c98a}\label{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8ade412f4cbd2391f51a235cc6a313c98a} 
+Forward\+Transparent&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Shadow@{Shadow}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Shadow@{Shadow}}}\Hypertarget{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a3f39588bb19e28051d9aedfbb170025c}\label{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a3f39588bb19e28051d9aedfbb170025c} 
+Shadow&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DepthPrepass@{DepthPrepass}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!DepthPrepass@{DepthPrepass}}}\Hypertarget{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a05b58800e662769613ca6ff2502828c2}\label{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a05b58800e662769613ca6ff2502828c2} 
+Depth\+Prepass&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PostProcess@{PostProcess}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!PostProcess@{PostProcess}}}\Hypertarget{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a98fc75810211c3727af6e79b639514d8}\label{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a98fc75810211c3727af6e79b639514d8} 
+Post\+Process&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UI@{UI}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!UI@{UI}}}\Hypertarget{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a71ff71526d15db86eb50fcac245d183b}\label{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a71ff71526d15db86eb50fcac245d183b} 
+UI&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Unknown@{Unknown}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Unknown@{Unknown}}}\Hypertarget{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a88183b946cc5f0e8c96b2e66e1c74a7e}\label{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8a88183b946cc5f0e8c96b2e66e1c74a7e} 
+Unknown&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!RenderSystemDebugMode@{RenderSystemDebugMode}}
+\index{RenderSystemDebugMode@{RenderSystemDebugMode}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{RenderSystemDebugMode}{RenderSystemDebugMode}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440}{Void\+Architect\+::\+Renderer\+::\+Render\+System\+Debug\+Mode}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{None@{None}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!None@{None}}}\Hypertarget{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440a6adf97f83acf6453d4a6a4b1070f3754}\label{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440a6adf97f83acf6453d4a6a4b1070f3754} 
+None&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Lighting@{Lighting}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Lighting@{Lighting}}}\Hypertarget{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440a2e4b97fde8cf63085ec969fcc7e490c0}\label{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440a2e4b97fde8cf63085ec969fcc7e490c0} 
+Lighting&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Normals@{Normals}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Normals@{Normals}}}\Hypertarget{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440a4ab971a51f0335cbf8d9c2c65d379e99}\label{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440a4ab971a51f0335cbf8d9c2c65d379e99} 
+Normals&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!RenderTargetUsage@{RenderTargetUsage}}
+\index{RenderTargetUsage@{RenderTargetUsage}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{RenderTargetUsage}{RenderTargetUsage}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0}{Void\+Architect\+::\+Renderer\+::\+Render\+Target\+Usage}} \+: uint32\+\_\+t\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{None@{None}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!None@{None}}}\Hypertarget{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0a6adf97f83acf6453d4a6a4b1070f3754}\label{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0a6adf97f83acf6453d4a6a4b1070f3754} 
+None&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ColorAttachment@{ColorAttachment}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!ColorAttachment@{ColorAttachment}}}\Hypertarget{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0afddd0a8661f380ee89f529eff813b03d}\label{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0afddd0a8661f380ee89f529eff813b03d} 
+Color\+Attachment&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DepthStencilAttachment@{DepthStencilAttachment}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!DepthStencilAttachment@{DepthStencilAttachment}}}\Hypertarget{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0a652fd1408b3de263e32147770a48931e}\label{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0a652fd1408b3de263e32147770a48931e} 
+Depth\+Stencil\+Attachment&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RenderTexture@{RenderTexture}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!RenderTexture@{RenderTexture}}}\Hypertarget{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0a6ac5af02730d4c87bdc2257d00090333}\label{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0a6ac5af02730d4c87bdc2257d00090333} 
+Render\+Texture&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Storage@{Storage}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Storage@{Storage}}}\Hypertarget{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0a8c4aa541ee911e8d80451ef8cc304806}\label{namespace_void_architect_1_1_renderer_a76a486c4116cd2c2b0679282f8cd83e0a8c4aa541ee911e8d80451ef8cc304806} 
+Storage&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94d}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!ResourceBindingType@{ResourceBindingType}}
+\index{ResourceBindingType@{ResourceBindingType}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{ResourceBindingType}{ResourceBindingType}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94d} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94d}{Void\+Architect\+::\+Renderer\+::\+Resource\+Binding\+Type}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ConstantBuffer@{ConstantBuffer}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!ConstantBuffer@{ConstantBuffer}}}\Hypertarget{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94daf09d0dd3c08eeabc5b432609f31d0a8c}\label{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94daf09d0dd3c08eeabc5b432609f31d0a8c} 
+Constant\+Buffer&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Texture1D@{Texture1D}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Texture1D@{Texture1D}}}\Hypertarget{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94dadc7f989aa32631adaea4eb6a609b0de4}\label{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94dadc7f989aa32631adaea4eb6a609b0de4} 
+Texture1D&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Texture2D@{Texture2D}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Texture2D@{Texture2D}}}\Hypertarget{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94daa6e2bae752d3bf4e34cb392bca789995}\label{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94daa6e2bae752d3bf4e34cb392bca789995} 
+Texture2D&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Texture3D@{Texture3D}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Texture3D@{Texture3D}}}\Hypertarget{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da89c915587e16bcf8963be7cf41a0d9fd}\label{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da89c915587e16bcf8963be7cf41a0d9fd} 
+Texture3D&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TextureCube@{TextureCube}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!TextureCube@{TextureCube}}}\Hypertarget{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da0a152d9f3e1df14068c5857fb3352505}\label{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da0a152d9f3e1df14068c5857fb3352505} 
+Texture\+Cube&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Sampler@{Sampler}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Sampler@{Sampler}}}\Hypertarget{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da5bca2f066df1fe641b2b779db2a63c0a}\label{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da5bca2f066df1fe641b2b779db2a63c0a} 
+Sampler&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{StorageBuffer@{StorageBuffer}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!StorageBuffer@{StorageBuffer}}}\Hypertarget{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da439f57c2c466c89db942b3de48298b2b}\label{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da439f57c2c466c89db942b3de48298b2b} 
+Storage\+Buffer&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{StorageTexture@{StorageTexture}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!StorageTexture@{StorageTexture}}}\Hypertarget{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da92b182c3f00e8fc4a07b157ed553ab41}\label{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94da92b182c3f00e8fc4a07b157ed553ab41} 
+Storage\+Texture&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717da}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!StoreOp@{StoreOp}}
+\index{StoreOp@{StoreOp}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{StoreOp}{StoreOp}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717da} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717da}{Void\+Architect\+::\+Renderer\+::\+Store\+Op}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Store@{Store}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Store@{Store}}}\Hypertarget{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717daafdb0c388de01d545017cdf9ccf00eb72}\label{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717daafdb0c388de01d545017cdf9ccf00eb72} 
+Store&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DontCare@{DontCare}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!DontCare@{DontCare}}}\Hypertarget{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717daa60a3629ef6a8f991f45d7a85f2458544}\label{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717daa60a3629ef6a8f991f45d7a85f2458544} 
+Dont\+Care&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!TextureFormat@{TextureFormat}}
+\index{TextureFormat@{TextureFormat}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{TextureFormat}{TextureFormat}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Void\+Architect\+::\+Renderer\+::\+Texture\+Format}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RGBA8\_UNORM@{RGBA8\_UNORM}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!RGBA8\_UNORM@{RGBA8\_UNORM}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5a909cc8c5cc8fe4f16bec84a291aadbdb}\label{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5a909cc8c5cc8fe4f16bec84a291aadbdb} 
+RGBA8\+\_\+\+UNORM&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BGRA8\_UNORM@{BGRA8\_UNORM}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!BGRA8\_UNORM@{BGRA8\_UNORM}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5ac92b6e890fda6825792eea67e53c5b73}\label{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5ac92b6e890fda6825792eea67e53c5b73} 
+BGRA8\+\_\+\+UNORM&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RGBA8\_SRGB@{RGBA8\_SRGB}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!RGBA8\_SRGB@{RGBA8\_SRGB}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5ae5a76309919d3c679c642c13125eb930}\label{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5ae5a76309919d3c679c642c13125eb930} 
+RGBA8\+\_\+\+SRGB&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BGRA8\_SRGB@{BGRA8\_SRGB}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!BGRA8\_SRGB@{BGRA8\_SRGB}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5af4a701ac1b36032e705eb34a8283e7e8}\label{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5af4a701ac1b36032e705eb34a8283e7e8} 
+BGRA8\+\_\+\+SRGB&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{D32\_SFLOAT@{D32\_SFLOAT}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!D32\_SFLOAT@{D32\_SFLOAT}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5a23a4ce33815655871d103d3071d91072}\label{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5a23a4ce33815655871d103d3071d91072} 
+D32\+\_\+\+SFLOAT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{D24\_UNORM\_S8\_UINT@{D24\_UNORM\_S8\_UINT}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!D24\_UNORM\_S8\_UINT@{D24\_UNORM\_S8\_UINT}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5aa6dc4e4319b85984a4ab81ae89949f88}\label{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5aa6dc4e4319b85984a4ab81ae89949f88} 
+D24\+\_\+\+UNORM\+\_\+\+S8\+\_\+\+UINT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SWAPCHAIN\_FORMAT@{SWAPCHAIN\_FORMAT}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!SWAPCHAIN\_FORMAT@{SWAPCHAIN\_FORMAT}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5a2e925ee72558fb34b9f031d5327d7a0f}\label{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5a2e925ee72558fb34b9f031d5327d7a0f} 
+SWAPCHAIN\+\_\+\+FORMAT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SWAPCHAIN\_DEPTH@{SWAPCHAIN\_DEPTH}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!SWAPCHAIN\_DEPTH@{SWAPCHAIN\_DEPTH}}}\Hypertarget{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5aaa1fd18fe622a0223be390454559a814}\label{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5aaa1fd18fe622a0223be390454559a814} 
+SWAPCHAIN\+\_\+\+DEPTH&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cad}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!VertexFormat@{VertexFormat}}
+\index{VertexFormat@{VertexFormat}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{VertexFormat}{VertexFormat}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cad} 
+enum class \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cad}{Void\+Architect\+::\+Renderer\+::\+Vertex\+Format}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Position@{Position}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Position@{Position}}}\Hypertarget{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada52f5e0bc3859bc5f5e25130b6c7e8881}\label{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada52f5e0bc3859bc5f5e25130b6c7e8881} 
+Position&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PositionColor@{PositionColor}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!PositionColor@{PositionColor}}}\Hypertarget{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada701c91e0f3b59db5b0b7b8c85a4654de}\label{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada701c91e0f3b59db5b0b7b8c85a4654de} 
+Position\+Color&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PositionUV@{PositionUV}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!PositionUV@{PositionUV}}}\Hypertarget{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada3dcfb2f05273c5690c591a77258b0206}\label{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada3dcfb2f05273c5690c591a77258b0206} 
+Position\+UV&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PositionNormal@{PositionNormal}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!PositionNormal@{PositionNormal}}}\Hypertarget{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada55dbaff27dd527020dc9ba52bf7f0ab5}\label{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada55dbaff27dd527020dc9ba52bf7f0ab5} 
+Position\+Normal&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PositionNormalUV@{PositionNormalUV}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!PositionNormalUV@{PositionNormalUV}}}\Hypertarget{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cadabc88bb30d1476c11a7e12967340bd4cf}\label{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cadabc88bb30d1476c11a7e12967340bd4cf} 
+Position\+Normal\+UV&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PositionNormalUVTangent@{PositionNormalUVTangent}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!PositionNormalUVTangent@{PositionNormalUVTangent}}}\Hypertarget{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada79ff0818716262ece8c228de39898b59}\label{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada79ff0818716262ece8c228de39898b59} 
+Position\+Normal\+UVTangent&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Custom@{Custom}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!Custom@{Custom}}}\Hypertarget{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada90589c47f06eb971d548591f23c285af}\label{namespace_void_architect_1_1_renderer_ad7d46d61280dc3321621d595946d5cada90589c47f06eb971d548591f23c285af} 
+Custom&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\label{doc-func-members}
+\Hypertarget{namespace_void_architect_1_1_renderer_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{namespace_void_architect_1_1_renderer_a0e83dd5526e4d3712010f0fe2084b8b9}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!RenderPassTypeToString@{RenderPassTypeToString}}
+\index{RenderPassTypeToString@{RenderPassTypeToString}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{RenderPassTypeToString()}{RenderPassTypeToString()}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_a0e83dd5526e4d3712010f0fe2084b8b9} 
+const char \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Renderer\+::\+Render\+Pass\+Type\+To\+String (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{namespace_void_architect_1_1_renderer_af2aedb4e6c71af85b7dc379b160c34f8}{Render\+Pass\+Type}}}]{type}{}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 0
+\Hypertarget{namespace_void_architect_1_1_renderer_a609de8882c9f7013f401d4cd9c3a3c0d}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!ResourceBindingTypeFromString@{ResourceBindingTypeFromString}}
+\index{ResourceBindingTypeFromString@{ResourceBindingTypeFromString}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{ResourceBindingTypeFromString()}{ResourceBindingTypeFromString()}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_a609de8882c9f7013f401d4cd9c3a3c0d} 
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94d}{Void\+Architect\+::\+Renderer\+::\+Resource\+Binding\+Type}} Void\+Architect\+::\+Renderer\+::\+Resource\+Binding\+Type\+From\+String (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{str}{}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 1
+
+
+\label{doc-var-members}
+\Hypertarget{namespace_void_architect_1_1_renderer_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{namespace_void_architect_1_1_renderer_a919f2d8df5cf43e15e8cf5da8a39a422}\index{VoidArchitect::Renderer@{VoidArchitect::Renderer}!g\_RenderSystem@{g\_RenderSystem}}
+\index{g\_RenderSystem@{g\_RenderSystem}!VoidArchitect::Renderer@{VoidArchitect::Renderer}}
+\doxysubsubsection{\texorpdfstring{g\_RenderSystem}{g\_RenderSystem}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_renderer_a919f2d8df5cf43e15e8cf5da8a39a422} 
+std\+::unique\+\_\+ptr$<$\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_system}{Render\+System}}$>$ Void\+Architect\+::\+Renderer\+::g\+\_\+\+Render\+System\hspace{0.3cm}{\ttfamily [inline]}}
+

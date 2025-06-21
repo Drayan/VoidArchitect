@@ -1,0 +1,150 @@
+\doxysection{Void\+Architect\+::Math\+::Quat Class Reference}
+\hypertarget{class_void_architect_1_1_math_1_1_quat}{}\label{class_void_architect_1_1_math_1_1_quat}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+
+
+{\ttfamily \#include $<$Quat.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}{Quat}} ()
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a75b5d5b11e65ebabacbe482f864cffe8}{Quat}} (float x, float y, float z, float w)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a549ad450a033995293eb0a74de5a8afc}{Quat}} (const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Vec3}} \&axis, float angle)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a8a54023ef4373ee7ff1ebf1da2098787}{operator\texorpdfstring{$\ast$}{*}}} (const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} \&other) const
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} \& \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a67005f06a0f6e075ca5043bef82f734b}{operator\texorpdfstring{$\ast$}{*}=}} (const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} \&other)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Vec3}} \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a34686438ee48b38d5a2fb332b51d47f2}{To\+Euler}} () const
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Vec3}} \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_ab07a89f587c83cd267ec7e73ab0ff7a3}{Rotate\+Vector}} (const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Vec3}} \&vector) const
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a77ddb8827e6f414598898183965731ee}{Normalize}} () const
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Mat4}} \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a76cddec8b162e593aff5d4f5ef0c9689}{To\+Mat4}} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a485cf11356a0e4ca1e9ee12a7ade3725}{Identity}} ()
+\item 
+static \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a27bfb6b79f033e5b66c21257ced1b266}{From\+Euler}} (float x, float y, float z)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_ab22666e92ed99d4c504e684d717e98f1}{Mat4}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}!Quat@{Quat}}
+\index{Quat@{Quat}!VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+\doxysubsubsection{\texorpdfstring{Quat()}{Quat()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_math_1_1_quat_a1c73bacedbc2543152b295ad7fa820a0} 
+Void\+Architect\+::\+Math\+::\+Quat\+::\+Quat (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 0
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_a75b5d5b11e65ebabacbe482f864cffe8}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}!Quat@{Quat}}
+\index{Quat@{Quat}!VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+\doxysubsubsection{\texorpdfstring{Quat()}{Quat()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_math_1_1_quat_a75b5d5b11e65ebabacbe482f864cffe8} 
+Void\+Architect\+::\+Math\+::\+Quat\+::\+Quat (\begin{DoxyParamCaption}\item[{float}]{x}{, }\item[{float}]{y}{, }\item[{float}]{z}{, }\item[{float}]{w}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_a549ad450a033995293eb0a74de5a8afc}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}!Quat@{Quat}}
+\index{Quat@{Quat}!VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+\doxysubsubsection{\texorpdfstring{Quat()}{Quat()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_math_1_1_quat_a549ad450a033995293eb0a74de5a8afc} 
+Void\+Architect\+::\+Math\+::\+Quat\+::\+Quat (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Vec3}} \&}]{axis}{, }\item[{float}]{angle}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_a27bfb6b79f033e5b66c21257ced1b266}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}!FromEuler@{FromEuler}}
+\index{FromEuler@{FromEuler}!VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+\doxysubsubsection{\texorpdfstring{FromEuler()}{FromEuler()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_math_1_1_quat_a27bfb6b79f033e5b66c21257ced1b266} 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} Void\+Architect\+::\+Math\+::\+Quat\+::\+From\+Euler (\begin{DoxyParamCaption}\item[{float}]{x}{, }\item[{float}]{y}{, }\item[{float}]{z}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+% FIG 1
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_a485cf11356a0e4ca1e9ee12a7ade3725}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}!Identity@{Identity}}
+\index{Identity@{Identity}!VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+\doxysubsubsection{\texorpdfstring{Identity()}{Identity()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_math_1_1_quat_a485cf11356a0e4ca1e9ee12a7ade3725} 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} Void\+Architect\+::\+Math\+::\+Quat\+::\+Identity (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+% FIG 3
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_a77ddb8827e6f414598898183965731ee}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}!Normalize@{Normalize}}
+\index{Normalize@{Normalize}!VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+\doxysubsubsection{\texorpdfstring{Normalize()}{Normalize()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_math_1_1_quat_a77ddb8827e6f414598898183965731ee} 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} Void\+Architect\+::\+Math\+::\+Quat\+::\+Normalize (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+Here is the call graph for this function\+:
+% FIG 4
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_a8a54023ef4373ee7ff1ebf1da2098787}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}!operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}}
+\index{operator\texorpdfstring{$\ast$}{*}@{operator\texorpdfstring{$\ast$}{*}}!VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}()}{operator*()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_math_1_1_quat_a8a54023ef4373ee7ff1ebf1da2098787} 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} Void\+Architect\+::\+Math\+::\+Quat\+::operator\texorpdfstring{$\ast$}{*} (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} \&}]{other}{}\end{DoxyParamCaption}) const}
+
+Here is the call graph for this function\+:
+% FIG 5
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_a67005f06a0f6e075ca5043bef82f734b}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}!operator\texorpdfstring{$\ast$}{*}=@{operator\texorpdfstring{$\ast$}{*}=}}
+\index{operator\texorpdfstring{$\ast$}{*}=@{operator\texorpdfstring{$\ast$}{*}=}!VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+\doxysubsubsection{\texorpdfstring{operator\texorpdfstring{$\ast$}{*}=()}{operator*=()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_math_1_1_quat_a67005f06a0f6e075ca5043bef82f734b} 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} \& Void\+Architect\+::\+Math\+::\+Quat\+::operator\texorpdfstring{$\ast$}{*}= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Quat}} \&}]{other}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 6
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_ab07a89f587c83cd267ec7e73ab0ff7a3}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}!RotateVector@{RotateVector}}
+\index{RotateVector@{RotateVector}!VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+\doxysubsubsection{\texorpdfstring{RotateVector()}{RotateVector()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_math_1_1_quat_ab07a89f587c83cd267ec7e73ab0ff7a3} 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Vec3}} Void\+Architect\+::\+Math\+::\+Quat\+::\+Rotate\+Vector (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Vec3}} \&}]{vector}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_a34686438ee48b38d5a2fb332b51d47f2}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}!ToEuler@{ToEuler}}
+\index{ToEuler@{ToEuler}!VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+\doxysubsubsection{\texorpdfstring{ToEuler()}{ToEuler()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_math_1_1_quat_a34686438ee48b38d5a2fb332b51d47f2} 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Vec3}} Void\+Architect\+::\+Math\+::\+Quat\+::\+To\+Euler (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_a76cddec8b162e593aff5d4f5ef0c9689}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}!ToMat4@{ToMat4}}
+\index{ToMat4@{ToMat4}!VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+\doxysubsubsection{\texorpdfstring{ToMat4()}{ToMat4()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_math_1_1_quat_a76cddec8b162e593aff5d4f5ef0c9689} 
+\mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Mat4}} Void\+Architect\+::\+Math\+::\+Quat\+::\+To\+Mat4 (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+Here is the call graph for this function\+:
+% FIG 7
+Here is the caller graph for this function\+:
+% FIG 8
+
+
+\label{doc-related-members}
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_doc-related-members}
+\doxysubsection{Friends And Related Symbol Documentation}
+\Hypertarget{class_void_architect_1_1_math_1_1_quat_ab22666e92ed99d4c504e684d717e98f1}\index{VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}!Mat4@{Mat4}}
+\index{Mat4@{Mat4}!VoidArchitect::Math::Quat@{VoidArchitect::Math::Quat}}
+\doxysubsubsection{\texorpdfstring{Mat4}{Mat4}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_math_1_1_quat_ab22666e92ed99d4c504e684d717e98f1} 
+friend class \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Mat4}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Core/\+Math/\mbox{\hyperlink{_quat_8hpp}{Quat.\+hpp}}\item 
+engine/src/\+Core/\+Math/\mbox{\hyperlink{_quat_8cpp}{Quat.\+cpp}}\end{DoxyCompactItemize}

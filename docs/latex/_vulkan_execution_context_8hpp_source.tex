@@ -1,0 +1,147 @@
+\doxysection{Vulkan\+Execution\+Context.\+hpp}
+\hypertarget{_vulkan_execution_context_8hpp_source}{}\label{_vulkan_execution_context_8hpp_source}\index{engine/src/Platform/RHI/Vulkan/VulkanExecutionContext.hpp@{engine/src/Platform/RHI/Vulkan/VulkanExecutionContext.hpp}}
+\mbox{\hyperlink{_vulkan_execution_context_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 08/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <vulkan/vulkan.h>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vulkan_binding_group_manager_8hpp}{VulkanBindingGroupManager.hpp}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vulkan_command_buffer_8hpp}{VulkanCommandBuffer.hpp}}"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_material_8hpp}{Resources/Material.hpp}}"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_render_target_8hpp}{Resources/RenderTarget.hpp}}"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_render_pass_system_8hpp}{Systems/RenderPassSystem.hpp}}"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_render_state_system_8hpp}{Systems/RenderStateSystem.hpp}}"{}}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00016\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_resource_factory}{VulkanResourceFactory}};}
+\DoxyCodeLine{00018\ \}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00021\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{VulkanFramebufferCache}};}
+\DoxyCodeLine{00023\ \}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_resources}{VoidArchitect::Resources}}}
+\DoxyCodeLine{00026\ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_global_uniform_object}{GlobalUniformObject}};}
+\DoxyCodeLine{00028\ \}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain}{VulkanSwapchain}};}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{VulkanDevice}};}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence}{VulkanFence}};}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{VulkanBuffer}};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_af3222a33160673a7b6f8dcf03938ce9c}{VulkanExecutionContext}}}
+\DoxyCodeLine{00038\ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_af3222a33160673a7b6f8dcf03938ce9c}{VulkanExecutionContext}}(}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::unique\_ptr<VulkanDevice>\&\ device,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ VkAllocationCallbacks*\ allocator,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ width,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ height);}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_ab9a85116f0bb98beee2898474e7fd31d}{\string~VulkanExecutionContext}}();}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_af3ce6d0d3194667ae0ab1acdc245fec8}{BeginFrame}}(\textcolor{keywordtype}{float}\ deltaTime);}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a4e83a3fb49f0433ae6142a3c4e0ed08b}{EndFrame}}(\textcolor{keywordtype}{float}\ deltaTime);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a64e8a73307eb9a68d8e4e9ba45caa755}{BeginRenderPass}}(}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_a0a7e2042bd7abc0b743137291d70bd4e}{RenderPassHandle}}\ passHandle,}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VAArray<Resources::RenderTargetHandle>\&\ targetHandles);}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a1819f0dda82d7d810d5884c1ff3b7ad0}{EndRenderPass}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a95113228e845dbb3d0693ea0adda5eac}{UpdateGlobalState}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_global_uniform_object}{Resources::GlobalUniformObject}}\&\ gUBO)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_ab31b245c06abf7bd83f792be7e5a474d}{BindRenderState}}(\mbox{\hyperlink{namespace_void_architect_a10b206cefcde9a579f6f29ed09cbd690}{RenderStateHandle}}\ stateHandle);}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_ab4e612fcb730a5347ddb8b489d8cb5e1}{BindMaterialGroup}}(\mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}}\ materialHandle,\ \mbox{\hyperlink{namespace_void_architect_a10b206cefcde9a579f6f29ed09cbd690}{RenderStateHandle}}\ stateHandle);}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a61c23a049ce4eda814e9d466dc01cbec}{BindMesh}}(\mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ meshHandle);}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a5c75dd89835a6cd5b3d1bda68aab69a1}{PushConstants}}(\mbox{\hyperlink{namespace_void_architect_1_1_resources_ab2eac8b50f5500ec0b2cf9beef1f215b}{Resources::ShaderStage}}\ stage,\ uint32\_t\ size,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ data);}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_ab189443448fdc0428239d982955c37b9}{DrawIndexed}}(}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ indexCount,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ indexOffset\ =\ 0,}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ vertexOffset\ =\ 0,}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ instanceCount\ =\ 1,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ firstInstance\ =\ 0);}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a8f30915e222bc9a6129947b06457739a}{RequestResize}}(\textcolor{keyword}{const}\ uint32\_t\ width,\ \textcolor{keyword}{const}\ uint32\_t\ height);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{VulkanCommandBuffer}}\&\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a4443631e5f837f432a71a0e25f9ee0c6}{GetCurrentCommandBuffer}}()}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_GraphicsCommandBuffers[m\_ImageIndex];}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ [[nodiscard]]\ uint32\_t\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a487f3ba05ce9c7726c60f8f4da6a9a55}{GetImageIndex}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_ImageIndex;\ \}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a70654e196db7bdb28268393361536f4b}{Resources::RenderTargetHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a005b0392c09e7ad085666c16696b5dae}{GetCurrentColorRenderTargetHandle}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a70654e196db7bdb28268393361536f4b}{Resources::RenderTargetHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a0284fe6707fc046a16d8ea3a25096f49}{GetDepthRenderTargetHandle}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ VkFormat\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a5d2dc70b899abf8ff5e445777a02f952}{GetSwapchainFormat}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ VkFormat\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_ac329ddcc09b79325779a20645313d7b5}{GetDepthFormat}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ VkDescriptorSetLayout\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context_a67f5029e571b76ad3f4b79eddeaec1e8}{GetGlobalSetLayout}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_GlobalDescriptorSetLayout;\ \}}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ CreateSyncObjects();}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ CreateCommandBuffers();}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ CreateGlobalUBO();}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ HandleResize();}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ DestroySyncObjects();}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }AttachmentDescriptor}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ name;}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ VkFormat\ resolvedFormat;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isDepthAttachment;}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ configIndex;}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ VAArray<VkImageView>\ SortAttachmentsToMatchRenderPassOrder(}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_pass_config}{Renderer::RenderPassConfig}}\&\ config,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VAArray<Resources::RenderTargetHandle>\&\ targetHandles)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ VkFormat\ ResolveAttachmentFormat(\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Renderer::TextureFormat}}\ engineFormat)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ ValidateAttachmentCompatibility(}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ AttachmentDescriptor\&\ expected,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target}{Resources::IRenderTarget}}*\ renderTarget)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::unique\_ptr<VulkanDevice>\&\ m\_Device;}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ VkAllocationCallbacks*\ m\_Allocator;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ uint32\_t\ m\_ImageIndex\ =\ 0;}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ uint32\_t\ m\_CurrentIndex\ =\ 0;}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_RecreatingSwapchain\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ uint32\_t\ m\_CurrentWidth\ =\ 0;}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ uint32\_t\ m\_CurrentHeight\ =\ 0;}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ uint32\_t\ m\_PendingWidth\ =\ 0;}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ uint32\_t\ m\_PendingHeight\ =\ 0;}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ uint64\_t\ m\_ProcessedSizeGeneration\ =\ 0;}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ uint64\_t\ m\_RequestedSizeGeneration\ =\ 0;}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ std::unique\_ptr<VulkanSwapchain>\ m\_Swapchain;}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ VAArray<VkSemaphore>\ m\_ImageAvailableSemaphores;}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ VAArray<VkSemaphore>\ m\_QueueCompleteSemaphores;}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ VAArray<VulkanFence>\ m\_InFlightFences;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ VAArray<VulkanFence*>\ m\_ImagesInFlight;}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ VAArray<VulkanFence>\ m\_ImageAcquisitionFences;}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ VAArray<VulkanCommandBuffer>\ m\_GraphicsCommandBuffers;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ VkPipelineLayout\ m\_LastBoundPipelineLayout\ =\ VK\_NULL\_HANDLE;}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ VkDescriptorPool\ m\_GlobalDescriptorPool;}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ VkDescriptorSetLayout\ m\_GlobalDescriptorSetLayout;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ VkDescriptorSet*\ m\_GlobalDescriptorSets;}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ std::unique\_ptr<VulkanBuffer>\ m\_GlobalUniformBuffer;}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ std::unique\_ptr<VulkanFramebufferCache>\ m\_FramebufferCache;}
+\DoxyCodeLine{00138\ \ \ \ \ \};}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \textcolor{keyword}{inline}\ std::unique\_ptr<VulkanExecutionContext>\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a34dea548909416069eb28cc73fc9a15a}{g\_VkExecutionContext}};}
+\DoxyCodeLine{00141\ \}}
+
+\end{DoxyCode}

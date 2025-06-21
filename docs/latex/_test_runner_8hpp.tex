@@ -1,0 +1,95 @@
+\doxysection{tests/src/\+Core/\+Test\+Runner.hpp File Reference}
+\hypertarget{_test_runner_8hpp}{}\label{_test_runner_8hpp}\index{tests/src/Core/TestRunner.hpp@{tests/src/Core/TestRunner.hpp}}
+This graph shows which files directly or indirectly include this file\+:
+% FIG 0
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_result}{Void\+Architect\+::\+Testing\+::\+Test\+Result}}
+\begin{DoxyCompactList}\small\item\em Test execution result with timing and status information. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_run_summary}{Void\+Architect\+::\+Testing\+::\+Test\+Run\+Summary}}
+\begin{DoxyCompactList}\small\item\em Summary of test run results. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner}{Void\+Architect\+::\+Testing\+::\+Test\+Runner}}
+\begin{DoxyCompactList}\small\item\em Simple test runner for \doxylink{namespace_void_architect}{Void\+Architect} engine components. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespace_void_architect}{Void\+Architect}}
+\item 
+namespace \mbox{\hyperlink{namespace_void_architect_1_1_testing}{Void\+Architect\+::\+Testing}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{_test_runner_8hpp_ab43056375391b6b078d1937efc132a33}{VA\+\_\+\+REGISTER\+\_\+\+TEST}}(name,  func)
+\begin{DoxyCompactList}\small\item\em Macro to register a test function with the test runner. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{_test_runner_8hpp_ae5f97f04673b5c860ceceac30bed392c}{VA\+\_\+\+REGISTER\+\_\+\+TEST\+\_\+\+NAMED}}(name\+Str,  func)
+\begin{DoxyCompactList}\small\item\em Macro to register a test with custom test name string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{namespace_void_architect_1_1_testing_a6a7d9554eddbb42a25df59c164ce5557}{Void\+Architect\+::\+Testing\+::\+Test\+Function}} = std\+::function$<$bool()$>$
+\begin{DoxyCompactList}\small\item\em Test function signature. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\label{doc-define-members}
+\Hypertarget{_test_runner_8hpp_doc-define-members}
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{_test_runner_8hpp_ab43056375391b6b078d1937efc132a33}\index{TestRunner.hpp@{TestRunner.hpp}!VA\_REGISTER\_TEST@{VA\_REGISTER\_TEST}}
+\index{VA\_REGISTER\_TEST@{VA\_REGISTER\_TEST}!TestRunner.hpp@{TestRunner.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_REGISTER\_TEST}{VA\_REGISTER\_TEST}}
+{\footnotesize\ttfamily \label{_test_runner_8hpp_ab43056375391b6b078d1937efc132a33} 
+\#define VA\+\_\+\+REGISTER\+\_\+\+TEST(\begin{DoxyParamCaption}\item[{}]{name}{, }\item[{}]{func}{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ s\_\#\#name\#\#\_test\_registered\ =\ \(\backslash\)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ (\mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner_afe447b3f486a41621540956562af2bc4}{::VoidArchitect::Testing::TestRunner::RegisterTest}}(\#name,\ func),\ \textcolor{keyword}{true})}
+
+\end{DoxyCode}
+
+
+Macro to register a test function with the test runner. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Unique test name (will be stringified) \\
+\hline
+{\em func} & Function or lambda that returns bool (true = pass, false = fail)\\
+\hline
+\end{DoxyParams}
+This macro should be used at file scope to register tests. The test will be automatically discovered and included in test runs.
+
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{_test_runner_8hpp_ab43056375391b6b078d1937efc132a33}{VA\_REGISTER\_TEST}}(CollectionsBasics,\ []()}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ VAArray<int>\ arr;}
+\DoxyCodeLine{\ \ \ \ arr.push\_back(42);}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ arr.size()\ ==\ 1\ \&\&\ arr[0]\ ==\ 42;}
+\DoxyCodeLine{\});}
+
+\end{DoxyCode}
+ \Hypertarget{_test_runner_8hpp_ae5f97f04673b5c860ceceac30bed392c}\index{TestRunner.hpp@{TestRunner.hpp}!VA\_REGISTER\_TEST\_NAMED@{VA\_REGISTER\_TEST\_NAMED}}
+\index{VA\_REGISTER\_TEST\_NAMED@{VA\_REGISTER\_TEST\_NAMED}!TestRunner.hpp@{TestRunner.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_REGISTER\_TEST\_NAMED}{VA\_REGISTER\_TEST\_NAMED}}
+{\footnotesize\ttfamily \label{_test_runner_8hpp_ae5f97f04673b5c860ceceac30bed392c} 
+\#define VA\+\_\+\+REGISTER\+\_\+\+TEST\+\_\+\+NAMED(\begin{DoxyParamCaption}\item[{}]{name\+Str}{, }\item[{}]{func}{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ s\_test\_registered\_\#\#\_\_COUNTER\_\_\ =\ \(\backslash\)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ (\mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner_afe447b3f486a41621540956562af2bc4}{::VoidArchitect::Testing::TestRunner::RegisterTest}}(nameStr,\ func),\ \textcolor{keyword}{true})}
+
+\end{DoxyCode}
+
+
+Macro to register a test with custom test name string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name\+Str} & String literal for test name \\
+\hline
+{\em func} & Function or lambda that returns bool \\
+\hline
+\end{DoxyParams}

@@ -1,0 +1,113 @@
+\doxysection{Mesh\+System.\+hpp}
+\hypertarget{_mesh_system_8hpp_source}{}\label{_mesh_system_8hpp_source}\index{engine/src/Systems/MeshSystem.hpp@{engine/src/Systems/MeshSystem.hpp}}
+\mbox{\hyperlink{_mesh_system_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 01/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_mesh_8hpp}{Resources/Mesh.hpp}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_mesh_data_8hpp}{Resources/MeshData.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_sub_mesh_8hpp}{Resources/SubMesh.hpp}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_resources}{Resources}}}
+\DoxyCodeLine{00012\ \ \ \ \ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_mesh_vertex}{MeshVertex}};}
+\DoxyCodeLine{00014\ \ \ \ \ \}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_mesh_system_a19bcdc21eea1d37762439148e7bd326a}{MeshSystem}}}
+\DoxyCodeLine{00017\ \ \ \ \ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a19bcdc21eea1d37762439148e7bd326a}{MeshSystem}}();}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_abfe95af7992a5c4fa3bfa655787d40b5}{\string~MeshSystem}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a4646d4b29d409c564c9b741351e8ff10}{MeshSystem}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a19bcdc21eea1d37762439148e7bd326a}{MeshSystem}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a19bcdc21eea1d37762439148e7bd326a}{MeshSystem}}\&\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_ac8eea5019f3b801d420d1c4d41df7009}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a19bcdc21eea1d37762439148e7bd326a}{MeshSystem}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a2eea8a743de3613d76ffe3e19f3ada4c}{GetHandleFor}}(}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ name,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VAArray<Resources::MeshVertex>\&\ vertices\ =\ \{\},}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VAArray<uint32\_t>\&\ indices\ =\ \{\},}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VAArray<Resources::SubMeshDescriptor>\&\ submeshes\ =\ \{\});}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a1e5a0bb40509c11653ee08605aeced99}{LoadMesh}}(\textcolor{keyword}{const}\ std::string\&\ name);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a09c84c8e9e79a910e61697bea5b90a8f}{AddSubMeshTo}}(}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ handle,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ submeshName,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}}\ material,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VAArray<Resources::MeshVertex>\&\ vertices,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VAArray<uint32\_t>\&\ indices)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_abea7c90e154de834e7a19fca58607966}{RemoveSubMeshFrom}}(\mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ handle,\ uint32\_t\ submeshIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_aef49ca14aa5ad105dcd4420361d0ab15}{UpdateSubMeshMaterial}}(}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ handle,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ submeshIndex,}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}}\ material)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ [[nodiscard]]\ uint32\_t\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a1da0143af6b26a9a39703fe0bd6d4ffb}{GetIndexCountFor}}(\mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ handle)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ [[nodiscard]]\ uint32\_t\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a8f070256d6e8e0237f0054833c3eaeec}{GetSubMeshCountFor}}(\mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ handle)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ [[nodiscard]]\ \textcolor{keyword}{const}\ Resources::SubMeshDescriptor\&\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a58c88ba1bfb506ee96e085855e9d7941}{GetSubMesh}}(}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ handle,}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ submeshIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ [[nodiscard]]\ \mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a8e7f080dfb8aee4a93f04f27ddaa1ead}{GetSubMeshMaterial}}(}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ handle,}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ submeshIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{comment}{//==========================================================================================}}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Basic\ shape\ procedural\ generators}}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{comment}{//==========================================================================================}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a442b1697b6f0440b74584ddc1be39a90}{CreateSphere}}(}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ name,}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ radius\ =\ 0.5f,}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ latitudeBands\ =\ 8,}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ longitudeBands\ =\ 8);}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a789e0f9048d2845ae718bfe425778656}{CreateCube}}(}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ name,}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ material\ =\ \textcolor{stringliteral}{"{}DefaultMaterial"{}},}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ size\ =\ 1.0f);}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a01bb82af5fab7209d792d0ca7ee987b4}{CreateQuad}}(}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ name,}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ width\ =\ 1.0f,}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ height\ =\ 1.0f);}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a8710b6c5d7faf59b4a07865c431b76c6}{CreatePlane}}(}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ name,}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ width\ =\ 1.0f,}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ height\ =\ 1.0f,}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ Math::Vec3\&\ normal\ =\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3_affad2b928c3b39d684875df7cdc551d3}{Math::Vec3::Up}}(),}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ widthSegments\ =\ 1,}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ heightSegments\ =\ 1);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{comment}{//==========================================================================================}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Math\ helpers\ specialized\ for\ meshes}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{comment}{//==========================================================================================}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_a969743ce4650ef17433c670dd6f5c0c7}{GenerateNormals}}(}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ VAArray<Resources::MeshVertex>\&\ vertices,}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VAArray<uint32\_t>\&\ indices);}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_adc7f54ee53414a86701bf74e3e59e75e}{GenerateTangents}}(}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ VAArray<Resources::MeshVertex>\&\ vertices,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VAArray<uint32\_t>\&\ indices);}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ [[nodiscard]]\ Resources::IMesh*\ \mbox{\hyperlink{class_void_architect_1_1_mesh_system_acc30fc873bbd49e5619659c4d1e02c2f}{GetPointerFor}}(\mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ handle)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ uint32\_t\ GetFreeMeshHandle();}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Resources::IMesh*\ CreateMesh(}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ name,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ std::shared\_ptr<Resources::MeshData>\ data,}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VAArray<Resources::SubMeshDescriptor>\&\ submeshes);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ std::queue<Resources::MeshHandle>\ m\_FreeMeshHandles;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a7c84561e85a41878a9772501df846462}{Resources::MeshHandle}}\ m\_NextMeshHandle\ =\ 0;}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ VAArray<std::unique\_ptr<Resources::IMesh>>\ m\_Meshes;}
+\DoxyCodeLine{00104\ \ \ \ \ \};}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keyword}{inline}\ std::unique\_ptr<MeshSystem>\ \mbox{\hyperlink{namespace_void_architect_a1b1c8a72917d1337ac32a3c0deb39a49}{g\_MeshSystem}};}
+\DoxyCodeLine{00107\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect}}
+
+\end{DoxyCode}

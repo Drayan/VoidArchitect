@@ -1,0 +1,61 @@
+\doxysection{Vulkan\+Pipeline.\+hpp}
+\hypertarget{_vulkan_pipeline_8hpp_source}{}\label{_vulkan_pipeline_8hpp_source}\index{engine/src/Platform/RHI/Vulkan/VulkanPipeline.hpp@{engine/src/Platform/RHI/Vulkan/VulkanPipeline.hpp}}
+\mbox{\hyperlink{_vulkan_pipeline_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 18/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <vulkan/vulkan.h>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_render_state_8hpp}{Resources/RenderState.hpp}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_render_state_system_8hpp}{Systems/RenderStateSystem.hpp}}"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vulkan_command_buffer_8hpp}{VulkanCommandBuffer.hpp}}"{}}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_void_architect_1_1_render_state_config}{RenderStateConfig}};}
+\DoxyCodeLine{00015\ \}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00018\ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{VulkanDevice}};}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_pass}{VulkanRenderPass}};}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{VulkanCommandBuffer}};}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{VulkanShader}};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a6d0e99cd232ef761bc4cd3f47d4cea85}{VulkanPipeline}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state}{Resources::IRenderState}}}
+\DoxyCodeLine{00025\ \ \ \ \ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a6d0e99cd232ef761bc4cd3f47d4cea85}{VulkanPipeline}}(}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ name,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::unique\_ptr<VulkanDevice>\&\ device,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ VkAllocationCallbacks*\ allocator,}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ VkPipeline\ pipelineHandle,}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ VkPipelineLayout\ layoutHandle);}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a73f074e3611eaf98680590c86c16621e}{\string~VulkanPipeline}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ void\ Bind(const\ VulkanCommandBuffer\&\ cmdBuf,\ VkPipelineBindPoint\ bindPoint)\ const;}}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a0feab0868587a8ebc1ec87cf6842a5ab}{Bind}}(\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_i_rendering_hardware}{Platform::IRenderingHardware}}\&\ rhi)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ [[nodiscard]]\ VkPipelineLayout\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_pipeline_afb716a189a4ef6efa1cd33a44d959e89}{GetPipelineLayout}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_PipelineLayout;\ \}}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ VkPipeline\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a3dd9a297f068453a81dc8a6b4e3c6e69}{GetHandle}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Pipeline;\ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ VkFormat\ TranslateEngineAttributeFormatToVulkanFormat(}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287}{Renderer::AttributeType}}\ type,}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ac272c9b57e66b1f1999a115bb372893e}{Renderer::AttributeFormat}}\ format);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ uint32\_t\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a0117e138d5af79edca1b689075769e0a}{GetEngineAttributeSize}}(}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a770ba0e3f29391495e320ce8c2eba287}{Renderer::AttributeType}}\ type,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ac272c9b57e66b1f1999a115bb372893e}{Renderer::AttributeFormat}}\ format);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ VkDevice\ m\_Device;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ VkAllocationCallbacks*\ m\_Allocator;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ VkPipeline\ m\_Pipeline;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ VkPipelineLayout\ m\_PipelineLayout;}
+\DoxyCodeLine{00054\ \ \ \ \ \};}
+\DoxyCodeLine{00055\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect::Platform}}
+
+\end{DoxyCode}

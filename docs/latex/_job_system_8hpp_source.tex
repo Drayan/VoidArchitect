@@ -1,0 +1,136 @@
+\doxysection{Job\+System.\+hpp}
+\hypertarget{_job_system_8hpp_source}{}\label{_job_system_8hpp_source}\index{engine/src/Systems/Jobs/JobSystem.hpp@{engine/src/Systems/Jobs/JobSystem.hpp}}
+\mbox{\hyperlink{_job_system_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 20/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_job_scheduler_8hpp}{JobScheduler.hpp}}"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_jobs}{VoidArchitect::Jobs}}}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a795c02c5eedf2fefeffb3818ac8a95e1}{JobSystem}}}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Lifecycle\ Management\ ===}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a795c02c5eedf2fefeffb3818ac8a95e1}{JobSystem}}(uint32\_t\ workerCount\ =\ 0);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a0c981a0bdbd7c60bb10dab9301a7079f}{\string~JobSystem}}();}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Non-\/copyable\ and\ non-\/movable}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a4072096442656bb81f98005caef15a00}{JobSystem}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a795c02c5eedf2fefeffb3818ac8a95e1}{JobSystem}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a795c02c5eedf2fefeffb3818ac8a95e1}{JobSystem}}\&\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_af9d405770be28c8da63327a39dfb58b1}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a795c02c5eedf2fefeffb3818ac8a95e1}{JobSystem}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a2056616e86a06ebd06489e999c7e5fd0}{JobSystem}}(\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a795c02c5eedf2fefeffb3818ac8a95e1}{JobSystem}}\&\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a795c02c5eedf2fefeffb3818ac8a95e1}{JobSystem}}\&\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_ac42b15088476afbe5f4125299e422f9d}{operator=}}(\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a795c02c5eedf2fefeffb3818ac8a95e1}{JobSystem}}\&\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Backend\ API\ (Full\ Control)\ ===}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{SyncPointHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a8c595ad5a2b69f76955bf46364456f12}{CreateSyncPoint}}(uint32\_t\ initialCount,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{JobHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a60729ca864a5ca9e0941e50aac9af664}{Submit}}(}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{JobFunction}}\ job,}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{SyncPointHandle}}\ signalSP,}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52}{JobPriority}}\ priority,}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{JobHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a9a1b51cd3b86f41b098680afb3e7ba8a}{SubmitAfter}}(}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{SyncPointHandle}}\ dependency,}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{JobFunction}}\ job,}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{SyncPointHandle}}\ signalSP,}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52}{JobPriority}}\ priority,}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a8170698d1780a0602018edbc42d11514}{Signal}}(\mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{SyncPointHandle}}\ sp,\ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result}{JobResult}}\ result)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_aa0ec7de9919a340db7a8dd5d9a568150}{Cancel}}(\mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{SyncPointHandle}}\ sp,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ reason)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a5997837a9594314e46e30ad4971c3af9}{IsSignaled}}(\mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{SyncPointHandle}}\ sp)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c}{JobResult::Status}}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a797dd3a9bac5e5fa176ec67c43abc3b4}{GetSyncPointStatus}}(\mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{SyncPointHandle}}\ sp)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_aa1bf5df4af3e5b827a184fe500ce7015}{WaitFor}}(\mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{SyncPointHandle}}\ sp)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Frontend\ API\ ===}}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{JobHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a479b1fdc5fb1c35b6c24c0aea156c204}{SubmitJob}}(}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{JobFunction}}\ job,}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52}{JobPriority}}\ priority\ =\ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52a960b44c579bc2f6818d2daaf9e4c16f0}{JobPriority::Normal}})\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{JobHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a5e889f9ede4fecb230367279bf704a53}{SubmitJobAfter}}(}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{JobHandle}}\ dependency,}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{JobFunction}}\ job,}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52}{JobPriority}}\ priority\ =\ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52a960b44c579bc2f6818d2daaf9e4c16f0}{JobPriority::Normal}});}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a9d8f4c5326f0f19d934f4ad126d7025d}{WaitForJob}}(\mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{JobHandle}}\ handle);}
+\DoxyCodeLine{00171\ }
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a559d3a14372a4cb612132119a672aa13}{IsJobCompleted}}(\mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{JobHandle}}\ handle)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result}{JobResult}}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a103705afbfdf73f8281c879ef319cdec}{GetJobResult}}(\mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{JobHandle}}\ handle)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Batch\ operations\ ===}}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a47f733b535ca165335bb3529765337ad}{JobBatch}}}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a47f733b535ca165335bb3529765337ad}{JobBatch}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name);}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_ab52841ebf1fc850282a78524a22c941f}{\string~JobBatch}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Non-\/copyable\ but\ movable}}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_abd9176f1eb9cfecdfccc6d6d1ab388bc}{JobBatch}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a47f733b535ca165335bb3529765337ad}{JobBatch}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a47f733b535ca165335bb3529765337ad}{JobBatch}}\&\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a341151fd442c12e8d9997c4b728ace62}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a47f733b535ca165335bb3529765337ad}{JobBatch}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a9cc8b7d1ed109fef5091e96ab032d7f7}{JobBatch}}(\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a47f733b535ca165335bb3529765337ad}{JobBatch}}\&\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a47f733b535ca165335bb3529765337ad}{JobBatch}}\&\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_ae3cf2abc9fe5beafa0d97b3cc0407dc8}{operator=}}(\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a47f733b535ca165335bb3529765337ad}{JobBatch}}\&\&)\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a38c8bc2000659481f189047a0a7399a0}{AddJob}}(}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{JobFunction}}\ job,}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name,}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52}{JobPriority}}\ priority\ =\ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52a960b44c579bc2f6818d2daaf9e4c16f0}{JobPriority::Normal}});}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{SyncPointHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a4b75c2437c0ceee1e3c3ac1941597c08}{Submit}}();}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_aea119f756cceffb688e456fc6c9c61d4}{Cancel}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ reason\ =\ \textcolor{stringliteral}{"{}Batch\ cancelled"{}});}
+\DoxyCodeLine{00216\ }
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a860033ab6d57a6aed4a32de81097f656}{GetJobCount}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_PendingJobs.size();\ \}}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a1b8fd19575ccc53631e7a44e28083f4d}{IsSubmitted}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Submitted;\ \}}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }PendingJob}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{JobFunction}}\ function;}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name;}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52}{JobPriority}}\ priority;}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00233\ }
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ VAArray<PendingJob>\ m\_PendingJobs;}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{SyncPointHandle}}\ m\_BatchSyncPoint\{\mbox{\hyperlink{namespace_void_architect_1_1_jobs_a5b992b472700b1b0aa0c40ca95fc925d}{InvalidSyncPointHandle}}\};}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ m\_BatchName;}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_Submitted\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Statistics\ and\ Monitoring\ ===}}
+\DoxyCodeLine{00241\ }
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ JobSystemStats\&\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a9e3e1bce6f669e54c0b0dac0e85c00a9}{GetStats}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a6fdab0ed6d620d94db6eb5d5f156f988}{GetBackpressureLevel}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ std::array<size\_t,\ 4>\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_ad2792725d54faaaa3393faa2118167ef}{GetQueueLengths}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_ab2f4880168f2bddff4bdd9a2a5aa8caa}{IsRunning}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ std::unique\_ptr<JobScheduler>\ \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_a9e1e771f2b2c9fd1b87d77ddcd2982e5}{m\_Scheduler}};}
+\DoxyCodeLine{00260\ \ \ \ \ \};}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ \textcolor{comment}{//\ ===\ Global\ Instance\ Declaration\ ===}}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00265\ \ \ \ \ \textcolor{keyword}{extern}\ std::unique\_ptr<JobSystem>\ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_ae24d353830a8e09d71ac488e524d69c7}{g\_JobSystem}};}
+\DoxyCodeLine{00266\ \}}
+
+\end{DoxyCode}

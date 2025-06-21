@@ -1,0 +1,13 @@
+digraph "VoidArchitect::Resources::Loaders::VAMHeader::IsCompressed"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="RL";
+  Node1 [id="Node000001",label="VoidArchitect::Resources\l::Loaders::VAMHeader::IsCompressed",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [id="edge1_Node000001_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="VoidArchitect::Resources\l::Loaders::VAMLoader::LoadMesh\lFromVAM",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_loader.html#a37035a258a8ac80cdf50ae65c1abeb13",tooltip=" "];
+  Node2 -> Node3 [id="edge2_Node000002_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="VoidArchitect::Resources\l::Loaders::VAMLoader::Load",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_loader.html#a62f418e75bb0bf1f7f0979130de4a7ce",tooltip=" "];
+}

@@ -1,0 +1,38 @@
+\doxysection{Test\+Layer.\+hpp}
+\hypertarget{tests_2src_2_test_layer_8hpp_source}{}\label{tests_2src_2_test_layer_8hpp_source}\index{tests/src/TestLayer.hpp@{tests/src/TestLayer.hpp}}
+\mbox{\hyperlink{tests_2src_2_test_layer_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 17/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{_layer_8hpp}{Core/Layer.hpp}}>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_testing}{VoidArchitect::Testing}}}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a45e44f6d86008e63635200a09a64eebe}{TestLayer}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_void_architect_1_1_layer}{VoidArchitect::Layer}}}
+\DoxyCodeLine{00017\ \ \ \ \ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a45e44f6d86008e63635200a09a64eebe}{TestLayer}}();}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a1786f78df1f48faa4937ad018afe0f4c}{\string~TestLayer}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a4a81e05d081e67f252a8807792a6635a}{OnFixedUpdate}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ fixedTimestep)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_aa6a8d735089b98137e395b7dcb79b27b}{OnAttach}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a8d03531568a8c37a95da1305fefce0c4}{OnDetach}}()\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a37392dfb6dca1f04d4e7b7ead5b35ced}{TestsCompleted}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_TestsExecuted;\ \}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_ae075c20b035166c1cc4b8a150e67bccd}{TestsPassed}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_TestsPassed;\ \}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_TestsExecuted\{\textcolor{keyword}{false}\};\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_TestsPassed\{\textcolor{keyword}{false}\};\ }
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ ExecuteTests();}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ RequestShutdown();}
+\DoxyCodeLine{00043\ \ \ \ \ \};}
+\DoxyCodeLine{00044\ \}}
+
+\end{DoxyCode}

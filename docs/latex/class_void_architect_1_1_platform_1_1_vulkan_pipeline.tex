@@ -1,0 +1,101 @@
+\doxysection{Void\+Architect\+::Platform\+::Vulkan\+Pipeline Class Reference}
+\hypertarget{class_void_architect_1_1_platform_1_1_vulkan_pipeline}{}\label{class_void_architect_1_1_platform_1_1_vulkan_pipeline}\index{VoidArchitect::Platform::VulkanPipeline@{VoidArchitect::Platform::VulkanPipeline}}
+
+
+{\ttfamily \#include $<$Vulkan\+Pipeline.\+hpp$>$}
+
+
+
+Inheritance diagram for Void\+Architect\+::Platform\+::Vulkan\+Pipeline\+:
+% FIG 0
+
+
+Collaboration diagram for Void\+Architect\+::Platform\+::Vulkan\+Pipeline\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a6d0e99cd232ef761bc4cd3f47d4cea85}{Vulkan\+Pipeline}} (const std\+::string \&name, const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&device, Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}allocator, Vk\+Pipeline pipeline\+Handle, Vk\+Pipeline\+Layout layout\+Handle)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a73f074e3611eaf98680590c86c16621e}{\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Pipeline}} () override
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a0feab0868587a8ebc1ec87cf6842a5ab}{Bind}} (\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_i_rendering_hardware}{Platform\+::\+IRendering\+Hardware}} \&rhi) override
+\item 
+Vk\+Pipeline\+Layout \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_pipeline_afb716a189a4ef6efa1cd33a44d959e89}{Get\+Pipeline\+Layout}} () const
+\item 
+Vk\+Pipeline \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a3dd9a297f068453a81dc8a6b4e3c6e69}{Get\+Handle}} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state}{Void\+Architect\+::\+Resources\+::\+IRender\+State}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state_a4e3959c7343dab21e6cbb2abf9c2dde0}{\texorpdfstring{$\sim$}{\string~}\+IRender\+State}} ()=default
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state_ae113a39baffd88710bdaef62a93da064}{Get\+Name}} () const
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_u_u_i_d}{UUID}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state_a5341661c1a5841335090a3dfa4cabfea}{Get\+UUID}} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state}{Void\+Architect\+::\+Resources\+::\+IRender\+State}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state_aee85b12fce0cae60951cf8c02c934365}{IRender\+State}} (const std\+::string \&name)
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state}{Void\+Architect\+::\+Resources\+::\+IRender\+State}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_u_u_i_d}{UUID}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state_ab0a22b6fd6d71d6773f0639bffad4032}{m\+\_\+\+UUID}}
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state_a652ff1ca454c7bb1f341dfb33ae0778b}{m\+\_\+\+Name}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_pipeline_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a6d0e99cd232ef761bc4cd3f47d4cea85}\index{VoidArchitect::Platform::VulkanPipeline@{VoidArchitect::Platform::VulkanPipeline}!VulkanPipeline@{VulkanPipeline}}
+\index{VulkanPipeline@{VulkanPipeline}!VoidArchitect::Platform::VulkanPipeline@{VoidArchitect::Platform::VulkanPipeline}}
+\doxysubsubsection{\texorpdfstring{VulkanPipeline()}{VulkanPipeline()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a6d0e99cd232ef761bc4cd3f47d4cea85} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Pipeline\+::\+Vulkan\+Pipeline (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{, }\item[{const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&}]{device}{, }\item[{Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}}]{allocator}{, }\item[{Vk\+Pipeline}]{pipeline\+Handle}{, }\item[{Vk\+Pipeline\+Layout}]{layout\+Handle}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a73f074e3611eaf98680590c86c16621e}\index{VoidArchitect::Platform::VulkanPipeline@{VoidArchitect::Platform::VulkanPipeline}!````~VulkanPipeline@{\texorpdfstring{$\sim$}{\string~}VulkanPipeline}}
+\index{````~VulkanPipeline@{\texorpdfstring{$\sim$}{\string~}VulkanPipeline}!VoidArchitect::Platform::VulkanPipeline@{VoidArchitect::Platform::VulkanPipeline}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}VulkanPipeline()}{\string~VulkanPipeline()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a73f074e3611eaf98680590c86c16621e} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Pipeline\+::\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Pipeline (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_pipeline_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a0feab0868587a8ebc1ec87cf6842a5ab}\index{VoidArchitect::Platform::VulkanPipeline@{VoidArchitect::Platform::VulkanPipeline}!Bind@{Bind}}
+\index{Bind@{Bind}!VoidArchitect::Platform::VulkanPipeline@{VoidArchitect::Platform::VulkanPipeline}}
+\doxysubsubsection{\texorpdfstring{Bind()}{Bind()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a0feab0868587a8ebc1ec87cf6842a5ab} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Pipeline\+::\+Bind (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_i_rendering_hardware}{Platform\+::\+IRendering\+Hardware}} \&}]{rhi}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state_a86cbdf34b4e1c52e5e35cada3b1d1f22}{Void\+Architect\+::\+Resources\+::\+IRender\+State}}.
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a3dd9a297f068453a81dc8a6b4e3c6e69}\index{VoidArchitect::Platform::VulkanPipeline@{VoidArchitect::Platform::VulkanPipeline}!GetHandle@{GetHandle}}
+\index{GetHandle@{GetHandle}!VoidArchitect::Platform::VulkanPipeline@{VoidArchitect::Platform::VulkanPipeline}}
+\doxysubsubsection{\texorpdfstring{GetHandle()}{GetHandle()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_pipeline_a3dd9a297f068453a81dc8a6b4e3c6e69} 
+Vk\+Pipeline Void\+Architect\+::\+Platform\+::\+Vulkan\+Pipeline\+::\+Get\+Handle (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_pipeline_afb716a189a4ef6efa1cd33a44d959e89}\index{VoidArchitect::Platform::VulkanPipeline@{VoidArchitect::Platform::VulkanPipeline}!GetPipelineLayout@{GetPipelineLayout}}
+\index{GetPipelineLayout@{GetPipelineLayout}!VoidArchitect::Platform::VulkanPipeline@{VoidArchitect::Platform::VulkanPipeline}}
+\doxysubsubsection{\texorpdfstring{GetPipelineLayout()}{GetPipelineLayout()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_pipeline_afb716a189a4ef6efa1cd33a44d959e89} 
+Vk\+Pipeline\+Layout Void\+Architect\+::\+Platform\+::\+Vulkan\+Pipeline\+::\+Get\+Pipeline\+Layout (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_pipeline_8hpp}{Vulkan\+Pipeline.\+hpp}}\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_pipeline_8cpp}{Vulkan\+Pipeline.\+cpp}}\end{DoxyCompactItemize}

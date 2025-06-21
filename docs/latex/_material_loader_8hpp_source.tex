@@ -1,0 +1,48 @@
+\doxysection{Material\+Loader.\+hpp}
+\hypertarget{_material_loader_8hpp_source}{}\label{_material_loader_8hpp_source}\index{engine/src/Resources/Loaders/MaterialLoader.hpp@{engine/src/Resources/Loaders/MaterialLoader.hpp}}
+\mbox{\hyperlink{_material_loader_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 01/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_loader_8hpp}{Loader.hpp}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_resource_definition_8hpp}{ResourceDefinition.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_material_system_8hpp}{Systems/MaterialSystem.hpp}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_resources}{Resources}}}
+\DoxyCodeLine{00012\ \ \ \ \ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_resources_1_1_loaders}{Loaders}}}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }MaterialDataDefinition\ final\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_i_resource_definition}{IResourceDefinition}}}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_material_data_definition_a306716082a75f363301a92a61da5ca98}{MaterialLoader}};}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_material_data_definition_ad4b93529b6ebaf75f42a3e68a39502ef}{\string~MaterialDataDefinition}}()\ \textcolor{keyword}{override}\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_material_template}{MaterialTemplate}}\&\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_material_data_definition_a10f2c4f21cf0bd59fb1b0b5b0029868e}{GetConfig}}()\ \{\ \textcolor{keywordflow}{return}\ m\_MaterialConfig;\ \}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_material_data_definition}{MaterialDataDefinition}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_void_architect_1_1_material_template}{MaterialTemplate}}\&\ config);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_material_template}{MaterialTemplate}}\ m\_MaterialConfig;}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_void_architect_1_1_resources_1_1_loaders_ac0f549f5e6a2d3ff377b75b205c60bdd}{MaterialDataDefinitionPtr}}\ =\ std::shared\_ptr<MaterialDataDefinition>;}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_material_loader_a2066594312213d2b63706eefc70299d1}{MaterialLoader}}\ final\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_a6f6ba96fc7734bb100275e849eb2bd62}{ILoader}}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_material_loader_a2066594312213d2b63706eefc70299d1}{MaterialLoader}}(\textcolor{keyword}{const}\ std::string\&\ baseAssetPath);}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_material_loader_a8627cb1a2f00f90ecbc5ea77209528d2}{\string~MaterialLoader}}()\ \textcolor{keyword}{override}\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::shared\_ptr<IResourceDefinition>\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_material_loader_a4eafd31116616a925df18e762be3ca01}{Load}}(\textcolor{keyword}{const}\ std::string\&\ name)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \}\ \textcolor{comment}{//\ namespace\ Loaders}}
+\DoxyCodeLine{00041\ \ \ \ \ \}\ \textcolor{comment}{//\ namespace\ Resources}}
+\DoxyCodeLine{00042\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect}}
+
+\end{DoxyCode}

@@ -1,0 +1,54 @@
+\doxysection{Vulkan\+Material.\+hpp}
+\hypertarget{_vulkan_material_8hpp_source}{}\label{_vulkan_material_8hpp_source}\index{engine/src/Platform/RHI/Vulkan/VulkanMaterial.hpp@{engine/src/Platform/RHI/Vulkan/VulkanMaterial.hpp}}
+\mbox{\hyperlink{_vulkan_material_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 20/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_material_8hpp}{Resources/Material.hpp}}"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <vulkan/vulkan.h>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_material_system_8hpp}{Systems/MaterialSystem.hpp}}"{}}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_r_h_i}{VulkanRHI}};}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{VulkanShader}};}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{VulkanDevice}};}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain}{VulkanSwapchain}};}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_pass}{VulkanRenderPass}};}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_pipeline}{VulkanPipeline}};}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{VulkanBuffer}};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_material_ac86d94e657453dba141c51c0083a0f6f}{VulkanMaterial}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material}{Resources::IMaterial}}}
+\DoxyCodeLine{00023\ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_material_ac86d94e657453dba141c51c0083a0f6f}{VulkanMaterial}}(}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\&\ name,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_void_architect_1_1_material_template}{MaterialTemplate}}\&\ config);}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_material_abf285f544a46df565fac195a332489c7}{\string~VulkanMaterial}}()\ \textcolor{keyword}{override}\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_material_a469a905be3287bd086e20f01b7e788a4}{SetDiffuseColor}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec4}{Math::Vec4}}\&\ color)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_material_aa6b993140ece2373a4b831064d344ceb}{SetTexture}}(\mbox{\hyperlink{namespace_void_architect_1_1_resources_a0263236753eb0716db01d7a5a0f9ae98}{Resources::TextureUse}}\ use,\ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a8c9721a4a6e450038e8583515af75b2d}{Resources::TextureHandle}}\ texture)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_void_architect_1_1_material_template}{MaterialTemplate}}\&\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_material_a5850f5d8f30267912fff51d92896ae1d}{GetTemplate}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Template;\ \}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_material_uniform_object}{Resources::MaterialUniformObject}}\&\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_material_a5265a50ffa1f0151b86a62cc3d298c56}{GetUniformData}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_UniformData;\ \}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a8c9721a4a6e450038e8583515af75b2d}{Resources::TextureHandle}}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_material_a4d53322c560667dba5fcc6c856acc8e8}{GetTexture}}(\mbox{\hyperlink{namespace_void_architect_1_1_resources_a0263236753eb0716db01d7a5a0f9ae98}{Resources::TextureUse}}\ use)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_material_a0e4094cb742529df1e88a48d5d628053}{IsDirty}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_IsDirty;\ \}}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_material_a53bc9e241a102f30998b321f1695a02c}{ClearDirtyFlag}}()\ \{\ m\_IsDirty\ =\ \textcolor{keyword}{false};\ \}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_material_template}{MaterialTemplate}}\ m\_Template;}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_material_uniform_object}{Resources::MaterialUniformObject}}\ m\_UniformData;}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{comment}{//TODO:\ Replace\ this\ with\ handle\ when\ TextureSystem\ is\ refactored}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ VAHashMap<Resources::TextureUse,\ Resources::TextureHandle>\ m\_Textures;}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_IsDirty\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00047\ \ \ \ \ \};}
+\DoxyCodeLine{00048\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect::Platform}}
+
+\end{DoxyCode}

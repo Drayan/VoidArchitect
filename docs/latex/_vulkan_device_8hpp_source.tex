@@ -1,0 +1,130 @@
+\doxysection{Vulkan\+Device.\+hpp}
+\hypertarget{_vulkan_device_8hpp_source}{}\label{_vulkan_device_8hpp_source}\index{engine/src/Platform/RHI/Vulkan/VulkanDevice.hpp@{engine/src/Platform/RHI/Vulkan/VulkanDevice.hpp}}
+\mbox{\hyperlink{_vulkan_device_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 16/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <vulkan/vulkan.h>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00008\ \{}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_window}{Window}};}
+\DoxyCodeLine{00010\ \}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_device_requirements}{DeviceRequirements}}}
+\DoxyCodeLine{00015\ \ \ \ \ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_device_requirements_a3ee96f81d2a828edb27adfcdeaa26d59}{DedicatedGPU}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ VAArray<const\ char*>\ \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_device_requirements_aa5f3a131e523181e2be9b54f0fd710e8}{Extensions}};}
+\DoxyCodeLine{00018\ \ \ \ \ \};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_a39927031f49f87e5d27057ee4a406058}{VulkanDevice}}}
+\DoxyCodeLine{00021\ \ \ \ \ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_a39927031f49f87e5d27057ee4a406058}{VulkanDevice}}(}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ VkAllocationCallbacks*\ allocator,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::unique\_ptr<Window>\&\ window,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_device_requirements}{DeviceRequirements}}\&\ requirements);}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_afdf46b340211e5831e2e2c94a7b51767}{\string~VulkanDevice}}();}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_aead470721fb6024e5241265d30329ad1}{WaitIdle}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ int32\_t\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_a6e7b3856cd54f3759b84a189d3d1a9fd}{FindMemoryIndex}}(uint32\_t\ typeFilter,\ uint32\_t\ propertyFlags)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ [[nodiscard]]\ VkDevice\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_a69032ccc5e8f3145643358b9f0e704a0}{GetLogicalDeviceHandle}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_LogicalDevice;\ \}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ [[nodiscard]]\ VkPhysicalDevice\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_aaf9b8f697223ffae0e015b173b568532}{GetPhysicalDeviceHandle}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_PhysicalDevice;\ \}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ VkSurfaceKHR\&\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_aa2702384a9d3d2821e36198e059013d1}{GetRefSurface}}()\ \{\ \textcolor{keywordflow}{return}\ m\_Surface;\ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ [[nodiscard]]\ std::optional<uint32\_t>\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_a9b0746da8beee7b8ce44636dec1065ef}{GetGraphicsFamily}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00038\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_GraphicsQueueFamilyIndex;}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ [[nodiscard]]\ std::optional<uint32\_t>\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_a7d7150b1f82b63a1875211af0bdce9e6}{GetPresentFamily}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00043\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_PresentQueueFamilyIndex;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ [[nodiscard]]\ std::optional<uint32\_t>\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_ace26ec749927ac7523ff881e8524044f}{GetTransferFamily}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00048\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_TransferQueueFamilyIndex;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ [[nodiscard]]\ std::optional<uint32\_t>\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_a0c22acf52c6285285c833648236e7fc4}{GetComputeFamily}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00053\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_ComputeQueueFamilyIndex;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ VkCommandPool\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_adfc7a3d2f65c88f729faa1b056e744f6}{GetGraphicsCommandPool}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_GraphicsCommandPool;\ \}}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ VkCommandPool\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_aab2b52042a42f35f3ddb9a9c2ac1ea20}{GetTransferCommandPool}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_TransferCommandPool;\ \}}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ VkCommandPool\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_ac05d21efca1de7b751719c67ffc6df11}{GetComputeCommandPool}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_ComputeCommandPool;\ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ VkQueue\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_abfd0d0073ccd44b0926247a36471c283}{GetGraphicsQueueHandle}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_GraphicsQueue;\ \}}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ VkQueue\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_a2d53adf09834af0d37dbd07a1f612676}{GetPresentQueueHandle}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_PresentQueue;\ \}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ VkQueue\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_a0a990f2a7feeaaab05636a7c52e38675}{GetTransferQueueHandle}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_TransferQueue;\ \}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ VkQueue\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_aec0db794d6fe23219f72cc5be948a6ed}{GetComputeQueueHandle}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_ComputeQueue;\ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ VkPhysicalDeviceProperties\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_a78fff0ba0e04b2a1589f6bd3efee8498}{GetProperties}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_PhysicalDeviceProperties;\ \}}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ VkPhysicalDeviceFeatures\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_a5c7ec731413e19ca995dba61b55f3d69}{GetFeatures}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_PhysicalDeviceFeatures;\ \}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ VkPhysicalDeviceMemoryProperties\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device_af080340693e4e07a5d097c526f8c6444}{GetMemoryProperties}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00070\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_PhysicalDeviceMemoryProperties;}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ CreateInstance();}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#ifdef\ DEBUG}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ CreateDebugMessenger();}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ DestroyDebugMessenger()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ AddDebugExtensions(}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ \textcolor{keyword}{const}*\ \textcolor{keyword}{const}*\&\ extensions,}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\&\ extensionCount);}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ CleaningDebugExtensionsArray(}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ \textcolor{keyword}{const}*\ \textcolor{keyword}{const}*\&\ extensions,}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ extensionCount);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ VkDebugUtilsMessengerEXT\ m\_DebugMessenger;}
+\DoxyCodeLine{00087\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ SelectPhysicalDevice(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_device_requirements}{DeviceRequirements}}\&\ requirements);}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ IsDeviceMeetRequirements(}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VkPhysicalDevice\&\ device,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_device_requirements}{DeviceRequirements}}\&\ requirements);}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ CreateLogicalDevice(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_device_requirements}{DeviceRequirements}}\&\ requirements);}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ DestroyLogicalDevice();}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ FindQueueFamilies();}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ VkInstance\ m\_Instance;}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ VkAllocationCallbacks*\ m\_Allocator;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ VkPhysicalDevice\ m\_PhysicalDevice;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ VkDevice\ m\_LogicalDevice;}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ VkSurfaceKHR\ m\_Surface;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/\ Physical\ device\ properties\ -\/-\/-\/}}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ VkPhysicalDeviceProperties\ m\_PhysicalDeviceProperties;}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ VkPhysicalDeviceFeatures\ m\_PhysicalDeviceFeatures;}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ VkPhysicalDeviceMemoryProperties\ m\_PhysicalDeviceMemoryProperties;}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ std::optional<uint32\_t>\ m\_GraphicsQueueFamilyIndex;}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ std::optional<uint32\_t>\ m\_PresentQueueFamilyIndex;}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ std::optional<uint32\_t>\ m\_TransferQueueFamilyIndex;}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ std::optional<uint32\_t>\ m\_ComputeQueueFamilyIndex;}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ VkQueue\ m\_GraphicsQueue;}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ VkQueue\ m\_PresentQueue;}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ VkQueue\ m\_TransferQueue;}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ VkQueue\ m\_ComputeQueue;}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ VkCommandPool\ m\_GraphicsCommandPool;}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ VkCommandPool\ m\_TransferCommandPool;}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ VkCommandPool\ m\_ComputeCommandPool;}
+\DoxyCodeLine{00123\ \ \ \ \ \};}
+\DoxyCodeLine{00124\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect::Platform}}
+
+\end{DoxyCode}

@@ -1,0 +1,116 @@
+\doxysection{engine/src/\+Core/\+Collections/\+Tests.cpp File Reference}
+\hypertarget{_tests_8cpp}{}\label{_tests_8cpp}\index{engine/src/Core/Collections/Tests.cpp@{engine/src/Core/Collections/Tests.cpp}}
+{\ttfamily \#include "{}Fixed\+Storage.\+hpp"{}}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$thread$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+Include dependency graph for Tests.\+cpp\+:
+% FIG 0
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_test_object}{Test\+Object}}
+\begin{DoxyCompactList}\small\item\em Simple test struct for storage validation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{_tests_8cpp_a3b37debd5d1b3db3bf6fd537398b310f}{Test\+Basic\+Operations}} ()
+\begin{DoxyCompactList}\small\item\em Test basic allocation and access. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{_tests_8cpp_af3d3ae72d181366ff0cca7dc27106d7f}{Test\+Handle\+Generation}} ()
+\begin{DoxyCompactList}\small\item\em Test handle generation and ABA prevention. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{_tests_8cpp_a82a2fbc0598de9a6ca78f276c49e8d24}{Test\+Multiple\+Slots}} ()
+\begin{DoxyCompactList}\small\item\em Test multiple slot allocation and generation tracking. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{_tests_8cpp_ac03aec7c41cf6ac2237ffe28a14935dc}{Test\+Capacity\+Limits}} ()
+\begin{DoxyCompactList}\small\item\em Test capacity limits. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{_tests_8cpp_ae1041a05860256d48f5056e22e14cc95}{Test\+Thread\+Safety}} ()
+\begin{DoxyCompactList}\small\item\em Test thread safety with concurrent allocations. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{_tests_8cpp_ae0ca194f6b730e168850ce3179ad4f63}{Run\+All\+Tests}} ()
+\begin{DoxyCompactList}\small\item\em Run all validation tests. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{_tests_8cpp_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{_tests_8cpp_ae0ca194f6b730e168850ce3179ad4f63}\index{Tests.cpp@{Tests.cpp}!RunAllTests@{RunAllTests}}
+\index{RunAllTests@{RunAllTests}!Tests.cpp@{Tests.cpp}}
+\doxysubsubsection{\texorpdfstring{RunAllTests()}{RunAllTests()}}
+{\footnotesize\ttfamily \label{_tests_8cpp_ae0ca194f6b730e168850ce3179ad4f63} 
+int Run\+All\+Tests (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Run all validation tests. 
+
+Here is the call graph for this function\+:
+% FIG 1
+\Hypertarget{_tests_8cpp_a3b37debd5d1b3db3bf6fd537398b310f}\index{Tests.cpp@{Tests.cpp}!TestBasicOperations@{TestBasicOperations}}
+\index{TestBasicOperations@{TestBasicOperations}!Tests.cpp@{Tests.cpp}}
+\doxysubsubsection{\texorpdfstring{TestBasicOperations()}{TestBasicOperations()}}
+{\footnotesize\ttfamily \label{_tests_8cpp_a3b37debd5d1b3db3bf6fd537398b310f} 
+bool Test\+Basic\+Operations (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Test basic allocation and access. 
+
+Here is the call graph for this function\+:
+% FIG 2
+Here is the caller graph for this function\+:
+% FIG 3
+\Hypertarget{_tests_8cpp_ac03aec7c41cf6ac2237ffe28a14935dc}\index{Tests.cpp@{Tests.cpp}!TestCapacityLimits@{TestCapacityLimits}}
+\index{TestCapacityLimits@{TestCapacityLimits}!Tests.cpp@{Tests.cpp}}
+\doxysubsubsection{\texorpdfstring{TestCapacityLimits()}{TestCapacityLimits()}}
+{\footnotesize\ttfamily \label{_tests_8cpp_ac03aec7c41cf6ac2237ffe28a14935dc} 
+bool Test\+Capacity\+Limits (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Test capacity limits. 
+
+Here is the call graph for this function\+:
+% FIG 4
+Here is the caller graph for this function\+:
+% FIG 5
+\Hypertarget{_tests_8cpp_af3d3ae72d181366ff0cca7dc27106d7f}\index{Tests.cpp@{Tests.cpp}!TestHandleGeneration@{TestHandleGeneration}}
+\index{TestHandleGeneration@{TestHandleGeneration}!Tests.cpp@{Tests.cpp}}
+\doxysubsubsection{\texorpdfstring{TestHandleGeneration()}{TestHandleGeneration()}}
+{\footnotesize\ttfamily \label{_tests_8cpp_af3d3ae72d181366ff0cca7dc27106d7f} 
+bool Test\+Handle\+Generation (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Test handle generation and ABA prevention. 
+
+Here is the call graph for this function\+:
+% FIG 6
+Here is the caller graph for this function\+:
+% FIG 7
+\Hypertarget{_tests_8cpp_a82a2fbc0598de9a6ca78f276c49e8d24}\index{Tests.cpp@{Tests.cpp}!TestMultipleSlots@{TestMultipleSlots}}
+\index{TestMultipleSlots@{TestMultipleSlots}!Tests.cpp@{Tests.cpp}}
+\doxysubsubsection{\texorpdfstring{TestMultipleSlots()}{TestMultipleSlots()}}
+{\footnotesize\ttfamily \label{_tests_8cpp_a82a2fbc0598de9a6ca78f276c49e8d24} 
+bool Test\+Multiple\+Slots (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Test multiple slot allocation and generation tracking. 
+
+Here is the call graph for this function\+:
+% FIG 8
+Here is the caller graph for this function\+:
+% FIG 9
+\Hypertarget{_tests_8cpp_ae1041a05860256d48f5056e22e14cc95}\index{Tests.cpp@{Tests.cpp}!TestThreadSafety@{TestThreadSafety}}
+\index{TestThreadSafety@{TestThreadSafety}!Tests.cpp@{Tests.cpp}}
+\doxysubsubsection{\texorpdfstring{TestThreadSafety()}{TestThreadSafety()}}
+{\footnotesize\ttfamily \label{_tests_8cpp_ae1041a05860256d48f5056e22e14cc95} 
+bool Test\+Thread\+Safety (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Test thread safety with concurrent allocations. 
+
+Here is the call graph for this function\+:
+% FIG 10
+Here is the caller graph for this function\+:
+% FIG 11

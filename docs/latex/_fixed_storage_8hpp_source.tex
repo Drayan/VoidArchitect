@@ -1,0 +1,275 @@
+\doxysection{Fixed\+Storage.\+hpp}
+\hypertarget{_fixed_storage_8hpp_source}{}\label{_fixed_storage_8hpp_source}\index{engine/src/Core/Collections/FixedStorage.hpp@{engine/src/Core/Collections/FixedStorage.hpp}}
+\mbox{\hyperlink{_fixed_storage_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 17/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_handle_8hpp}{Core/Handle.hpp}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_logger_8hpp}{Core/Logger.hpp}}"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_collections}{VoidArchitect::Collections}}}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keywordtype}{size\_t}\ CAPACITY>}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a}{FixedStorage}}}
+\DoxyCodeLine{00048\ \ \ \ \ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{HandleType}}\ =\ \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle<T>}};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a9124755646ca846ff5fa0380e32bacd9}{MAX\_OBJECTS}}\ =\ CAPACITY;}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Constructors\ /\ Destructors\ ===}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a}{FixedStorage}}();}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_abf04bbf1997ca31b1433c5d554fabd58}{\string~FixedStorage}}();}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Non-\/copyable\ and\ non-\/movable\ (contains\ atomic\ members)}}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a57c5aa2aef0b7eccaf357636f77cede4}{FixedStorage}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a}{FixedStorage}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a}{FixedStorage}}\&\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a97901010a1e0dcbd94ab31eb0b1324b3}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a}{FixedStorage}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a406d310a372df46673ca3cc08feb3e2e}{FixedStorage}}(\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a}{FixedStorage}}\&\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a}{FixedStorage}}\&\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a2364efe44cc07690ae17d81a6fe8c010}{operator=}}(\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a}{FixedStorage}}\&\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Allocation\ /\ Deallocation\ ===}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}...\ Args>}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{HandleType}}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a9f4828c0199ff0cd6a2f08f7622e3e78}{Allocate}}(Args\&\&...\ args);}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a135e8dbe28a28e611e9c292ca82be518}{Release}}(\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{HandleType}}\ handle);}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Access\ ===}}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ T*\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a721d4fae44f875c5946058de2effd441}{Get}}(\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{HandleType}}\ handle);}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ T*\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a721d4fae44f875c5946058de2effd441}{Get}}(\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{HandleType}}\ handle)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_ad0eee9c51c6341c404d860cc841ec73b}{IsValid}}(\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{HandleType}}\ handle)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Statistics\ ===}}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a005394a788ffe413201e38331689de39}{GetUsedSlots}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_UsedCount.load(std::memory\_order\_relaxed);\ \}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_af1ec866368b859d1d2cf7913012db5e3}{GetCapacity}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ CAPACITY;\ \}}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_afe2778e3d3166561b21a248eb83e2491}{GetAvailableSlots}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ CAPACITY\ -\/\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a005394a788ffe413201e38331689de39}{GetUsedSlots}}();\ \}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_ac2f47d1561f36176b4c0e52e864a9d0e}{IsFull}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a005394a788ffe413201e38331689de39}{GetUsedSlots}}()\ >=\ CAPACITY;\ \}}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a4d9fc57bd15e68354859c2c6340daf17}{IsEmpty}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a005394a788ffe413201e38331689de39}{GetUsedSlots}}()\ ==\ 0;\ \}}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aae6b2bbecc1595624d161e55530f7e18}{GetUsagePercentage}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00152\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a005394a788ffe413201e38331689de39}{GetUsedSlots}}())\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(CAPACITY);}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }Slot}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{alignas}(T)\ std::byte\ storage[\textcolor{keyword}{sizeof}(T)];}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ std::atomic<bool>\ inUse\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ std::atomic<uint32\_t>\ generation\{0\};}
+\DoxyCodeLine{00173\ }
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ T*\ GetObject()\ noexcept}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{reinterpret\_cast<}T*\textcolor{keyword}{>}(storage);}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ T*\ GetObject()\ const\ noexcept}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }T*\textcolor{keyword}{>}(storage);}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00188\ }
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Private\ Members\ ===}}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ std::array<Slot,\ CAPACITY>\ m\_Slots;}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ std::atomic<uint32\_t>\ m\_NextSlot\{0\};}
+\DoxyCodeLine{00196\ }
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ std::atomic<size\_t>\ m\_UsedCount\{0\};}
+\DoxyCodeLine{00199\ }
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Private\ Methods\ ===}}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ FindAndClaimFreeSlot();}
+\DoxyCodeLine{00208\ }
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ ValidateHandle(\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{HandleType}}\ handle,\ \textcolor{keywordtype}{size\_t}\&\ slotIndex)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00214\ \ \ \ \ \};}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00216\ \ \ \ \ \textcolor{comment}{//\ ==============================================================}}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{comment}{//\ Template\ Implementation}}
+\DoxyCodeLine{00218\ \ \ \ \ \textcolor{comment}{//\ ==============================================================}}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keywordtype}{size\_t}\ CAPACITY>}
+\DoxyCodeLine{00221\ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a}{FixedStorage<T,\ CAPACITY>::FixedStorage}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keywordtype}{size\_t}\ CAPACITY>}
+\DoxyCodeLine{00224\ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_abf04bbf1997ca31b1433c5d554fabd58}{FixedStorage<T,\ CAPACITY>::\string~FixedStorage}}()}
+\DoxyCodeLine{00225\ \ \ \ \ \{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Release\ all\ allocated\ objects\ to\ ensure\ proper\ destruction}}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ CAPACITY;\ ++i)}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\&\ slot\ =\ m\_Slots[i];\ slot.inUse.load(std::memory\_order\_acquire))}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Destruct\ object\ manually\ to\ avoid\ memory\ leaks}}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ slot.GetObject()-\/>\string~T();}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ slot.inUse.store(\textcolor{keyword}{false},\ std::memory\_order\_release);}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00236\ \ \ \ \ \}}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keywordtype}{size\_t}\ CAPACITY>}
+\DoxyCodeLine{00239\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}...\ Args>}
+\DoxyCodeLine{00240\ \ \ \ \ \textcolor{keyword}{typename}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{FixedStorage<T,\ CAPACITY>::HandleType}}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a9f4828c0199ff0cd6a2f08f7622e3e78}{FixedStorage<T,\ CAPACITY>::Allocate}}(}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ Args\&\&...\ args)}
+\DoxyCodeLine{00242\ \ \ \ \ \{}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Find\ and\ claim\ a\ free\ slot}}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ slotIndex\ =\ FindAndClaimFreeSlot();}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (slotIndex\ >=\ CAPACITY)}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8hpp_a8d66b1bd5d47d8389c5fb19efab64ed1}{VA\_ENGINE\_WARN}}(}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}[FixedStorage<\{\}>]\ The\ storage\ is\ full\ (\{\}/\{\}\ slots\ used)."{}},}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{typeid}(T).name(),}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a005394a788ffe413201e38331689de39}{GetUsedSlots}}(),}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CAPACITY);}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_void_architect_1_1_handle_a791780bb18d11208b419903a9086b937}{HandleType::Invalid}}();}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ slot\ =\ m\_Slots[slotIndex];}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Increment\ generation\ for\ new\ allocation}}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ uint32\_t\ generation\ =\ slot.generation.fetch\_add(1,\ std::memory\_order\_acq\_rel)\ +\ 1;}
+\DoxyCodeLine{00260\ }
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Construct\ an\ object\ in-\/place\ with\ perfect\ forwarding}}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ T*\ \textcolor{keywordtype}{object}\ =\ slot.GetObject();}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}(object)\ T(std::forward<Args>(args)...);}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ statistics}}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ m\_UsedCount.fetch\_add(1,\ std::memory\_order\_relaxed);}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ hint\ for\ next\ allocation}}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ m\_NextSlot.store((slotIndex\ +\ 1)\ \%\ CAPACITY,\ std::memory\_order\_relaxed);}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{HandleType}}(\textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(slotIndex),\ generation);}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (...)}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Construction\ failed\ -\/\ release\ claimed\ slot}}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ slot.generation.fetch\_sub(1,\ std::memory\_order\_acq\_rel);}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ slot.inUse.store(\textcolor{keyword}{false},\ std::memory\_order\_release);}
+\DoxyCodeLine{00280\ }
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{_logger_8hpp_a69830cf75a3de03cb5c41eedf29cd4b1}{VA\_ENGINE\_ERROR}}(}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}[FixedStorage<\{\}>]\ Failed\ to\ construct\ object\ in\ slot\ \{\}."{}},}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{typeid}(T).name(),}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ slotIndex);}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_void_architect_1_1_handle_a791780bb18d11208b419903a9086b937}{HandleType::Invalid}}();}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00288\ \ \ \ \ \}}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00290\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keywordtype}{size\_t}\ CAPACITY>}
+\DoxyCodeLine{00291\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a135e8dbe28a28e611e9c292ca82be518}{FixedStorage<T,\ CAPACITY>::Release}}(\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{HandleType}}\ handle)}
+\DoxyCodeLine{00292\ \ \ \ \ \{}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ slotIndex;}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!ValidateHandle(handle,\ slotIndex))}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00298\ }
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ slot\ =\ m\_Slots[slotIndex];}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Destruct\ object}}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ slot.GetObject()-\/>\string~T();}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mark\ slot\ as\ free}}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ slot.inUse.store(\textcolor{keyword}{false},\ std::memory\_order\_release);}
+\DoxyCodeLine{00306\ }
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Update\ stats}}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ m\_UsedCount.fetch\_sub(1,\ std::memory\_order\_relaxed);}
+\DoxyCodeLine{00309\ }
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00311\ \ \ \ \ \}}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00313\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keywordtype}{size\_t}\ CAPACITY>}
+\DoxyCodeLine{00314\ \ \ \ \ T*\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a721d4fae44f875c5946058de2effd441}{FixedStorage<T,\ CAPACITY>::Get}}(\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{HandleType}}\ handle)}
+\DoxyCodeLine{00315\ \ \ \ \ \{}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ slotIndex;}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!ValidateHandle(handle,\ slotIndex))}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00321\ }
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_Slots[slotIndex].GetObject();}
+\DoxyCodeLine{00323\ \ \ \ \ \}}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keywordtype}{size\_t}\ CAPACITY>}
+\DoxyCodeLine{00326\ \ \ \ \ \textcolor{keyword}{const}\ T*\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a721d4fae44f875c5946058de2effd441}{FixedStorage<T,\ CAPACITY>::Get}}(\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{HandleType}}\ handle)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00327\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ slotIndex;}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!ValidateHandle(handle,\ slotIndex))}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00333\ }
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_Slots[slotIndex].GetObject();}
+\DoxyCodeLine{00335\ \ \ \ \ \}}
+\DoxyCodeLine{00336\ }
+\DoxyCodeLine{00337\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keywordtype}{size\_t}\ CAPACITY>}
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_ad0eee9c51c6341c404d860cc841ec73b}{FixedStorage<T,\ CAPACITY>::IsValid}}(\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{HandleType}}\ handle)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00339\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ slotIndex;}
+\DoxyCodeLine{00341\ }
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ ValidateHandle(handle,\ slotIndex);}
+\DoxyCodeLine{00343\ \ \ \ \ \}}
+\DoxyCodeLine{00344\ }
+\DoxyCodeLine{00345\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keywordtype}{size\_t}\ CAPACITY>}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ FixedStorage<T,\ CAPACITY>::FindAndClaimFreeSlot()}
+\DoxyCodeLine{00347\ \ \ \ \ \{}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ startSlot\ =\ m\_NextSlot.load(std::memory\_order\_relaxed);}
+\DoxyCodeLine{00349\ }
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Search\ for\ a\ free\ slot\ with\ wraparound}}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ attempts\ =\ 0;\ attempts\ <\ CAPACITY;\ ++attempts)}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ slotIndex\ =\ (startSlot\ +\ attempts)\ \%\ CAPACITY;}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ slot\ =\ m\_Slots[slotIndex];}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Try\ to\ claim\ this\ slot}}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{auto}\ expected\ =\ \textcolor{keyword}{false};\ slot.inUse.compare\_exchange\_weak(}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ expected,}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{true},}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::memory\_order\_acquire,}
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::memory\_order\_relaxed))}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ slotIndex;}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00365\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00366\ }
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ CAPACITY;\ \textcolor{comment}{//\ No\ free\ slots\ found\ -\/\ return\ an\ invalid\ handle}}
+\DoxyCodeLine{00368\ \ \ \ \ \}}
+\DoxyCodeLine{00369\ }
+\DoxyCodeLine{00370\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keywordtype}{size\_t}\ CAPACITY>}
+\DoxyCodeLine{00371\ \ \ \ \ \textcolor{keywordtype}{bool}\ FixedStorage<T,\ CAPACITY>::ValidateHandle(HandleType\ handle,\ \textcolor{keywordtype}{size\_t}\&\ slotIndex)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00372\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!handle.IsValid())\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \ \ \ \ \ \ \ \ slotIndex\ =\ handle.GetIndex();}
+\DoxyCodeLine{00376\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (slotIndex\ >=\ CAPACITY)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00377\ }
+\DoxyCodeLine{00378\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ slot\ =\ m\_Slots[slotIndex];}
+\DoxyCodeLine{00379\ }
+\DoxyCodeLine{00380\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!slot.inUse.load(std::memory\_order\_acquire))\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00381\ }
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ generation\ to\ prevent\ ABA\ problems}}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ uint32\_t\ curGen\ =\ slot.generation.load(std::memory\_order\_relaxed);}
+\DoxyCodeLine{00384\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (curGen\ !=\ handle.GetGeneration())\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00385\ }
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00387\ \ \ \ \ \}}
+\DoxyCodeLine{00388\ \}}
+
+\end{DoxyCode}

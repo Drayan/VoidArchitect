@@ -1,0 +1,71 @@
+\doxysection{Vulkan\+Command\+Buffer.\+hpp}
+\hypertarget{_vulkan_command_buffer_8hpp_source}{}\label{_vulkan_command_buffer_8hpp_source}\index{engine/src/Platform/RHI/Vulkan/VulkanCommandBuffer.hpp@{engine/src/Platform/RHI/Vulkan/VulkanCommandBuffer.hpp}}
+\mbox{\hyperlink{_vulkan_command_buffer_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 19/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <vulkan/vulkan.h>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{VulkanDevice}};}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0d}{CommandBufferState}}}
+\DoxyCodeLine{00013\ \ \ \ \ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0dae7d31fc0602fb2ede144d18cdffd816b}{Ready}},}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0dac5564d2e8b8e0ae08bf4363f2b947166}{Recording}},}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0da97c18ee1bafca38384b4a30a1afa38ad}{InRenderpass}},}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0da8d6acaa17b56d58db23d706579d4a381}{RecordingEnded}},}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0da5c835c22429f25992b4371691ecde1a4}{Submitted}},}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0da816afd9f2c48b88720890140559eb3fe}{NotAllocated}}}
+\DoxyCodeLine{00020\ \ \ \ \ \};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}{VulkanCommandBuffer}}}
+\DoxyCodeLine{00023\ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}{VulkanCommandBuffer}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}{VulkanCommandBuffer}}(}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::unique\_ptr<VulkanDevice>\&\ device,\ VkCommandPool\ pool,\ \textcolor{keywordtype}{bool}\ isPrimary\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}{VulkanCommandBuffer}}(VkDevice\ device,\ VkCommandPool\ pool,\ \textcolor{keywordtype}{bool}\ isPrimary\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}{VulkanCommandBuffer}}(\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}{VulkanCommandBuffer}}\&\&\ other)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a6ed868ca0112fce7bd2f023393b03b11}{VulkanCommandBuffer}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}{VulkanCommandBuffer}}\&\ other)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_aee54ef96fecdd390aaf94bb3457b38c2}{\string~VulkanCommandBuffer}}();}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}{VulkanCommandBuffer}}\&\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a2f0d0a9f5df1e46e781d08bf4f817993}{operator=}}(\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}{VulkanCommandBuffer}}\&\&\ other)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}{VulkanCommandBuffer}}\&\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a37b0e96d68b4711fa43bc77a3093ebcb}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}{VulkanCommandBuffer}}\&\ other)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_af3ed85df6b2154e7e861d02139c9673b}{Begin}}(}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isSingleUse\ =\ \textcolor{keyword}{false},}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isRenderPassContinue\ =\ \textcolor{keyword}{false},}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isSimultaneousUse\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a93366f3656a93de8872b5a921f18afe7}{End}}();}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_aa02850ab8e67c24dce9c5610d3b0811a}{Reset}}()\ \{\ m\_State\ =\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0dae7d31fc0602fb2ede144d18cdffd816b}{CommandBufferState::Ready}};\ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a67e124f08fc5a56b0ad2a44f37fc0fd5}{SingleUseBegin}}(}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::unique\_ptr<VulkanDevice>\&\ device,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ VkCommandPool\ pool,}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{VulkanCommandBuffer}}\&\ cmdBuf);}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a67e124f08fc5a56b0ad2a44f37fc0fd5}{SingleUseBegin}}(}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ VkDevice\ device,\ VkCommandPool\ pool,\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{VulkanCommandBuffer}}\&\ cmdBuf);}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a88d97b90d7774a382274866e13b705c9}{SingleUseEnd}}(\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{VulkanCommandBuffer}}\&\ cmdBuf,\ VkQueue\ queue,\ VkFence\ fence);}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a715f1c970eec255fc3e2bc917b46a1cc}{SetState}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0d}{CommandBufferState}}\&\ state)\ \{\ m\_State\ =\ state;\ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0d}{CommandBufferState}}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d906808975bb273e56b39e9014b4949}{GetState}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_State;\ \}}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ VkCommandBuffer\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a4a832c47d322fdbbf388a1e1031d8e72}{GetHandle}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_CommandBuffer;\ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ InvalidateResources();}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ VkDevice\ m\_Device;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ VkCommandPool\ m\_Pool;}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ VkCommandBuffer\ m\_CommandBuffer\{\};}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0d}{CommandBufferState}}\ m\_State\ =\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0da816afd9f2c48b88720890140559eb3fe}{CommandBufferState::NotAllocated}};}
+\DoxyCodeLine{00064\ \ \ \ \ \};}
+\DoxyCodeLine{00065\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect::Platform}}
+
+\end{DoxyCode}

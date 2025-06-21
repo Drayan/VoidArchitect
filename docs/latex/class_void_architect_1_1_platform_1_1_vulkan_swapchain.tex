@@ -1,0 +1,113 @@
+\doxysection{Void\+Architect\+::Platform\+::Vulkan\+Swapchain Class Reference}
+\hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain}{}\label{class_void_architect_1_1_platform_1_1_vulkan_swapchain}\index{VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}}
+
+
+{\ttfamily \#include $<$Vulkan\+Swapchain.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a8ce2177b85c8c335d94b58f20b5d353a}{Vulkan\+Swapchain}} (const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&device, Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}allocator, uint32\+\_\+t width, uint32\+\_\+t height)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_aa9bef21ab1e304d58885f1e20f324d3a}{\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Swapchain}} ()
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_aaa80fa627f7c539dd0952ae32f72df6f}{Recreate}} (uint32\+\_\+t width, uint32\+\_\+t height)
+\item 
+std\+::optional$<$ uint32\+\_\+t $>$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a50b6360d8a501996e5b39f93eb7bcffe}{Acquire\+Next\+Image}} (uint64\+\_\+t timeout, Vk\+Semaphore semaphore, Vk\+Fence fence) const
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a3cdf51954fb3479480de9cb2b502ed6d}{Present}} (Vk\+Queue graphics\+Queue, Vk\+Semaphore render\+Complete, uint32\+\_\+t image\+Index) const
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_a70654e196db7bdb28268393361536f4b}{Resources\+::\+Render\+Target\+Handle}} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a5552db4b36c12c6aa07190f379ece5a4}{Get\+Color\+Render\+Target}} (uint32\+\_\+t index) const
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_a70654e196db7bdb28268393361536f4b}{Resources\+::\+Render\+Target\+Handle}} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_aa18cce309fd886d2731071f4a23390b5}{Get\+Depth\+Render\+Target}} () const
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a8bfc55ae0cf165bab9b3e8b7b30b6776}{Get\+Image\+Count}} () const
+\item 
+Vk\+Format \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a7aa8c0d328543489b6cf7a5f3b8e62ef}{Get\+Format}} () const
+\item 
+Vk\+Format \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_ae11ea0d8580f90ffcf3e2bb9db2394eb}{Get\+Depth\+Format}} () const
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a0f9dbdcd09e11fd44d495cef830bcd8b}{Get\+Max\+Frame\+In\+Flight}} () const
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a8ce2177b85c8c335d94b58f20b5d353a}\index{VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}!VulkanSwapchain@{VulkanSwapchain}}
+\index{VulkanSwapchain@{VulkanSwapchain}!VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}}
+\doxysubsubsection{\texorpdfstring{VulkanSwapchain()}{VulkanSwapchain()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a8ce2177b85c8c335d94b58f20b5d353a} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Swapchain\+::\+Vulkan\+Swapchain (\begin{DoxyParamCaption}\item[{const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&}]{device}{, }\item[{Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}}]{allocator}{, }\item[{uint32\+\_\+t}]{width}{, }\item[{uint32\+\_\+t}]{height}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_aa9bef21ab1e304d58885f1e20f324d3a}\index{VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}!````~VulkanSwapchain@{\texorpdfstring{$\sim$}{\string~}VulkanSwapchain}}
+\index{````~VulkanSwapchain@{\texorpdfstring{$\sim$}{\string~}VulkanSwapchain}!VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}VulkanSwapchain()}{\string~VulkanSwapchain()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_swapchain_aa9bef21ab1e304d58885f1e20f324d3a} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Swapchain\+::\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Swapchain (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a50b6360d8a501996e5b39f93eb7bcffe}\index{VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}!AcquireNextImage@{AcquireNextImage}}
+\index{AcquireNextImage@{AcquireNextImage}!VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}}
+\doxysubsubsection{\texorpdfstring{AcquireNextImage()}{AcquireNextImage()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a50b6360d8a501996e5b39f93eb7bcffe} 
+std\+::optional$<$ uint32\+\_\+t $>$ Void\+Architect\+::\+Platform\+::\+Vulkan\+Swapchain\+::\+Acquire\+Next\+Image (\begin{DoxyParamCaption}\item[{uint64\+\_\+t}]{timeout}{, }\item[{Vk\+Semaphore}]{semaphore}{, }\item[{Vk\+Fence}]{fence}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a5552db4b36c12c6aa07190f379ece5a4}\index{VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}!GetColorRenderTarget@{GetColorRenderTarget}}
+\index{GetColorRenderTarget@{GetColorRenderTarget}!VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}}
+\doxysubsubsection{\texorpdfstring{GetColorRenderTarget()}{GetColorRenderTarget()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a5552db4b36c12c6aa07190f379ece5a4} 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_a70654e196db7bdb28268393361536f4b}{Resources\+::\+Render\+Target\+Handle}} Void\+Architect\+::\+Platform\+::\+Vulkan\+Swapchain\+::\+Get\+Color\+Render\+Target (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{index}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_ae11ea0d8580f90ffcf3e2bb9db2394eb}\index{VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}!GetDepthFormat@{GetDepthFormat}}
+\index{GetDepthFormat@{GetDepthFormat}!VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}}
+\doxysubsubsection{\texorpdfstring{GetDepthFormat()}{GetDepthFormat()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_swapchain_ae11ea0d8580f90ffcf3e2bb9db2394eb} 
+Vk\+Format Void\+Architect\+::\+Platform\+::\+Vulkan\+Swapchain\+::\+Get\+Depth\+Format (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_aa18cce309fd886d2731071f4a23390b5}\index{VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}!GetDepthRenderTarget@{GetDepthRenderTarget}}
+\index{GetDepthRenderTarget@{GetDepthRenderTarget}!VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}}
+\doxysubsubsection{\texorpdfstring{GetDepthRenderTarget()}{GetDepthRenderTarget()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_swapchain_aa18cce309fd886d2731071f4a23390b5} 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_a70654e196db7bdb28268393361536f4b}{Resources\+::\+Render\+Target\+Handle}} Void\+Architect\+::\+Platform\+::\+Vulkan\+Swapchain\+::\+Get\+Depth\+Render\+Target (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a7aa8c0d328543489b6cf7a5f3b8e62ef}\index{VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}!GetFormat@{GetFormat}}
+\index{GetFormat@{GetFormat}!VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}}
+\doxysubsubsection{\texorpdfstring{GetFormat()}{GetFormat()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a7aa8c0d328543489b6cf7a5f3b8e62ef} 
+Vk\+Format Void\+Architect\+::\+Platform\+::\+Vulkan\+Swapchain\+::\+Get\+Format (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a8bfc55ae0cf165bab9b3e8b7b30b6776}\index{VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}!GetImageCount@{GetImageCount}}
+\index{GetImageCount@{GetImageCount}!VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}}
+\doxysubsubsection{\texorpdfstring{GetImageCount()}{GetImageCount()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a8bfc55ae0cf165bab9b3e8b7b30b6776} 
+uint32\+\_\+t Void\+Architect\+::\+Platform\+::\+Vulkan\+Swapchain\+::\+Get\+Image\+Count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a0f9dbdcd09e11fd44d495cef830bcd8b}\index{VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}!GetMaxFrameInFlight@{GetMaxFrameInFlight}}
+\index{GetMaxFrameInFlight@{GetMaxFrameInFlight}!VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}}
+\doxysubsubsection{\texorpdfstring{GetMaxFrameInFlight()}{GetMaxFrameInFlight()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a0f9dbdcd09e11fd44d495cef830bcd8b} 
+uint32\+\_\+t Void\+Architect\+::\+Platform\+::\+Vulkan\+Swapchain\+::\+Get\+Max\+Frame\+In\+Flight (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a3cdf51954fb3479480de9cb2b502ed6d}\index{VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}!Present@{Present}}
+\index{Present@{Present}!VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}}
+\doxysubsubsection{\texorpdfstring{Present()}{Present()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_swapchain_a3cdf51954fb3479480de9cb2b502ed6d} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Swapchain\+::\+Present (\begin{DoxyParamCaption}\item[{Vk\+Queue}]{graphics\+Queue}{, }\item[{Vk\+Semaphore}]{render\+Complete}{, }\item[{uint32\+\_\+t}]{image\+Index}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_swapchain_aaa80fa627f7c539dd0952ae32f72df6f}\index{VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}!Recreate@{Recreate}}
+\index{Recreate@{Recreate}!VoidArchitect::Platform::VulkanSwapchain@{VoidArchitect::Platform::VulkanSwapchain}}
+\doxysubsubsection{\texorpdfstring{Recreate()}{Recreate()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_swapchain_aaa80fa627f7c539dd0952ae32f72df6f} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Swapchain\+::\+Recreate (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{width}{, }\item[{uint32\+\_\+t}]{height}{}\end{DoxyParamCaption})}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_swapchain_8hpp}{Vulkan\+Swapchain.\+hpp}}\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_swapchain_8cpp}{Vulkan\+Swapchain.\+cpp}}\end{DoxyCompactItemize}

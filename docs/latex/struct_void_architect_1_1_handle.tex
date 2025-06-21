@@ -1,0 +1,406 @@
+\doxysection{Void\+Architect\+::Handle\texorpdfstring{$<$}{<} T, Generation\+Bits \texorpdfstring{$>$}{>} Struct Template Reference}
+\hypertarget{struct_void_architect_1_1_handle}{}\label{struct_void_architect_1_1_handle}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+
+
+Generic handle template with generation counter for ABA prevention.  
+
+
+
+
+{\ttfamily \#include $<$Handle.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+constexpr \mbox{\hyperlink{struct_void_architect_1_1_handle_ab87dad3814ec5f034ba0d60abde26913}{Handle}} () noexcept
+\begin{DoxyCompactList}\small\item\em Default constructor creates an invalid handle. \end{DoxyCompactList}\item 
+constexpr \mbox{\hyperlink{struct_void_architect_1_1_handle_a718df27d4f7d8231de28868f01f8e165}{Handle}} (const uint32\+\_\+t idx, const uint32\+\_\+t gen) noexcept
+\begin{DoxyCompactList}\small\item\em Construct handle with a specific index and generation. \end{DoxyCompactList}\item 
+constexpr bool \mbox{\hyperlink{struct_void_architect_1_1_handle_a49c43ae80dcdba365c441051b2c9e6eb}{Is\+Valid}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Check if the handle is valid. \end{DoxyCompactList}\item 
+constexpr uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle_aeb69d4479453ea841be9afc3a33e8093}{Get\+Index}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get the handle index value. \end{DoxyCompactList}\item 
+constexpr uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle_a9028efcfd5d4567f4653a6d4b9022ce8}{Get\+Generation}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get the handle generation value. \end{DoxyCompactList}\item 
+constexpr bool \mbox{\hyperlink{struct_void_architect_1_1_handle_afa69e2c1915b9266d56d182f501f16bf}{operator==}} (const \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}} \&other) const noexcept
+\begin{DoxyCompactList}\small\item\em Equality comparison. \end{DoxyCompactList}\item 
+constexpr bool \mbox{\hyperlink{struct_void_architect_1_1_handle_a2fc2ab77283275077d4f0b773ef44eab}{operator!=}} (const \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}} \&other) const noexcept
+\begin{DoxyCompactList}\small\item\em Inequality comparison. \end{DoxyCompactList}\item 
+constexpr bool \mbox{\hyperlink{struct_void_architect_1_1_handle_ae467901d0d87673be4e63435025b47d5}{operator$<$}} (const \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}} \&other) const noexcept
+\begin{DoxyCompactList}\small\item\em Less-\/than comparison. \end{DoxyCompactList}\item 
+constexpr uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle_afa7a34228ce07448e078674ec258c664}{Get\+Hash}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get hash value for use in hash tables. \end{DoxyCompactList}\item 
+constexpr uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle_aeccb7ee65c0568d9ac858a7038831086}{Get\+Packed}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get packed representation as single uint32\+\_\+t. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}} \mbox{\hyperlink{struct_void_architect_1_1_handle_a791780bb18d11208b419903a9086b937}{Invalid}} () noexcept
+\begin{DoxyCompactList}\small\item\em Create an explicitly invalid handle. \end{DoxyCompactList}\item 
+static constexpr \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}} \mbox{\hyperlink{struct_void_architect_1_1_handle_a5765bc2658ba37966a74ff1c49b9dc0b}{Next\+Generation}} (const uint32\+\_\+t idx, const uint32\+\_\+t current\+Gen) noexcept
+\begin{DoxyCompactList}\small\item\em Create a handle with next generation for given index. \end{DoxyCompactList}\item 
+static constexpr \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}} \mbox{\hyperlink{struct_void_architect_1_1_handle_a8fbd50c34dae2d4eb612034371df77d1}{From\+Packed}} (const uint32\+\_\+t packed) noexcept
+\begin{DoxyCompactList}\small\item\em Create a handle from packed representation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle_a6310e9deeff830440e7619ded8d1ee27}{index}}\+: \mbox{\hyperlink{struct_void_architect_1_1_handle_aaf989aca990f43b0b4b356473dc82f54}{INDEX\+\_\+\+BITS}}
+\begin{DoxyCompactList}\small\item\em Index into the storage array (24 bits by default) \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle_abb11b603ce4460f8800aea30daa520f9}{generation}}\+: Generation\+Bits
+\begin{DoxyCompactList}\small\item\em Generation counter for ABA prevention and change detection (8 bits by default) \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle_aaf989aca990f43b0b4b356473dc82f54}{INDEX\+\_\+\+BITS}} = 32 -\/ Generation\+Bits
+\begin{DoxyCompactList}\small\item\em Number of bits available for index. \end{DoxyCompactList}\item 
+static constexpr uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle_a1d45a4c9e8817cd4b67886d7775e87c3}{MAX\+\_\+\+INDEX}} = (1u $<$$<$ \mbox{\hyperlink{struct_void_architect_1_1_handle_aaf989aca990f43b0b4b356473dc82f54}{INDEX\+\_\+\+BITS}}) -\/ 1
+\begin{DoxyCompactList}\small\item\em Maximum valid index value. \end{DoxyCompactList}\item 
+static constexpr uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle_a5ceb78386326eef017e779a9e7103dd6}{INVALID\+\_\+\+INDEX}} = \mbox{\hyperlink{struct_void_architect_1_1_handle_a1d45a4c9e8817cd4b67886d7775e87c3}{MAX\+\_\+\+INDEX}}
+\begin{DoxyCompactList}\small\item\em Reserved index value for invalid handles. \end{DoxyCompactList}\item 
+static constexpr uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle_a621a45942ff957f799285505bb3ee601}{MAX\+\_\+\+GENERATION}} = (1u $<$$<$ Generation\+Bits) -\/ 1
+\begin{DoxyCompactList}\small\item\em Maximum generation value before wrapping. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$\newline
+struct Void\+Architect\+::\+Handle$<$ T, Generation\+Bits $>$}
+Generic handle template with generation counter for ABA prevention. 
+
+This template provides a robust handle system that can be used throughout the engine for safe resource referencing. The generation counter prevents ABA problems where a handle might accidentally reference a different object that was allocated in the same slot after the original was freed. It can also be used to detect if a resource changed.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Tag type for type safety (usually a forward-\/declared class) \\
+\hline
+{\em Generation\+Bits} & Number of bits to use for generation counter (default\+: 8)\\
+\hline
+\end{DoxyTemplParams}
+Usage examples\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ Define\ type\ handles}}
+\DoxyCodeLine{\textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_void_architect_1_1_resources_a8c9721a4a6e450038e8583515af75b2d}{TextureHandle}}\ =\ \mbox{\hyperlink{struct_void_architect_1_1_handle_ab87dad3814ec5f034ba0d60abde26913}{Handle<class\ TextureTag>}};}
+\DoxyCodeLine{\textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}}\ =\ \mbox{\hyperlink{struct_void_architect_1_1_handle_ab87dad3814ec5f034ba0d60abde26913}{Handle<class\ MaterialTag>}};}
+\DoxyCodeLine{\textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{JobHandle}}\ =\ \mbox{\hyperlink{struct_void_architect_1_1_handle_ab87dad3814ec5f034ba0d60abde26913}{Handle<class\ JobTag>}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ and\ validate\ handles}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ handle\ =\ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a8c9721a4a6e450038e8583515af75b2d}{TextureHandle}}\{42,\ 5\};\ \textcolor{comment}{//\ index\ =\ 42,\ generation\ =\ 5}}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (handle.IsValid())}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Use\ a\ handle\ safely}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Invalid\ handle}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ invalid\ =\ TextureHandle::Invalid();}
+\DoxyCodeLine{assert(!invalid.IsValid());}
+
+\end{DoxyCode}
+ 
+
+\label{doc-constructors}
+\Hypertarget{struct_void_architect_1_1_handle_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{struct_void_architect_1_1_handle_ab87dad3814ec5f034ba0d60abde26913}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!Handle@{Handle}}
+\index{Handle@{Handle}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{Handle()}{Handle()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_ab87dad3814ec5f034ba0d60abde26913} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+\mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+Handle (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Default constructor creates an invalid handle. 
+
+\Hypertarget{struct_void_architect_1_1_handle_a718df27d4f7d8231de28868f01f8e165}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!Handle@{Handle}}
+\index{Handle@{Handle}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{Handle()}{Handle()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_a718df27d4f7d8231de28868f01f8e165} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+\mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+Handle (\begin{DoxyParamCaption}\item[{const uint32\+\_\+t}]{idx}{, }\item[{const uint32\+\_\+t}]{gen}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Construct handle with a specific index and generation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em idx} & Index value (will be clamped to MAX\+\_\+\+INDEX) \\
+\hline
+{\em gen} & Generation value (will be wrapped if \texorpdfstring{$>$}{>} MAX\+\_\+\+GENERATION) \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{struct_void_architect_1_1_handle_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_void_architect_1_1_handle_a8fbd50c34dae2d4eb612034371df77d1}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!FromPacked@{FromPacked}}
+\index{FromPacked@{FromPacked}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{FromPacked()}{FromPacked()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_a8fbd50c34dae2d4eb612034371df77d1} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+constexpr \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}} \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+From\+Packed (\begin{DoxyParamCaption}\item[{const uint32\+\_\+t}]{packed}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Create a handle from packed representation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em packed} & handle data from \doxylink{struct_void_architect_1_1_handle_aeccb7ee65c0568d9ac858a7038831086}{Get\+Packed()} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Reconstructed handle 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_handle_a9028efcfd5d4567f4653a6d4b9022ce8}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!GetGeneration@{GetGeneration}}
+\index{GetGeneration@{GetGeneration}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{GetGeneration()}{GetGeneration()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_a9028efcfd5d4567f4653a6d4b9022ce8} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+Get\+Generation (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Get the handle generation value. 
+
+\begin{DoxyReturn}{Returns}
+Generation portion of the handle 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_handle_afa7a34228ce07448e078674ec258c664}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!GetHash@{GetHash}}
+\index{GetHash@{GetHash}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{GetHash()}{GetHash()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_afa7a34228ce07448e078674ec258c664} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+Get\+Hash (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Get hash value for use in hash tables. 
+
+\begin{DoxyReturn}{Returns}
+Combined hash of index and generation 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+% FIG 0
+\Hypertarget{struct_void_architect_1_1_handle_aeb69d4479453ea841be9afc3a33e8093}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!GetIndex@{GetIndex}}
+\index{GetIndex@{GetIndex}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{GetIndex()}{GetIndex()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_aeb69d4479453ea841be9afc3a33e8093} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+Get\+Index (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Get the handle index value. 
+
+\begin{DoxyReturn}{Returns}
+Index portion of the handle 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_handle_aeccb7ee65c0568d9ac858a7038831086}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!GetPacked@{GetPacked}}
+\index{GetPacked@{GetPacked}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{GetPacked()}{GetPacked()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_aeccb7ee65c0568d9ac858a7038831086} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+Get\+Packed (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Get packed representation as single uint32\+\_\+t. 
+
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_void_architect_1_1_handle}{Handle} data packed into 32-\/bit integer
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Useful for debugging and serialization 
+\end{DoxyNote}
+Here is the caller graph for this function\+:
+% FIG 1
+\Hypertarget{struct_void_architect_1_1_handle_a791780bb18d11208b419903a9086b937}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!Invalid@{Invalid}}
+\index{Invalid@{Invalid}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{Invalid()}{Invalid()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_a791780bb18d11208b419903a9086b937} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+constexpr \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}} \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+Invalid (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Create an explicitly invalid handle. 
+
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_void_architect_1_1_handle}{Handle} that will return false for \doxylink{struct_void_architect_1_1_handle_a49c43ae80dcdba365c441051b2c9e6eb}{Is\+Valid()} 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{struct_void_architect_1_1_handle_a49c43ae80dcdba365c441051b2c9e6eb}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!IsValid@{IsValid}}
+\index{IsValid@{IsValid}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{IsValid()}{IsValid()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_a49c43ae80dcdba365c441051b2c9e6eb} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+bool \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+Is\+Valid (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Check if the handle is valid. 
+
+\begin{DoxyReturn}{Returns}
+true if the handle has a valid index, false otherwise 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+% FIG 3
+\Hypertarget{struct_void_architect_1_1_handle_a5765bc2658ba37966a74ff1c49b9dc0b}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!NextGeneration@{NextGeneration}}
+\index{NextGeneration@{NextGeneration}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{NextGeneration()}{NextGeneration()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_a5765bc2658ba37966a74ff1c49b9dc0b} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+constexpr \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}} \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+Next\+Generation (\begin{DoxyParamCaption}\item[{const uint32\+\_\+t}]{idx}{, }\item[{const uint32\+\_\+t}]{current\+Gen}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Create a handle with next generation for given index. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em idx} & Index value \\
+\hline
+{\em current\+Gen} & Current generation value \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+New handle with incremented generation 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_handle_a2fc2ab77283275077d4f0b773ef44eab}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_a2fc2ab77283275077d4f0b773ef44eab} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+bool \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::operator!= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}}$<$ T, Generation\+Bits $>$ \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Inequality comparison. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxylink{struct_void_architect_1_1_handle}{Handle} to compare with \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if either index OR generation differ 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_handle_ae467901d0d87673be4e63435025b47d5}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!operator$<$@{operator$<$}}
+\index{operator$<$@{operator$<$}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{operator$<$()}{operator<()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_ae467901d0d87673be4e63435025b47d5} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+bool \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::operator$<$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}}$<$ T, Generation\+Bits $>$ \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Less-\/than comparison. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxylink{struct_void_architect_1_1_handle}{Handle} to compare with \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if this handle is "{}less than"{} other
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Comparison is primarily by index, then by generation 
+\end{DoxyNote}
+\Hypertarget{struct_void_architect_1_1_handle_afa69e2c1915b9266d56d182f501f16bf}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!operator==@{operator==}}
+\index{operator==@{operator==}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_afa69e2c1915b9266d56d182f501f16bf} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+bool \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::operator== (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}}$<$ T, Generation\+Bits $>$ \&}]{other}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+
+
+Equality comparison. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \doxylink{struct_void_architect_1_1_handle}{Handle} to compare with \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if both index AND generation match 
+\end{DoxyReturn}
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_void_architect_1_1_handle_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{struct_void_architect_1_1_handle_abb11b603ce4460f8800aea30daa520f9}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!generation@{generation}}
+\index{generation@{generation}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{generation}{generation}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_abb11b603ce4460f8800aea30daa520f9} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::generation}
+
+
+
+Generation counter for ABA prevention and change detection (8 bits by default) 
+
+\Hypertarget{struct_void_architect_1_1_handle_a6310e9deeff830440e7619ded8d1ee27}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!index@{index}}
+\index{index@{index}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{index}{index}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_a6310e9deeff830440e7619ded8d1ee27} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::index}
+
+
+
+Index into the storage array (24 bits by default) 
+
+\Hypertarget{struct_void_architect_1_1_handle_aaf989aca990f43b0b4b356473dc82f54}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!INDEX\_BITS@{INDEX\_BITS}}
+\index{INDEX\_BITS@{INDEX\_BITS}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{INDEX\_BITS}{INDEX\_BITS}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_aaf989aca990f43b0b4b356473dc82f54} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+INDEX\+\_\+\+BITS = 32 -\/ Generation\+Bits\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+Number of bits available for index. 
+
+\Hypertarget{struct_void_architect_1_1_handle_a5ceb78386326eef017e779a9e7103dd6}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!INVALID\_INDEX@{INVALID\_INDEX}}
+\index{INVALID\_INDEX@{INVALID\_INDEX}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{INVALID\_INDEX}{INVALID\_INDEX}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_a5ceb78386326eef017e779a9e7103dd6} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+INVALID\+\_\+\+INDEX = \mbox{\hyperlink{struct_void_architect_1_1_handle_a1d45a4c9e8817cd4b67886d7775e87c3}{MAX\+\_\+\+INDEX}}\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+Reserved index value for invalid handles. 
+
+\Hypertarget{struct_void_architect_1_1_handle_a621a45942ff957f799285505bb3ee601}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!MAX\_GENERATION@{MAX\_GENERATION}}
+\index{MAX\_GENERATION@{MAX\_GENERATION}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{MAX\_GENERATION}{MAX\_GENERATION}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_a621a45942ff957f799285505bb3ee601} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+MAX\+\_\+\+GENERATION = (1u $<$$<$ Generation\+Bits) -\/ 1\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+Maximum generation value before wrapping. 
+
+\Hypertarget{struct_void_architect_1_1_handle_a1d45a4c9e8817cd4b67886d7775e87c3}\index{VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}!MAX\_INDEX@{MAX\_INDEX}}
+\index{MAX\_INDEX@{MAX\_INDEX}!VoidArchitect::Handle$<$ T, GenerationBits $>$@{VoidArchitect::Handle$<$ T, GenerationBits $>$}}
+\doxysubsubsection{\texorpdfstring{MAX\_INDEX}{MAX\_INDEX}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_handle_a1d45a4c9e8817cd4b67886d7775e87c3} 
+template$<$typename T, uint8\+\_\+t Generation\+Bits = 8$>$ \\
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_handle}{Void\+Architect\+::\+Handle}}$<$ T, Generation\+Bits $>$\+::\+MAX\+\_\+\+INDEX = (1u $<$$<$ \mbox{\hyperlink{struct_void_architect_1_1_handle_aaf989aca990f43b0b4b356473dc82f54}{INDEX\+\_\+\+BITS}}) -\/ 1\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+Maximum valid index value. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Core/\mbox{\hyperlink{_handle_8hpp}{Handle.\+hpp}}\end{DoxyCompactItemize}

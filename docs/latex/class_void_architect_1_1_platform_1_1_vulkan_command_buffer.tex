@@ -1,0 +1,192 @@
+\doxysection{Void\+Architect\+::Platform\+::Vulkan\+Command\+Buffer Class Reference}
+\hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{}\label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+
+
+{\ttfamily \#include $<$Vulkan\+Command\+Buffer.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}{Vulkan\+Command\+Buffer}} ()=default
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_ae73c515e7a052889a02fcb29609b8087}{Vulkan\+Command\+Buffer}} (const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&device, Vk\+Command\+Pool pool, bool is\+Primary=true)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_ae0ecd02c619d5c6f3d518ca5d0723534}{Vulkan\+Command\+Buffer}} (Vk\+Device device, Vk\+Command\+Pool pool, bool is\+Primary=true)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_aa4ae9110d5873413451b57a0a0943d51}{Vulkan\+Command\+Buffer}} (\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&\&other) noexcept
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a6ed868ca0112fce7bd2f023393b03b11}{Vulkan\+Command\+Buffer}} (const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&other)=delete
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_aee54ef96fecdd390aaf94bb3457b38c2}{\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Command\+Buffer}} ()
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \& \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a2f0d0a9f5df1e46e781d08bf4f817993}{operator=}} (\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&\&other) noexcept
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \& \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a37b0e96d68b4711fa43bc77a3093ebcb}{operator=}} (const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&other)=delete
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_af3ed85df6b2154e7e861d02139c9673b}{Begin}} (bool is\+Single\+Use=false, bool is\+Render\+Pass\+Continue=false, bool is\+Simultaneous\+Use=false)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a93366f3656a93de8872b5a921f18afe7}{End}} ()
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_aa02850ab8e67c24dce9c5610d3b0811a}{Reset}} ()
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a715f1c970eec255fc3e2bc917b46a1cc}{Set\+State}} (const \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0d}{Command\+Buffer\+State}} \&state)
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0d}{Command\+Buffer\+State}} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d906808975bb273e56b39e9014b4949}{Get\+State}} () const
+\item 
+Vk\+Command\+Buffer \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a4a832c47d322fdbbf388a1e1031d8e72}{Get\+Handle}} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a67e124f08fc5a56b0ad2a44f37fc0fd5}{Single\+Use\+Begin}} (const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&device, Vk\+Command\+Pool pool, \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&cmd\+Buf)
+\item 
+static void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_ae240d6ee190ab14aaee50ebbabf3acab}{Single\+Use\+Begin}} (Vk\+Device device, Vk\+Command\+Pool pool, \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&cmd\+Buf)
+\item 
+static void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a88d97b90d7774a382274866e13b705c9}{Single\+Use\+End}} (\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&cmd\+Buf, Vk\+Queue queue, Vk\+Fence fence)
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!VulkanCommandBuffer@{VulkanCommandBuffer}}
+\index{VulkanCommandBuffer@{VulkanCommandBuffer}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{VulkanCommandBuffer()}{VulkanCommandBuffer()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d0e53849c85e1ef6b871efd42dc3695} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Vulkan\+Command\+Buffer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+Here is the call graph for this function\+:
+% FIG 0
+Here is the caller graph for this function\+:
+% FIG 1
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_ae73c515e7a052889a02fcb29609b8087}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!VulkanCommandBuffer@{VulkanCommandBuffer}}
+\index{VulkanCommandBuffer@{VulkanCommandBuffer}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{VulkanCommandBuffer()}{VulkanCommandBuffer()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_ae73c515e7a052889a02fcb29609b8087} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Vulkan\+Command\+Buffer (\begin{DoxyParamCaption}\item[{const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&}]{device}{, }\item[{Vk\+Command\+Pool}]{pool}{, }\item[{bool}]{is\+Primary}{ = {\ttfamily true}}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_ae0ecd02c619d5c6f3d518ca5d0723534}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!VulkanCommandBuffer@{VulkanCommandBuffer}}
+\index{VulkanCommandBuffer@{VulkanCommandBuffer}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{VulkanCommandBuffer()}{VulkanCommandBuffer()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_ae0ecd02c619d5c6f3d518ca5d0723534} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Vulkan\+Command\+Buffer (\begin{DoxyParamCaption}\item[{Vk\+Device}]{device}{, }\item[{Vk\+Command\+Pool}]{pool}{, }\item[{bool}]{is\+Primary}{ = {\ttfamily true}}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_aa4ae9110d5873413451b57a0a0943d51}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!VulkanCommandBuffer@{VulkanCommandBuffer}}
+\index{VulkanCommandBuffer@{VulkanCommandBuffer}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{VulkanCommandBuffer()}{VulkanCommandBuffer()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_aa4ae9110d5873413451b57a0a0943d51} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Vulkan\+Command\+Buffer (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+Here is the call graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a6ed868ca0112fce7bd2f023393b03b11}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!VulkanCommandBuffer@{VulkanCommandBuffer}}
+\index{VulkanCommandBuffer@{VulkanCommandBuffer}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{VulkanCommandBuffer()}{VulkanCommandBuffer()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a6ed868ca0112fce7bd2f023393b03b11} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Vulkan\+Command\+Buffer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 3
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_aee54ef96fecdd390aaf94bb3457b38c2}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!````~VulkanCommandBuffer@{\texorpdfstring{$\sim$}{\string~}VulkanCommandBuffer}}
+\index{````~VulkanCommandBuffer@{\texorpdfstring{$\sim$}{\string~}VulkanCommandBuffer}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}VulkanCommandBuffer()}{\string~VulkanCommandBuffer()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_aee54ef96fecdd390aaf94bb3457b38c2} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Command\+Buffer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_af3ed85df6b2154e7e861d02139c9673b}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!Begin@{Begin}}
+\index{Begin@{Begin}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{Begin()}{Begin()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_af3ed85df6b2154e7e861d02139c9673b} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Begin (\begin{DoxyParamCaption}\item[{bool}]{is\+Single\+Use}{ = {\ttfamily false}, }\item[{bool}]{is\+Render\+Pass\+Continue}{ = {\ttfamily false}, }\item[{bool}]{is\+Simultaneous\+Use}{ = {\ttfamily false}}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 4
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a93366f3656a93de8872b5a921f18afe7}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!End@{End}}
+\index{End@{End}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{End()}{End()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a93366f3656a93de8872b5a921f18afe7} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+End (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 5
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a4a832c47d322fdbbf388a1e1031d8e72}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!GetHandle@{GetHandle}}
+\index{GetHandle@{GetHandle}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{GetHandle()}{GetHandle()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a4a832c47d322fdbbf388a1e1031d8e72} 
+Vk\+Command\+Buffer Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Get\+Handle (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Here is the caller graph for this function\+:
+% FIG 6
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d906808975bb273e56b39e9014b4949}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!GetState@{GetState}}
+\index{GetState@{GetState}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{GetState()}{GetState()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a0d906808975bb273e56b39e9014b4949} 
+\mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0d}{Command\+Buffer\+State}} Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Get\+State (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a37b0e96d68b4711fa43bc77a3093ebcb}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a37b0e96d68b4711fa43bc77a3093ebcb} 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \& Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 7
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a2f0d0a9f5df1e46e781d08bf4f817993}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a2f0d0a9f5df1e46e781d08bf4f817993} 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \& Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+Here is the call graph for this function\+:
+% FIG 8
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_aa02850ab8e67c24dce9c5610d3b0811a}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!Reset@{Reset}}
+\index{Reset@{Reset}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{Reset()}{Reset()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_aa02850ab8e67c24dce9c5610d3b0811a} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a715f1c970eec255fc3e2bc917b46a1cc}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!SetState@{SetState}}
+\index{SetState@{SetState}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{SetState()}{SetState()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a715f1c970eec255fc3e2bc917b46a1cc} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Set\+State (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{namespace_void_architect_1_1_platform_aec23e300454996014672b1ff65e18f0d}{Command\+Buffer\+State}} \&}]{state}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a67e124f08fc5a56b0ad2a44f37fc0fd5}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!SingleUseBegin@{SingleUseBegin}}
+\index{SingleUseBegin@{SingleUseBegin}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{SingleUseBegin()}{SingleUseBegin()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a67e124f08fc5a56b0ad2a44f37fc0fd5} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Single\+Use\+Begin (\begin{DoxyParamCaption}\item[{const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&}]{device}{, }\item[{Vk\+Command\+Pool}]{pool}{, }\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&}]{cmd\+Buf}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+% FIG 9
+Here is the caller graph for this function\+:
+% FIG 10
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_ae240d6ee190ab14aaee50ebbabf3acab}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!SingleUseBegin@{SingleUseBegin}}
+\index{SingleUseBegin@{SingleUseBegin}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{SingleUseBegin()}{SingleUseBegin()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_ae240d6ee190ab14aaee50ebbabf3acab} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Single\+Use\+Begin (\begin{DoxyParamCaption}\item[{Vk\+Device}]{device}{, }\item[{Vk\+Command\+Pool}]{pool}{, }\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&}]{cmd\+Buf}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+% FIG 11
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a88d97b90d7774a382274866e13b705c9}\index{VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}!SingleUseEnd@{SingleUseEnd}}
+\index{SingleUseEnd@{SingleUseEnd}!VoidArchitect::Platform::VulkanCommandBuffer@{VoidArchitect::Platform::VulkanCommandBuffer}}
+\doxysubsubsection{\texorpdfstring{SingleUseEnd()}{SingleUseEnd()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_command_buffer_a88d97b90d7774a382274866e13b705c9} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Command\+Buffer\+::\+Single\+Use\+End (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_command_buffer}{Vulkan\+Command\+Buffer}} \&}]{cmd\+Buf}{, }\item[{Vk\+Queue}]{queue}{, }\item[{Vk\+Fence}]{fence}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+% FIG 12
+Here is the caller graph for this function\+:
+% FIG 13
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_command_buffer_8hpp}{Vulkan\+Command\+Buffer.\+hpp}}\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_command_buffer_8cpp}{Vulkan\+Command\+Buffer.\+cpp}}\end{DoxyCompactItemize}

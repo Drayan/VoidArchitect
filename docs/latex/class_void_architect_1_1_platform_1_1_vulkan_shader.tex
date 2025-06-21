@@ -1,0 +1,127 @@
+\doxysection{Void\+Architect\+::Platform\+::Vulkan\+Shader Class Reference}
+\hypertarget{class_void_architect_1_1_platform_1_1_vulkan_shader}{}\label{class_void_architect_1_1_platform_1_1_vulkan_shader}\index{VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}}
+
+
+{\ttfamily \#include $<$Vulkan\+Shader.\+hpp$>$}
+
+
+
+Inheritance diagram for Void\+Architect\+::Platform\+::Vulkan\+Shader\+:
+% FIG 0
+
+
+Collaboration diagram for Void\+Architect\+::Platform\+::Vulkan\+Shader\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader_ac34b4991980512f3edb929f96d74d1c5}{Vulkan\+Shader}} (const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&device, Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}allocator, const std\+::string \&name, const \mbox{\hyperlink{struct_void_architect_1_1_shader_config}{Shader\+Config}} \&config, const VAArray$<$ uint8\+\_\+t $>$ \&shader\+Code)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader_ae8cd6b76cb286ad6877a746f6e86e24a}{Vulkan\+Shader}} (\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{Vulkan\+Shader}} \&\&other) noexcept
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader_acc70a3e45397a752947a3dfa481fa589}{Vulkan\+Shader}} (const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{Vulkan\+Shader}} \&other)=delete
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader_a4d854d9916b956f2b750304d193e8fd6}{\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Shader}} () override
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{Vulkan\+Shader}} \& \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader_a94fd84754bae266c3537143bdd968b76}{operator=}} (\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{Vulkan\+Shader}} \&\&other) noexcept
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{Vulkan\+Shader}} \& \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader_afe4238941b2c092cebbae292cf95c0dc}{operator=}} (const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{Vulkan\+Shader}} \&other)=delete
+\item 
+Vk\+Pipeline\+Shader\+Stage\+Create\+Info \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader_a1538217d96137195179ee3208e680b91}{Get\+Shader\+Stage\+Info}} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_shader}{Void\+Architect\+::\+Resources\+::\+IShader}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_shader_aecc47dd988d6c06c0fe6c2a79a9a2ff0}{\texorpdfstring{$\sim$}{\string~}\+IShader}} ()=default
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_shader}{Void\+Architect\+::\+Resources\+::\+IShader}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_shader_aefaea076c148d18fd525c82ebb0c25be}{IShader}} ()=default
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_shader_a5567684d4b68e24b76b79011f6a40f78}{IShader}} (const std\+::string \&name, \mbox{\hyperlink{namespace_void_architect_1_1_resources_ab2eac8b50f5500ec0b2cf9beef1f215b}{Shader\+Stage}} stage, const std\+::string \&entry\+Point)
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_shader}{Void\+Architect\+::\+Resources\+::\+IShader}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_shader_a21a590470a58c66ddb4aa5205ee5b0a2}{m\+\_\+\+Name}}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_u_u_i_d}{UUID}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_shader_a89b0de933ec8a6f803fce3a44afc455e}{m\+\_\+\+UUID}}
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_ab2eac8b50f5500ec0b2cf9beef1f215b}{Shader\+Stage}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_shader_a83dba28bd505b63821223e1b5dbe9427}{m\+\_\+\+Stage}}
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_shader_a396089a0d0c8f8eff5a285f15b425264}{m\+\_\+\+Entry\+Point}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_shader_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_shader_ac34b4991980512f3edb929f96d74d1c5}\index{VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}!VulkanShader@{VulkanShader}}
+\index{VulkanShader@{VulkanShader}!VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}}
+\doxysubsubsection{\texorpdfstring{VulkanShader()}{VulkanShader()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_shader_ac34b4991980512f3edb929f96d74d1c5} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Shader\+::\+Vulkan\+Shader (\begin{DoxyParamCaption}\item[{const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&}]{device}{, }\item[{Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}}]{allocator}{, }\item[{const std\+::string \&}]{name}{, }\item[{const \mbox{\hyperlink{struct_void_architect_1_1_shader_config}{Shader\+Config}} \&}]{config}{, }\item[{const VAArray$<$ uint8\+\_\+t $>$ \&}]{shader\+Code}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 2
+Here is the caller graph for this function\+:
+% FIG 3
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_shader_ae8cd6b76cb286ad6877a746f6e86e24a}\index{VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}!VulkanShader@{VulkanShader}}
+\index{VulkanShader@{VulkanShader}!VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}}
+\doxysubsubsection{\texorpdfstring{VulkanShader()}{VulkanShader()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_shader_ae8cd6b76cb286ad6877a746f6e86e24a} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Shader\+::\+Vulkan\+Shader (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{Vulkan\+Shader}} \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+Here is the call graph for this function\+:
+% FIG 4
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_shader_acc70a3e45397a752947a3dfa481fa589}\index{VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}!VulkanShader@{VulkanShader}}
+\index{VulkanShader@{VulkanShader}!VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}}
+\doxysubsubsection{\texorpdfstring{VulkanShader()}{VulkanShader()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_shader_acc70a3e45397a752947a3dfa481fa589} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Shader\+::\+Vulkan\+Shader (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{Vulkan\+Shader}} \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 5
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_shader_a4d854d9916b956f2b750304d193e8fd6}\index{VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}!````~VulkanShader@{\texorpdfstring{$\sim$}{\string~}VulkanShader}}
+\index{````~VulkanShader@{\texorpdfstring{$\sim$}{\string~}VulkanShader}!VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}VulkanShader()}{\string~VulkanShader()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_shader_a4d854d9916b956f2b750304d193e8fd6} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Shader\+::\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Shader (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_shader_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_shader_a1538217d96137195179ee3208e680b91}\index{VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}!GetShaderStageInfo@{GetShaderStageInfo}}
+\index{GetShaderStageInfo@{GetShaderStageInfo}!VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}}
+\doxysubsubsection{\texorpdfstring{GetShaderStageInfo()}{GetShaderStageInfo()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_shader_a1538217d96137195179ee3208e680b91} 
+Vk\+Pipeline\+Shader\+Stage\+Create\+Info Void\+Architect\+::\+Platform\+::\+Vulkan\+Shader\+::\+Get\+Shader\+Stage\+Info (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Here is the caller graph for this function\+:
+% FIG 6
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_shader_afe4238941b2c092cebbae292cf95c0dc}\index{VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_shader_afe4238941b2c092cebbae292cf95c0dc} 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{Vulkan\+Shader}} \& Void\+Architect\+::\+Platform\+::\+Vulkan\+Shader\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{Vulkan\+Shader}} \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 7
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_shader_a94fd84754bae266c3537143bdd968b76}\index{VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Platform::VulkanShader@{VoidArchitect::Platform::VulkanShader}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_shader_a94fd84754bae266c3537143bdd968b76} 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{Vulkan\+Shader}} \& Void\+Architect\+::\+Platform\+::\+Vulkan\+Shader\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_shader}{Vulkan\+Shader}} \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+Here is the call graph for this function\+:
+% FIG 8
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_shader_8hpp}{Vulkan\+Shader.\+hpp}}\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_shader_8cpp}{Vulkan\+Shader.\+cpp}}\end{DoxyCompactItemize}

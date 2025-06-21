@@ -1,0 +1,93 @@
+\doxysection{Test\+Layer Class Reference}
+\hypertarget{class_test_layer}{}\label{class_test_layer}\index{TestLayer@{TestLayer}}
+
+
+{\ttfamily \#include $<$Test\+Layer.\+hpp$>$}
+
+
+
+Inheritance diagram for Test\+Layer\+:
+% FIG 0
+
+
+Collaboration diagram for Test\+Layer\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_test_layer_aa6a8d735089b98137e395b7dcb79b27b}{On\+Attach}} () override
+\item 
+void \mbox{\hyperlink{class_test_layer_a8d03531568a8c37a95da1305fefce0c4}{On\+Detach}} () override
+\item 
+void \mbox{\hyperlink{class_test_layer_a9a0c0688f3db9f7f5d29650cede89346}{On\+Fixed\+Update}} (float fixed\+Timestep) override
+\item 
+void \mbox{\hyperlink{class_test_layer_a27bebae39ed553baa4deafae35092dc1}{On\+Event}} (\mbox{\hyperlink{class_void_architect_1_1_event}{Void\+Architect\+::\+Event}} \&e) override
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_void_architect_1_1_layer}{Void\+Architect\+::\+Layer}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_layer_a98740f9db2405bc160f7c67d212da7b8}{Layer}} (const std\+::string \&name="{}Layer"{})
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_layer_a51354e96c5736a30f45a42f095bb61e6}{\texorpdfstring{$\sim$}{\string~}\+Layer}} ()
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_layer_aad87785d3e9f620e3c328d2805caa351}{On\+Update}} (float delta\+Time)
+\item 
+const std\+::string \& \mbox{\hyperlink{class_void_architect_1_1_layer_aa3b4e82e63707afd43987f72203cd8ba}{Get\+Name}} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_void_architect_1_1_layer}{Void\+Architect\+::\+Layer}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_layer_a112bb0d5731051f6e31d78dadda44d5a}{m\+\_\+\+Debug\+Name}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{class_test_layer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_test_layer_aa6a8d735089b98137e395b7dcb79b27b}\index{TestLayer@{TestLayer}!OnAttach@{OnAttach}}
+\index{OnAttach@{OnAttach}!TestLayer@{TestLayer}}
+\doxysubsubsection{\texorpdfstring{OnAttach()}{OnAttach()}}
+{\footnotesize\ttfamily \label{class_test_layer_aa6a8d735089b98137e395b7dcb79b27b} 
+void Test\+Layer\+::\+On\+Attach (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_void_architect_1_1_layer_afc7b38adf776884fb18006742824c43a}{Void\+Architect\+::\+Layer}}.
+
+\Hypertarget{class_test_layer_a8d03531568a8c37a95da1305fefce0c4}\index{TestLayer@{TestLayer}!OnDetach@{OnDetach}}
+\index{OnDetach@{OnDetach}!TestLayer@{TestLayer}}
+\doxysubsubsection{\texorpdfstring{OnDetach()}{OnDetach()}}
+{\footnotesize\ttfamily \label{class_test_layer_a8d03531568a8c37a95da1305fefce0c4} 
+void Test\+Layer\+::\+On\+Detach (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_void_architect_1_1_layer_adc16928c5cacb0728f65143bf3af1b44}{Void\+Architect\+::\+Layer}}.
+
+\Hypertarget{class_test_layer_a27bebae39ed553baa4deafae35092dc1}\index{TestLayer@{TestLayer}!OnEvent@{OnEvent}}
+\index{OnEvent@{OnEvent}!TestLayer@{TestLayer}}
+\doxysubsubsection{\texorpdfstring{OnEvent()}{OnEvent()}}
+{\footnotesize\ttfamily \label{class_test_layer_a27bebae39ed553baa4deafae35092dc1} 
+void Test\+Layer\+::\+On\+Event (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_event}{Void\+Architect\+::\+Event}} \&}]{e}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_void_architect_1_1_layer_a2bba5dceecd925bde57b0e04e5fa7e82}{Void\+Architect\+::\+Layer}}.
+
+\Hypertarget{class_test_layer_a9a0c0688f3db9f7f5d29650cede89346}\index{TestLayer@{TestLayer}!OnFixedUpdate@{OnFixedUpdate}}
+\index{OnFixedUpdate@{OnFixedUpdate}!TestLayer@{TestLayer}}
+\doxysubsubsection{\texorpdfstring{OnFixedUpdate()}{OnFixedUpdate()}}
+{\footnotesize\ttfamily \label{class_test_layer_a9a0c0688f3db9f7f5d29650cede89346} 
+void Test\+Layer\+::\+On\+Fixed\+Update (\begin{DoxyParamCaption}\item[{float}]{fixed\+Timestep}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_void_architect_1_1_layer_a6cb379e04ae66a30e303a495e20875b0}{Void\+Architect\+::\+Layer}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+client/src/\mbox{\hyperlink{client_2src_2_test_layer_8hpp}{Test\+Layer.\+hpp}}\item 
+client/src/\mbox{\hyperlink{client_2src_2_test_layer_8cpp}{Test\+Layer.\+cpp}}\end{DoxyCompactItemize}

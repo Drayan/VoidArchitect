@@ -1,0 +1,34 @@
+\doxysection{Void\+Architect\+::Testing Namespace Reference}
+\hypertarget{namespace_void_architect_1_1_testing}{}\label{namespace_void_architect_1_1_testing}\index{VoidArchitect::Testing@{VoidArchitect::Testing}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer}{Test\+Layer}}
+\begin{DoxyCompactList}\small\item\em \doxylink{class_void_architect_1_1_layer}{Layer} that executes the test suite. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_result}{Test\+Result}}
+\begin{DoxyCompactList}\small\item\em Test execution result with timing and status information. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_runner}{Test\+Runner}}
+\begin{DoxyCompactList}\small\item\em Simple test runner for \doxylink{namespace_void_architect}{Void\+Architect} engine components. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_run_summary}{Test\+Run\+Summary}}
+\begin{DoxyCompactList}\small\item\em Summary of test run results. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{namespace_void_architect_1_1_testing_a6a7d9554eddbb42a25df59c164ce5557}{Test\+Function}} = std\+::function$<$bool()$>$
+\begin{DoxyCompactList}\small\item\em Test function signature. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\label{doc-typedef-members}
+\Hypertarget{namespace_void_architect_1_1_testing_doc-typedef-members}
+\doxysubsection{Typedef Documentation}
+\Hypertarget{namespace_void_architect_1_1_testing_a6a7d9554eddbb42a25df59c164ce5557}\index{VoidArchitect::Testing@{VoidArchitect::Testing}!TestFunction@{TestFunction}}
+\index{TestFunction@{TestFunction}!VoidArchitect::Testing@{VoidArchitect::Testing}}
+\doxysubsubsection{\texorpdfstring{TestFunction}{TestFunction}}
+{\footnotesize\ttfamily \label{namespace_void_architect_1_1_testing_a6a7d9554eddbb42a25df59c164ce5557} 
+using \mbox{\hyperlink{namespace_void_architect_1_1_testing_a6a7d9554eddbb42a25df59c164ce5557}{Void\+Architect\+::\+Testing\+::\+Test\+Function}} = std\+::function$<$bool()$>$}
+
+
+
+Test function signature. 
+
+Test functions should return true for success, false for failure. They should handle their own error reporting to stdout/stderr. 

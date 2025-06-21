@@ -1,0 +1,92 @@
+\doxysection{Void\+Architect\+::Platform\+::Thread\+Registry Struct Reference}
+\hypertarget{struct_void_architect_1_1_platform_1_1_thread_registry}{}\label{struct_void_architect_1_1_platform_1_1_thread_registry}\index{VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}}
+
+
+Global thread registry for unified thread ID management.  
+
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_platform_a4eb5ffc4979f50ebec39df827fd029ba}{Thread\+Handle}} \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_thread_registry_a396dddcfef4e1b27ccccd1d4437f44b2}{Register\+Thread}} (const \mbox{\hyperlink{namespace_void_architect_1_1_platform_ade78a52395635894b49412b9b23eaff1}{Native\+Thread\+Handle}} thread\+Id)
+\item 
+void \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_thread_registry_ab41849c351eaa2562d738397cc8c2665}{Unregister\+Thread}} (\mbox{\hyperlink{namespace_void_architect_1_1_platform_a4eb5ffc4979f50ebec39df827fd029ba}{Thread\+Handle}} handle)
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_platform_a4eb5ffc4979f50ebec39df827fd029ba}{Thread\+Handle}} \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_thread_registry_a81490d70588f77de2720597aad8c2add}{Find\+Thread\+Handle}} (const \mbox{\hyperlink{namespace_void_architect_1_1_platform_ade78a52395635894b49412b9b23eaff1}{Native\+Thread\+Handle}} thread\+Id)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{namespace_void_architect_1_1_platform_ade78a52395635894b49412b9b23eaff1}{Native\+Thread\+Handle}} \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_thread_registry_aee5803ad130a33ea20c219aa86cc0409}{Get\+Current\+Native\+Handle}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+VAHash\+Map$<$ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a4eb5ffc4979f50ebec39df827fd029ba}{Thread\+Handle}}, \mbox{\hyperlink{namespace_void_architect_1_1_platform_ade78a52395635894b49412b9b23eaff1}{Native\+Thread\+Handle}} $>$ \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_thread_registry_a29db70cac46967f65f13f6bc7e6032e3}{active\+Threads}}
+\item 
+std\+::atomic$<$ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a4eb5ffc4979f50ebec39df827fd029ba}{Thread\+Handle}} $>$ \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_thread_registry_a57f27bfad1ee3b54256f2193e3ae56cc}{next\+Thread\+Id}} \{0\}
+\item 
+std\+::mutex \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_thread_registry_ad390252da4f894f66e8dbdd08faeba1d}{registry\+Mutex}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Global thread registry for unified thread ID management. 
+
+\label{doc-func-members}
+\Hypertarget{struct_void_architect_1_1_platform_1_1_thread_registry_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_void_architect_1_1_platform_1_1_thread_registry_a81490d70588f77de2720597aad8c2add}\index{VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}!FindThreadHandle@{FindThreadHandle}}
+\index{FindThreadHandle@{FindThreadHandle}!VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}}
+\doxysubsubsection{\texorpdfstring{FindThreadHandle()}{FindThreadHandle()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_platform_1_1_thread_registry_a81490d70588f77de2720597aad8c2add} 
+\mbox{\hyperlink{namespace_void_architect_1_1_platform_a4eb5ffc4979f50ebec39df827fd029ba}{Thread\+Handle}} Void\+Architect\+::\+Platform\+::\+Thread\+Registry\+::\+Find\+Thread\+Handle (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{namespace_void_architect_1_1_platform_ade78a52395635894b49412b9b23eaff1}{Native\+Thread\+Handle}}}]{thread\+Id}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{struct_void_architect_1_1_platform_1_1_thread_registry_aee5803ad130a33ea20c219aa86cc0409}\index{VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}!GetCurrentNativeHandle@{GetCurrentNativeHandle}}
+\index{GetCurrentNativeHandle@{GetCurrentNativeHandle}!VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}}
+\doxysubsubsection{\texorpdfstring{GetCurrentNativeHandle()}{GetCurrentNativeHandle()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_platform_1_1_thread_registry_aee5803ad130a33ea20c219aa86cc0409} 
+\mbox{\hyperlink{namespace_void_architect_1_1_platform_ade78a52395635894b49412b9b23eaff1}{Native\+Thread\+Handle}} Void\+Architect\+::\+Platform\+::\+Thread\+Registry\+::\+Get\+Current\+Native\+Handle (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+Here is the caller graph for this function\+:
+% FIG 0
+\Hypertarget{struct_void_architect_1_1_platform_1_1_thread_registry_a396dddcfef4e1b27ccccd1d4437f44b2}\index{VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}!RegisterThread@{RegisterThread}}
+\index{RegisterThread@{RegisterThread}!VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}}
+\doxysubsubsection{\texorpdfstring{RegisterThread()}{RegisterThread()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_platform_1_1_thread_registry_a396dddcfef4e1b27ccccd1d4437f44b2} 
+\mbox{\hyperlink{namespace_void_architect_1_1_platform_a4eb5ffc4979f50ebec39df827fd029ba}{Thread\+Handle}} Void\+Architect\+::\+Platform\+::\+Thread\+Registry\+::\+Register\+Thread (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{namespace_void_architect_1_1_platform_ade78a52395635894b49412b9b23eaff1}{Native\+Thread\+Handle}}}]{thread\+Id}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{struct_void_architect_1_1_platform_1_1_thread_registry_ab41849c351eaa2562d738397cc8c2665}\index{VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}!UnregisterThread@{UnregisterThread}}
+\index{UnregisterThread@{UnregisterThread}!VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}}
+\doxysubsubsection{\texorpdfstring{UnregisterThread()}{UnregisterThread()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_platform_1_1_thread_registry_ab41849c351eaa2562d738397cc8c2665} 
+void Void\+Architect\+::\+Platform\+::\+Thread\+Registry\+::\+Unregister\+Thread (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_void_architect_1_1_platform_a4eb5ffc4979f50ebec39df827fd029ba}{Thread\+Handle}}}]{handle}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_void_architect_1_1_platform_1_1_thread_registry_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{struct_void_architect_1_1_platform_1_1_thread_registry_a29db70cac46967f65f13f6bc7e6032e3}\index{VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}!activeThreads@{activeThreads}}
+\index{activeThreads@{activeThreads}!VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}}
+\doxysubsubsection{\texorpdfstring{activeThreads}{activeThreads}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_platform_1_1_thread_registry_a29db70cac46967f65f13f6bc7e6032e3} 
+VAHash\+Map$<$\mbox{\hyperlink{namespace_void_architect_1_1_platform_a4eb5ffc4979f50ebec39df827fd029ba}{Thread\+Handle}}, \mbox{\hyperlink{namespace_void_architect_1_1_platform_ade78a52395635894b49412b9b23eaff1}{Native\+Thread\+Handle}}$>$ Void\+Architect\+::\+Platform\+::\+Thread\+Registry\+::active\+Threads}
+
+\Hypertarget{struct_void_architect_1_1_platform_1_1_thread_registry_a57f27bfad1ee3b54256f2193e3ae56cc}\index{VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}!nextThreadId@{nextThreadId}}
+\index{nextThreadId@{nextThreadId}!VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}}
+\doxysubsubsection{\texorpdfstring{nextThreadId}{nextThreadId}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_platform_1_1_thread_registry_a57f27bfad1ee3b54256f2193e3ae56cc} 
+std\+::atomic$<$\mbox{\hyperlink{namespace_void_architect_1_1_platform_a4eb5ffc4979f50ebec39df827fd029ba}{Thread\+Handle}}$>$ Void\+Architect\+::\+Platform\+::\+Thread\+Registry\+::next\+Thread\+Id \{0\}}
+
+\Hypertarget{struct_void_architect_1_1_platform_1_1_thread_registry_ad390252da4f894f66e8dbdd08faeba1d}\index{VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}!registryMutex@{registryMutex}}
+\index{registryMutex@{registryMutex}!VoidArchitect::Platform::ThreadRegistry@{VoidArchitect::Platform::ThreadRegistry}}
+\doxysubsubsection{\texorpdfstring{registryMutex}{registryMutex}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_platform_1_1_thread_registry_ad390252da4f894f66e8dbdd08faeba1d} 
+std\+::mutex Void\+Architect\+::\+Platform\+::\+Thread\+Registry\+::registry\+Mutex}
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Platform/\+Threading/\mbox{\hyperlink{_thread_8cpp}{Thread.\+cpp}}\end{DoxyCompactItemize}

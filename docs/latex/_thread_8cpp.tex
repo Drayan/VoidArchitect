@@ -1,0 +1,28 @@
+\doxysection{engine/src/\+Platform/\+Threading/\+Thread.cpp File Reference}
+\hypertarget{_thread_8cpp}{}\label{_thread_8cpp}\index{engine/src/Platform/Threading/Thread.cpp@{engine/src/Platform/Threading/Thread.cpp}}
+{\ttfamily \#include "{}Thread.\+hpp"{}}\newline
+{\ttfamily \#include "{}Core/\+Logger.\+hpp"{}}\newline
+Include dependency graph for Thread.\+cpp\+:
+% FIG 0
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_void_architect_1_1_platform_1_1_thread_registry}{Void\+Architect\+::\+Platform\+::\+Thread\+Registry}}
+\begin{DoxyCompactList}\small\item\em Global thread registry for unified thread ID management. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespace_void_architect}{Void\+Architect}}
+\item 
+namespace \mbox{\hyperlink{namespace_void_architect_1_1_platform}{Void\+Architect\+::\+Platform}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{namespace_void_architect_1_1_platform_ade78a52395635894b49412b9b23eaff1}{Void\+Architect\+::\+Platform\+::\+Native\+Thread\+Handle}} = std\+::thread\+::id
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+thread\+\_\+local \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_thread}{Thread}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{namespace_void_architect_1_1_platform_a4ceb1181bb3c47749f796cb7cbfd799a}{Void\+Architect\+::\+Platform\+::g\+\_\+\+Current\+Thread}} = nullptr
+\end{DoxyCompactItemize}

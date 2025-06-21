@@ -1,0 +1,137 @@
+\doxysection{Void\+Architect\+::Platform\+::Vulkan\+Render\+Pass Class Reference}
+\hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass}{}\label{class_void_architect_1_1_platform_1_1_vulkan_render_pass}\index{VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}}
+
+
+{\ttfamily \#include $<$Vulkan\+Render\+Pass.\+hpp$>$}
+
+
+
+Inheritance diagram for Void\+Architect\+::Platform\+::Vulkan\+Render\+Pass\+:
+% FIG 0
+
+
+Collaboration diagram for Void\+Architect\+::Platform\+::Vulkan\+Render\+Pass\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a768dec57bc846951fd9eb98750800745}{Vulkan\+Render\+Pass}} (const \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_pass_config}{Renderer\+::\+Render\+Pass\+Config}} \&config, const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&device, Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}allocator, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5f}{Renderer\+::\+Pass\+Position}} pass\+Position, Vk\+Format swapchain\+Format, Vk\+Format depth\+Format)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_pass_ac8cc7b25a2d72352dfa91e13ea3dd836}{\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Render\+Pass}} () override
+\item 
+Vk\+Render\+Pass \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a0217af05dbb42e76aa29f9193e0b1598}{Get\+Handle}} () const
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_pass_ae3b37942a89915313d3954cb7fe949a1}{Set\+Dimensions}} (const uint32\+\_\+t x, const uint32\+\_\+t y, const uint32\+\_\+t w, const uint32\+\_\+t h)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a8b02e5211ed71e188bd822e9a7cf5553}{Set\+Width}} (const uint32\+\_\+t width)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a3244d6b4862b6e6bfb9281b262a48cf8}{Set\+Height}} (const uint32\+\_\+t height)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a805e90917392c88039b84a2beaf6a61a}{SetX}} (const uint32\+\_\+t x)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_pass_aad927cb82a2605871c50c6d741978af7}{SetY}} (const uint32\+\_\+t y)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_pass}{Void\+Architect\+::\+Resources\+::\+IRender\+Pass}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_pass_a8e69e4c2ad0b5ef9b5fadb58e28d20b0}{\texorpdfstring{$\sim$}{\string~}\+IRender\+Pass}} ()=default
+\item 
+const std\+::string \& \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_pass_ae814bceacecc1c8023d13e1d8a3d148a}{Get\+Name}} () const
+\item 
+const \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_render_pass_signature}{Render\+Pass\+Signature}} \& \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_pass_afcd696e1d199f79dc6b72b9b92e7bffe}{Get\+Signature}} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a546843ae78cec970855288f253a1f948}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Execution\+Context}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_pass}{Void\+Architect\+::\+Resources\+::\+IRender\+Pass}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_pass_ad053d54896f6429f93f4e72fb6dcf5dc}{IRender\+Pass}} (const std\+::string \&name, const \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_render_pass_signature}{Render\+Pass\+Signature}} \&signature)
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_pass}{Void\+Architect\+::\+Resources\+::\+IRender\+Pass}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_pass_afb45426ef3b4f368086c8a04f6c33c3a}{m\+\_\+\+Name}}
+\item 
+\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_render_pass_signature}{Render\+Pass\+Signature}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_pass_a268d6b93d27cf3049e6eb4711fd2e2df}{m\+\_\+\+Signature}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a768dec57bc846951fd9eb98750800745}\index{VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}!VulkanRenderPass@{VulkanRenderPass}}
+\index{VulkanRenderPass@{VulkanRenderPass}!VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}}
+\doxysubsubsection{\texorpdfstring{VulkanRenderPass()}{VulkanRenderPass()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a768dec57bc846951fd9eb98750800745} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Render\+Pass\+::\+Vulkan\+Render\+Pass (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_pass_config}{Renderer\+::\+Render\+Pass\+Config}} \&}]{config}{, }\item[{const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&}]{device}{, }\item[{Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}}]{allocator}{, }\item[{\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5f}{Renderer\+::\+Pass\+Position}}}]{pass\+Position}{, }\item[{Vk\+Format}]{swapchain\+Format}{, }\item[{Vk\+Format}]{depth\+Format}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass_ac8cc7b25a2d72352dfa91e13ea3dd836}\index{VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}!````~VulkanRenderPass@{\texorpdfstring{$\sim$}{\string~}VulkanRenderPass}}
+\index{````~VulkanRenderPass@{\texorpdfstring{$\sim$}{\string~}VulkanRenderPass}!VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}VulkanRenderPass()}{\string~VulkanRenderPass()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_render_pass_ac8cc7b25a2d72352dfa91e13ea3dd836} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Render\+Pass\+::\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Render\+Pass (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a0217af05dbb42e76aa29f9193e0b1598}\index{VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}!GetHandle@{GetHandle}}
+\index{GetHandle@{GetHandle}!VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}}
+\doxysubsubsection{\texorpdfstring{GetHandle()}{GetHandle()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a0217af05dbb42e76aa29f9193e0b1598} 
+Vk\+Render\+Pass Void\+Architect\+::\+Platform\+::\+Vulkan\+Render\+Pass\+::\+Get\+Handle (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass_ae3b37942a89915313d3954cb7fe949a1}\index{VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}!SetDimensions@{SetDimensions}}
+\index{SetDimensions@{SetDimensions}!VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}}
+\doxysubsubsection{\texorpdfstring{SetDimensions()}{SetDimensions()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_render_pass_ae3b37942a89915313d3954cb7fe949a1} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Render\+Pass\+::\+Set\+Dimensions (\begin{DoxyParamCaption}\item[{const uint32\+\_\+t}]{x}{, }\item[{const uint32\+\_\+t}]{y}{, }\item[{const uint32\+\_\+t}]{w}{, }\item[{const uint32\+\_\+t}]{h}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a3244d6b4862b6e6bfb9281b262a48cf8}\index{VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}!SetHeight@{SetHeight}}
+\index{SetHeight@{SetHeight}!VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}}
+\doxysubsubsection{\texorpdfstring{SetHeight()}{SetHeight()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a3244d6b4862b6e6bfb9281b262a48cf8} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Render\+Pass\+::\+Set\+Height (\begin{DoxyParamCaption}\item[{const uint32\+\_\+t}]{height}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a8b02e5211ed71e188bd822e9a7cf5553}\index{VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}!SetWidth@{SetWidth}}
+\index{SetWidth@{SetWidth}!VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}}
+\doxysubsubsection{\texorpdfstring{SetWidth()}{SetWidth()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a8b02e5211ed71e188bd822e9a7cf5553} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Render\+Pass\+::\+Set\+Width (\begin{DoxyParamCaption}\item[{const uint32\+\_\+t}]{width}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a805e90917392c88039b84a2beaf6a61a}\index{VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}!SetX@{SetX}}
+\index{SetX@{SetX}!VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}}
+\doxysubsubsection{\texorpdfstring{SetX()}{SetX()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a805e90917392c88039b84a2beaf6a61a} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Render\+Pass\+::\+SetX (\begin{DoxyParamCaption}\item[{const uint32\+\_\+t}]{x}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass_aad927cb82a2605871c50c6d741978af7}\index{VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}!SetY@{SetY}}
+\index{SetY@{SetY}!VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}}
+\doxysubsubsection{\texorpdfstring{SetY()}{SetY()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_render_pass_aad927cb82a2605871c50c6d741978af7} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Render\+Pass\+::\+SetY (\begin{DoxyParamCaption}\item[{const uint32\+\_\+t}]{y}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\label{doc-related-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass_doc-related-members}
+\doxysubsection{Friends And Related Symbol Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a546843ae78cec970855288f253a1f948}\index{VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}!VoidArchitect::Platform::VulkanExecutionContext@{VoidArchitect::Platform::VulkanExecutionContext}}
+\index{VoidArchitect::Platform::VulkanExecutionContext@{VoidArchitect::Platform::VulkanExecutionContext}!VoidArchitect::Platform::VulkanRenderPass@{VoidArchitect::Platform::VulkanRenderPass}}
+\doxysubsubsection{\texorpdfstring{VoidArchitect::Platform::VulkanExecutionContext}{VoidArchitect::Platform::VulkanExecutionContext}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_render_pass_a546843ae78cec970855288f253a1f948} 
+friend class \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_execution_context}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Execution\+Context}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_render_pass_8hpp}{Vulkan\+Render\+Pass.\+hpp}}\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_render_pass_8cpp}{Vulkan\+Render\+Pass.\+cpp}}\end{DoxyCompactItemize}

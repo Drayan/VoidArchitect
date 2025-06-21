@@ -1,0 +1,103 @@
+\doxysection{Void\+Architect\+::Platform\+::Vulkan\+Framebuffer\+Cache Class Reference}
+\hypertarget{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{}\label{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}\index{VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}}
+
+
+{\ttfamily \#include $<$Vulkan\+Framebuffer\+Cache.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a5553eaa420b33c43bf789aed9ae1be18}{Vulkan\+Framebuffer\+Cache}} (const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&device, Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}allocator)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a795eca78099be26539665c40d6f2787f}{\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Framebuffer\+Cache}} ()
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a6913d8b8220272fa1e35584b76342bf9}{Vulkan\+Framebuffer\+Cache}} (const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{Vulkan\+Framebuffer\+Cache}} \&)=delete
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{Vulkan\+Framebuffer\+Cache}} \& \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_ac9b39da610b6bcdb3df07e2208226fa7}{operator=}} (const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{Vulkan\+Framebuffer\+Cache}} \&)=delete
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_af3220048886632aaeb408cbed9a79263}{Vulkan\+Framebuffer\+Cache}} (\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{Vulkan\+Framebuffer\+Cache}} \&\&)=delete
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{Vulkan\+Framebuffer\+Cache}} \& \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a5bb4315f56f113d707214cbf30ddc9a0}{operator=}} (\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{Vulkan\+Framebuffer\+Cache}} \&\&)=delete
+\item 
+Vk\+Framebuffer \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a462ff51eee74e415f0ac47783e0aeb90}{Get\+Handle\+For}} (Vk\+Render\+Pass render\+Pass, const VAArray$<$ Vk\+Image\+View $>$ \&attachments, uint32\+\_\+t width, uint32\+\_\+t height)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_abcbdb39c88ce1a9abe2a04464013a742}{Clear}} ()
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a5553eaa420b33c43bf789aed9ae1be18}\index{VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}!VulkanFramebufferCache@{VulkanFramebufferCache}}
+\index{VulkanFramebufferCache@{VulkanFramebufferCache}!VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}}
+\doxysubsubsection{\texorpdfstring{VulkanFramebufferCache()}{VulkanFramebufferCache()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a5553eaa420b33c43bf789aed9ae1be18} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Framebuffer\+Cache\+::\+Vulkan\+Framebuffer\+Cache (\begin{DoxyParamCaption}\item[{const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&}]{device}{, }\item[{Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}}]{allocator}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+Here is the caller graph for this function\+:
+% FIG 0
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a795eca78099be26539665c40d6f2787f}\index{VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}!````~VulkanFramebufferCache@{\texorpdfstring{$\sim$}{\string~}VulkanFramebufferCache}}
+\index{````~VulkanFramebufferCache@{\texorpdfstring{$\sim$}{\string~}VulkanFramebufferCache}!VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}VulkanFramebufferCache()}{\string~VulkanFramebufferCache()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a795eca78099be26539665c40d6f2787f} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Framebuffer\+Cache\+::\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Framebuffer\+Cache (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 1
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a6913d8b8220272fa1e35584b76342bf9}\index{VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}!VulkanFramebufferCache@{VulkanFramebufferCache}}
+\index{VulkanFramebufferCache@{VulkanFramebufferCache}!VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}}
+\doxysubsubsection{\texorpdfstring{VulkanFramebufferCache()}{VulkanFramebufferCache()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a6913d8b8220272fa1e35584b76342bf9} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Framebuffer\+Cache\+::\+Vulkan\+Framebuffer\+Cache (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{Vulkan\+Framebuffer\+Cache}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_af3220048886632aaeb408cbed9a79263}\index{VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}!VulkanFramebufferCache@{VulkanFramebufferCache}}
+\index{VulkanFramebufferCache@{VulkanFramebufferCache}!VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}}
+\doxysubsubsection{\texorpdfstring{VulkanFramebufferCache()}{VulkanFramebufferCache()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_af3220048886632aaeb408cbed9a79263} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Framebuffer\+Cache\+::\+Vulkan\+Framebuffer\+Cache (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{Vulkan\+Framebuffer\+Cache}} \&\&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 3
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_abcbdb39c88ce1a9abe2a04464013a742}\index{VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}!Clear@{Clear}}
+\index{Clear@{Clear}!VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}}
+\doxysubsubsection{\texorpdfstring{Clear()}{Clear()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_abcbdb39c88ce1a9abe2a04464013a742} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Framebuffer\+Cache\+::\+Clear (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 4
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a462ff51eee74e415f0ac47783e0aeb90}\index{VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}!GetHandleFor@{GetHandleFor}}
+\index{GetHandleFor@{GetHandleFor}!VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}}
+\doxysubsubsection{\texorpdfstring{GetHandleFor()}{GetHandleFor()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a462ff51eee74e415f0ac47783e0aeb90} 
+Vk\+Framebuffer Void\+Architect\+::\+Platform\+::\+Vulkan\+Framebuffer\+Cache\+::\+Get\+Handle\+For (\begin{DoxyParamCaption}\item[{Vk\+Render\+Pass}]{render\+Pass}{, }\item[{const VAArray$<$ Vk\+Image\+View $>$ \&}]{attachments}{, }\item[{uint32\+\_\+t}]{width}{, }\item[{uint32\+\_\+t}]{height}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_ac9b39da610b6bcdb3df07e2208226fa7}\index{VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_ac9b39da610b6bcdb3df07e2208226fa7} 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{Vulkan\+Framebuffer\+Cache}} \& Void\+Architect\+::\+Platform\+::\+Vulkan\+Framebuffer\+Cache\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{Vulkan\+Framebuffer\+Cache}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 5
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a5bb4315f56f113d707214cbf30ddc9a0}\index{VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Platform::VulkanFramebufferCache@{VoidArchitect::Platform::VulkanFramebufferCache}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache_a5bb4315f56f113d707214cbf30ddc9a0} 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{Vulkan\+Framebuffer\+Cache}} \& Void\+Architect\+::\+Platform\+::\+Vulkan\+Framebuffer\+Cache\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_framebuffer_cache}{Vulkan\+Framebuffer\+Cache}} \&\&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 6
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_framebuffer_cache_8hpp}{Vulkan\+Framebuffer\+Cache.\+hpp}}\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_framebuffer_cache_8cpp}{Vulkan\+Framebuffer\+Cache.\+cpp}}\end{DoxyCompactItemize}

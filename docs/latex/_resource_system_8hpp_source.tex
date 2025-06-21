@@ -1,0 +1,43 @@
+\doxysection{Resource\+System.\+hpp}
+\hypertarget{_resource_system_8hpp_source}{}\label{_resource_system_8hpp_source}\index{engine/src/Systems/ResourceSystem.hpp@{engine/src/Systems/ResourceSystem.hpp}}
+\mbox{\hyperlink{_resource_system_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 01/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_loader_8hpp}{Resources/Loaders/Loader.hpp}}"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespace_void_architect_a3585c3fdee37e3268b7e3ecd9482548b}{ResourceType}}}
+\DoxyCodeLine{00011\ \ \ \ \ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_a3585c3fdee37e3268b7e3ecd9482548babe53a0541a6d36f6ecb879fa2c584b08}{Image}},}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_a3585c3fdee37e3268b7e3ecd9482548bad92a8333dd3ccb895cc65f7455b71206}{Material}},}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_a3585c3fdee37e3268b7e3ecd9482548baa88a92f4a0e793589f2341851a15c660}{Shader}},}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_a3585c3fdee37e3268b7e3ecd9482548ba710fdb6adb881b408116ef95335e1961}{Mesh}}}
+\DoxyCodeLine{00016\ \ \ \ \ \};}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_resource_system_a1bfb2f82fe6d3c7abee81474d452e145}{ResourceSystem}}}
+\DoxyCodeLine{00019\ \ \ \ \ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_resource_system_a1bfb2f82fe6d3c7abee81474d452e145}{ResourceSystem}}();}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_resource_system_a5c1c86e8f3dada1a5a29d118e7de67cf}{\string~ResourceSystem}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_resource_system_af4ec62f1a9d3d4a3ad211b7466d0f06a}{RegisterLoader}}(\mbox{\hyperlink{namespace_void_architect_a3585c3fdee37e3268b7e3ecd9482548b}{ResourceType}}\ type,\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader}{Resources::Loaders::ILoader}}*\ loader);}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_resource_system_aff78e96940c295c29bf9da842bf76e40}{UnregisterLoader}}(\mbox{\hyperlink{namespace_void_architect_a3585c3fdee37e3268b7e3ecd9482548b}{ResourceType}}\ type);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ std::shared\_ptr<T>\ \mbox{\hyperlink{class_void_architect_1_1_resource_system_ad3f963d9827adca26203a76dc82646a0}{LoadResource}}(\mbox{\hyperlink{namespace_void_architect_a3585c3fdee37e3268b7e3ecd9482548b}{ResourceType}}\ type,\ \textcolor{keyword}{const}\ std::string\&\ path);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ std::string\ ResourceTypeToString(\mbox{\hyperlink{namespace_void_architect_a3585c3fdee37e3268b7e3ecd9482548b}{ResourceType}}\ type);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ VAHashMap<ResourceType,\ std::unique\_ptr<Resources::Loaders::ILoader>>\ m\_Loaders;}
+\DoxyCodeLine{00034\ \ \ \ \ \};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{inline}\ std::unique\_ptr<ResourceSystem>\ \mbox{\hyperlink{namespace_void_architect_a9eb598bb0770c52829afb41300b91f5a}{g\_ResourceSystem}};}
+\DoxyCodeLine{00037\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect}}
+
+\end{DoxyCode}

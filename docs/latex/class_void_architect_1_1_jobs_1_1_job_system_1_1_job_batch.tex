@@ -1,0 +1,183 @@
+\doxysection{Void\+Architect\+::Jobs\+::Job\+System\+::Job\+Batch Class Reference}
+\hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{}\label{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}\index{VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}}
+
+
+Utility class for managing batches of related jobs.  
+
+
+
+
+{\ttfamily \#include $<$Job\+System.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a47f733b535ca165335bb3529765337ad}{Job\+Batch}} (const char \texorpdfstring{$\ast$}{*}name)
+\begin{DoxyCompactList}\small\item\em Constructor creates empty job batch. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_ab52841ebf1fc850282a78524a22c941f}{\texorpdfstring{$\sim$}{\string~}\+Job\+Batch}} ()=default
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_abd9176f1eb9cfecdfccc6d6d1ab388bc}{Job\+Batch}} (const \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{Job\+Batch}} \&)=delete
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{Job\+Batch}} \& \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a341151fd442c12e8d9997c4b728ace62}{operator=}} (const \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{Job\+Batch}} \&)=delete
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a9cc8b7d1ed109fef5091e96ab032d7f7}{Job\+Batch}} (\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{Job\+Batch}} \&\&)=default
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{Job\+Batch}} \& \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_ae3cf2abc9fe5beafa0d97b3cc0407dc8}{operator=}} (\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{Job\+Batch}} \&\&)=default
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a38c8bc2000659481f189047a0a7399a0}{Add\+Job}} (\mbox{\hyperlink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{Job\+Function}} job, const char \texorpdfstring{$\ast$}{*}name, \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52}{Job\+Priority}} priority=\mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52a960b44c579bc2f6818d2daaf9e4c16f0}{Job\+Priority\+::\+Normal}})
+\begin{DoxyCompactList}\small\item\em Add a job to the batch. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{Sync\+Point\+Handle}} \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a4b75c2437c0ceee1e3c3ac1941597c08}{Submit}} ()
+\begin{DoxyCompactList}\small\item\em Submit all jobs in the batch for execution. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_aea119f756cceffb688e456fc6c9c61d4}{Cancel}} (const char \texorpdfstring{$\ast$}{*}reason="{}Batch cancelled"{})
+\begin{DoxyCompactList}\small\item\em Cancel all jobs in the batch. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a860033ab6d57a6aed4a32de81097f656}{Get\+Job\+Count}} () const
+\begin{DoxyCompactList}\small\item\em Get number of jobs in the batch. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a1b8fd19575ccc53631e7a44e28083f4d}{Is\+Submitted}} () const
+\begin{DoxyCompactList}\small\item\em Check fi batch has been submitted. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Utility class for managing batches of related jobs. 
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a47f733b535ca165335bb3529765337ad}\index{VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}!JobBatch@{JobBatch}}
+\index{JobBatch@{JobBatch}!VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}}
+\doxysubsubsection{\texorpdfstring{JobBatch()}{JobBatch()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a47f733b535ca165335bb3529765337ad} 
+Void\+Architect\+::\+Jobs\+::\+Job\+System\+::\+Job\+Batch\+::\+Job\+Batch (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Constructor creates empty job batch. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Debug name for batch sync point \\
+\hline
+\end{DoxyParams}
+Here is the caller graph for this function\+:
+% FIG 0
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_ab52841ebf1fc850282a78524a22c941f}\index{VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}!````~JobBatch@{\texorpdfstring{$\sim$}{\string~}JobBatch}}
+\index{````~JobBatch@{\texorpdfstring{$\sim$}{\string~}JobBatch}!VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}JobBatch()}{\string~JobBatch()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_ab52841ebf1fc850282a78524a22c941f} 
+Void\+Architect\+::\+Jobs\+::\+Job\+System\+::\+Job\+Batch\+::\texorpdfstring{$\sim$}{\string~}\+Job\+Batch (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_abd9176f1eb9cfecdfccc6d6d1ab388bc}\index{VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}!JobBatch@{JobBatch}}
+\index{JobBatch@{JobBatch}!VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}}
+\doxysubsubsection{\texorpdfstring{JobBatch()}{JobBatch()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_abd9176f1eb9cfecdfccc6d6d1ab388bc} 
+Void\+Architect\+::\+Jobs\+::\+Job\+System\+::\+Job\+Batch\+::\+Job\+Batch (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{Job\+Batch}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 1
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a9cc8b7d1ed109fef5091e96ab032d7f7}\index{VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}!JobBatch@{JobBatch}}
+\index{JobBatch@{JobBatch}!VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}}
+\doxysubsubsection{\texorpdfstring{JobBatch()}{JobBatch()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a9cc8b7d1ed109fef5091e96ab032d7f7} 
+Void\+Architect\+::\+Jobs\+::\+Job\+System\+::\+Job\+Batch\+::\+Job\+Batch (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{Job\+Batch}} \&\&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+Here is the call graph for this function\+:
+% FIG 2
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a38c8bc2000659481f189047a0a7399a0}\index{VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}!AddJob@{AddJob}}
+\index{AddJob@{AddJob}!VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}}
+\doxysubsubsection{\texorpdfstring{AddJob()}{AddJob()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a38c8bc2000659481f189047a0a7399a0} 
+void Void\+Architect\+::\+Jobs\+::\+Job\+System\+::\+Job\+Batch\+::\+Add\+Job (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_void_architect_1_1_jobs_a270282f778432d410f2ebbae174518df}{Job\+Function}}}]{job}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{name}{, }\item[{\mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52}{Job\+Priority}}}]{priority}{ = {\ttfamily \mbox{\hyperlink{namespace_void_architect_1_1_jobs_a17432d18638fd500acc143d312762a52a960b44c579bc2f6818d2daaf9e4c16f0}{Job\+Priority\+::\+Normal}}}}\end{DoxyParamCaption})}
+
+
+
+Add a job to the batch. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em job} & Function to execute \\
+\hline
+{\em name} & Debug name for the job \\
+\hline
+{\em priority} & \doxylink{struct_void_architect_1_1_jobs_1_1_job}{Job} execution priority \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_aea119f756cceffb688e456fc6c9c61d4}\index{VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}!Cancel@{Cancel}}
+\index{Cancel@{Cancel}!VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}}
+\doxysubsubsection{\texorpdfstring{Cancel()}{Cancel()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_aea119f756cceffb688e456fc6c9c61d4} 
+void Void\+Architect\+::\+Jobs\+::\+Job\+System\+::\+Job\+Batch\+::\+Cancel (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{reason}{ = {\ttfamily "{}Batch~cancelled"{}}}\end{DoxyParamCaption})}
+
+
+
+Cancel all jobs in the batch. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em reason} & Description of why batch was cancelled \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a860033ab6d57a6aed4a32de81097f656}\index{VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}!GetJobCount@{GetJobCount}}
+\index{GetJobCount@{GetJobCount}!VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}}
+\doxysubsubsection{\texorpdfstring{GetJobCount()}{GetJobCount()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a860033ab6d57a6aed4a32de81097f656} 
+size\+\_\+t Void\+Architect\+::\+Jobs\+::\+Job\+System\+::\+Job\+Batch\+::\+Get\+Job\+Count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get number of jobs in the batch. 
+
+\begin{DoxyReturn}{Returns}
+Number of jobs added to the batch 
+\end{DoxyReturn}
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a1b8fd19575ccc53631e7a44e28083f4d}\index{VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}!IsSubmitted@{IsSubmitted}}
+\index{IsSubmitted@{IsSubmitted}!VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}}
+\doxysubsubsection{\texorpdfstring{IsSubmitted()}{IsSubmitted()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a1b8fd19575ccc53631e7a44e28083f4d} 
+bool Void\+Architect\+::\+Jobs\+::\+Job\+System\+::\+Job\+Batch\+::\+Is\+Submitted (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check fi batch has been submitted. 
+
+\begin{DoxyReturn}{Returns}
+true if \doxylink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a4b75c2437c0ceee1e3c3ac1941597c08}{Submit()} has been called 
+\end{DoxyReturn}
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a341151fd442c12e8d9997c4b728ace62}\index{VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a341151fd442c12e8d9997c4b728ace62} 
+\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{Job\+Batch}} \& Void\+Architect\+::\+Jobs\+::\+Job\+System\+::\+Job\+Batch\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{Job\+Batch}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 3
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_ae3cf2abc9fe5beafa0d97b3cc0407dc8}\index{VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_ae3cf2abc9fe5beafa0d97b3cc0407dc8} 
+\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{Job\+Batch}} \& Void\+Architect\+::\+Jobs\+::\+Job\+System\+::\+Job\+Batch\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch}{Job\+Batch}} \&\&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+Here is the call graph for this function\+:
+% FIG 4
+\Hypertarget{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a4b75c2437c0ceee1e3c3ac1941597c08}\index{VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}!Submit@{Submit}}
+\index{Submit@{Submit}!VoidArchitect::Jobs::JobSystem::JobBatch@{VoidArchitect::Jobs::JobSystem::JobBatch}}
+\doxysubsubsection{\texorpdfstring{Submit()}{Submit()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch_a4b75c2437c0ceee1e3c3ac1941597c08} 
+\mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{Sync\+Point\+Handle}} Void\+Architect\+::\+Jobs\+::\+Job\+System\+::\+Job\+Batch\+::\+Submit (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Submit all jobs in the batch for execution. 
+
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} handle that completes when all batch jobs complete 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Systems/\+Jobs/\mbox{\hyperlink{_job_system_8hpp}{Job\+System.\+hpp}}\item 
+engine/src/\+Systems/\+Jobs/\mbox{\hyperlink{_job_system_8cpp}{Job\+System.\+cpp}}\end{DoxyCompactItemize}

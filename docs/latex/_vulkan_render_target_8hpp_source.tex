@@ -1,0 +1,40 @@
+\doxysection{Vulkan\+Render\+Target.\+hpp}
+\hypertarget{_vulkan_render_target_8hpp_source}{}\label{_vulkan_render_target_8hpp_source}\index{engine/src/Platform/RHI/Vulkan/VulkanRenderTarget.hpp@{engine/src/Platform/RHI/Vulkan/VulkanRenderTarget.hpp}}
+\mbox{\hyperlink{_vulkan_render_target_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 19/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vulkan_image_8hpp}{VulkanImage.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_render_target_8hpp}{Resources/RenderTarget.hpp}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_renderer}{VoidArchitect::Renderer}}}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_target_config}{RenderTargetConfig}};}
+\DoxyCodeLine{00012\ \}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00015\ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_image}{VulkanImage}};}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{VulkanDevice}};}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_pass}{VulkanRenderPass}};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_target_af9ed9b4697880b9d688285b337b05727}{VulkanRenderTarget}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target}{Resources::IRenderTarget}}}
+\DoxyCodeLine{00021\ \ \ \ \ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_target_af9ed9b4697880b9d688285b337b05727}{VulkanRenderTarget}}(\textcolor{keyword}{const}\ std::string\&\ name,\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_image}{VulkanImage}}\&\&\ image);}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_target_a0e91f4dd7512f07e19a08aa9be3dc978}{\string~VulkanRenderTarget}}()\ \textcolor{keyword}{override}\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_image}{VulkanImage}}\&\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_target_ad2d1e02f5e07376c99fe26000abc97ce}{GetImage}}()\ \{\ \textcolor{keywordflow}{return}\ m\_Image;\ \}}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ VkImageView\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_render_target_a25d4284860fdd0077f08c244a3c037c6}{GetImageView}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Image.GetView();\ \}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ IsDepthTarget(VkFormat\ format)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_image}{VulkanImage}}\ m\_Image;}
+\DoxyCodeLine{00033\ \ \ \ \ \};}
+\DoxyCodeLine{00034\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect::Platform}}
+
+\end{DoxyCode}

@@ -1,0 +1,27 @@
+var struct_void_architect_1_1_jobs_1_1_sync_point =
+[
+    [ "SyncPoint", "struct_void_architect_1_1_jobs_1_1_sync_point.html#a7ec5d8f6ffed09e8688b96fb2d8f4a5a", null ],
+    [ "SyncPoint", "struct_void_architect_1_1_jobs_1_1_sync_point.html#a10bfeec925042ef364cf598db4271124", null ],
+    [ "~SyncPoint", "struct_void_architect_1_1_jobs_1_1_sync_point.html#aa83212429d6fa0e7397fc53a35e04016", null ],
+    [ "SyncPoint", "struct_void_architect_1_1_jobs_1_1_sync_point.html#aacde2ca3100ab8e65e9f430da30ccaaf", null ],
+    [ "SyncPoint", "struct_void_architect_1_1_jobs_1_1_sync_point.html#a220b220abd48fdf9c2851e6ada7cc7ea", null ],
+    [ "AddContinuation", "struct_void_architect_1_1_jobs_1_1_sync_point.html#ad3718aa23182d93c540ee28b28575652", null ],
+    [ "DecrementAndCheck", "struct_void_architect_1_1_jobs_1_1_sync_point.html#a1d4cccc10ad67ca9ecd7856d1346505a", null ],
+    [ "GetContinuations", "struct_void_architect_1_1_jobs_1_1_sync_point.html#ac34daddd861e10c0e41a7a06438be41a", null ],
+    [ "GetDebugName", "struct_void_architect_1_1_jobs_1_1_sync_point.html#a31e9ec7f2a478604e9bc5a1d961a4d31", null ],
+    [ "GetElapsedTime", "struct_void_architect_1_1_jobs_1_1_sync_point.html#a5043d11aa13e7ccae3e437ab2db2cb90", null ],
+    [ "GetPendingCount", "struct_void_architect_1_1_jobs_1_1_sync_point.html#a875a3ba515dfdb8c67a254d6f4cb3081", null ],
+    [ "GetStatus", "struct_void_architect_1_1_jobs_1_1_sync_point.html#af38941ed4ccfd628eedcb3c78c366cac", null ],
+    [ "GetStatusString", "struct_void_architect_1_1_jobs_1_1_sync_point.html#aca8f66420847392d80ac6608bc118735", null ],
+    [ "IsSignaled", "struct_void_architect_1_1_jobs_1_1_sync_point.html#aeeb648d851a4b36e965177fbe0dae810", null ],
+    [ "operator=", "struct_void_architect_1_1_jobs_1_1_sync_point.html#ae1e0200c9f88a880a96a378e228d0f5a", null ],
+    [ "operator=", "struct_void_architect_1_1_jobs_1_1_sync_point.html#a1173b57f0383b9596f363438b89672cf", null ],
+    [ "counter", "struct_void_architect_1_1_jobs_1_1_sync_point.html#a19da0944e153737e7d7909777c8d0e60", null ],
+    [ "creationTime", "struct_void_architect_1_1_jobs_1_1_sync_point.html#a0e1979f0f75047c0f5d7887d810702cd", null ],
+    [ "debugName", "struct_void_architect_1_1_jobs_1_1_sync_point.html#ace943cecd77d506149a1f174552ce556", null ],
+    [ "inlineContinuations", "struct_void_architect_1_1_jobs_1_1_sync_point.html#adb3be18de1adeacd0148478403d028e6", null ],
+    [ "inlineCount", "struct_void_architect_1_1_jobs_1_1_sync_point.html#a649a1d4b32e6ecaf32edcd107dfe1d68", null ],
+    [ "overflowContinuations", "struct_void_architect_1_1_jobs_1_1_sync_point.html#aad4c58b0094f6fbed04f1e7a4723265b", null ],
+    [ "overflowLock", "struct_void_architect_1_1_jobs_1_1_sync_point.html#aba7522e460211cfb838d2eda7a8d386f", null ],
+    [ "status", "struct_void_architect_1_1_jobs_1_1_sync_point.html#ae04a56c683dda3f719dc5c1b786e1383", null ]
+];

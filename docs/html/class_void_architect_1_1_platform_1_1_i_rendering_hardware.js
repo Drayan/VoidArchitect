@@ -1,0 +1,27 @@
+var class_void_architect_1_1_platform_1_1_i_rendering_hardware =
+[
+    [ "IRenderingHardware", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a201822686f208abc6fb00f27895d0d05", null ],
+    [ "~IRenderingHardware", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a2b05370e7ecff12597cd26264c1fb3b5", null ],
+    [ "BeginFrame", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a6ef12f714407a398bc467d85edcaeef7", null ],
+    [ "BeginRenderPass", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a7648da4f48f24c63397541ba7e3e46c7", null ],
+    [ "BindMaterial", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#ad327de1ab92c048d2dca2cee178595b2", null ],
+    [ "BindMesh", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a664de82e17bc4a06546a7e141d89e7d0", null ],
+    [ "BindRenderState", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a41591c2501c74aabdd7bbf4399be740d", null ],
+    [ "CreateMaterial", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a0d7f7e6a1f0948a596d47e97cf0b596c", null ],
+    [ "CreateMesh", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a27e43ea2de9846d908314ab90278c14e", null ],
+    [ "CreateRenderPass", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#adcb99b6b19d279caa4751f422f6721d6", null ],
+    [ "CreateRenderState", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#ac8dc1c67f04cd30972ebbd10e28e7690", null ],
+    [ "CreateRenderTarget", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a67dd696228ce3fa62c4d7f79c8f8e58c", null ],
+    [ "CreateShader", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a81d2a20ece1be606a4f2569fd98144a4", null ],
+    [ "CreateTexture2D", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a1a5207821a14abb1112aa5343728cf46", null ],
+    [ "DrawIndexed", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a8ed010ccaa0a2fefd848048907ca8142", null ],
+    [ "EndFrame", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a661bbad200468975fa6bf9f0e67bad01", null ],
+    [ "EndRenderPass", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#ae7485e030f8f5d1b961c24529cdbe606", null ],
+    [ "GetCurrentColorRenderTargetHandle", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a86aa8b28bf126db85229627ba7fe4e0d", null ],
+    [ "GetDepthRenderTargetHandle", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#abc23f996f98ebce4943a7b6fd6157bd7", null ],
+    [ "PushConstants", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a808d345031ad078728d0dec569255bbb", null ],
+    [ "ReleaseRenderTarget", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a07752098287d63289a941e1a7e067176", null ],
+    [ "Resize", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a7e29339b103a4cfe0104033c4adf0cf1", null ],
+    [ "UpdateGlobalState", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#a48f13c85754933a6a96cefa47538835a", null ],
+    [ "WaitIdle", "class_void_architect_1_1_platform_1_1_i_rendering_hardware.html#ad7e6394e9fa2085f7a95db551eb99017", null ]
+];

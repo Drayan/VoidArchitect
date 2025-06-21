@@ -1,0 +1,25 @@
+var class_void_architect_1_1_math_1_1_vec4 =
+[
+    [ "Vec4", "class_void_architect_1_1_math_1_1_vec4.html#a92e94b22510b1f0194a9f29e73673979", null ],
+    [ "Vec4", "class_void_architect_1_1_math_1_1_vec4.html#ab2e8903d181ee09b22968836fa53e36a", null ],
+    [ "Vec4", "class_void_architect_1_1_math_1_1_vec4.html#aec28e64df1a0b67c44fe13e5020174bd", null ],
+    [ "operator*", "class_void_architect_1_1_math_1_1_vec4.html#ad27853c038de2c1ac4c17fd3c16f431a", null ],
+    [ "operator*", "class_void_architect_1_1_math_1_1_vec4.html#a80abee0b4f65323bf68737063895f031", null ],
+    [ "operator+", "class_void_architect_1_1_math_1_1_vec4.html#a21c57390d4d3815b559d4a42aa42bbfd", null ],
+    [ "operator+=", "class_void_architect_1_1_math_1_1_vec4.html#a4abaf2dfd2dc29a7ba94fad0e14fe1e5", null ],
+    [ "operator-", "class_void_architect_1_1_math_1_1_vec4.html#a2bb46554d2fdfd9711366f2f87627322", null ],
+    [ "operator-=", "class_void_architect_1_1_math_1_1_vec4.html#ac3f7c564befc05973f5b3db82676b972", null ],
+    [ "operator/", "class_void_architect_1_1_math_1_1_vec4.html#a9b694cbe7b21d63717afeaf903a88327", null ],
+    [ "operator/", "class_void_architect_1_1_math_1_1_vec4.html#aa865087412ce5fd755f86de502a23d8a", null ],
+    [ "operator==", "class_void_architect_1_1_math_1_1_vec4.html#a93871c478739b3f91917a15ee136a299", null ],
+    [ "W", "class_void_architect_1_1_math_1_1_vec4.html#a1ea9d13d23352216a357c0059b27524c", null ],
+    [ "W", "class_void_architect_1_1_math_1_1_vec4.html#aeeb9f6b02541e8f6ab3eb8091e70b401", null ],
+    [ "X", "class_void_architect_1_1_math_1_1_vec4.html#ac86f76ca3dcceee420fb8a333ee3854b", null ],
+    [ "X", "class_void_architect_1_1_math_1_1_vec4.html#afc0519458e9cf9a42df0f5d27b206286", null ],
+    [ "Y", "class_void_architect_1_1_math_1_1_vec4.html#ab75254f74e086d317db24236a5dc4d52", null ],
+    [ "Y", "class_void_architect_1_1_math_1_1_vec4.html#aef415005d5650c50f437d70caaff3f35", null ],
+    [ "Z", "class_void_architect_1_1_math_1_1_vec4.html#a5efcbab0fab6bf1b4215af878d82ef60", null ],
+    [ "Z", "class_void_architect_1_1_math_1_1_vec4.html#afdeb32ffd9510b9f8fce0ae7089c31f5", null ],
+    [ "Mat4", "class_void_architect_1_1_math_1_1_vec4.html#ab22666e92ed99d4c504e684d717e98f1", null ],
+    [ "Quat", "class_void_architect_1_1_math_1_1_vec4.html#a9558b5b7c52fbc3a4af4b94d87a0a315", null ]
+];

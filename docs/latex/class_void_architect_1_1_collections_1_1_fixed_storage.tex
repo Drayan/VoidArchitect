@@ -1,0 +1,437 @@
+\doxysection{Void\+Architect\+::Collections\+::Fixed\+Storage\texorpdfstring{$<$}{<} T, CAPACITY \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage}{}\label{class_void_architect_1_1_collections_1_1_fixed_storage}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+
+
+Thread-\/safe fixed-\/capacity storage with handle-\/based access.  
+
+
+
+
+{\ttfamily \#include $<$Fixed\+Storage.\+hpp$>$}
+
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{Handle\+Type}} = \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}}$<$T$>$
+\begin{DoxyCompactList}\small\item\em \doxylink{struct_void_architect_1_1_handle}{Handle} type for accessing stored objects. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a}{Fixed\+Storage}} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_abf04bbf1997ca31b1433c5d554fabd58}{\texorpdfstring{$\sim$}{\string~}\+Fixed\+Storage}} ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a57c5aa2aef0b7eccaf357636f77cede4}{Fixed\+Storage}} (const \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}} \&)=delete
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}} \& \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a97901010a1e0dcbd94ab31eb0b1324b3}{operator=}} (const \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}} \&)=delete
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a406d310a372df46673ca3cc08feb3e2e}{Fixed\+Storage}} (\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}} \&\&)=delete
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}} \& \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a2364efe44cc07690ae17d81a6fe8c010}{operator=}} (\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}} \&\&)=delete
+\item 
+{\footnotesize template$<$typename... Args$>$ }\\\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{Handle\+Type}} \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a9f4828c0199ff0cd6a2f08f7622e3e78}{Allocate}} (Args \&\&... args)
+\begin{DoxyCompactList}\small\item\em Allocate a new slot and construct object in-\/place. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a135e8dbe28a28e611e9c292ca82be518}{Release}} (\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{Handle\+Type}} handle)
+\begin{DoxyCompactList}\small\item\em Release a slot and destruct the object. \end{DoxyCompactList}\item 
+T \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a721d4fae44f875c5946058de2effd441}{Get}} (\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{Handle\+Type}} handle)
+\begin{DoxyCompactList}\small\item\em Get mutable object by handle. \end{DoxyCompactList}\item 
+const T \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a833bb57bccda31a8df2d0b8f3a1c1887}{Get}} (\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{Handle\+Type}} handle) const
+\begin{DoxyCompactList}\small\item\em Get immutable object by handle. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_ad0eee9c51c6341c404d860cc841ec73b}{Is\+Valid}} (\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{Handle\+Type}} handle) const
+\begin{DoxyCompactList}\small\item\em Check if handle references a valid object. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a005394a788ffe413201e38331689de39}{Get\+Used\+Slots}} () const
+\begin{DoxyCompactList}\small\item\em Get the number of currently allocated slots. \end{DoxyCompactList}\item 
+constexpr size\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_af1ec866368b859d1d2cf7913012db5e3}{Get\+Capacity}} () const
+\begin{DoxyCompactList}\small\item\em Get maximum capacity of storage. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_afe2778e3d3166561b21a248eb83e2491}{Get\+Available\+Slots}} () const
+\begin{DoxyCompactList}\small\item\em Get the number of available slots. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_ac2f47d1561f36176b4c0e52e864a9d0e}{Is\+Full}} () const
+\begin{DoxyCompactList}\small\item\em Check if storage is full. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a4d9fc57bd15e68354859c2c6340daf17}{Is\+Empty}} () const
+\begin{DoxyCompactList}\small\item\em Check if storage is empty. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aae6b2bbecc1595624d161e55530f7e18}{Get\+Usage\+Percentage}} () const
+\begin{DoxyCompactList}\small\item\em Get usage percentage. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr size\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a9124755646ca846ff5fa0380e32bacd9}{MAX\+\_\+\+OBJECTS}} = CAPACITY
+\begin{DoxyCompactList}\small\item\em Maximum number of objects that can be stored. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T, size\+\_\+t CAPACITY$>$\newline
+class Void\+Architect\+::\+Collections\+::\+Fixed\+Storage$<$ T, CAPACITY $>$}
+Thread-\/safe fixed-\/capacity storage with handle-\/based access. 
+
+\doxylink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage} provides a thread-\/safe, fixed-\/capacity container that allocates objects in-\/place and provides access through generation-\/validated handles. This prevents ABA problems and provides stable object references.
+
+Key features\+:
+\begin{DoxyItemize}
+\item Fixed capacity determined at compile time
+\item Thread-\/safe allocation and deallocation using atomic operations
+\item In-\/place construction with perfect forwarding
+\item Generation-\/based handles prevent use-\/after-\/free bugs
+\item Lock-\/free operations for high performance
+\item Automatic object destruction on release
+\end{DoxyItemize}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Type of objects to store (must be constructible and destructible) \\
+\hline
+{\em CAPACITY} & Maximum number of objects that can be stored simultaneously\\
+\hline
+\end{DoxyTemplParams}
+Usage example\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ Define\ storage\ for\ game\ entities}}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a}{FixedStorage<Entity,\ 10000>}}\ entityStorage;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Allocate\ new\ entity\ with\ constructor\ parameters}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ handle\ =\ entityStorage.Allocate(Vec3::Zero(),\ \textcolor{stringliteral}{"{}Player"{}});}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (handle.IsValid())}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ Entity*\ entity\ =\ entityStorage.Get(handle);}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Use\ entity\ safely...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Release\ when\ done}}
+\DoxyCodeLine{\ \ \ \ entityStorage.Release(handle);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Handle\ becomes\ invalid\ after\ release}}
+\DoxyCodeLine{assert(!entityStorage.IsValid(handle));}
+
+\end{DoxyCode}
+ 
+
+\label{doc-typedef-members}
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_doc-typedef-members}
+\doxysubsection{Member Typedef Documentation}
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!HandleType@{HandleType}}
+\index{HandleType@{HandleType}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{HandleType}{HandleType}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+using \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Handle\+Type = \mbox{\hyperlink{struct_void_architect_1_1_handle}{Handle}}$<$T$>$}
+
+
+
+\doxylink{struct_void_architect_1_1_handle}{Handle} type for accessing stored objects. 
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!FixedStorage@{FixedStorage}}
+\index{FixedStorage@{FixedStorage}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{FixedStorage()}{FixedStorage()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_a0e6291979b1a7f5d80eefc093c71523a} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Fixed\+Storage (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Default constructor. 
+
+Initializes empty storage with all slots available for allocation. Here is the caller graph for this function\+:
+% FIG 0
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_abf04bbf1997ca31b1433c5d554fabd58}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!````~FixedStorage@{\texorpdfstring{$\sim$}{\string~}FixedStorage}}
+\index{````~FixedStorage@{\texorpdfstring{$\sim$}{\string~}FixedStorage}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}FixedStorage()}{\string~FixedStorage()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_abf04bbf1997ca31b1433c5d554fabd58} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\texorpdfstring{$\sim$}{\string~}\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}} (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Destructor. 
+
+Automatically releases all allocated objects and calls their destructors.
+
+\begin{DoxyWarning}{Warning}
+Objects should be manually released before destruction to ensure proper cleanup order in complex systems... 
+\end{DoxyWarning}
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_a57c5aa2aef0b7eccaf357636f77cede4}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!FixedStorage@{FixedStorage}}
+\index{FixedStorage@{FixedStorage}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{FixedStorage()}{FixedStorage()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_a57c5aa2aef0b7eccaf357636f77cede4} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Fixed\+Storage (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}}$<$ T, CAPACITY $>$ \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 1
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_a406d310a372df46673ca3cc08feb3e2e}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!FixedStorage@{FixedStorage}}
+\index{FixedStorage@{FixedStorage}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{FixedStorage()}{FixedStorage()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_a406d310a372df46673ca3cc08feb3e2e} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Fixed\+Storage (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}}$<$ T, CAPACITY $>$ \&\&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 2
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_a9f4828c0199ff0cd6a2f08f7622e3e78}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!Allocate@{Allocate}}
+\index{Allocate@{Allocate}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{Allocate()}{Allocate()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_a9f4828c0199ff0cd6a2f08f7622e3e78} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+template$<$typename... Args$>$ \\
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}}$<$ T, CAPACITY $>$\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{\+::\+Handle\+Type}} \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Allocate (\begin{DoxyParamCaption}\item[{Args \&\&...}]{args}{}\end{DoxyParamCaption})}
+
+
+
+Allocate a new slot and construct object in-\/place. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Args} & Constructor argument types (deduced) \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em args} & Arguments to forward to T\textquotesingle{}s constructor \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Valid handle on success, invalid otherwise
+\end{DoxyReturn}
+This method is thread-\/safe and uses atomic operations to claim slots. The object is constructed in-\/place using perfect forwarding.
+
+\begin{DoxyNote}{Note}
+If allocation fails due to full storage, a warning is logged and an invalid handle is returned. 
+\end{DoxyNote}
+Here is the call graph for this function\+:
+% FIG 3
+Here is the caller graph for this function\+:
+% FIG 4
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_a721d4fae44f875c5946058de2effd441}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!Get@{Get}}
+\index{Get@{Get}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{Get()}{Get()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_a721d4fae44f875c5946058de2effd441} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+T \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Get (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{Handle\+Type}}}]{handle}{}\end{DoxyParamCaption})}
+
+
+
+Get mutable object by handle. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em handle} & \doxylink{struct_void_architect_1_1_handle}{Handle} to the object \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to object if handle is valid, nullptr otherwise
+\end{DoxyReturn}
+This method is thread-\/safe for access but the returned object is not protected from concurrent modification. External synchronization may be required for thread-\/safe object access. Here is the caller graph for this function\+:
+% FIG 5
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_a833bb57bccda31a8df2d0b8f3a1c1887}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!Get@{Get}}
+\index{Get@{Get}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{Get()}{Get()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_a833bb57bccda31a8df2d0b8f3a1c1887} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+const T \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Get (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{Handle\+Type}}}]{handle}{}\end{DoxyParamCaption}) const}
+
+
+
+Get immutable object by handle. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em handle} & \doxylink{struct_void_architect_1_1_handle}{Handle} to the object \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Const pointer to object if handle is valid, nullptr otherwise 
+\end{DoxyReturn}
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_afe2778e3d3166561b21a248eb83e2491}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!GetAvailableSlots@{GetAvailableSlots}}
+\index{GetAvailableSlots@{GetAvailableSlots}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{GetAvailableSlots()}{GetAvailableSlots()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_afe2778e3d3166561b21a248eb83e2491} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+size\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Get\+Available\+Slots (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of available slots. 
+
+\begin{DoxyReturn}{Returns}
+Number of slots available for allocation 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+% FIG 6
+Here is the caller graph for this function\+:
+% FIG 7
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_af1ec866368b859d1d2cf7913012db5e3}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!GetCapacity@{GetCapacity}}
+\index{GetCapacity@{GetCapacity}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{GetCapacity()}{GetCapacity()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_af1ec866368b859d1d2cf7913012db5e3} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+size\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Get\+Capacity (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [constexpr]}}
+
+
+
+Get maximum capacity of storage. 
+
+\begin{DoxyReturn}{Returns}
+Maximum number of objects that can be stored 
+\end{DoxyReturn}
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_aae6b2bbecc1595624d161e55530f7e18}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!GetUsagePercentage@{GetUsagePercentage}}
+\index{GetUsagePercentage@{GetUsagePercentage}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{GetUsagePercentage()}{GetUsagePercentage()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_aae6b2bbecc1595624d161e55530f7e18} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+float \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Get\+Usage\+Percentage (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get usage percentage. 
+
+\begin{DoxyReturn}{Returns}
+Percentage of capacity currently used (0.\+0 to 1.\+0) 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+% FIG 8
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_a005394a788ffe413201e38331689de39}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!GetUsedSlots@{GetUsedSlots}}
+\index{GetUsedSlots@{GetUsedSlots}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{GetUsedSlots()}{GetUsedSlots()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_a005394a788ffe413201e38331689de39} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+size\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Get\+Used\+Slots (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the number of currently allocated slots. 
+
+\begin{DoxyReturn}{Returns}
+Number of objects currently stored 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+% FIG 9
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_a4d9fc57bd15e68354859c2c6340daf17}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!IsEmpty@{IsEmpty}}
+\index{IsEmpty@{IsEmpty}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{IsEmpty()}{IsEmpty()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_a4d9fc57bd15e68354859c2c6340daf17} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+bool \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Is\+Empty (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check if storage is empty. 
+
+\begin{DoxyReturn}{Returns}
+true if no objects are currently allocated 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+% FIG 10
+Here is the caller graph for this function\+:
+% FIG 11
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_ac2f47d1561f36176b4c0e52e864a9d0e}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!IsFull@{IsFull}}
+\index{IsFull@{IsFull}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{IsFull()}{IsFull()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_ac2f47d1561f36176b4c0e52e864a9d0e} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+bool \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Is\+Full (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check if storage is full. 
+
+\begin{DoxyReturn}{Returns}
+true if no slots are available for allocation 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+% FIG 12
+Here is the caller graph for this function\+:
+% FIG 13
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_ad0eee9c51c6341c404d860cc841ec73b}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!IsValid@{IsValid}}
+\index{IsValid@{IsValid}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{IsValid()}{IsValid()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_ad0eee9c51c6341c404d860cc841ec73b} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+bool \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Is\+Valid (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{Handle\+Type}}}]{handle}{}\end{DoxyParamCaption}) const}
+
+
+
+Check if handle references a valid object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em handle} & \doxylink{struct_void_architect_1_1_handle}{Handle} to validate \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if handle is valid and references an allocated object
+\end{DoxyReturn}
+This method performs full validation including generation checking to prevent use of stale handles. Here is the caller graph for this function\+:
+% FIG 14
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_a97901010a1e0dcbd94ab31eb0b1324b3}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_a97901010a1e0dcbd94ab31eb0b1324b3} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}} \& \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}}$<$ T, CAPACITY $>$ \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 15
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_a2364efe44cc07690ae17d81a6fe8c010}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_a2364efe44cc07690ae17d81a6fe8c010} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}} \& \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage}}$<$ T, CAPACITY $>$ \&\&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 16
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_a135e8dbe28a28e611e9c292ca82be518}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!Release@{Release}}
+\index{Release@{Release}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{Release()}{Release()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_a135e8dbe28a28e611e9c292ca82be518} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+bool \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+Release (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage_aeef15a7dd0dfe993b346ab3c7e3551be}{Handle\+Type}}}]{handle}{}\end{DoxyParamCaption})}
+
+
+
+Release a slot and destruct the object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em handle} & \doxylink{struct_void_architect_1_1_handle}{Handle} to the object to release \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the object was successfully released, false if the handle was invalid
+\end{DoxyReturn}
+This method is thread-\/safe and validates the handle before releasing. The object\textquotesingle{}s destructor is called automatically.
+
+\begin{DoxyWarning}{Warning}
+Using the handle after release will result in undefined behavior. The handle becomes invalid immediately after this call. 
+\end{DoxyWarning}
+Here is the caller graph for this function\+:
+% FIG 17
+
+
+\label{doc-variable-members}
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_void_architect_1_1_collections_1_1_fixed_storage_a9124755646ca846ff5fa0380e32bacd9}\index{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}!MAX\_OBJECTS@{MAX\_OBJECTS}}
+\index{MAX\_OBJECTS@{MAX\_OBJECTS}!VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$@{VoidArchitect::Collections::FixedStorage$<$ T, CAPACITY $>$}}
+\doxysubsubsection{\texorpdfstring{MAX\_OBJECTS}{MAX\_OBJECTS}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_collections_1_1_fixed_storage_a9124755646ca846ff5fa0380e32bacd9} 
+template$<$typename T, size\+\_\+t CAPACITY$>$ \\
+size\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_collections_1_1_fixed_storage}{Void\+Architect\+::\+Collections\+::\+Fixed\+Storage}}$<$ T, CAPACITY $>$\+::\+MAX\+\_\+\+OBJECTS = CAPACITY\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+Maximum number of objects that can be stored. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Core/\+Collections/\mbox{\hyperlink{_fixed_storage_8hpp}{Fixed\+Storage.\+hpp}}\end{DoxyCompactItemize}

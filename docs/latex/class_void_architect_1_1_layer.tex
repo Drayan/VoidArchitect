@@ -1,0 +1,131 @@
+\doxysection{Void\+Architect\+::Layer Class Reference}
+\hypertarget{class_void_architect_1_1_layer}{}\label{class_void_architect_1_1_layer}\index{VoidArchitect::Layer@{VoidArchitect::Layer}}
+
+
+{\ttfamily \#include $<$Layer.\+hpp$>$}
+
+
+
+Inheritance diagram for Void\+Architect\+::Layer\+:
+% FIG 0
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_layer_a98740f9db2405bc160f7c67d212da7b8}{Layer}} (const std\+::string \&name="{}Layer"{})
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_layer_a51354e96c5736a30f45a42f095bb61e6}{\texorpdfstring{$\sim$}{\string~}\+Layer}} ()
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_layer_afc7b38adf776884fb18006742824c43a}{On\+Attach}} ()
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_layer_adc16928c5cacb0728f65143bf3af1b44}{On\+Detach}} ()
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_layer_a6cb379e04ae66a30e303a495e20875b0}{On\+Fixed\+Update}} (const float fixed\+Timestep)
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_layer_aad87785d3e9f620e3c328d2805caa351}{On\+Update}} (float delta\+Time)
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_layer_a2bba5dceecd925bde57b0e04e5fa7e82}{On\+Event}} (\mbox{\hyperlink{class_void_architect_1_1_event}{Event}} \&e)
+\item 
+const std\+::string \& \mbox{\hyperlink{class_void_architect_1_1_layer_aa3b4e82e63707afd43987f72203cd8ba}{Get\+Name}} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_layer_a112bb0d5731051f6e31d78dadda44d5a}{m\+\_\+\+Debug\+Name}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_layer_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_layer_a98740f9db2405bc160f7c67d212da7b8}\index{VoidArchitect::Layer@{VoidArchitect::Layer}!Layer@{Layer}}
+\index{Layer@{Layer}!VoidArchitect::Layer@{VoidArchitect::Layer}}
+\doxysubsubsection{\texorpdfstring{Layer()}{Layer()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_layer_a98740f9db2405bc160f7c67d212da7b8} 
+Void\+Architect\+::\+Layer\+::\+Layer (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{ = {\ttfamily "{}Layer"{}}}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 1
+\Hypertarget{class_void_architect_1_1_layer_a51354e96c5736a30f45a42f095bb61e6}\index{VoidArchitect::Layer@{VoidArchitect::Layer}!````~Layer@{\texorpdfstring{$\sim$}{\string~}Layer}}
+\index{````~Layer@{\texorpdfstring{$\sim$}{\string~}Layer}!VoidArchitect::Layer@{VoidArchitect::Layer}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}Layer()}{\string~Layer()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_layer_a51354e96c5736a30f45a42f095bb61e6} 
+Void\+Architect\+::\+Layer\+::\texorpdfstring{$\sim$}{\string~}\+Layer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_layer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_layer_aa3b4e82e63707afd43987f72203cd8ba}\index{VoidArchitect::Layer@{VoidArchitect::Layer}!GetName@{GetName}}
+\index{GetName@{GetName}!VoidArchitect::Layer@{VoidArchitect::Layer}}
+\doxysubsubsection{\texorpdfstring{GetName()}{GetName()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_layer_aa3b4e82e63707afd43987f72203cd8ba} 
+const std\+::string \& Void\+Architect\+::\+Layer\+::\+Get\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_layer_afc7b38adf776884fb18006742824c43a}\index{VoidArchitect::Layer@{VoidArchitect::Layer}!OnAttach@{OnAttach}}
+\index{OnAttach@{OnAttach}!VoidArchitect::Layer@{VoidArchitect::Layer}}
+\doxysubsubsection{\texorpdfstring{OnAttach()}{OnAttach()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_layer_afc7b38adf776884fb18006742824c43a} 
+virtual void Void\+Architect\+::\+Layer\+::\+On\+Attach (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented in \mbox{\hyperlink{class_test_layer_aa6a8d735089b98137e395b7dcb79b27b}{Test\+Layer}}, and \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_aa6a8d735089b98137e395b7dcb79b27b}{Void\+Architect\+::\+Testing\+::\+Test\+Layer}}.
+
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_layer_adc16928c5cacb0728f65143bf3af1b44}\index{VoidArchitect::Layer@{VoidArchitect::Layer}!OnDetach@{OnDetach}}
+\index{OnDetach@{OnDetach}!VoidArchitect::Layer@{VoidArchitect::Layer}}
+\doxysubsubsection{\texorpdfstring{OnDetach()}{OnDetach()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_layer_adc16928c5cacb0728f65143bf3af1b44} 
+virtual void Void\+Architect\+::\+Layer\+::\+On\+Detach (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented in \mbox{\hyperlink{class_test_layer_a8d03531568a8c37a95da1305fefce0c4}{Test\+Layer}}, and \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a8d03531568a8c37a95da1305fefce0c4}{Void\+Architect\+::\+Testing\+::\+Test\+Layer}}.
+
+Here is the caller graph for this function\+:
+% FIG 3
+\Hypertarget{class_void_architect_1_1_layer_a2bba5dceecd925bde57b0e04e5fa7e82}\index{VoidArchitect::Layer@{VoidArchitect::Layer}!OnEvent@{OnEvent}}
+\index{OnEvent@{OnEvent}!VoidArchitect::Layer@{VoidArchitect::Layer}}
+\doxysubsubsection{\texorpdfstring{OnEvent()}{OnEvent()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_layer_a2bba5dceecd925bde57b0e04e5fa7e82} 
+virtual void Void\+Architect\+::\+Layer\+::\+On\+Event (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_event}{Event}} \&}]{e}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented in \mbox{\hyperlink{class_test_layer_a27bebae39ed553baa4deafae35092dc1}{Test\+Layer}}.
+
+\Hypertarget{class_void_architect_1_1_layer_a6cb379e04ae66a30e303a495e20875b0}\index{VoidArchitect::Layer@{VoidArchitect::Layer}!OnFixedUpdate@{OnFixedUpdate}}
+\index{OnFixedUpdate@{OnFixedUpdate}!VoidArchitect::Layer@{VoidArchitect::Layer}}
+\doxysubsubsection{\texorpdfstring{OnFixedUpdate()}{OnFixedUpdate()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_layer_a6cb379e04ae66a30e303a495e20875b0} 
+virtual void Void\+Architect\+::\+Layer\+::\+On\+Fixed\+Update (\begin{DoxyParamCaption}\item[{const float}]{fixed\+Timestep}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented in \mbox{\hyperlink{class_test_layer_a9a0c0688f3db9f7f5d29650cede89346}{Test\+Layer}}, and \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a4a81e05d081e67f252a8807792a6635a}{Void\+Architect\+::\+Testing\+::\+Test\+Layer}}.
+
+\Hypertarget{class_void_architect_1_1_layer_aad87785d3e9f620e3c328d2805caa351}\index{VoidArchitect::Layer@{VoidArchitect::Layer}!OnUpdate@{OnUpdate}}
+\index{OnUpdate@{OnUpdate}!VoidArchitect::Layer@{VoidArchitect::Layer}}
+\doxysubsubsection{\texorpdfstring{OnUpdate()}{OnUpdate()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_layer_aad87785d3e9f620e3c328d2805caa351} 
+virtual void Void\+Architect\+::\+Layer\+::\+On\+Update (\begin{DoxyParamCaption}\item[{float}]{delta\+Time}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_void_architect_1_1_layer_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_void_architect_1_1_layer_a112bb0d5731051f6e31d78dadda44d5a}\index{VoidArchitect::Layer@{VoidArchitect::Layer}!m\_DebugName@{m\_DebugName}}
+\index{m\_DebugName@{m\_DebugName}!VoidArchitect::Layer@{VoidArchitect::Layer}}
+\doxysubsubsection{\texorpdfstring{m\_DebugName}{m\_DebugName}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_layer_a112bb0d5731051f6e31d78dadda44d5a} 
+std\+::string Void\+Architect\+::\+Layer\+::m\+\_\+\+Debug\+Name\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Core/\mbox{\hyperlink{_layer_8hpp}{Layer.\+hpp}}\item 
+engine/src/\+Core/\mbox{\hyperlink{_layer_8cpp}{Layer.\+cpp}}\end{DoxyCompactItemize}

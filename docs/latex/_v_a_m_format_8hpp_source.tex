@@ -1,0 +1,204 @@
+\doxysection{VAMFormat.\+hpp}
+\hypertarget{_v_a_m_format_8hpp_source}{}\label{_v_a_m_format_8hpp_source}\index{engine/src/Resources/Loaders/VAMFormat.hpp@{engine/src/Resources/Loaders/VAMFormat.hpp}}
+\mbox{\hyperlink{_v_a_m_format_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 15/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_core_8hpp}{Core/Core.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vec2_8hpp}{Core/Math/Vec2.hpp}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vec3_8hpp}{Core/Math/Vec3.hpp}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vec4_8hpp}{Core/Math/Vec4.hpp}}"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_resources_1_1_loaders}{VoidArchitect::Resources::Loaders}}}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{comment}{//\ VAM\ =\ "{}Void\ Architect\ Mesh"{}\ -\/\ Custom\ binary\ mesh\ format}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{comment}{//\ Current\ format\ version}}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint32\_t\ VAM\_VERSION\ =\ 1;}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint8\_t\ VAM\_MAGIC[4]\ =\ \{\textcolor{charliteral}{'V'},\ \textcolor{charliteral}{'A'},\ \textcolor{charliteral}{'M'},\ \textcolor{charliteral}{'\(\backslash\)0'}\};}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespace_void_architect_1_1_resources_1_1_loaders_a6660d3d183a4a4c479025c1fadd5a611}{VAMFlags}}\ :\ uint32\_t}
+\DoxyCodeLine{00020\ \ \ \ \ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_1_1_loaders_a6660d3d183a4a4c479025c1fadd5a611a6adf97f83acf6453d4a6a4b1070f3754}{None}}\ =\ 0,}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_1_1_loaders_a6660d3d183a4a4c479025c1fadd5a611a4d602abc0c0f2f7c1a5156d964517e4e}{Compressed}}\ =\ \mbox{\hyperlink{_core_8hpp_ad27cc17b25bb93134368d5eb21126eae}{BIT}}(0),\ \textcolor{comment}{//\ LZ4\ compression\ (not\ implemented)}}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reserved\ bits\ 1-\/31\ for\ future\ features}}
+\DoxyCodeLine{00024\ \ \ \ \ \};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{comment}{//\ Main\ header\ -\/\ 80\ bytes,\ 16-\/bytes\ aligned}}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{struct\ }\textcolor{keyword}{alignas}(16)\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header}{VAMHeader}}}
+\DoxyCodeLine{00028\ \ \ \ \ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ uint8\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_aa91bf980eb08a64193aad65126132578}{magic}}[4];\ \textcolor{comment}{//\ VAM\(\backslash\)0}}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_afa3fca9905b39b86e82f5b7ec222d18d}{version}};\ \textcolor{comment}{//\ Format\ version\ (1)}}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a7edd675bbeb56dac84354305b49abed2}{flags}};\ \textcolor{comment}{//\ VAMFlags\ bitfield}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ uint64\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a9f2bef32e183899f6cd1eee835f48c07}{sourceTimestamp}};\ \textcolor{comment}{//\ Source\ file\ modification\ time}}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Counts}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a3ab3c587efa7dd038725093da7261599}{vertexCount}};}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a34c44ad181875e717269dd9fe3e4abf2}{indexCount}};}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a19f5778ad42c980a3de7975135f16a71}{submeshCount}};}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_afe40ff3488c5cf05dd11cd173ba8b86a}{materialCount}};}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a4a6e78618f8f8616d8cca72a205a55fb}{stringTableSize}};\ \textcolor{comment}{//\ Size\ in\ bytes}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Section\ offsets\ (for\ validation\ and\ seeking)}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_abd17e35efe59da62ce91397284b20305}{stringTableOffset}};}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ac9e753cb24ca1d9c817adc7ce86d6fe8}{verticesOffset}};}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a1cffe8bbaaa84a34a4b3dd88842649f2}{indicesOffset}};}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ace9cb26b0899ae07497b7f9c31631e9c}{submeshesOffset}};}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_acba3f29b8a1828d2bb895ba85ef509e2}{materialsOffset}};}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Compression\ info}}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a60772aebee9376408594fa8b6a2505c3}{uncompressedSize}};\ \textcolor{comment}{//\ Original\ size\ before\ compression\ (0\ if\ not\ compressed)}}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a50269491d647379252e893e73b9ed3aa}{compressionRatio}};\ \textcolor{comment}{//\ Compression\ ratio\ *\ 1000\ (e.g.,\ 750\ =\ 75.0\%\ compression)}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Original\ section\ sizes\ (for\ compressed\ format\ parsing)}}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_aa1f296f2c241c7c759ff52c0f31444b5}{originalStringTableSize}};}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a2a229832597c655039f645dc8f212a59}{originalVerticesSize}};}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ad6ae0ec4255d75754f24c7c622aafc65}{originalIndicesSize}};}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a89f3fe8fcf19cb31748600d046f2aa22}{originalSubmeshesSize}};}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a51dd0d162ef1a5d786cc91c7e417adcb}{originalMaterialsSize}};}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ac0e556554d20b514aab7e05487866817}{originalBindingsSize}};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Validation\ helpers}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ad11789bc91ea6c40162909b57ea287ce}{IsValid}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00062\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ memcmp(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_aa91bf980eb08a64193aad65126132578}{magic}},\ VAM\_MAGIC,\ 4)\ ==\ 0\ \&\&\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_afa3fca9905b39b86e82f5b7ec222d18d}{version}}\ ==\ VAM\_VERSION;}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ab2c5f36660f71c66da563530766cc69b}{IsCompressed}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00067\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a7edd675bbeb56dac84354305b49abed2}{flags}}\ \&\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(\mbox{\hyperlink{namespace_void_architect_1_1_resources_1_1_loaders_a6660d3d183a4a4c479025c1fadd5a611a4d602abc0c0f2f7c1a5156d964517e4e}{VAMFlags::Compressed}}))\ !=\ 0;}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_ad42e27b4347363115096bf35e58d68e7}{GetCompressionRatio}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00072\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a50269491d647379252e893e73b9ed3aa}{compressionRatio}})\ /\ 1000.0f;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a2f5de6e38fa3e86b47c81336822acf2c}{SetCompressionRatio}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ ratio)}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header_a50269491d647379252e893e73b9ed3aa}{compressionRatio}}\ =\ \textcolor{keyword}{static\_cast<}uint32\_t\textcolor{keyword}{>}(ratio\ *\ 1000.0f);}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \ \ \ \ \};}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{comment}{//\ Vertex\ data\ -\/\ 48\ bytes,\ aligned\ for\ SIMD\ performance}}
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{keyword}{struct\ }\textcolor{keyword}{alignas}(16)\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a4263aceb4ae900a31a6841b74ddeea28}{VAMVertex}}}
+\DoxyCodeLine{00084\ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a5cbdc66f4530291af11141152ef92349}{position}};\ \textcolor{comment}{//\ 12\ bytes}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a8f10c0eb1356cc42d0e2551937663f63}{normal}};\ \textcolor{comment}{//\ 12\ bytes}}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2}{Math::Vec2}}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a080c52b8821f232f995800f224d3ad38}{uv0}};\ \textcolor{comment}{//\ 8\ bytes}}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec4}{Math::Vec4}}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a427e230a21526f5099e29efcf8fd1f57}{tangent}};\ \textcolor{comment}{//\ 16\ bytes}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a4263aceb4ae900a31a6841b74ddeea28}{VAMVertex}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a5d3d633a373be31727f27d1fccc370b6}{VAMVertex}}(}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\&\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a5cbdc66f4530291af11141152ef92349}{position}},}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\&\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a8f10c0eb1356cc42d0e2551937663f63}{normal}},}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2}{Math::Vec2}}\&\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a080c52b8821f232f995800f224d3ad38}{uv0}},}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec4}{Math::Vec4}}\&\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a427e230a21526f5099e29efcf8fd1f57}{tangent}})}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a5cbdc66f4530291af11141152ef92349}{position}}(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a5cbdc66f4530291af11141152ef92349}{position}}),}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a8f10c0eb1356cc42d0e2551937663f63}{normal}}(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a8f10c0eb1356cc42d0e2551937663f63}{normal}}),}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a080c52b8821f232f995800f224d3ad38}{uv0}}(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a080c52b8821f232f995800f224d3ad38}{uv0}}),}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a427e230a21526f5099e29efcf8fd1f57}{tangent}}(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex_a427e230a21526f5099e29efcf8fd1f57}{tangent}})}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \ \ \ \ \};}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{comment}{//\ SubMesh\ descriptor\ -\/\ 32\ bytes,\ aligned}}
+\DoxyCodeLine{00106\ \ \ \ \ \textcolor{keyword}{struct\ }\textcolor{keyword}{alignas}(16)\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_a34bd17fae65795408a848251c5eb7796}{VAMSubMeshDescriptor}}}
+\DoxyCodeLine{00107\ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_abc960a293c13886e670e7f6887950e05}{nameOffset}};\ \textcolor{comment}{//\ Offset\ in\ the\ string\ table}}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_ab9f31c60fc447d50f337011a788147a9}{materialIndex}};\ \textcolor{comment}{//\ Index\ in\ the\ materials\ array\ (not\ handle\ !)}}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_a78b185285358e2b2c8e3a4d7ad0d0eb7}{indexOffset}};}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_a449cec4dbbf95d63fd69a7e1909895e5}{indexCount}};}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_ab8d508b359f73af0862c5c5c2b58fd3b}{vertexOffset}};}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_aacd22a51c3a54927daf4007a731c7c28}{vertexCount}};}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ uint64\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_a0ae4052b00f63ffa112c8304582d463d}{reserved}};\ \textcolor{comment}{//\ For\ future\ use}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_a34bd17fae65795408a848251c5eb7796}{VAMSubMeshDescriptor}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_ac3725cf8f84f5e9e3d10f7eb9b74c9b4}{VAMSubMeshDescriptor}}(}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ nameOff,}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ matIdx,}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ idxOff,}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ idxCnt,}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ vtxOff,}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ vtxCnt)}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_abc960a293c13886e670e7f6887950e05}{nameOffset}}(nameOff),}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_ab9f31c60fc447d50f337011a788147a9}{materialIndex}}(matIdx),}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_a78b185285358e2b2c8e3a4d7ad0d0eb7}{indexOffset}}(idxOff),}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_a449cec4dbbf95d63fd69a7e1909895e5}{indexCount}}(idxCnt),}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_ab8d508b359f73af0862c5c5c2b58fd3b}{vertexOffset}}(vtxOff),}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_aacd22a51c3a54927daf4007a731c7c28}{vertexCount}}(vtxCnt),}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor_a0ae4052b00f63ffa112c8304582d463d}{reserved}}\{\}}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00134\ \ \ \ \ \};}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{comment}{//\ Resource\ binding\ for\ materials\ -\/\ matches\ engine\ ResourceBinding}}
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_resource_binding}{VAMResourceBinding}}}
+\DoxyCodeLine{00138\ \ \ \ \ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_resource_binding_ae742f55195b1d3c93f5bc62732e6ce8e}{type}};\ \textcolor{comment}{//\ ResourceBindingType\ as\ uint32\_t}}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_resource_binding_ae99985e504670781a769d8bcb331cf24}{binding}};}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_resource_binding_af400a4692b56a65a139971895852b825}{stage}};\ \textcolor{comment}{//\ ShaderStage\ as\ uint32\_t}}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_resource_binding_a892853e948d9f9ba2b292941a6385ff8}{reserved}};\ \textcolor{comment}{//\ For\ future\ use\ and\ alignment}}
+\DoxyCodeLine{00143\ \ \ \ \ \};}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ \textcolor{comment}{//\ Material\ template\ -\/\ variable\ size}}
+\DoxyCodeLine{00146\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a97d65883de682bd0ca4162e108ad1aaf}{VAMMAterialTemplate}}}
+\DoxyCodeLine{00147\ \ \ \ \ \{}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a1834cefec9f1cb086dd04b3db17a35f7}{nameOffset}};\ \textcolor{comment}{//\ Offset\ in\ the\ string\ table}}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a50d114e8c70807b6903b17e6e6133a27}{renderStateClassOffset}};\ \textcolor{comment}{//\ RenderState\ class\ name}}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec4}{Math::Vec4}}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_af8142436ade8e069ba591f6470e63a61}{diffuseColor}};\ \textcolor{comment}{//\ 16\ bytes,\ aligned}}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Texture\ name\ offsets\ in\ string\ table}}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a0f68e393b60515873eb5bea6fcf16e1e}{diffuseTextureOffset}};}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a546e8f5e539f8eaaa49bf43cbfc4b40b}{specularTextureOffset}};}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a0a9ee9e191df69df91111cd7c12ae961}{normalTextureOffset}};}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_aec2a15cb80b74c8580bed757dbb36b5a}{bindingCount}};\ \textcolor{comment}{//\ Number\ of\ resource\ bindings}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a97d65883de682bd0ca4162e108ad1aaf}{VAMMAterialTemplate}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a3677ae209ad7dfead6189033007defcc}{VAMMAterialTemplate}}(}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ nameOff,}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ stateOff,}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec4}{Math::Vec4}}\&\ color,}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ diffOff,}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ specOff,}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ normOff,}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_aec2a15cb80b74c8580bed757dbb36b5a}{bindingCount}})}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a1834cefec9f1cb086dd04b3db17a35f7}{nameOffset}}(nameOff),}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a50d114e8c70807b6903b17e6e6133a27}{renderStateClassOffset}}(stateOff),}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_af8142436ade8e069ba591f6470e63a61}{diffuseColor}}(color),}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a0f68e393b60515873eb5bea6fcf16e1e}{diffuseTextureOffset}}(diffOff),}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a546e8f5e539f8eaaa49bf43cbfc4b40b}{specularTextureOffset}}(specOff),}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_a0a9ee9e191df69df91111cd7c12ae961}{normalTextureOffset}}(normOff),}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_aec2a15cb80b74c8580bed757dbb36b5a}{bindingCount}}(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template_aec2a15cb80b74c8580bed757dbb36b5a}{bindingCount}})}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00178\ \ \ \ \ \};}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{comment}{//\ String\ table\ entry\ helper}}
+\DoxyCodeLine{00181\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_string_entry}{VAMStringEntry}}}
+\DoxyCodeLine{00182\ \ \ \ \ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_string_entry_acf6d8610a0d9ee516f51bf70efb44154}{offset}};}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_string_entry_a4e8148e9f7af8d64f5c31063ddb9aa94}{data}};}
+\DoxyCodeLine{00185\ \ \ \ \ \};}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \textcolor{comment}{//\ Memory\ layout\ verification}}
+\DoxyCodeLine{00188\ \ \ \ \ \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header}{VAMHeader}})\ ==\ 96,\ \textcolor{stringliteral}{"{}VAMHeader\ must\ be\ exactly\ 96\ bytes"{}});}
+\DoxyCodeLine{00189\ \ \ \ \ \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex}{VAMVertex}})\ ==\ 48,\ \textcolor{stringliteral}{"{}VAMVertex\ must\ be\ exactly\ 48\ bytes"{}});}
+\DoxyCodeLine{00190\ \ \ \ \ \textcolor{keyword}{static\_assert}(}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor}{VAMSubMeshDescriptor}})\ ==\ 32,}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}VAMSubMeshDescriptor\ must\ be\ exactly\ 32\ bytes"{}});}
+\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keyword}{static\_assert}(\textcolor{keyword}{alignof}(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header}{VAMHeader}})\ ==\ 16,\ \textcolor{stringliteral}{"{}VAMHeader\ must\ be\ 16-\/byte\ aligned"{}});}
+\DoxyCodeLine{00194\ \ \ \ \ \textcolor{keyword}{static\_assert}(\textcolor{keyword}{alignof}(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_vertex}{VAMVertex}})\ ==\ 16,\ \textcolor{stringliteral}{"{}VAMVertex\ must\ be\ 16-\/byte\ aligned"{}});}
+\DoxyCodeLine{00195\ \ \ \ \ \textcolor{keyword}{static\_assert}(}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \textcolor{keyword}{alignof}(\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_sub_mesh_descriptor}{VAMSubMeshDescriptor}})\ ==\ 16,}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}VAMSubMeshDescriptor\ must\ be\ 16-\/byte\ aligned"{}});}
+\DoxyCodeLine{00198\ \}}
+
+\end{DoxyCode}

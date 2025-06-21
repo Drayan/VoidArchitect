@@ -1,0 +1,75 @@
+\doxysection{Void\+Architect\+::Resources\+::Loaders\+::ILoader Class Reference}
+\hypertarget{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader}{}\label{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader}\index{VoidArchitect::Resources::Loaders::ILoader@{VoidArchitect::Resources::Loaders::ILoader}}
+
+
+{\ttfamily \#include $<$Loader.\+hpp$>$}
+
+
+
+Inheritance diagram for Void\+Architect\+::Resources\+::Loaders\+::ILoader\+:
+% FIG 0
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_a6f6ba96fc7734bb100275e849eb2bd62}{ILoader}} (const std\+::string \&base\+Asset\+Path)
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_aa39d5c387f981ab59fbe2ff7c8c0aa4f}{\texorpdfstring{$\sim$}{\string~}\+ILoader}} ()=default
+\item 
+virtual std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_i_resource_definition}{IResource\+Definition}} $>$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_a396637e5255998fe33b96fb1fc7691db}{Load}} (const std\+::string \&name)=0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_a7cd63f42922b6480873e15d369612fd2}{m\+\_\+\+Base\+Asset\+Path}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_a6f6ba96fc7734bb100275e849eb2bd62}\index{VoidArchitect::Resources::Loaders::ILoader@{VoidArchitect::Resources::Loaders::ILoader}!ILoader@{ILoader}}
+\index{ILoader@{ILoader}!VoidArchitect::Resources::Loaders::ILoader@{VoidArchitect::Resources::Loaders::ILoader}}
+\doxysubsubsection{\texorpdfstring{ILoader()}{ILoader()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_a6f6ba96fc7734bb100275e849eb2bd62} 
+Void\+Architect\+::\+Resources\+::\+Loaders\+::\+ILoader\+::\+ILoader (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{base\+Asset\+Path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+Here is the caller graph for this function\+:
+% FIG 1
+\Hypertarget{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_aa39d5c387f981ab59fbe2ff7c8c0aa4f}\index{VoidArchitect::Resources::Loaders::ILoader@{VoidArchitect::Resources::Loaders::ILoader}!````~ILoader@{\texorpdfstring{$\sim$}{\string~}ILoader}}
+\index{````~ILoader@{\texorpdfstring{$\sim$}{\string~}ILoader}!VoidArchitect::Resources::Loaders::ILoader@{VoidArchitect::Resources::Loaders::ILoader}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}ILoader()}{\string~ILoader()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_aa39d5c387f981ab59fbe2ff7c8c0aa4f} 
+virtual Void\+Architect\+::\+Resources\+::\+Loaders\+::\+ILoader\+::\texorpdfstring{$\sim$}{\string~}\+ILoader (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_a396637e5255998fe33b96fb1fc7691db}\index{VoidArchitect::Resources::Loaders::ILoader@{VoidArchitect::Resources::Loaders::ILoader}!Load@{Load}}
+\index{Load@{Load}!VoidArchitect::Resources::Loaders::ILoader@{VoidArchitect::Resources::Loaders::ILoader}}
+\doxysubsubsection{\texorpdfstring{Load()}{Load()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_a396637e5255998fe33b96fb1fc7691db} 
+virtual std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_i_resource_definition}{IResource\+Definition}} $>$ Void\+Architect\+::\+Resources\+::\+Loaders\+::\+ILoader\+::\+Load (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_image_loader_a588f4608c6a8e9d9f193addfb870fa6f}{Void\+Architect\+::\+Resources\+::\+Loaders\+::\+Image\+Loader}}, \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_material_loader_a4eafd31116616a925df18e762be3ca01}{Void\+Architect\+::\+Resources\+::\+Loaders\+::\+Material\+Loader}}, \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_raw_mesh_loader_a463a8097a3727b52b9082cac194c2fbc}{Void\+Architect\+::\+Resources\+::\+Loaders\+::\+Raw\+Mesh\+Loader}}, \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_shader_loader_a01ff61a5393d55d47fa4caf910474ae3}{Void\+Architect\+::\+Resources\+::\+Loaders\+::\+Shader\+Loader}}, and \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_loader_a62f418e75bb0bf1f7f0979130de4a7ce}{Void\+Architect\+::\+Resources\+::\+Loaders\+::\+VAMLoader}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_a7cd63f42922b6480873e15d369612fd2}\index{VoidArchitect::Resources::Loaders::ILoader@{VoidArchitect::Resources::Loaders::ILoader}!m\_BaseAssetPath@{m\_BaseAssetPath}}
+\index{m\_BaseAssetPath@{m\_BaseAssetPath}!VoidArchitect::Resources::Loaders::ILoader@{VoidArchitect::Resources::Loaders::ILoader}}
+\doxysubsubsection{\texorpdfstring{m\_BaseAssetPath}{m\_BaseAssetPath}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader_a7cd63f42922b6480873e15d369612fd2} 
+std\+::string Void\+Architect\+::\+Resources\+::\+Loaders\+::\+ILoader\+::m\+\_\+\+Base\+Asset\+Path\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Resources/\+Loaders/\mbox{\hyperlink{_loader_8hpp}{Loader.\+hpp}}\item 
+engine/src/\+Resources/\+Loaders/\mbox{\hyperlink{_loader_8cpp}{Loader.\+cpp}}\end{DoxyCompactItemize}

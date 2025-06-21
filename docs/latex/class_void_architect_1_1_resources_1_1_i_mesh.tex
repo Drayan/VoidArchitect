@@ -1,0 +1,208 @@
+\doxysection{Void\+Architect\+::Resources\+::IMesh Class Reference}
+\hypertarget{class_void_architect_1_1_resources_1_1_i_mesh}{}\label{class_void_architect_1_1_resources_1_1_i_mesh}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+
+
+{\ttfamily \#include $<$Mesh.\+hpp$>$}
+
+
+
+Inheritance diagram for Void\+Architect\+::Resources\+::IMesh\+:
+% FIG 0
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_aca69518769895fed96f7fbdbd166c837}{\texorpdfstring{$\sim$}{\string~}\+IMesh}} ()=default
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_a71cf5ed5f3526eb2b89b64bfe2744fe0}{Update\+Submesh\+Material}} (uint32\+\_\+t index, \mbox{\hyperlink{namespace_void_architect_1_1_resources_ac9746089dc6bc65cc247f1ba5f98bbc1}{Material\+Handle}} new\+Material)=0
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_i_buffer}{IBuffer}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_a43bf2c8cc62a1700321dd0b42f1101a8}{Get\+Vertex\+Buffer}} ()=0
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_i_buffer}{IBuffer}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_a2e9bda46786fade4235983a239962df4}{Get\+Index\+Buffer}} ()=0
+\item 
+virtual uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_aeb79359bb709e8f344db006e93e58de4}{Get\+Indices\+Count}} () const =0
+\item 
+virtual uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_a82bdb2f7bba947b32c93009837da937b}{Get\+Sub\+Mesh\+Count}} () const =0
+\item 
+virtual const \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor}{Sub\+Mesh\+Descriptor}} \& \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_a2912e7cfd635f53633bc65d233afd32b}{Get\+Sub\+Mesh}} (uint32\+\_\+t index) const =0
+\item 
+virtual const VAArray$<$ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor}{Sub\+Mesh\+Descriptor}} $>$ \& \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_a1f74345dd5a3ef479248d2ccaa1be006}{Get\+All\+Sub\+Meshes}} () const =0
+\item 
+virtual std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_mesh_data}{Mesh\+Data}} $>$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_a7a7fc25b906cb41979a978c31fa92d79}{Get\+Mesh\+Data}} () const =0
+\item 
+virtual uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_a708eb8bea5256e228e30b5bb53074ba5}{Get\+Data\+Generation}} () const =0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_a30f0d95d41875ce2c6064e04f9d5c9ad}{IMesh}} (std\+::string name, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_mesh_data}{Mesh\+Data}} $>$ data, const VAArray$<$ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor}{Sub\+Mesh\+Descriptor}} $>$ \&submeshes)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_ae154227afee598a8d19d412c596ef726}{m\+\_\+\+Name}}
+\item 
+std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_mesh_data}{Mesh\+Data}} $>$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_a7af6e4fbe85fdccb09fcc02dfa6498e5}{m\+\_\+\+Data}}
+\item 
+VAArray$<$ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor}{Sub\+Mesh\+Descriptor}} $>$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_abec806360c9e4c135084bb149c29b27c}{m\+\_\+\+Submeshes}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh_a10ea0210761cc2ebc6191febf6306b30}{Void\+Architect\+::\+Mesh\+System}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_aca69518769895fed96f7fbdbd166c837}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!````~IMesh@{\texorpdfstring{$\sim$}{\string~}IMesh}}
+\index{````~IMesh@{\texorpdfstring{$\sim$}{\string~}IMesh}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}IMesh()}{\string~IMesh()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_aca69518769895fed96f7fbdbd166c837} 
+virtual Void\+Architect\+::\+Resources\+::\+IMesh\+::\texorpdfstring{$\sim$}{\string~}\+IMesh (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_a30f0d95d41875ce2c6064e04f9d5c9ad}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!IMesh@{IMesh}}
+\index{IMesh@{IMesh}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{IMesh()}{IMesh()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_a30f0d95d41875ce2c6064e04f9d5c9ad} 
+Void\+Architect\+::\+Resources\+::\+IMesh\+::\+IMesh (\begin{DoxyParamCaption}\item[{std\+::string}]{name}{, }\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_mesh_data}{Mesh\+Data}} $>$}]{data}{, }\item[{const VAArray$<$ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor}{Sub\+Mesh\+Descriptor}} $>$ \&}]{submeshes}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}, {\ttfamily [protected]}}
+
+Here is the caller graph for this function\+:
+% FIG 1
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_a1f74345dd5a3ef479248d2ccaa1be006}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!GetAllSubMeshes@{GetAllSubMeshes}}
+\index{GetAllSubMeshes@{GetAllSubMeshes}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{GetAllSubMeshes()}{GetAllSubMeshes()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_a1f74345dd5a3ef479248d2ccaa1be006} 
+virtual const VAArray$<$ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor}{Sub\+Mesh\+Descriptor}} $>$ \& Void\+Architect\+::\+Resources\+::\+IMesh\+::\+Get\+All\+Sub\+Meshes (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}, {\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_mesh_a1787cabe1fb4796b8c5c2237654616aa}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Mesh}}.
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_a708eb8bea5256e228e30b5bb53074ba5}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!GetDataGeneration@{GetDataGeneration}}
+\index{GetDataGeneration@{GetDataGeneration}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{GetDataGeneration()}{GetDataGeneration()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_a708eb8bea5256e228e30b5bb53074ba5} 
+virtual uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+IMesh\+::\+Get\+Data\+Generation (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}, {\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_mesh_a17d437a2b6d101fbae30de9e0e048342}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Mesh}}.
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_a2e9bda46786fade4235983a239962df4}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!GetIndexBuffer@{GetIndexBuffer}}
+\index{GetIndexBuffer@{GetIndexBuffer}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{GetIndexBuffer()}{GetIndexBuffer()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_a2e9bda46786fade4235983a239962df4} 
+virtual \mbox{\hyperlink{class_void_architect_1_1_i_buffer}{IBuffer}} \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Resources\+::\+IMesh\+::\+Get\+Index\+Buffer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [nodiscard]}, {\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_mesh_a61a1a97e5c93b06bdc21941d7659d946}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Mesh}}.
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_aeb79359bb709e8f344db006e93e58de4}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!GetIndicesCount@{GetIndicesCount}}
+\index{GetIndicesCount@{GetIndicesCount}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{GetIndicesCount()}{GetIndicesCount()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_aeb79359bb709e8f344db006e93e58de4} 
+virtual uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+IMesh\+::\+Get\+Indices\+Count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}, {\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_mesh_a2f8a010b5b884873fbb8de2b96941058}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Mesh}}.
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_a7a7fc25b906cb41979a978c31fa92d79}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!GetMeshData@{GetMeshData}}
+\index{GetMeshData@{GetMeshData}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{GetMeshData()}{GetMeshData()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_a7a7fc25b906cb41979a978c31fa92d79} 
+virtual std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_mesh_data}{Mesh\+Data}} $>$ Void\+Architect\+::\+Resources\+::\+IMesh\+::\+Get\+Mesh\+Data (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}, {\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_mesh_ad23b7c4e0afd32f3d5ec03f7bdb283e9}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Mesh}}.
+
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_a2912e7cfd635f53633bc65d233afd32b}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!GetSubMesh@{GetSubMesh}}
+\index{GetSubMesh@{GetSubMesh}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{GetSubMesh()}{GetSubMesh()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_a2912e7cfd635f53633bc65d233afd32b} 
+virtual const \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor}{Sub\+Mesh\+Descriptor}} \& Void\+Architect\+::\+Resources\+::\+IMesh\+::\+Get\+Sub\+Mesh (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{index}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}, {\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_mesh_a6cbcf8f3bd50b188ee168ef008f7d081}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Mesh}}.
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_a82bdb2f7bba947b32c93009837da937b}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!GetSubMeshCount@{GetSubMeshCount}}
+\index{GetSubMeshCount@{GetSubMeshCount}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{GetSubMeshCount()}{GetSubMeshCount()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_a82bdb2f7bba947b32c93009837da937b} 
+virtual uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+IMesh\+::\+Get\+Sub\+Mesh\+Count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}, {\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_mesh_a7f79811965def8795a14ae346506bdce}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Mesh}}.
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_a43bf2c8cc62a1700321dd0b42f1101a8}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!GetVertexBuffer@{GetVertexBuffer}}
+\index{GetVertexBuffer@{GetVertexBuffer}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{GetVertexBuffer()}{GetVertexBuffer()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_a43bf2c8cc62a1700321dd0b42f1101a8} 
+virtual \mbox{\hyperlink{class_void_architect_1_1_i_buffer}{IBuffer}} \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Resources\+::\+IMesh\+::\+Get\+Vertex\+Buffer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [nodiscard]}, {\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_mesh_a75d29e68ea3521bb75c7b0e668dffb3b}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Mesh}}.
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_a71cf5ed5f3526eb2b89b64bfe2744fe0}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!UpdateSubmeshMaterial@{UpdateSubmeshMaterial}}
+\index{UpdateSubmeshMaterial@{UpdateSubmeshMaterial}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{UpdateSubmeshMaterial()}{UpdateSubmeshMaterial()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_a71cf5ed5f3526eb2b89b64bfe2744fe0} 
+virtual void Void\+Architect\+::\+Resources\+::\+IMesh\+::\+Update\+Submesh\+Material (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{index}{, }\item[{\mbox{\hyperlink{namespace_void_architect_1_1_resources_ac9746089dc6bc65cc247f1ba5f98bbc1}{Material\+Handle}}}]{new\+Material}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_mesh_a6bce5b9a832f18a89b94f9ff656d8356}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Mesh}}.
+
+
+
+\label{doc-related-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_doc-related-members}
+\doxysubsection{Friends And Related Symbol Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_a10ea0210761cc2ebc6191febf6306b30}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!VoidArchitect::MeshSystem@{VoidArchitect::MeshSystem}}
+\index{VoidArchitect::MeshSystem@{VoidArchitect::MeshSystem}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{VoidArchitect::MeshSystem}{VoidArchitect::MeshSystem}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_a10ea0210761cc2ebc6191febf6306b30} 
+friend class \mbox{\hyperlink{class_void_architect_1_1_mesh_system}{Void\+Architect\+::\+Mesh\+System}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_a7af6e4fbe85fdccb09fcc02dfa6498e5}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!m\_Data@{m\_Data}}
+\index{m\_Data@{m\_Data}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{m\_Data}{m\_Data}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_a7af6e4fbe85fdccb09fcc02dfa6498e5} 
+std\+::shared\+\_\+ptr$<$\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_mesh_data}{Mesh\+Data}}$>$ Void\+Architect\+::\+Resources\+::\+IMesh\+::m\+\_\+\+Data\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_ae154227afee598a8d19d412c596ef726}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!m\_Name@{m\_Name}}
+\index{m\_Name@{m\_Name}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{m\_Name}{m\_Name}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_ae154227afee598a8d19d412c596ef726} 
+std\+::string Void\+Architect\+::\+Resources\+::\+IMesh\+::m\+\_\+\+Name\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_mesh_abec806360c9e4c135084bb149c29b27c}\index{VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}!m\_Submeshes@{m\_Submeshes}}
+\index{m\_Submeshes@{m\_Submeshes}!VoidArchitect::Resources::IMesh@{VoidArchitect::Resources::IMesh}}
+\doxysubsubsection{\texorpdfstring{m\_Submeshes}{m\_Submeshes}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_mesh_abec806360c9e4c135084bb149c29b27c} 
+VAArray$<$\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor}{Sub\+Mesh\+Descriptor}}$>$ Void\+Architect\+::\+Resources\+::\+IMesh\+::m\+\_\+\+Submeshes\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Resources/\mbox{\hyperlink{_mesh_8hpp}{Mesh.\+hpp}}\item 
+engine/src/\+Resources/\mbox{\hyperlink{_mesh_8cpp}{Mesh.\+cpp}}\end{DoxyCompactItemize}

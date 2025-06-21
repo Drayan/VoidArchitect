@@ -1,0 +1,180 @@
+\doxysection{engine/src/\+Core/\+Logger.hpp File Reference}
+\hypertarget{_logger_8hpp}{}\label{_logger_8hpp}\index{engine/src/Core/Logger.hpp@{engine/src/Core/Logger.hpp}}
+{\ttfamily \#include "{}spdlog/spdlog.\+h"{}}\newline
+{\ttfamily \#include "{}Core.\+hpp"{}}\newline
+Include dependency graph for Logger.\+hpp\+:
+% FIG 0
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_logger}{Void\+Architect\+::\+Logger}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespace_void_architect}{Void\+Architect}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{_logger_8hpp_afa9fd58b11863d9be2db8a5004f14375}{VA\+\_\+\+ENGINE\+\_\+\+CRITICAL}}(...)
+\item 
+\#define \mbox{\hyperlink{_logger_8hpp_a69830cf75a3de03cb5c41eedf29cd4b1}{VA\+\_\+\+ENGINE\+\_\+\+ERROR}}(...)
+\item 
+\#define \mbox{\hyperlink{_logger_8hpp_a8d66b1bd5d47d8389c5fb19efab64ed1}{VA\+\_\+\+ENGINE\+\_\+\+WARN}}(...)
+\item 
+\#define \mbox{\hyperlink{_logger_8hpp_ac45f682bb601bf12ae8cb8174803284b}{VA\+\_\+\+ENGINE\+\_\+\+INFO}}(...)
+\item 
+\#define \mbox{\hyperlink{_logger_8hpp_ae06fbf1f4416255386f6b45eecacfa3e}{VA\+\_\+\+ENGINE\+\_\+\+DEBUG}}(...)
+\item 
+\#define \mbox{\hyperlink{_logger_8hpp_a17ea4c5068f6ebb84e0dbc39f84fef83}{VA\+\_\+\+ENGINE\+\_\+\+TRACE}}(...)
+\item 
+\#define \mbox{\hyperlink{_logger_8hpp_ab73809de52bb6e9561c862cba442de00}{VA\+\_\+\+APP\+\_\+\+CRITICAL}}(...)
+\item 
+\#define \mbox{\hyperlink{_logger_8hpp_a4c33a1cc11913eab5dc1a83c810ec6d4}{VA\+\_\+\+APP\+\_\+\+ERROR}}(...)
+\item 
+\#define \mbox{\hyperlink{_logger_8hpp_a57da6dfa64a0595d8607f86cecf71712}{VA\+\_\+\+APP\+\_\+\+WARN}}(...)
+\item 
+\#define \mbox{\hyperlink{_logger_8hpp_a486e586c595bd54b6cd1527d1fbf380f}{VA\+\_\+\+APP\+\_\+\+INFO}}(...)
+\item 
+\#define \mbox{\hyperlink{_logger_8hpp_a6f9851b1dc73f29308e2d8614af0e282}{VA\+\_\+\+APP\+\_\+\+DEBUG}}(...)
+\item 
+\#define \mbox{\hyperlink{_logger_8hpp_a5541d5f9d298978f4b17c2086863bfd8}{VA\+\_\+\+APP\+\_\+\+TRACE}}(...)
+\end{DoxyCompactItemize}
+
+
+\label{doc-define-members}
+\Hypertarget{_logger_8hpp_doc-define-members}
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{_logger_8hpp_ab73809de52bb6e9561c862cba442de00}\index{Logger.hpp@{Logger.hpp}!VA\_APP\_CRITICAL@{VA\_APP\_CRITICAL}}
+\index{VA\_APP\_CRITICAL@{VA\_APP\_CRITICAL}!Logger.hpp@{Logger.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_APP\_CRITICAL}{VA\_APP\_CRITICAL}}
+{\footnotesize\ttfamily \label{_logger_8hpp_ab73809de52bb6e9561c862cba442de00} 
+\#define VA\+\_\+\+APP\+\_\+\+CRITICAL(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_logger_afaeafa0f113239e53a722e7246033d28}{::VoidArchitect::Logger::GetApplicationLogger}}()-\/>critical(\_\_VA\_ARGS\_\_)}
+
+\end{DoxyCode}
+\Hypertarget{_logger_8hpp_a6f9851b1dc73f29308e2d8614af0e282}\index{Logger.hpp@{Logger.hpp}!VA\_APP\_DEBUG@{VA\_APP\_DEBUG}}
+\index{VA\_APP\_DEBUG@{VA\_APP\_DEBUG}!Logger.hpp@{Logger.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_APP\_DEBUG}{VA\_APP\_DEBUG}}
+{\footnotesize\ttfamily \label{_logger_8hpp_a6f9851b1dc73f29308e2d8614af0e282} 
+\#define VA\+\_\+\+APP\+\_\+\+DEBUG(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_logger_afaeafa0f113239e53a722e7246033d28}{::VoidArchitect::Logger::GetApplicationLogger}}()-\/>debug(\_\_VA\_ARGS\_\_)}
+
+\end{DoxyCode}
+\Hypertarget{_logger_8hpp_a4c33a1cc11913eab5dc1a83c810ec6d4}\index{Logger.hpp@{Logger.hpp}!VA\_APP\_ERROR@{VA\_APP\_ERROR}}
+\index{VA\_APP\_ERROR@{VA\_APP\_ERROR}!Logger.hpp@{Logger.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_APP\_ERROR}{VA\_APP\_ERROR}}
+{\footnotesize\ttfamily \label{_logger_8hpp_a4c33a1cc11913eab5dc1a83c810ec6d4} 
+\#define VA\+\_\+\+APP\+\_\+\+ERROR(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_logger_afaeafa0f113239e53a722e7246033d28}{::VoidArchitect::Logger::GetApplicationLogger}}()-\/>error(\_\_VA\_ARGS\_\_)}
+
+\end{DoxyCode}
+\Hypertarget{_logger_8hpp_a486e586c595bd54b6cd1527d1fbf380f}\index{Logger.hpp@{Logger.hpp}!VA\_APP\_INFO@{VA\_APP\_INFO}}
+\index{VA\_APP\_INFO@{VA\_APP\_INFO}!Logger.hpp@{Logger.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_APP\_INFO}{VA\_APP\_INFO}}
+{\footnotesize\ttfamily \label{_logger_8hpp_a486e586c595bd54b6cd1527d1fbf380f} 
+\#define VA\+\_\+\+APP\+\_\+\+INFO(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_logger_afaeafa0f113239e53a722e7246033d28}{::VoidArchitect::Logger::GetApplicationLogger}}()-\/>info(\_\_VA\_ARGS\_\_)}
+
+\end{DoxyCode}
+\Hypertarget{_logger_8hpp_a5541d5f9d298978f4b17c2086863bfd8}\index{Logger.hpp@{Logger.hpp}!VA\_APP\_TRACE@{VA\_APP\_TRACE}}
+\index{VA\_APP\_TRACE@{VA\_APP\_TRACE}!Logger.hpp@{Logger.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_APP\_TRACE}{VA\_APP\_TRACE}}
+{\footnotesize\ttfamily \label{_logger_8hpp_a5541d5f9d298978f4b17c2086863bfd8} 
+\#define VA\+\_\+\+APP\+\_\+\+TRACE(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_logger_afaeafa0f113239e53a722e7246033d28}{::VoidArchitect::Logger::GetApplicationLogger}}()-\/>trace(\_\_VA\_ARGS\_\_)}
+
+\end{DoxyCode}
+\Hypertarget{_logger_8hpp_a57da6dfa64a0595d8607f86cecf71712}\index{Logger.hpp@{Logger.hpp}!VA\_APP\_WARN@{VA\_APP\_WARN}}
+\index{VA\_APP\_WARN@{VA\_APP\_WARN}!Logger.hpp@{Logger.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_APP\_WARN}{VA\_APP\_WARN}}
+{\footnotesize\ttfamily \label{_logger_8hpp_a57da6dfa64a0595d8607f86cecf71712} 
+\#define VA\+\_\+\+APP\+\_\+\+WARN(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_logger_afaeafa0f113239e53a722e7246033d28}{::VoidArchitect::Logger::GetApplicationLogger}}()-\/>warn(\_\_VA\_ARGS\_\_)}
+
+\end{DoxyCode}
+\Hypertarget{_logger_8hpp_afa9fd58b11863d9be2db8a5004f14375}\index{Logger.hpp@{Logger.hpp}!VA\_ENGINE\_CRITICAL@{VA\_ENGINE\_CRITICAL}}
+\index{VA\_ENGINE\_CRITICAL@{VA\_ENGINE\_CRITICAL}!Logger.hpp@{Logger.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_ENGINE\_CRITICAL}{VA\_ENGINE\_CRITICAL}}
+{\footnotesize\ttfamily \label{_logger_8hpp_afa9fd58b11863d9be2db8a5004f14375} 
+\#define VA\+\_\+\+ENGINE\+\_\+\+CRITICAL(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_logger_aaba6e40f66f3a28c14a6b1efb0fd834d}{::VoidArchitect::Logger::GetEngineLogger}}()-\/>critical(\_\_VA\_ARGS\_\_)}
+
+\end{DoxyCode}
+\Hypertarget{_logger_8hpp_ae06fbf1f4416255386f6b45eecacfa3e}\index{Logger.hpp@{Logger.hpp}!VA\_ENGINE\_DEBUG@{VA\_ENGINE\_DEBUG}}
+\index{VA\_ENGINE\_DEBUG@{VA\_ENGINE\_DEBUG}!Logger.hpp@{Logger.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_ENGINE\_DEBUG}{VA\_ENGINE\_DEBUG}}
+{\footnotesize\ttfamily \label{_logger_8hpp_ae06fbf1f4416255386f6b45eecacfa3e} 
+\#define VA\+\_\+\+ENGINE\+\_\+\+DEBUG(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_logger_aaba6e40f66f3a28c14a6b1efb0fd834d}{::VoidArchitect::Logger::GetEngineLogger}}()-\/>debug(\_\_VA\_ARGS\_\_)}
+
+\end{DoxyCode}
+\Hypertarget{_logger_8hpp_a69830cf75a3de03cb5c41eedf29cd4b1}\index{Logger.hpp@{Logger.hpp}!VA\_ENGINE\_ERROR@{VA\_ENGINE\_ERROR}}
+\index{VA\_ENGINE\_ERROR@{VA\_ENGINE\_ERROR}!Logger.hpp@{Logger.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_ENGINE\_ERROR}{VA\_ENGINE\_ERROR}}
+{\footnotesize\ttfamily \label{_logger_8hpp_a69830cf75a3de03cb5c41eedf29cd4b1} 
+\#define VA\+\_\+\+ENGINE\+\_\+\+ERROR(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_logger_aaba6e40f66f3a28c14a6b1efb0fd834d}{::VoidArchitect::Logger::GetEngineLogger}}()-\/>error(\_\_VA\_ARGS\_\_)}
+
+\end{DoxyCode}
+\Hypertarget{_logger_8hpp_ac45f682bb601bf12ae8cb8174803284b}\index{Logger.hpp@{Logger.hpp}!VA\_ENGINE\_INFO@{VA\_ENGINE\_INFO}}
+\index{VA\_ENGINE\_INFO@{VA\_ENGINE\_INFO}!Logger.hpp@{Logger.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_ENGINE\_INFO}{VA\_ENGINE\_INFO}}
+{\footnotesize\ttfamily \label{_logger_8hpp_ac45f682bb601bf12ae8cb8174803284b} 
+\#define VA\+\_\+\+ENGINE\+\_\+\+INFO(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_logger_aaba6e40f66f3a28c14a6b1efb0fd834d}{::VoidArchitect::Logger::GetEngineLogger}}()-\/>info(\_\_VA\_ARGS\_\_)}
+
+\end{DoxyCode}
+\Hypertarget{_logger_8hpp_a17ea4c5068f6ebb84e0dbc39f84fef83}\index{Logger.hpp@{Logger.hpp}!VA\_ENGINE\_TRACE@{VA\_ENGINE\_TRACE}}
+\index{VA\_ENGINE\_TRACE@{VA\_ENGINE\_TRACE}!Logger.hpp@{Logger.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_ENGINE\_TRACE}{VA\_ENGINE\_TRACE}}
+{\footnotesize\ttfamily \label{_logger_8hpp_a17ea4c5068f6ebb84e0dbc39f84fef83} 
+\#define VA\+\_\+\+ENGINE\+\_\+\+TRACE(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_logger_aaba6e40f66f3a28c14a6b1efb0fd834d}{::VoidArchitect::Logger::GetEngineLogger}}()-\/>trace(\_\_VA\_ARGS\_\_)}
+
+\end{DoxyCode}
+\Hypertarget{_logger_8hpp_a8d66b1bd5d47d8389c5fb19efab64ed1}\index{Logger.hpp@{Logger.hpp}!VA\_ENGINE\_WARN@{VA\_ENGINE\_WARN}}
+\index{VA\_ENGINE\_WARN@{VA\_ENGINE\_WARN}!Logger.hpp@{Logger.hpp}}
+\doxysubsubsection{\texorpdfstring{VA\_ENGINE\_WARN}{VA\_ENGINE\_WARN}}
+{\footnotesize\ttfamily \label{_logger_8hpp_a8d66b1bd5d47d8389c5fb19efab64ed1} 
+\#define VA\+\_\+\+ENGINE\+\_\+\+WARN(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{class_void_architect_1_1_logger_aaba6e40f66f3a28c14a6b1efb0fd834d}{::VoidArchitect::Logger::GetEngineLogger}}()-\/>warn(\_\_VA\_ARGS\_\_)}
+
+\end{DoxyCode}

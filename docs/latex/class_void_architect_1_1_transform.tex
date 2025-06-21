@@ -1,0 +1,190 @@
+\doxysection{Void\+Architect\+::Transform Class Reference}
+\hypertarget{class_void_architect_1_1_transform}{}\label{class_void_architect_1_1_transform}\index{VoidArchitect::Transform@{VoidArchitect::Transform}}
+
+
+{\ttfamily \#include $<$Transform.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_transform_a83ceef0154fa51df4fd81bb7bf66fac2}{Set\+Local\+Position}} (const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math\+::\+Vec3}} \&position)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_transform_a78f0abd0dbbdd391013eb65c786367ef}{Set\+Local\+Position}} (float x, float y, float z)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_transform_af510cbfb83acc6527ed09b7cd48d12e0}{Set\+Local\+Rotation}} (const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math\+::\+Quat}} \&rotation)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_transform_a092b89b07bc69791a1112354758fb9b3}{Set\+Local\+Rotation}} (float pitch, float yaw, float roll)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_transform_ad6aef25b8b4ca4ae8601c259b23a77d2}{Set\+Local\+Scale}} (const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math\+::\+Vec3}} \&scale)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_transform_ad2c64fe3e2feecaf4cf7aeb723c61aa5}{Set\+Local\+Scale}} (float x, float y, float z)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_transform_a53591b6f3141da038fd462fbff590c48}{Set\+Parent}} (\mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}} \texorpdfstring{$\ast$}{*}parent)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_transform_a73e25e7df28250a6be4a51b78a3d08a8}{Set\+Parent\+Keep\+World\+Transform}} (\mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}} \texorpdfstring{$\ast$}{*}parent)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_transform_adfef3adf546d7585cf042a21509a9c62}{Get\+Parent}} () const
+\item 
+const VAArray$<$ \mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}} \texorpdfstring{$\ast$}{*} $>$ \& \mbox{\hyperlink{class_void_architect_1_1_transform_ac2d244d1c5c02ddf0650815028f55da3}{Get\+Children}} () const
+\item 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math\+::\+Vec3}} \& \mbox{\hyperlink{class_void_architect_1_1_transform_a3d9eb06e224e8c77b95df63315777e96}{Get\+Local\+Position}} () const
+\item 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math\+::\+Quat}} \& \mbox{\hyperlink{class_void_architect_1_1_transform_a1bc4d55ec793878b59d5dc87b28e46e6}{Get\+Local\+Rotation}} () const
+\item 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math\+::\+Vec3}} \& \mbox{\hyperlink{class_void_architect_1_1_transform_ad11463a361a0550da94a0ce7f5ee81c0}{Get\+Local\+Scale}} () const
+\item 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math\+::\+Mat4}} \& \mbox{\hyperlink{class_void_architect_1_1_transform_ab6d64dabde4123f779b660d1c638736b}{Get\+Local\+Transform}} () const
+\item 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math\+::\+Vec3}} \mbox{\hyperlink{class_void_architect_1_1_transform_add4ef336d69451034dcb55055c6ef7e5}{Get\+World\+Position}} () const
+\item 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math\+::\+Quat}} \mbox{\hyperlink{class_void_architect_1_1_transform_a5d02889f0a3bc43ea10e80a3f0968bcb}{Get\+World\+Rotation}} () const
+\item 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math\+::\+Vec3}} \mbox{\hyperlink{class_void_architect_1_1_transform_a49c7affef3b21fbb5a95a42d7b78f1d1}{Get\+World\+Scale}} () const
+\item 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math\+::\+Mat4}} \& \mbox{\hyperlink{class_void_architect_1_1_transform_a967af987f30032785bd78e30f0f71305}{Get\+World\+Transform}} () const
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_transform_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_transform_ac2d244d1c5c02ddf0650815028f55da3}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!GetChildren@{GetChildren}}
+\index{GetChildren@{GetChildren}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{GetChildren()}{GetChildren()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_ac2d244d1c5c02ddf0650815028f55da3} 
+const VAArray$<$ \mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}} \texorpdfstring{$\ast$}{*} $>$ \& Void\+Architect\+::\+Transform\+::\+Get\+Children (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_transform_a3d9eb06e224e8c77b95df63315777e96}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!GetLocalPosition@{GetLocalPosition}}
+\index{GetLocalPosition@{GetLocalPosition}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{GetLocalPosition()}{GetLocalPosition()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_a3d9eb06e224e8c77b95df63315777e96} 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math\+::\+Vec3}} \& Void\+Architect\+::\+Transform\+::\+Get\+Local\+Position (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_transform_a1bc4d55ec793878b59d5dc87b28e46e6}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!GetLocalRotation@{GetLocalRotation}}
+\index{GetLocalRotation@{GetLocalRotation}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{GetLocalRotation()}{GetLocalRotation()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_a1bc4d55ec793878b59d5dc87b28e46e6} 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math\+::\+Quat}} \& Void\+Architect\+::\+Transform\+::\+Get\+Local\+Rotation (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_transform_ad11463a361a0550da94a0ce7f5ee81c0}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!GetLocalScale@{GetLocalScale}}
+\index{GetLocalScale@{GetLocalScale}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{GetLocalScale()}{GetLocalScale()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_ad11463a361a0550da94a0ce7f5ee81c0} 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math\+::\+Vec3}} \& Void\+Architect\+::\+Transform\+::\+Get\+Local\+Scale (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_transform_ab6d64dabde4123f779b660d1c638736b}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!GetLocalTransform@{GetLocalTransform}}
+\index{GetLocalTransform@{GetLocalTransform}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{GetLocalTransform()}{GetLocalTransform()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_ab6d64dabde4123f779b660d1c638736b} 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math\+::\+Mat4}} \& Void\+Architect\+::\+Transform\+::\+Get\+Local\+Transform (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+Here is the call graph for this function\+:
+% FIG 0
+Here is the caller graph for this function\+:
+% FIG 1
+\Hypertarget{class_void_architect_1_1_transform_adfef3adf546d7585cf042a21509a9c62}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!GetParent@{GetParent}}
+\index{GetParent@{GetParent}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{GetParent()}{GetParent()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_adfef3adf546d7585cf042a21509a9c62} 
+\mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}} \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Transform\+::\+Get\+Parent (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_transform_add4ef336d69451034dcb55055c6ef7e5}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!GetWorldPosition@{GetWorldPosition}}
+\index{GetWorldPosition@{GetWorldPosition}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{GetWorldPosition()}{GetWorldPosition()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_add4ef336d69451034dcb55055c6ef7e5} 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math\+::\+Vec3}} Void\+Architect\+::\+Transform\+::\+Get\+World\+Position (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+Here is the call graph for this function\+:
+% FIG 2
+Here is the caller graph for this function\+:
+% FIG 3
+\Hypertarget{class_void_architect_1_1_transform_a5d02889f0a3bc43ea10e80a3f0968bcb}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!GetWorldRotation@{GetWorldRotation}}
+\index{GetWorldRotation@{GetWorldRotation}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{GetWorldRotation()}{GetWorldRotation()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_a5d02889f0a3bc43ea10e80a3f0968bcb} 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math\+::\+Quat}} Void\+Architect\+::\+Transform\+::\+Get\+World\+Rotation (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+Here is the call graph for this function\+:
+% FIG 4
+Here is the caller graph for this function\+:
+% FIG 5
+\Hypertarget{class_void_architect_1_1_transform_a49c7affef3b21fbb5a95a42d7b78f1d1}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!GetWorldScale@{GetWorldScale}}
+\index{GetWorldScale@{GetWorldScale}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{GetWorldScale()}{GetWorldScale()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_a49c7affef3b21fbb5a95a42d7b78f1d1} 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math\+::\+Vec3}} Void\+Architect\+::\+Transform\+::\+Get\+World\+Scale (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+Here is the call graph for this function\+:
+% FIG 6
+Here is the caller graph for this function\+:
+% FIG 7
+\Hypertarget{class_void_architect_1_1_transform_a967af987f30032785bd78e30f0f71305}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!GetWorldTransform@{GetWorldTransform}}
+\index{GetWorldTransform@{GetWorldTransform}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{GetWorldTransform()}{GetWorldTransform()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_a967af987f30032785bd78e30f0f71305} 
+const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math\+::\+Mat4}} \& Void\+Architect\+::\+Transform\+::\+Get\+World\+Transform (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+Here is the call graph for this function\+:
+% FIG 8
+Here is the caller graph for this function\+:
+% FIG 9
+\Hypertarget{class_void_architect_1_1_transform_a83ceef0154fa51df4fd81bb7bf66fac2}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!SetLocalPosition@{SetLocalPosition}}
+\index{SetLocalPosition@{SetLocalPosition}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{SetLocalPosition()}{SetLocalPosition()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_a83ceef0154fa51df4fd81bb7bf66fac2} 
+void Void\+Architect\+::\+Transform\+::\+Set\+Local\+Position (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math\+::\+Vec3}} \&}]{position}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_transform_a78f0abd0dbbdd391013eb65c786367ef}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!SetLocalPosition@{SetLocalPosition}}
+\index{SetLocalPosition@{SetLocalPosition}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{SetLocalPosition()}{SetLocalPosition()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_a78f0abd0dbbdd391013eb65c786367ef} 
+void Void\+Architect\+::\+Transform\+::\+Set\+Local\+Position (\begin{DoxyParamCaption}\item[{float}]{x}{, }\item[{float}]{y}{, }\item[{float}]{z}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_transform_af510cbfb83acc6527ed09b7cd48d12e0}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!SetLocalRotation@{SetLocalRotation}}
+\index{SetLocalRotation@{SetLocalRotation}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{SetLocalRotation()}{SetLocalRotation()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_af510cbfb83acc6527ed09b7cd48d12e0} 
+void Void\+Architect\+::\+Transform\+::\+Set\+Local\+Rotation (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math\+::\+Quat}} \&}]{rotation}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_transform_a092b89b07bc69791a1112354758fb9b3}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!SetLocalRotation@{SetLocalRotation}}
+\index{SetLocalRotation@{SetLocalRotation}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{SetLocalRotation()}{SetLocalRotation()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_a092b89b07bc69791a1112354758fb9b3} 
+void Void\+Architect\+::\+Transform\+::\+Set\+Local\+Rotation (\begin{DoxyParamCaption}\item[{float}]{pitch}{, }\item[{float}]{yaw}{, }\item[{float}]{roll}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 10
+\Hypertarget{class_void_architect_1_1_transform_ad6aef25b8b4ca4ae8601c259b23a77d2}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!SetLocalScale@{SetLocalScale}}
+\index{SetLocalScale@{SetLocalScale}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{SetLocalScale()}{SetLocalScale()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_ad6aef25b8b4ca4ae8601c259b23a77d2} 
+void Void\+Architect\+::\+Transform\+::\+Set\+Local\+Scale (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math\+::\+Vec3}} \&}]{scale}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_transform_ad2c64fe3e2feecaf4cf7aeb723c61aa5}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!SetLocalScale@{SetLocalScale}}
+\index{SetLocalScale@{SetLocalScale}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{SetLocalScale()}{SetLocalScale()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_ad2c64fe3e2feecaf4cf7aeb723c61aa5} 
+void Void\+Architect\+::\+Transform\+::\+Set\+Local\+Scale (\begin{DoxyParamCaption}\item[{float}]{x}{, }\item[{float}]{y}{, }\item[{float}]{z}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_transform_a53591b6f3141da038fd462fbff590c48}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!SetParent@{SetParent}}
+\index{SetParent@{SetParent}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{SetParent()}{SetParent()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_a53591b6f3141da038fd462fbff590c48} 
+void Void\+Architect\+::\+Transform\+::\+Set\+Parent (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}} \texorpdfstring{$\ast$}{*}}]{parent}{}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 11
+\Hypertarget{class_void_architect_1_1_transform_a73e25e7df28250a6be4a51b78a3d08a8}\index{VoidArchitect::Transform@{VoidArchitect::Transform}!SetParentKeepWorldTransform@{SetParentKeepWorldTransform}}
+\index{SetParentKeepWorldTransform@{SetParentKeepWorldTransform}!VoidArchitect::Transform@{VoidArchitect::Transform}}
+\doxysubsubsection{\texorpdfstring{SetParentKeepWorldTransform()}{SetParentKeepWorldTransform()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_transform_a73e25e7df28250a6be4a51b78a3d08a8} 
+void Void\+Architect\+::\+Transform\+::\+Set\+Parent\+Keep\+World\+Transform (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}} \texorpdfstring{$\ast$}{*}}]{parent}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 12
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Core/\mbox{\hyperlink{_transform_8hpp}{Transform.\+hpp}}\item 
+engine/src/\+Core/\mbox{\hyperlink{_transform_8cpp}{Transform.\+cpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,72 @@
+\doxysection{Vulkan\+Binding\+Group\+Manager.\+hpp}
+\hypertarget{_vulkan_binding_group_manager_8hpp_source}{}\label{_vulkan_binding_group_manager_8hpp_source}\index{engine/src/Platform/RHI/Vulkan/VulkanBindingGroupManager.hpp@{engine/src/Platform/RHI/Vulkan/VulkanBindingGroupManager.hpp}}
+\mbox{\hyperlink{_vulkan_binding_group_manager_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 08/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <vulkan/vulkan.h>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_material_8hpp}{Resources/Material.hpp}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_render_state_system_8hpp}{Systems/RenderStateSystem.hpp}}"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{VulkanDevice}};}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{VulkanBuffer}};}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a8ad538ee06a8d788bccdca2bd62d47dd}{VulkanBindingGroupManager}}}
+\DoxyCodeLine{00017\ \ \ \ \ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint32\_t\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_abda738d5a556074250e2f734c6dcd9a1}{MAX\_MATERIALS}}\ =\ 1024;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a8ad538ee06a8d788bccdca2bd62d47dd}{VulkanBindingGroupManager}}(}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_ptr<VulkanDevice>\&\ device,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ VkAllocationCallbacks*\ allocator);}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a368c9af4ca114380a0e7ae4f2a0c895c}{\string~VulkanBindingGroupManager}}();}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a5aa0354b2946cc5f0cb5e2f41248491d}{VulkanBindingGroupManager}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a8ad538ee06a8d788bccdca2bd62d47dd}{VulkanBindingGroupManager}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a8ad538ee06a8d788bccdca2bd62d47dd}{VulkanBindingGroupManager}}\&\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a965d66e5cecf5fa2b71a35a5eba42bee}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a8ad538ee06a8d788bccdca2bd62d47dd}{VulkanBindingGroupManager}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ VkDescriptorSetLayout\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a7e6f411c0e34775834ddcf7c79ae3f8e}{GetLayoutFor}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_void_architect_1_1_render_state_config}{RenderStateConfig}}\&\ stateConfig);}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_af719a8f8eff09cc375e69703cf36a874}{BindMaterialGroup}}(}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ VkCommandBuffer\ cmdsBuf,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}}\ materialHandle,}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_a10b206cefcde9a579f6f29ed09cbd690}{RenderStateHandle}}\ stateHandle);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a1158bab8de1e2649aebb3f58cb5e6e04}{UpdateMaterialUBO}}(}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}}\ materialHandle,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_material_uniform_object}{Resources::MaterialUniformObject}}\&\ ubo);}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ AreLayoutCompatible(\mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}}\ \mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}},\ \mbox{\hyperlink{namespace_void_architect_a10b206cefcde9a579f6f29ed09cbd690}{RenderStateHandle}}\ stateHandle);}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ VkDescriptorSetLayout\ GetHandleFor(\mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}}\ materialHandle);}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ VkDescriptorSet\ AllocateSet(VkDescriptorSetLayout\ layout);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ UpdateDescriptorSet(VkDescriptorSet\ set,\ \mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}}\ materialHandle);}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ NeedsUpdate(\mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}}\ materialHandle);}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ UpdateData(\mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{MaterialHandle}}\ materialHandle);}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ std::unique\_ptr<VulkanDevice>\&\ m\_Device;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ VkAllocationCallbacks*\ m\_Allocator;}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ VkDescriptorPool\ m\_DescriptorPool\ =\ VK\_NULL\_HANDLE;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ VAHashMap<size\_t,\ VkDescriptorSetLayout>\ m\_SetLayoutCache;}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ VAHashMap<MaterialHandle,\ VkDescriptorSet>\ m\_MaterialSetCache;}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ VAHashMap<MaterialHandle,\ uint32\_t>\ m\_MaterialGenerations;}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ std::unique\_ptr<VulkanBuffer>\ m\_MaterialUniformBuffer;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ m\_MaterialUniformBufferMemory\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ m\_MaterialUniformBufferSize\ =\ 0;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ m\_NextFreeUboOffset\ =\ 0;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ VAHashMap<MaterialHandle,\ size\_t>\ m\_MaterialUboOffsets;}
+\DoxyCodeLine{00063\ \ \ \ \ \};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{inline}\ std::unique\_ptr<VulkanBindingGroupManager>\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a94c223beb7a4438420908bf7502ef929}{g\_VkBindingGroupManager}};}
+\DoxyCodeLine{00066\ \}}
+
+\end{DoxyCode}

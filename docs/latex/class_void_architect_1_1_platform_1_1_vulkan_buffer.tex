@@ -1,0 +1,326 @@
+\doxysection{Void\+Architect\+::Platform\+::Vulkan\+Buffer Class Reference}
+\hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer}{}\label{class_void_architect_1_1_platform_1_1_vulkan_buffer}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+
+
+{\ttfamily \#include $<$Vulkan\+Buffer.\+hpp$>$}
+
+
+
+Inheritance diagram for Void\+Architect\+::Platform\+::Vulkan\+Buffer\+:
+% FIG 0
+
+
+Collaboration diagram for Void\+Architect\+::Platform\+::Vulkan\+Buffer\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a66a0362b9ac36f01ab3217f02ebad9f6}{Vulkan\+Buffer}} (const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&device, Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}allocator, uint64\+\_\+t size, Vk\+Buffer\+Usage\+Flags usage, Vk\+Memory\+Property\+Flags mem\+Properties, bool bind\+On\+Create=true)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a809d66d6084d7910784f1247528a18b2}{Vulkan\+Buffer}} (\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{Vulkan\+Buffer}} \&\&other) noexcept
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_aa2f7dfb224845426d6067eadc5be0fb4}{Vulkan\+Buffer}} (const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{Vulkan\+Buffer}} \&other)=delete
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_af4b0a16b51d7cb62bcf737ef74355e42}{\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Buffer}} () override
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{Vulkan\+Buffer}} \& \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a103348427a1f48bd16ab7d8075b30a6c}{operator=}} (\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{Vulkan\+Buffer}} \&\&other) noexcept
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{Vulkan\+Buffer}} \& \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a55fbb0846622451daac13849488a3fc4}{operator=}} (const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{Vulkan\+Buffer}} \&other)=delete
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a845c3d723bba81d61430ad536b866791}{Bind\+Memory}} (uint64\+\_\+t offset=0)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_aeac2a753e183ba9de4698181da3bf668}{Bind}} (\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_i_rendering_hardware}{IRendering\+Hardware}} \&rhi) override
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_adcaa5e15b3d2245a6a3e3072e8144cba}{Unbind}} () override
+\item 
+{\footnotesize template$<$typename T$>$ }\\void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a6feee3cd93c6c7cbad6adb5d0afacc23}{Load\+Data}} (VAArray$<$ T $>$ \&data)
+\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a52642d0aff95fad0ab72bd2c252e7e66}{Resize}} (const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&device, uint64\+\_\+t new\+Size, Vk\+Queue queue, Vk\+Command\+Pool pool)
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_ab596fbfa57a92baf2a7b17f07ed5f0b6}{Lock\+Memory}} (const uint64\+\_\+t offset, const uint64\+\_\+t size, const Vk\+Memory\+Map\+Flags flags) const
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_ac39697a82f456157d97195356c53054e}{Unlock\+Memory}} () const
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a856ef9746fa95215edc981b507a2049e}{Copy\+To}} (Vk\+Command\+Pool pool, Vk\+Fence fence, Vk\+Queue queue, Vk\+Buffer dest, uint64\+\_\+t dest\+Offset, uint64\+\_\+t size) const
+\item 
+Vk\+Buffer \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a067406c918ae9325c5777dd9f41ee5dc}{Get\+Handle}} () const
+\item 
+uint64\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_ae34d18f3d8bb7f65be960ffbc30a14ca}{Get\+Byte\+Size}} () const
+\item 
+uint64\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a875a8f0bc58f8720e65582eea271be33}{Get\+Offset}} () const
+\item 
+size\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a5865113a280a84a4bcb0e3e7b815dab7}{Get\+Count}} () const
+\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_aa28b8c440e315f8ea61ca587c0eec343}{Is\+Locked}} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_void_architect_1_1_i_buffer}{Void\+Architect\+::\+IBuffer}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_i_buffer_a522e6df9e319ff8afae62abf56afcb40}{\texorpdfstring{$\sim$}{\string~}\+IBuffer}} ()=default
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_aff0c196bb69fd19aacad7e9485bc4773}{Invalidate\+Resources}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Vk\+Device \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a482af6c350136f5973ce47dd7e30de79}{m\+\_\+\+Device}}
+\item 
+Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_ac4826869b8b4831a976341fe46265994}{m\+\_\+\+Allocator}}
+\item 
+Vk\+Buffer \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_ab7113431472e8e6a64c25eefd7fe7ff5}{m\+\_\+\+Buffer}}
+\item 
+Vk\+Device\+Memory \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a1c29bd3eb2ddf85284410764ae8605ee}{m\+\_\+\+Memory}}
+\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_adef24f227f9a5c105912ecca36411327}{m\+\_\+\+Locked}} = false
+\item 
+uint64\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a350a93132ec44675984a4c8723828d2f}{m\+\_\+\+Offset}}
+\item 
+uint64\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a84647947d209bee3def72d5b6610cf62}{m\+\_\+\+Size}}
+\item 
+Vk\+Buffer\+Usage\+Flags \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a28d618cc5d9f8f1558403cc15c8b368f}{m\+\_\+\+Usage}}
+\item 
+Vk\+Memory\+Property\+Flags \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer_a072e43e3049ee15270bd4b97505dd5f7}{m\+\_\+\+Memory\+Properties}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a66a0362b9ac36f01ab3217f02ebad9f6}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!VulkanBuffer@{VulkanBuffer}}
+\index{VulkanBuffer@{VulkanBuffer}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{VulkanBuffer()}{VulkanBuffer()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a66a0362b9ac36f01ab3217f02ebad9f6} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Vulkan\+Buffer (\begin{DoxyParamCaption}\item[{const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&}]{device}{, }\item[{Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}}]{allocator}{, }\item[{uint64\+\_\+t}]{size}{, }\item[{Vk\+Buffer\+Usage\+Flags}]{usage}{, }\item[{Vk\+Memory\+Property\+Flags}]{mem\+Properties}{, }\item[{bool}]{bind\+On\+Create}{ = {\ttfamily true}}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 2
+Here is the caller graph for this function\+:
+% FIG 3
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a809d66d6084d7910784f1247528a18b2}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!VulkanBuffer@{VulkanBuffer}}
+\index{VulkanBuffer@{VulkanBuffer}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{VulkanBuffer()}{VulkanBuffer()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a809d66d6084d7910784f1247528a18b2} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Vulkan\+Buffer (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{Vulkan\+Buffer}} \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+Here is the call graph for this function\+:
+% FIG 4
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_aa2f7dfb224845426d6067eadc5be0fb4}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!VulkanBuffer@{VulkanBuffer}}
+\index{VulkanBuffer@{VulkanBuffer}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{VulkanBuffer()}{VulkanBuffer()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_aa2f7dfb224845426d6067eadc5be0fb4} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Vulkan\+Buffer (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{Vulkan\+Buffer}} \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 5
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_af4b0a16b51d7cb62bcf737ef74355e42}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!````~VulkanBuffer@{\texorpdfstring{$\sim$}{\string~}VulkanBuffer}}
+\index{````~VulkanBuffer@{\texorpdfstring{$\sim$}{\string~}VulkanBuffer}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}VulkanBuffer()}{\string~VulkanBuffer()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_af4b0a16b51d7cb62bcf737ef74355e42} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Buffer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_aeac2a753e183ba9de4698181da3bf668}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!Bind@{Bind}}
+\index{Bind@{Bind}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{Bind()}{Bind()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_aeac2a753e183ba9de4698181da3bf668} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Bind (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_i_rendering_hardware}{IRendering\+Hardware}} \&}]{rhi}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_void_architect_1_1_i_buffer_a84a1f0a8a0413b1a61644f3c9bea368b}{Void\+Architect\+::\+IBuffer}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_index_buffer_a6caee0b8aae04ad0f119942b876e2af4}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Index\+Buffer}}, \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_staging_buffer_a864d11ea8320cda53202f5583f21eb81}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Staging\+Buffer$<$ T $>$}}, and \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_vertex_buffer_a21864f5800c1bad2bd8c8b5770b04073}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Vertex\+Buffer}}.
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a845c3d723bba81d61430ad536b866791}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!BindMemory@{BindMemory}}
+\index{BindMemory@{BindMemory}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{BindMemory()}{BindMemory()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a845c3d723bba81d61430ad536b866791} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Bind\+Memory (\begin{DoxyParamCaption}\item[{uint64\+\_\+t}]{offset}{ = {\ttfamily 0}}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 6
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a856ef9746fa95215edc981b507a2049e}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!CopyTo@{CopyTo}}
+\index{CopyTo@{CopyTo}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{CopyTo()}{CopyTo()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a856ef9746fa95215edc981b507a2049e} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Copy\+To (\begin{DoxyParamCaption}\item[{Vk\+Command\+Pool}]{pool}{, }\item[{Vk\+Fence}]{fence}{, }\item[{Vk\+Queue}]{queue}{, }\item[{Vk\+Buffer}]{dest}{, }\item[{uint64\+\_\+t}]{dest\+Offset}{, }\item[{uint64\+\_\+t}]{size}{}\end{DoxyParamCaption}) const}
+
+Here is the call graph for this function\+:
+% FIG 7
+Here is the caller graph for this function\+:
+% FIG 8
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_ae34d18f3d8bb7f65be960ffbc30a14ca}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!GetByteSize@{GetByteSize}}
+\index{GetByteSize@{GetByteSize}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{GetByteSize()}{GetByteSize()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_ae34d18f3d8bb7f65be960ffbc30a14ca} 
+uint64\+\_\+t Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Get\+Byte\+Size (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a5865113a280a84a4bcb0e3e7b815dab7}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!GetCount@{GetCount}}
+\index{GetCount@{GetCount}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{GetCount()}{GetCount()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a5865113a280a84a4bcb0e3e7b815dab7} 
+size\+\_\+t Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Get\+Count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a067406c918ae9325c5777dd9f41ee5dc}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!GetHandle@{GetHandle}}
+\index{GetHandle@{GetHandle}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{GetHandle()}{GetHandle()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a067406c918ae9325c5777dd9f41ee5dc} 
+Vk\+Buffer Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Get\+Handle (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Here is the caller graph for this function\+:
+% FIG 9
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a875a8f0bc58f8720e65582eea271be33}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!GetOffset@{GetOffset}}
+\index{GetOffset@{GetOffset}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{GetOffset()}{GetOffset()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a875a8f0bc58f8720e65582eea271be33} 
+uint64\+\_\+t Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Get\+Offset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_aff0c196bb69fd19aacad7e9485bc4773}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!InvalidateResources@{InvalidateResources}}
+\index{InvalidateResources@{InvalidateResources}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{InvalidateResources()}{InvalidateResources()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_aff0c196bb69fd19aacad7e9485bc4773} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Invalidate\+Resources (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_aa28b8c440e315f8ea61ca587c0eec343}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!IsLocked@{IsLocked}}
+\index{IsLocked@{IsLocked}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{IsLocked()}{IsLocked()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_aa28b8c440e315f8ea61ca587c0eec343} 
+bool Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Is\+Locked (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a6feee3cd93c6c7cbad6adb5d0afacc23}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!LoadData@{LoadData}}
+\index{LoadData@{LoadData}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{LoadData()}{LoadData()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a6feee3cd93c6c7cbad6adb5d0afacc23} 
+template$<$typename T$>$ \\
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Load\+Data (\begin{DoxyParamCaption}\item[{VAArray$<$ T $>$ \&}]{data}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Here is the call graph for this function\+:
+% FIG 10
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_ab596fbfa57a92baf2a7b17f07ed5f0b6}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!LockMemory@{LockMemory}}
+\index{LockMemory@{LockMemory}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{LockMemory()}{LockMemory()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_ab596fbfa57a92baf2a7b17f07ed5f0b6} 
+void \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Lock\+Memory (\begin{DoxyParamCaption}\item[{const uint64\+\_\+t}]{offset}{, }\item[{const uint64\+\_\+t}]{size}{, }\item[{const Vk\+Memory\+Map\+Flags}]{flags}{}\end{DoxyParamCaption}) const}
+
+Here is the caller graph for this function\+:
+% FIG 11
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a55fbb0846622451daac13849488a3fc4}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a55fbb0846622451daac13849488a3fc4} 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{Vulkan\+Buffer}} \& Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{Vulkan\+Buffer}} \&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 12
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a103348427a1f48bd16ab7d8075b30a6c}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a103348427a1f48bd16ab7d8075b30a6c} 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{Vulkan\+Buffer}} \& Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_buffer}{Vulkan\+Buffer}} \&\&}]{other}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+Here is the call graph for this function\+:
+% FIG 13
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a52642d0aff95fad0ab72bd2c252e7e66}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!Resize@{Resize}}
+\index{Resize@{Resize}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{Resize()}{Resize()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a52642d0aff95fad0ab72bd2c252e7e66} 
+bool Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Resize (\begin{DoxyParamCaption}\item[{const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&}]{device}{, }\item[{uint64\+\_\+t}]{new\+Size}{, }\item[{Vk\+Queue}]{queue}{, }\item[{Vk\+Command\+Pool}]{pool}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 14
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_adcaa5e15b3d2245a6a3e3072e8144cba}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!Unbind@{Unbind}}
+\index{Unbind@{Unbind}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{Unbind()}{Unbind()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_adcaa5e15b3d2245a6a3e3072e8144cba} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Unbind (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Implements \mbox{\hyperlink{class_void_architect_1_1_i_buffer_aaf84b671d769db5c72cef458adaa4f79}{Void\+Architect\+::\+IBuffer}}.
+
+
+
+Reimplemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_index_buffer_a79794c06904d9586db03a585a3db6bea}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Index\+Buffer}}, \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_staging_buffer_a6d6b23e5719c25e27ed5bd5fb09955de}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Staging\+Buffer$<$ T $>$}}, and \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_vertex_buffer_a8ae5a6b3b6265068f09ec466a091954a}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Vertex\+Buffer}}.
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_ac39697a82f456157d97195356c53054e}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!UnlockMemory@{UnlockMemory}}
+\index{UnlockMemory@{UnlockMemory}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{UnlockMemory()}{UnlockMemory()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_ac39697a82f456157d97195356c53054e} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::\+Unlock\+Memory (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+Here is the caller graph for this function\+:
+% FIG 15
+
+
+\label{doc-variable-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_ac4826869b8b4831a976341fe46265994}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!m\_Allocator@{m\_Allocator}}
+\index{m\_Allocator@{m\_Allocator}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{m\_Allocator}{m\_Allocator}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_ac4826869b8b4831a976341fe46265994} 
+Vk\+Allocation\+Callbacks\texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::m\+\_\+\+Allocator\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_ab7113431472e8e6a64c25eefd7fe7ff5}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!m\_Buffer@{m\_Buffer}}
+\index{m\_Buffer@{m\_Buffer}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{m\_Buffer}{m\_Buffer}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_ab7113431472e8e6a64c25eefd7fe7ff5} 
+Vk\+Buffer Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::m\+\_\+\+Buffer\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a482af6c350136f5973ce47dd7e30de79}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!m\_Device@{m\_Device}}
+\index{m\_Device@{m\_Device}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{m\_Device}{m\_Device}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a482af6c350136f5973ce47dd7e30de79} 
+Vk\+Device Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::m\+\_\+\+Device\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_adef24f227f9a5c105912ecca36411327}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!m\_Locked@{m\_Locked}}
+\index{m\_Locked@{m\_Locked}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{m\_Locked}{m\_Locked}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_adef24f227f9a5c105912ecca36411327} 
+bool Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::m\+\_\+\+Locked = false\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a1c29bd3eb2ddf85284410764ae8605ee}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!m\_Memory@{m\_Memory}}
+\index{m\_Memory@{m\_Memory}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{m\_Memory}{m\_Memory}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a1c29bd3eb2ddf85284410764ae8605ee} 
+Vk\+Device\+Memory Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::m\+\_\+\+Memory\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a072e43e3049ee15270bd4b97505dd5f7}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!m\_MemoryProperties@{m\_MemoryProperties}}
+\index{m\_MemoryProperties@{m\_MemoryProperties}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{m\_MemoryProperties}{m\_MemoryProperties}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a072e43e3049ee15270bd4b97505dd5f7} 
+Vk\+Memory\+Property\+Flags Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::m\+\_\+\+Memory\+Properties\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a350a93132ec44675984a4c8723828d2f}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!m\_Offset@{m\_Offset}}
+\index{m\_Offset@{m\_Offset}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{m\_Offset}{m\_Offset}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a350a93132ec44675984a4c8723828d2f} 
+uint64\+\_\+t Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::m\+\_\+\+Offset\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a84647947d209bee3def72d5b6610cf62}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!m\_Size@{m\_Size}}
+\index{m\_Size@{m\_Size}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{m\_Size}{m\_Size}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a84647947d209bee3def72d5b6610cf62} 
+uint64\+\_\+t Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::m\+\_\+\+Size\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_buffer_a28d618cc5d9f8f1558403cc15c8b368f}\index{VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}!m\_Usage@{m\_Usage}}
+\index{m\_Usage@{m\_Usage}!VoidArchitect::Platform::VulkanBuffer@{VoidArchitect::Platform::VulkanBuffer}}
+\doxysubsubsection{\texorpdfstring{m\_Usage}{m\_Usage}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_buffer_a28d618cc5d9f8f1558403cc15c8b368f} 
+Vk\+Buffer\+Usage\+Flags Void\+Architect\+::\+Platform\+::\+Vulkan\+Buffer\+::m\+\_\+\+Usage\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_buffer_8hpp}{Vulkan\+Buffer.\+hpp}}\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_buffer_8cpp}{Vulkan\+Buffer.\+cpp}}\end{DoxyCompactItemize}

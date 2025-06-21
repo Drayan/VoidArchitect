@@ -1,0 +1,129 @@
+\doxysection{Void\+Architect\+::Testing\+::Test\+Result Struct Reference}
+\hypertarget{struct_void_architect_1_1_testing_1_1_test_result}{}\label{struct_void_architect_1_1_testing_1_1_test_result}\index{VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}}
+
+
+Test execution result with timing and status information.  
+
+
+
+
+{\ttfamily \#include $<$Test\+Runner.\+hpp$>$}
+
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_result}{Test\+Result}} \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_result_a2f5f0e6ebd44c5bc0aae6af8e14a08a2}{Success}} (const std\+::string \&name, const std\+::chrono\+::nanoseconds \&duration)
+\begin{DoxyCompactList}\small\item\em Create successful test result. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_result}{Test\+Result}} \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_result_afa8a81170d4fea00683e4fa8a6c5ddee}{Failure}} (const std\+::string \&name, const std\+::chrono\+::nanoseconds \&duration, const std\+::string \&error)
+\begin{DoxyCompactList}\small\item\em Create failed test result. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_result_a4933a795dc5a7b4ceb246b490b69e8c3}{passed}} \{false\}
+\begin{DoxyCompactList}\small\item\em Whether test passed or failed. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_result_aa172a8afde7e344002e972490d1cf7db}{test\+Name}}
+\begin{DoxyCompactList}\small\item\em Name of the test. \end{DoxyCompactList}\item 
+std\+::chrono\+::nanoseconds \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_result_a810fda869b4cd6568940403e30dc602a}{execution\+Time}}
+\begin{DoxyCompactList}\small\item\em Time taken to execute the test. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_result_a6029a33dd2cbde529458f993f20720ff}{error\+Message}}
+\begin{DoxyCompactList}\small\item\em Error message if test failed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Test execution result with timing and status information. 
+
+\label{doc-func-members}
+\Hypertarget{struct_void_architect_1_1_testing_1_1_test_result_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_void_architect_1_1_testing_1_1_test_result_afa8a81170d4fea00683e4fa8a6c5ddee}\index{VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}!Failure@{Failure}}
+\index{Failure@{Failure}!VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}}
+\doxysubsubsection{\texorpdfstring{Failure()}{Failure()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_testing_1_1_test_result_afa8a81170d4fea00683e4fa8a6c5ddee} 
+\mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_result}{Test\+Result}} Void\+Architect\+::\+Testing\+::\+Test\+Result\+::\+Failure (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{, }\item[{const std\+::chrono\+::nanoseconds \&}]{duration}{, }\item[{const std\+::string \&}]{error}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Create failed test result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Test name \\
+\hline
+{\em duration} & Execution time \\
+\hline
+{\em error} & Error message \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_void_architect_1_1_testing_1_1_test_result}{Test\+Result} indicating failure 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_testing_1_1_test_result_a2f5f0e6ebd44c5bc0aae6af8e14a08a2}\index{VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}!Success@{Success}}
+\index{Success@{Success}!VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}}
+\doxysubsubsection{\texorpdfstring{Success()}{Success()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_testing_1_1_test_result_a2f5f0e6ebd44c5bc0aae6af8e14a08a2} 
+\mbox{\hyperlink{struct_void_architect_1_1_testing_1_1_test_result}{Test\+Result}} Void\+Architect\+::\+Testing\+::\+Test\+Result\+::\+Success (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{, }\item[{const std\+::chrono\+::nanoseconds \&}]{duration}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Create successful test result. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Test name \\
+\hline
+{\em duration} & Execution time \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_void_architect_1_1_testing_1_1_test_result}{Test\+Result} indicating success 
+\end{DoxyReturn}
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_void_architect_1_1_testing_1_1_test_result_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{struct_void_architect_1_1_testing_1_1_test_result_a6029a33dd2cbde529458f993f20720ff}\index{VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}!errorMessage@{errorMessage}}
+\index{errorMessage@{errorMessage}!VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}}
+\doxysubsubsection{\texorpdfstring{errorMessage}{errorMessage}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_testing_1_1_test_result_a6029a33dd2cbde529458f993f20720ff} 
+std\+::string Void\+Architect\+::\+Testing\+::\+Test\+Result\+::error\+Message}
+
+
+
+Error message if test failed. 
+
+\Hypertarget{struct_void_architect_1_1_testing_1_1_test_result_a810fda869b4cd6568940403e30dc602a}\index{VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}!executionTime@{executionTime}}
+\index{executionTime@{executionTime}!VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}}
+\doxysubsubsection{\texorpdfstring{executionTime}{executionTime}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_testing_1_1_test_result_a810fda869b4cd6568940403e30dc602a} 
+std\+::chrono\+::nanoseconds Void\+Architect\+::\+Testing\+::\+Test\+Result\+::execution\+Time}
+
+
+
+Time taken to execute the test. 
+
+\Hypertarget{struct_void_architect_1_1_testing_1_1_test_result_a4933a795dc5a7b4ceb246b490b69e8c3}\index{VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}!passed@{passed}}
+\index{passed@{passed}!VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}}
+\doxysubsubsection{\texorpdfstring{passed}{passed}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_testing_1_1_test_result_a4933a795dc5a7b4ceb246b490b69e8c3} 
+bool Void\+Architect\+::\+Testing\+::\+Test\+Result\+::passed \{false\}}
+
+
+
+Whether test passed or failed. 
+
+\Hypertarget{struct_void_architect_1_1_testing_1_1_test_result_aa172a8afde7e344002e972490d1cf7db}\index{VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}!testName@{testName}}
+\index{testName@{testName}!VoidArchitect::Testing::TestResult@{VoidArchitect::Testing::TestResult}}
+\doxysubsubsection{\texorpdfstring{testName}{testName}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_testing_1_1_test_result_aa172a8afde7e344002e972490d1cf7db} 
+std\+::string Void\+Architect\+::\+Testing\+::\+Test\+Result\+::test\+Name}
+
+
+
+Name of the test. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+tests/src/\+Core/\mbox{\hyperlink{_test_runner_8hpp}{Test\+Runner.\+hpp}}\end{DoxyCompactItemize}

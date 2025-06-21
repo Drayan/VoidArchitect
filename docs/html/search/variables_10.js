@@ -1,0 +1,23 @@
+var searchData=
+[
+  ['s_5fuiprojectionmatrix_0',['s_UIProjectionMatrix',['../class_void_architect_1_1_renderer_1_1___render_command.html#a2f38888f398aadc2b9f7d6d6db907a4f',1,'VoidArchitect::Renderer::_RenderCommand']]],
+  ['shaders_1',['shaders',['../struct_void_architect_1_1_render_state_config.html#a54ce6b1e3213f0c0ec6deb9d06be8224',1,'VoidArchitect::RenderStateConfig']]],
+  ['signaloncompletion_2',['signalOnCompletion',['../struct_void_architect_1_1_jobs_1_1_job.html#abacd3565ea97d569f255b72e5451c84f',1,'VoidArchitect::Jobs::Job']]],
+  ['sizingpolicy_3',['sizingPolicy',['../struct_void_architect_1_1_renderer_1_1_render_target_config.html#adde330e2f5be1991d0bdef9143066e12',1,'VoidArchitect::Renderer::RenderTargetConfig']]],
+  ['sourcetimestamp_4',['sourceTimestamp',['../struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header.html#a9f2bef32e183899f6cd1eee835f48c07',1,'VoidArchitect::Resources::Loaders::VAMHeader']]],
+  ['speculartexture_5',['specularTexture',['../struct_void_architect_1_1_material_template.html#a12a2a160b56878d177cadc4ee8151676',1,'VoidArchitect::MaterialTemplate']]],
+  ['speculartextureoffset_6',['specularTextureOffset',['../struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_m_aterial_template.html#a546e8f5e539f8eaaa49bf43cbfc4b40b',1,'VoidArchitect::Resources::Loaders::VAMMAterialTemplate']]],
+  ['stage_7',['stage',['../struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_resource_binding.html#af400a4692b56a65a139971895852b825',1,'VoidArchitect::Resources::Loaders::VAMResourceBinding::stage'],['../struct_void_architect_1_1_renderer_1_1_resource_binding.html#adc440eb5c61ef74c13d45ffdb55ddace',1,'VoidArchitect::Renderer::ResourceBinding::stage'],['../struct_void_architect_1_1_shader_config.html#a052baac8f5e9b1b887c88657f05eb4b0',1,'VoidArchitect::ShaderConfig::stage']]],
+  ['starttime_8',['startTime',['../struct_void_architect_1_1_jobs_1_1_job.html#af5202c92c3268fc5357e2ebe63caa0b1',1,'VoidArchitect::Jobs::Job']]],
+  ['state_9',['state',['../struct_void_architect_1_1_jobs_1_1_job.html#a11749fa0968940be70499dad7086a589',1,'VoidArchitect::Jobs::Job']]],
+  ['status_10',['status',['../struct_void_architect_1_1_jobs_1_1_job_result.html#a3fe6fabc4fd69a12379677452dbb7265',1,'VoidArchitect::Jobs::JobResult::status'],['../struct_void_architect_1_1_jobs_1_1_sync_point.html#ae04a56c683dda3f719dc5c1b786e1383',1,'VoidArchitect::Jobs::SyncPoint::status']]],
+  ['steps_11',['steps',['../struct_void_architect_1_1_renderer_1_1_render_graph_execution_plan.html#a3d1f476e5933ecc0524b3e75496928a0',1,'VoidArchitect::Renderer::RenderGraphExecutionPlan']]],
+  ['storeop_12',['storeOp',['../struct_void_architect_1_1_renderer_1_1_render_pass_config_1_1_attachment_config.html#a2136918b4ac96999bfe1c0abd81774fe',1,'VoidArchitect::Renderer::RenderPassConfig::AttachmentConfig']]],
+  ['stringtableoffset_13',['stringTableOffset',['../struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header.html#abd17e35efe59da62ce91397284b20305',1,'VoidArchitect::Resources::Loaders::VAMHeader']]],
+  ['stringtablesize_14',['stringTableSize',['../struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header.html#a4a6e78618f8f8616d8cca72a205a55fb',1,'VoidArchitect::Resources::Loaders::VAMHeader']]],
+  ['submeshcount_15',['submeshCount',['../struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header.html#a19f5778ad42c980a3de7975135f16a71',1,'VoidArchitect::Resources::Loaders::VAMHeader']]],
+  ['submeshesoffset_16',['submeshesOffset',['../struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header.html#ace9cb26b0899ae07497b7f9c31631e9c',1,'VoidArchitect::Resources::Loaders::VAMHeader']]],
+  ['submitterthread_17',['submitterThread',['../struct_void_architect_1_1_jobs_1_1_job.html#a3ade80254c46890056e37da1a733d8ba',1,'VoidArchitect::Jobs::Job']]],
+  ['submittime_18',['submitTime',['../struct_void_architect_1_1_jobs_1_1_job.html#a1b552dae7969d7ade448b71ea2de2375',1,'VoidArchitect::Jobs::Job']]],
+  ['success_19',['success',['../struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_1_1_compression_result.html#a51cf83542cb0a067c7fd9c6ea21dd5e7',1,'VoidArchitect::Resources::Loaders::VAMCompression::CompressionResult']]]
+];

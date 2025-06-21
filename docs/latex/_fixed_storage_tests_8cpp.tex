@@ -1,0 +1,123 @@
+\doxysection{tests/src/\+Collections/\+Fixed\+Storage\+Tests.cpp File Reference}
+\hypertarget{_fixed_storage_tests_8cpp}{}\label{_fixed_storage_tests_8cpp}\index{tests/src/Collections/FixedStorageTests.cpp@{tests/src/Collections/FixedStorageTests.cpp}}
+{\ttfamily \#include "{}../\+Core/\+Test\+Runner.\+hpp"{}}\newline
+{\ttfamily \#include $<$Core/\+Collections/\+Fixed\+Storage.\+hpp$>$}\newline
+Include dependency graph for Fixed\+Storage\+Tests.\+cpp\+:
+% FIG 0
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_test_object}{Test\+Object}}
+\begin{DoxyCompactList}\small\item\em Simple test struct for storage validation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{_fixed_storage_tests_8cpp_a1990d785967c245a0c198ad78a50f427}{Test\+Fixed\+Storage\+Basics}} ()
+\begin{DoxyCompactList}\small\item\em Test basic \doxylink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage} operations. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{_fixed_storage_tests_8cpp_a925360b2e40a579b247d321db7d07941}{Test\+Fixed\+Storage\+Generations}} ()
+\begin{DoxyCompactList}\small\item\em Test handle generation and ABA prevention. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{_fixed_storage_tests_8cpp_af033ce9be69338956f41c5c5ac0c8f7d}{Test\+Fixed\+Storage\+Capacity}} ()
+\begin{DoxyCompactList}\small\item\em Test capacity limits and overflow handling. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{_fixed_storage_tests_8cpp_a0b00e579555b55a9635f62cd07b8308f}{Test\+Fixed\+Storage\+Thread\+Safety}} ()
+\begin{DoxyCompactList}\small\item\em Test thread safety with concurrent operations. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{_fixed_storage_tests_8cpp_a3fe705e9f8c2babdc06f57260eedac86}{VA\+\_\+\+REGISTER\+\_\+\+TEST}} (Fixed\+Storage\+Basics, \mbox{\hyperlink{_fixed_storage_tests_8cpp_a1990d785967c245a0c198ad78a50f427}{Test\+Fixed\+Storage\+Basics}})
+\item 
+\mbox{\hyperlink{_fixed_storage_tests_8cpp_ad9be0a5b946da2aa81b697961b973038}{VA\+\_\+\+REGISTER\+\_\+\+TEST}} (Fixed\+Storage\+Generations, \mbox{\hyperlink{_fixed_storage_tests_8cpp_a925360b2e40a579b247d321db7d07941}{Test\+Fixed\+Storage\+Generations}})
+\item 
+\mbox{\hyperlink{_fixed_storage_tests_8cpp_aa1fceb57964f3b27934ab182e2c810df}{VA\+\_\+\+REGISTER\+\_\+\+TEST}} (Fixed\+Storage\+Capacity, \mbox{\hyperlink{_fixed_storage_tests_8cpp_af033ce9be69338956f41c5c5ac0c8f7d}{Test\+Fixed\+Storage\+Capacity}})
+\item 
+\mbox{\hyperlink{_fixed_storage_tests_8cpp_aa3327ea267c9ffa895c160f916c0cefc}{VA\+\_\+\+REGISTER\+\_\+\+TEST}} (Fixed\+Storage\+Thread\+Safety, \mbox{\hyperlink{_fixed_storage_tests_8cpp_a0b00e579555b55a9635f62cd07b8308f}{Test\+Fixed\+Storage\+Thread\+Safety}})
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{_fixed_storage_tests_8cpp_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{_fixed_storage_tests_8cpp_a1990d785967c245a0c198ad78a50f427}\index{FixedStorageTests.cpp@{FixedStorageTests.cpp}!TestFixedStorageBasics@{TestFixedStorageBasics}}
+\index{TestFixedStorageBasics@{TestFixedStorageBasics}!FixedStorageTests.cpp@{FixedStorageTests.cpp}}
+\doxysubsubsection{\texorpdfstring{TestFixedStorageBasics()}{TestFixedStorageBasics()}}
+{\footnotesize\ttfamily \label{_fixed_storage_tests_8cpp_a1990d785967c245a0c198ad78a50f427} 
+bool Test\+Fixed\+Storage\+Basics (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Test basic \doxylink{class_void_architect_1_1_collections_1_1_fixed_storage}{Fixed\+Storage} operations. 
+
+Here is the call graph for this function\+:
+% FIG 1
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{_fixed_storage_tests_8cpp_af033ce9be69338956f41c5c5ac0c8f7d}\index{FixedStorageTests.cpp@{FixedStorageTests.cpp}!TestFixedStorageCapacity@{TestFixedStorageCapacity}}
+\index{TestFixedStorageCapacity@{TestFixedStorageCapacity}!FixedStorageTests.cpp@{FixedStorageTests.cpp}}
+\doxysubsubsection{\texorpdfstring{TestFixedStorageCapacity()}{TestFixedStorageCapacity()}}
+{\footnotesize\ttfamily \label{_fixed_storage_tests_8cpp_af033ce9be69338956f41c5c5ac0c8f7d} 
+bool Test\+Fixed\+Storage\+Capacity (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Test capacity limits and overflow handling. 
+
+Here is the call graph for this function\+:
+% FIG 3
+Here is the caller graph for this function\+:
+% FIG 4
+\Hypertarget{_fixed_storage_tests_8cpp_a925360b2e40a579b247d321db7d07941}\index{FixedStorageTests.cpp@{FixedStorageTests.cpp}!TestFixedStorageGenerations@{TestFixedStorageGenerations}}
+\index{TestFixedStorageGenerations@{TestFixedStorageGenerations}!FixedStorageTests.cpp@{FixedStorageTests.cpp}}
+\doxysubsubsection{\texorpdfstring{TestFixedStorageGenerations()}{TestFixedStorageGenerations()}}
+{\footnotesize\ttfamily \label{_fixed_storage_tests_8cpp_a925360b2e40a579b247d321db7d07941} 
+bool Test\+Fixed\+Storage\+Generations (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Test handle generation and ABA prevention. 
+
+Here is the call graph for this function\+:
+% FIG 5
+Here is the caller graph for this function\+:
+% FIG 6
+\Hypertarget{_fixed_storage_tests_8cpp_a0b00e579555b55a9635f62cd07b8308f}\index{FixedStorageTests.cpp@{FixedStorageTests.cpp}!TestFixedStorageThreadSafety@{TestFixedStorageThreadSafety}}
+\index{TestFixedStorageThreadSafety@{TestFixedStorageThreadSafety}!FixedStorageTests.cpp@{FixedStorageTests.cpp}}
+\doxysubsubsection{\texorpdfstring{TestFixedStorageThreadSafety()}{TestFixedStorageThreadSafety()}}
+{\footnotesize\ttfamily \label{_fixed_storage_tests_8cpp_a0b00e579555b55a9635f62cd07b8308f} 
+bool Test\+Fixed\+Storage\+Thread\+Safety (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Test thread safety with concurrent operations. 
+
+Here is the call graph for this function\+:
+% FIG 7
+Here is the caller graph for this function\+:
+% FIG 8
+\Hypertarget{_fixed_storage_tests_8cpp_a3fe705e9f8c2babdc06f57260eedac86}\index{FixedStorageTests.cpp@{FixedStorageTests.cpp}!VA\_REGISTER\_TEST@{VA\_REGISTER\_TEST}}
+\index{VA\_REGISTER\_TEST@{VA\_REGISTER\_TEST}!FixedStorageTests.cpp@{FixedStorageTests.cpp}}
+\doxysubsubsection{\texorpdfstring{VA\_REGISTER\_TEST()}{VA\_REGISTER\_TEST()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily \label{_fixed_storage_tests_8cpp_a3fe705e9f8c2babdc06f57260eedac86} 
+VA\+\_\+\+REGISTER\+\_\+\+TEST (\begin{DoxyParamCaption}\item[{Fixed\+Storage\+Basics}]{}{, }\item[{\mbox{\hyperlink{_fixed_storage_tests_8cpp_a1990d785967c245a0c198ad78a50f427}{Test\+Fixed\+Storage\+Basics}}}]{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 9
+\Hypertarget{_fixed_storage_tests_8cpp_aa1fceb57964f3b27934ab182e2c810df}\index{FixedStorageTests.cpp@{FixedStorageTests.cpp}!VA\_REGISTER\_TEST@{VA\_REGISTER\_TEST}}
+\index{VA\_REGISTER\_TEST@{VA\_REGISTER\_TEST}!FixedStorageTests.cpp@{FixedStorageTests.cpp}}
+\doxysubsubsection{\texorpdfstring{VA\_REGISTER\_TEST()}{VA\_REGISTER\_TEST()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily \label{_fixed_storage_tests_8cpp_aa1fceb57964f3b27934ab182e2c810df} 
+VA\+\_\+\+REGISTER\+\_\+\+TEST (\begin{DoxyParamCaption}\item[{Fixed\+Storage\+Capacity}]{}{, }\item[{\mbox{\hyperlink{_fixed_storage_tests_8cpp_af033ce9be69338956f41c5c5ac0c8f7d}{Test\+Fixed\+Storage\+Capacity}}}]{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 10
+\Hypertarget{_fixed_storage_tests_8cpp_ad9be0a5b946da2aa81b697961b973038}\index{FixedStorageTests.cpp@{FixedStorageTests.cpp}!VA\_REGISTER\_TEST@{VA\_REGISTER\_TEST}}
+\index{VA\_REGISTER\_TEST@{VA\_REGISTER\_TEST}!FixedStorageTests.cpp@{FixedStorageTests.cpp}}
+\doxysubsubsection{\texorpdfstring{VA\_REGISTER\_TEST()}{VA\_REGISTER\_TEST()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily \label{_fixed_storage_tests_8cpp_ad9be0a5b946da2aa81b697961b973038} 
+VA\+\_\+\+REGISTER\+\_\+\+TEST (\begin{DoxyParamCaption}\item[{Fixed\+Storage\+Generations}]{}{, }\item[{\mbox{\hyperlink{_fixed_storage_tests_8cpp_a925360b2e40a579b247d321db7d07941}{Test\+Fixed\+Storage\+Generations}}}]{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 11
+\Hypertarget{_fixed_storage_tests_8cpp_aa3327ea267c9ffa895c160f916c0cefc}\index{FixedStorageTests.cpp@{FixedStorageTests.cpp}!VA\_REGISTER\_TEST@{VA\_REGISTER\_TEST}}
+\index{VA\_REGISTER\_TEST@{VA\_REGISTER\_TEST}!FixedStorageTests.cpp@{FixedStorageTests.cpp}}
+\doxysubsubsection{\texorpdfstring{VA\_REGISTER\_TEST()}{VA\_REGISTER\_TEST()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily \label{_fixed_storage_tests_8cpp_aa3327ea267c9ffa895c160f916c0cefc} 
+VA\+\_\+\+REGISTER\+\_\+\+TEST (\begin{DoxyParamCaption}\item[{Fixed\+Storage\+Thread\+Safety}]{}{, }\item[{\mbox{\hyperlink{_fixed_storage_tests_8cpp_a0b00e579555b55a9635f62cd07b8308f}{Test\+Fixed\+Storage\+Thread\+Safety}}}]{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 12

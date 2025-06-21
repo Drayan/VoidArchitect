@@ -1,0 +1,148 @@
+\doxysection{Void\+Architect\+::Testing\+::Test\+Layer Class Reference}
+\hypertarget{class_void_architect_1_1_testing_1_1_test_layer}{}\label{class_void_architect_1_1_testing_1_1_test_layer}\index{VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}}
+
+
+\doxylink{class_void_architect_1_1_layer}{Layer} that executes the test suite.  
+
+
+
+
+{\ttfamily \#include $<$Test\+Layer.\+hpp$>$}
+
+
+
+Inheritance diagram for Void\+Architect\+::Testing\+::Test\+Layer\+:
+% FIG 0
+
+
+Collaboration diagram for Void\+Architect\+::Testing\+::Test\+Layer\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a45e44f6d86008e63635200a09a64eebe}{Test\+Layer}} ()
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a1786f78df1f48faa4937ad018afe0f4c}{\texorpdfstring{$\sim$}{\string~}\+Test\+Layer}} () override
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a4a81e05d081e67f252a8807792a6635a}{On\+Fixed\+Update}} (const float fixed\+Timestep) override
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_aa6a8d735089b98137e395b7dcb79b27b}{On\+Attach}} () override
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a8d03531568a8c37a95da1305fefce0c4}{On\+Detach}} () override
+\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_a37392dfb6dca1f04d4e7b7ead5b35ced}{Tests\+Completed}} () const
+\begin{DoxyCompactList}\small\item\em Check if tests have completed. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_testing_1_1_test_layer_ae075c20b035166c1cc4b8a150e67bccd}{Tests\+Passed}} () const
+\begin{DoxyCompactList}\small\item\em Check if all tests passed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_void_architect_1_1_layer}{Void\+Architect\+::\+Layer}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_layer_a98740f9db2405bc160f7c67d212da7b8}{Layer}} (const std\+::string \&name="{}Layer"{})
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_layer_a51354e96c5736a30f45a42f095bb61e6}{\texorpdfstring{$\sim$}{\string~}\+Layer}} ()
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_layer_aad87785d3e9f620e3c328d2805caa351}{On\+Update}} (float delta\+Time)
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_layer_a2bba5dceecd925bde57b0e04e5fa7e82}{On\+Event}} (\mbox{\hyperlink{class_void_architect_1_1_event}{Event}} \&e)
+\item 
+const std\+::string \& \mbox{\hyperlink{class_void_architect_1_1_layer_aa3b4e82e63707afd43987f72203cd8ba}{Get\+Name}} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_void_architect_1_1_layer}{Void\+Architect\+::\+Layer}}}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_layer_a112bb0d5731051f6e31d78dadda44d5a}{m\+\_\+\+Debug\+Name}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{class_void_architect_1_1_layer}{Layer} that executes the test suite. 
+
+\doxylink{class_void_architect_1_1_testing_1_1_test_layer}{Test\+Layer} integrates with \doxylink{namespace_void_architect}{Void\+Architect}\textquotesingle{}s layer system to run tests at the appropriated time during the application lifecycle. Tests are executed once during the first fixed update, then the application is signaled to shut down gracefully. 
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_layer_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_layer_a45e44f6d86008e63635200a09a64eebe}\index{VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}!TestLayer@{TestLayer}}
+\index{TestLayer@{TestLayer}!VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}}
+\doxysubsubsection{\texorpdfstring{TestLayer()}{TestLayer()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_layer_a45e44f6d86008e63635200a09a64eebe} 
+Test\+Layer\+::\+Test\+Layer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_layer_a1786f78df1f48faa4937ad018afe0f4c}\index{VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}!````~TestLayer@{\texorpdfstring{$\sim$}{\string~}TestLayer}}
+\index{````~TestLayer@{\texorpdfstring{$\sim$}{\string~}TestLayer}!VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}TestLayer()}{\string~TestLayer()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_layer_a1786f78df1f48faa4937ad018afe0f4c} 
+Test\+Layer\+::\texorpdfstring{$\sim$}{\string~}\+Test\+Layer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_layer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_layer_aa6a8d735089b98137e395b7dcb79b27b}\index{VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}!OnAttach@{OnAttach}}
+\index{OnAttach@{OnAttach}!VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}}
+\doxysubsubsection{\texorpdfstring{OnAttach()}{OnAttach()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_layer_aa6a8d735089b98137e395b7dcb79b27b} 
+void Test\+Layer\+::\+On\+Attach (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_void_architect_1_1_layer_afc7b38adf776884fb18006742824c43a}{Void\+Architect\+::\+Layer}}.
+
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_layer_a8d03531568a8c37a95da1305fefce0c4}\index{VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}!OnDetach@{OnDetach}}
+\index{OnDetach@{OnDetach}!VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}}
+\doxysubsubsection{\texorpdfstring{OnDetach()}{OnDetach()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_layer_a8d03531568a8c37a95da1305fefce0c4} 
+void Test\+Layer\+::\+On\+Detach (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_void_architect_1_1_layer_adc16928c5cacb0728f65143bf3af1b44}{Void\+Architect\+::\+Layer}}.
+
+Here is the call graph for this function\+:
+% FIG 3
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_layer_a4a81e05d081e67f252a8807792a6635a}\index{VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}!OnFixedUpdate@{OnFixedUpdate}}
+\index{OnFixedUpdate@{OnFixedUpdate}!VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}}
+\doxysubsubsection{\texorpdfstring{OnFixedUpdate()}{OnFixedUpdate()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_layer_a4a81e05d081e67f252a8807792a6635a} 
+void Test\+Layer\+::\+On\+Fixed\+Update (\begin{DoxyParamCaption}\item[{const float}]{fixed\+Timestep}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_void_architect_1_1_layer_a6cb379e04ae66a30e303a495e20875b0}{Void\+Architect\+::\+Layer}}.
+
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_layer_a37392dfb6dca1f04d4e7b7ead5b35ced}\index{VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}!TestsCompleted@{TestsCompleted}}
+\index{TestsCompleted@{TestsCompleted}!VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}}
+\doxysubsubsection{\texorpdfstring{TestsCompleted()}{TestsCompleted()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_layer_a37392dfb6dca1f04d4e7b7ead5b35ced} 
+bool Void\+Architect\+::\+Testing\+::\+Test\+Layer\+::\+Tests\+Completed (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check if tests have completed. 
+
+\begin{DoxyReturn}{Returns}
+true if tests have been executed 
+\end{DoxyReturn}
+\Hypertarget{class_void_architect_1_1_testing_1_1_test_layer_ae075c20b035166c1cc4b8a150e67bccd}\index{VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}!TestsPassed@{TestsPassed}}
+\index{TestsPassed@{TestsPassed}!VoidArchitect::Testing::TestLayer@{VoidArchitect::Testing::TestLayer}}
+\doxysubsubsection{\texorpdfstring{TestsPassed()}{TestsPassed()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_testing_1_1_test_layer_ae075c20b035166c1cc4b8a150e67bccd} 
+bool Void\+Architect\+::\+Testing\+::\+Test\+Layer\+::\+Tests\+Passed (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check if all tests passed. 
+
+\begin{DoxyReturn}{Returns}
+true if tests passed, false if failed 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+tests/src/\mbox{\hyperlink{tests_2src_2_test_layer_8hpp}{Test\+Layer.\+hpp}}\item 
+tests/src/\mbox{\hyperlink{tests_2src_2_test_layer_8cpp}{Test\+Layer.\+cpp}}\end{DoxyCompactItemize}

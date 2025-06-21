@@ -1,0 +1,91 @@
+\doxysection{Void\+Architect\+::Renderer\+::Render\+System Class Reference}
+\hypertarget{class_void_architect_1_1_renderer_1_1_render_system}{}\label{class_void_architect_1_1_renderer_1_1_render_system}\index{VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}}
+
+
+{\ttfamily \#include $<$Render\+System.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_system_a1115114676903d1eae9540b046631b51}{Render\+System}} (\mbox{\hyperlink{namespace_void_architect_1_1_platform_ab80bb8b5b54632dd84f0b96426032e7a}{Platform\+::\+RHI\+\_\+\+API\+\_\+\+TYPE}} api\+Type, std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_window}{Window}} $>$ \&window)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_system_a3297a56e98ff9b7c79433e210c71c6a0}{Initialize\+Subsystems}} ()
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_system_a982da3497cf4b77247c6b3b6ec514a58}{\texorpdfstring{$\sim$}{\string~}\+Render\+System}} ()
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_system_a268b747346b888c6092e8c0b11fe0d78}{Render\+Frame}} (float frame\+Time)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_system_ae126862e42febc11419b5a024073b52f}{Resize}} (uint32\+\_\+t width, uint32\+\_\+t height)
+\item 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_i_rendering_hardware}{Platform\+::\+IRendering\+Hardware}} $>$ \& \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_system_a0ddbb841f6f0e2fe35e1052685171321}{Get\+RHI}} ()
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera}{Camera}} \& \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_system_afea5d61f72c2b8d1efe64c6794fcfbaa}{Get\+Main\+Camera}} ()
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_render_system_a2713209973e274a36e90db3aaf4e46df}{Set\+Debug\+Mode}} (\mbox{\hyperlink{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440}{Render\+System\+Debug\+Mode}} mode)
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_system_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_system_a1115114676903d1eae9540b046631b51}\index{VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}!RenderSystem@{RenderSystem}}
+\index{RenderSystem@{RenderSystem}!VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}}
+\doxysubsubsection{\texorpdfstring{RenderSystem()}{RenderSystem()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_system_a1115114676903d1eae9540b046631b51} 
+Void\+Architect\+::\+Renderer\+::\+Render\+System\+::\+Render\+System (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_void_architect_1_1_platform_ab80bb8b5b54632dd84f0b96426032e7a}{Platform\+::\+RHI\+\_\+\+API\+\_\+\+TYPE}}}]{api\+Type}{, }\item[{std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_window}{Window}} $>$ \&}]{window}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_system_a982da3497cf4b77247c6b3b6ec514a58}\index{VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}!````~RenderSystem@{\texorpdfstring{$\sim$}{\string~}RenderSystem}}
+\index{````~RenderSystem@{\texorpdfstring{$\sim$}{\string~}RenderSystem}!VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}RenderSystem()}{\string~RenderSystem()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_system_a982da3497cf4b77247c6b3b6ec514a58} 
+Void\+Architect\+::\+Renderer\+::\+Render\+System\+::\texorpdfstring{$\sim$}{\string~}\+Render\+System (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_system_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_system_afea5d61f72c2b8d1efe64c6794fcfbaa}\index{VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}!GetMainCamera@{GetMainCamera}}
+\index{GetMainCamera@{GetMainCamera}!VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}}
+\doxysubsubsection{\texorpdfstring{GetMainCamera()}{GetMainCamera()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_system_afea5d61f72c2b8d1efe64c6794fcfbaa} 
+\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera}{Camera}} \& Void\+Architect\+::\+Renderer\+::\+Render\+System\+::\+Get\+Main\+Camera (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_system_a0ddbb841f6f0e2fe35e1052685171321}\index{VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}!GetRHI@{GetRHI}}
+\index{GetRHI@{GetRHI}!VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}}
+\doxysubsubsection{\texorpdfstring{GetRHI()}{GetRHI()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_system_a0ddbb841f6f0e2fe35e1052685171321} 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_i_rendering_hardware}{Platform\+::\+IRendering\+Hardware}} $>$ \& Void\+Architect\+::\+Renderer\+::\+Render\+System\+::\+Get\+RHI (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_system_a3297a56e98ff9b7c79433e210c71c6a0}\index{VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}!InitializeSubsystems@{InitializeSubsystems}}
+\index{InitializeSubsystems@{InitializeSubsystems}!VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}}
+\doxysubsubsection{\texorpdfstring{InitializeSubsystems()}{InitializeSubsystems()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_system_a3297a56e98ff9b7c79433e210c71c6a0} 
+void Void\+Architect\+::\+Renderer\+::\+Render\+System\+::\+Initialize\+Subsystems (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_system_a268b747346b888c6092e8c0b11fe0d78}\index{VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}!RenderFrame@{RenderFrame}}
+\index{RenderFrame@{RenderFrame}!VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}}
+\doxysubsubsection{\texorpdfstring{RenderFrame()}{RenderFrame()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_system_a268b747346b888c6092e8c0b11fe0d78} 
+void Void\+Architect\+::\+Renderer\+::\+Render\+System\+::\+Render\+Frame (\begin{DoxyParamCaption}\item[{float}]{frame\+Time}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 0
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_system_ae126862e42febc11419b5a024073b52f}\index{VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}!Resize@{Resize}}
+\index{Resize@{Resize}!VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}}
+\doxysubsubsection{\texorpdfstring{Resize()}{Resize()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_system_ae126862e42febc11419b5a024073b52f} 
+void Void\+Architect\+::\+Renderer\+::\+Render\+System\+::\+Resize (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{width}{, }\item[{uint32\+\_\+t}]{height}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_renderer_1_1_render_system_a2713209973e274a36e90db3aaf4e46df}\index{VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}!SetDebugMode@{SetDebugMode}}
+\index{SetDebugMode@{SetDebugMode}!VoidArchitect::Renderer::RenderSystem@{VoidArchitect::Renderer::RenderSystem}}
+\doxysubsubsection{\texorpdfstring{SetDebugMode()}{SetDebugMode()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_renderer_1_1_render_system_a2713209973e274a36e90db3aaf4e46df} 
+void Void\+Architect\+::\+Renderer\+::\+Render\+System\+::\+Set\+Debug\+Mode (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_void_architect_1_1_renderer_aecf307347607e0147b271355c7995440}{Render\+System\+Debug\+Mode}}}]{mode}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Systems/\+Renderer/\mbox{\hyperlink{_render_system_8hpp}{Render\+System.\+hpp}}\item 
+engine/src/\+Systems/\+Renderer/\mbox{\hyperlink{_render_system_8cpp}{Render\+System.\+cpp}}\end{DoxyCompactItemize}

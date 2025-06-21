@@ -1,0 +1,140 @@
+\doxysection{Void\+Architect\+::Window Class Reference}
+\hypertarget{class_void_architect_1_1_window}{}\label{class_void_architect_1_1_window}\index{VoidArchitect::Window@{VoidArchitect::Window}}
+
+
+{\ttfamily \#include $<$Window.\+hpp$>$}
+
+
+
+Inheritance diagram for Void\+Architect\+::Window\+:
+% FIG 0
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+using \mbox{\hyperlink{class_void_architect_1_1_window_a0b1eaac2196d5457ee4a42e0c5f6cdde}{Event\+Callback\+Fn}} = std\+::function$<$void(\mbox{\hyperlink{class_void_architect_1_1_event}{Event}}\&)$>$
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_window_a5b42d4f3540b11022b698e4dda0fb8d3}{\texorpdfstring{$\sim$}{\string~}\+Window}} ()=default
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_window_a8ddd763e17a6df82af75120e0e5bd572}{On\+Update}} ()=0
+\item 
+virtual unsigned int \mbox{\hyperlink{class_void_architect_1_1_window_ad7f6fcba5c8c9aa11e1d5f2cbd3e19c0}{Get\+Width}} () const =0
+\item 
+virtual unsigned int \mbox{\hyperlink{class_void_architect_1_1_window_a3269f13847dfa989825ffd5a273778a6}{Get\+Height}} () const =0
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_window_a0e5a814d791e3069742605fef248b9f2}{Set\+Event\+Callback}} (const \mbox{\hyperlink{class_void_architect_1_1_window_a0b1eaac2196d5457ee4a42e0c5f6cdde}{Event\+Callback\+Fn}} \&callback)=0
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_window_a7aa3f3a770526aa877ee0c158e1b2a3d}{Set\+VSync}} (bool enabled)=0
+\item 
+virtual bool \mbox{\hyperlink{class_void_architect_1_1_window_abdef081823d6354c8e3ba05d4019c956}{Is\+VSync}} () const =0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_void_architect_1_1_window}{Window}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_window_a9b5fc3a8ca4b9c6bc9ff1b5f2986c00f}{Create}} (const \mbox{\hyperlink{struct_void_architect_1_1_window_props}{Window\+Props}} \&props=\mbox{\hyperlink{struct_void_architect_1_1_window_props}{Window\+Props}}())
+\end{DoxyCompactItemize}
+
+
+\label{doc-typedef-members}
+\Hypertarget{class_void_architect_1_1_window_doc-typedef-members}
+\doxysubsection{Member Typedef Documentation}
+\Hypertarget{class_void_architect_1_1_window_a0b1eaac2196d5457ee4a42e0c5f6cdde}\index{VoidArchitect::Window@{VoidArchitect::Window}!EventCallbackFn@{EventCallbackFn}}
+\index{EventCallbackFn@{EventCallbackFn}!VoidArchitect::Window@{VoidArchitect::Window}}
+\doxysubsubsection{\texorpdfstring{EventCallbackFn}{EventCallbackFn}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_window_a0b1eaac2196d5457ee4a42e0c5f6cdde} 
+using \mbox{\hyperlink{class_void_architect_1_1_window_a0b1eaac2196d5457ee4a42e0c5f6cdde}{Void\+Architect\+::\+Window\+::\+Event\+Callback\+Fn}} = std\+::function$<$void(\mbox{\hyperlink{class_void_architect_1_1_event}{Event}}\&)$>$}
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_window_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_window_a5b42d4f3540b11022b698e4dda0fb8d3}\index{VoidArchitect::Window@{VoidArchitect::Window}!````~Window@{\texorpdfstring{$\sim$}{\string~}Window}}
+\index{````~Window@{\texorpdfstring{$\sim$}{\string~}Window}!VoidArchitect::Window@{VoidArchitect::Window}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}Window()}{\string~Window()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_window_a5b42d4f3540b11022b698e4dda0fb8d3} 
+virtual Void\+Architect\+::\+Window\+::\texorpdfstring{$\sim$}{\string~}\+Window (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_window_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_window_a9b5fc3a8ca4b9c6bc9ff1b5f2986c00f}\index{VoidArchitect::Window@{VoidArchitect::Window}!Create@{Create}}
+\index{Create@{Create}!VoidArchitect::Window@{VoidArchitect::Window}}
+\doxysubsubsection{\texorpdfstring{Create()}{Create()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_window_a9b5fc3a8ca4b9c6bc9ff1b5f2986c00f} 
+\mbox{\hyperlink{class_void_architect_1_1_window}{Window}} \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Window\+::\+Create (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_window_props}{Window\+Props}} \&}]{props}{ = {\ttfamily \mbox{\hyperlink{struct_void_architect_1_1_window_props}{Window\+Props}}()}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the caller graph for this function\+:
+% FIG 1
+\Hypertarget{class_void_architect_1_1_window_a3269f13847dfa989825ffd5a273778a6}\index{VoidArchitect::Window@{VoidArchitect::Window}!GetHeight@{GetHeight}}
+\index{GetHeight@{GetHeight}!VoidArchitect::Window@{VoidArchitect::Window}}
+\doxysubsubsection{\texorpdfstring{GetHeight()}{GetHeight()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_window_a3269f13847dfa989825ffd5a273778a6} 
+virtual unsigned int Void\+Architect\+::\+Window\+::\+Get\+Height (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_s_d_l_window_a73b109cb27e5faf94d6c1a74cacd254e}{Void\+Architect\+::\+Platform\+::\+SDLWindow}}.
+
+\Hypertarget{class_void_architect_1_1_window_ad7f6fcba5c8c9aa11e1d5f2cbd3e19c0}\index{VoidArchitect::Window@{VoidArchitect::Window}!GetWidth@{GetWidth}}
+\index{GetWidth@{GetWidth}!VoidArchitect::Window@{VoidArchitect::Window}}
+\doxysubsubsection{\texorpdfstring{GetWidth()}{GetWidth()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_window_ad7f6fcba5c8c9aa11e1d5f2cbd3e19c0} 
+virtual unsigned int Void\+Architect\+::\+Window\+::\+Get\+Width (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_s_d_l_window_a72bb91e18ae78dfb6a4964b85a718953}{Void\+Architect\+::\+Platform\+::\+SDLWindow}}.
+
+\Hypertarget{class_void_architect_1_1_window_abdef081823d6354c8e3ba05d4019c956}\index{VoidArchitect::Window@{VoidArchitect::Window}!IsVSync@{IsVSync}}
+\index{IsVSync@{IsVSync}!VoidArchitect::Window@{VoidArchitect::Window}}
+\doxysubsubsection{\texorpdfstring{IsVSync()}{IsVSync()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_window_abdef081823d6354c8e3ba05d4019c956} 
+virtual bool Void\+Architect\+::\+Window\+::\+Is\+VSync (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_s_d_l_window_a5951821d09b420482031f7354c781278}{Void\+Architect\+::\+Platform\+::\+SDLWindow}}.
+
+Here is the call graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_window_a8ddd763e17a6df82af75120e0e5bd572}\index{VoidArchitect::Window@{VoidArchitect::Window}!OnUpdate@{OnUpdate}}
+\index{OnUpdate@{OnUpdate}!VoidArchitect::Window@{VoidArchitect::Window}}
+\doxysubsubsection{\texorpdfstring{OnUpdate()}{OnUpdate()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_window_a8ddd763e17a6df82af75120e0e5bd572} 
+virtual void Void\+Architect\+::\+Window\+::\+On\+Update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_s_d_l_window_abc84c168d5a8a55c56653e7b07eb53e7}{Void\+Architect\+::\+Platform\+::\+SDLWindow}}.
+
+\Hypertarget{class_void_architect_1_1_window_a0e5a814d791e3069742605fef248b9f2}\index{VoidArchitect::Window@{VoidArchitect::Window}!SetEventCallback@{SetEventCallback}}
+\index{SetEventCallback@{SetEventCallback}!VoidArchitect::Window@{VoidArchitect::Window}}
+\doxysubsubsection{\texorpdfstring{SetEventCallback()}{SetEventCallback()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_window_a0e5a814d791e3069742605fef248b9f2} 
+virtual void Void\+Architect\+::\+Window\+::\+Set\+Event\+Callback (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_window_a0b1eaac2196d5457ee4a42e0c5f6cdde}{Event\+Callback\+Fn}} \&}]{callback}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_s_d_l_window_a2dccb3576de338a8a5dc2ce7ec37c98f}{Void\+Architect\+::\+Platform\+::\+SDLWindow}}.
+
+\Hypertarget{class_void_architect_1_1_window_a7aa3f3a770526aa877ee0c158e1b2a3d}\index{VoidArchitect::Window@{VoidArchitect::Window}!SetVSync@{SetVSync}}
+\index{SetVSync@{SetVSync}!VoidArchitect::Window@{VoidArchitect::Window}}
+\doxysubsubsection{\texorpdfstring{SetVSync()}{SetVSync()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_window_a7aa3f3a770526aa877ee0c158e1b2a3d} 
+virtual void Void\+Architect\+::\+Window\+::\+Set\+VSync (\begin{DoxyParamCaption}\item[{bool}]{enabled}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_s_d_l_window_a0cea93c842f5cc37495af53ead686eb4}{Void\+Architect\+::\+Platform\+::\+SDLWindow}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Core/\mbox{\hyperlink{_window_8hpp}{Window.\+hpp}}\item 
+engine/src/\+Platform/\mbox{\hyperlink{_s_d_l_window_8cpp}{SDLWindow.\+cpp}}\end{DoxyCompactItemize}

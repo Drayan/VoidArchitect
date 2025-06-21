@@ -1,0 +1,210 @@
+\doxysection{Void\+Architect\+::Resources\+::ITexture Class Reference}
+\hypertarget{class_void_architect_1_1_resources_1_1_i_texture}{}\label{class_void_architect_1_1_resources_1_1_i_texture}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+
+
+{\ttfamily \#include $<$Texture.\+hpp$>$}
+
+
+
+Inheritance diagram for Void\+Architect\+::Resources\+::ITexture\+:
+% FIG 0
+
+
+Collaboration diagram for Void\+Architect\+::Resources\+::ITexture\+:
+% FIG 1
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_aabbb0f60e92c77bed0ac1c9966844f9d}{ITexture}} (std\+::string name, uint32\+\_\+t width, uint32\+\_\+t height, uint8\+\_\+t channel\+Count, bool has\+Transparency)
+\item 
+virtual \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_afed606c1aa8d6eb8bb8a1618f63e0c1a}{\texorpdfstring{$\sim$}{\string~}\+ITexture}} ()=default
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_u_u_i_d}{UUID}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_ac15dd902a58a69d361314e04b2669c3d}{Get\+UUID}} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_ad3423730919952e08d075e48b1ec71c3}{Release}} ()=0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_a1738407c9d869e83c1bfac7841aa8203}{m\+\_\+\+Name}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_a12b79f811324365f2aafee7272744b3e}{m\+\_\+\+Handle}}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_u_u_i_d}{UUID}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_acdab0d2d28f491ed7b0939695d3abea9}{m\+\_\+\+UUID}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_ab49779cb44b5c68b118f4f7c11655bf1}{m\+\_\+\+Width}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_abc72aa65d211c82081f1ef377be544f0}{m\+\_\+\+Height}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_acb213548119f14f0992aa3b40d96e714}{m\+\_\+\+Channel\+Count}}
+\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_a447d4006402390485b06148b2f297332}{m\+\_\+\+Has\+Transparency}}
+\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_a8435b2e0f81bd371f71fc647b334b4a0}{m\+\_\+\+Is\+Writable}} = false
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_a5d5e1abd2d3371f98679e35af136125b}{Texture\+Filter\+Mode}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_af2f987b480ae3016cb2255b36099118c}{m\+\_\+\+Filter\+Mode\+Min}} = \mbox{\hyperlink{namespace_void_architect_1_1_resources_a5d5e1abd2d3371f98679e35af136125ba32a843da6ea40ab3b17a3421ccdf671b}{Texture\+Filter\+Mode\+::\+Linear}}
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_a5d5e1abd2d3371f98679e35af136125b}{Texture\+Filter\+Mode}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_a038b7a642eaefb7e45e804f1b20bea27}{m\+\_\+\+Filter\+Mode\+Mag}} = \mbox{\hyperlink{namespace_void_architect_1_1_resources_a5d5e1abd2d3371f98679e35af136125ba32a843da6ea40ab3b17a3421ccdf671b}{Texture\+Filter\+Mode\+::\+Linear}}
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfaf}{Texture\+Repeat\+Mode}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_aaee2e7dac5ff3d8f2ea045994350584c}{m\+\_\+\+Repeat\+ModeU}} = \mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfafa7020426cfb0a204051be4b3053d2acc8}{Texture\+Repeat\+Mode\+::\+Repeat}}
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfaf}{Texture\+Repeat\+Mode}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_ad4cd6d42c029027434838eb42602252f}{m\+\_\+\+Repeat\+ModeV}} = \mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfafa7020426cfb0a204051be4b3053d2acc8}{Texture\+Repeat\+Mode\+::\+Repeat}}
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfaf}{Texture\+Repeat\+Mode}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_a360ca49269e8fe8c254f911378c49d6d}{m\+\_\+\+Repeat\+ModeW}} = \mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfafa7020426cfb0a204051be4b3053d2acc8}{Texture\+Repeat\+Mode\+::\+Repeat}}
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_a0263236753eb0716db01d7a5a0f9ae98}{Texture\+Use}} \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_a0e410195f10ca71e2072fb75a3144725}{m\+\_\+\+Use}} = \mbox{\hyperlink{namespace_void_architect_1_1_resources_a0263236753eb0716db01d7a5a0f9ae98a6adf97f83acf6453d4a6a4b1070f3754}{Texture\+Use\+::\+None}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_texture_a717ab447c8eae34129f1d23a48fc50d7}{Void\+Architect\+::\+Texture\+System}}
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_aabbb0f60e92c77bed0ac1c9966844f9d}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!ITexture@{ITexture}}
+\index{ITexture@{ITexture}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{ITexture()}{ITexture()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_aabbb0f60e92c77bed0ac1c9966844f9d} 
+Void\+Architect\+::\+Resources\+::\+ITexture\+::\+ITexture (\begin{DoxyParamCaption}\item[{std\+::string}]{name}{, }\item[{uint32\+\_\+t}]{width}{, }\item[{uint32\+\_\+t}]{height}{, }\item[{uint8\+\_\+t}]{channel\+Count}{, }\item[{bool}]{has\+Transparency}{}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_afed606c1aa8d6eb8bb8a1618f63e0c1a}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!````~ITexture@{\texorpdfstring{$\sim$}{\string~}ITexture}}
+\index{````~ITexture@{\texorpdfstring{$\sim$}{\string~}ITexture}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}ITexture()}{\string~ITexture()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_afed606c1aa8d6eb8bb8a1618f63e0c1a} 
+virtual Void\+Architect\+::\+Resources\+::\+ITexture\+::\texorpdfstring{$\sim$}{\string~}\+ITexture (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_ac15dd902a58a69d361314e04b2669c3d}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!GetUUID@{GetUUID}}
+\index{GetUUID@{GetUUID}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{GetUUID()}{GetUUID()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_ac15dd902a58a69d361314e04b2669c3d} 
+\mbox{\hyperlink{class_void_architect_1_1_u_u_i_d}{UUID}} Void\+Architect\+::\+Resources\+::\+ITexture\+::\+Get\+UUID (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_ad3423730919952e08d075e48b1ec71c3}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!Release@{Release}}
+\index{Release@{Release}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{Release()}{Release()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_ad3423730919952e08d075e48b1ec71c3} 
+virtual void Void\+Architect\+::\+Resources\+::\+ITexture\+::\+Release (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_texture2_d_a374765ce269ccf65c9e1242cb25f999e}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Texture2D}}.
+
+
+
+\label{doc-related-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_doc-related-members}
+\doxysubsection{Friends And Related Symbol Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_a717ab447c8eae34129f1d23a48fc50d7}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!VoidArchitect::TextureSystem@{VoidArchitect::TextureSystem}}
+\index{VoidArchitect::TextureSystem@{VoidArchitect::TextureSystem}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{VoidArchitect::TextureSystem}{VoidArchitect::TextureSystem}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_a717ab447c8eae34129f1d23a48fc50d7} 
+friend class \mbox{\hyperlink{class_void_architect_1_1_texture_system}{Void\+Architect\+::\+Texture\+System}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_acb213548119f14f0992aa3b40d96e714}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_ChannelCount@{m\_ChannelCount}}
+\index{m\_ChannelCount@{m\_ChannelCount}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_ChannelCount}{m\_ChannelCount}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_acb213548119f14f0992aa3b40d96e714} 
+uint8\+\_\+t Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Channel\+Count\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_a038b7a642eaefb7e45e804f1b20bea27}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_FilterModeMag@{m\_FilterModeMag}}
+\index{m\_FilterModeMag@{m\_FilterModeMag}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_FilterModeMag}{m\_FilterModeMag}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_a038b7a642eaefb7e45e804f1b20bea27} 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_a5d5e1abd2d3371f98679e35af136125b}{Texture\+Filter\+Mode}} Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Filter\+Mode\+Mag = \mbox{\hyperlink{namespace_void_architect_1_1_resources_a5d5e1abd2d3371f98679e35af136125ba32a843da6ea40ab3b17a3421ccdf671b}{Texture\+Filter\+Mode\+::\+Linear}}\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_af2f987b480ae3016cb2255b36099118c}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_FilterModeMin@{m\_FilterModeMin}}
+\index{m\_FilterModeMin@{m\_FilterModeMin}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_FilterModeMin}{m\_FilterModeMin}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_af2f987b480ae3016cb2255b36099118c} 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_a5d5e1abd2d3371f98679e35af136125b}{Texture\+Filter\+Mode}} Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Filter\+Mode\+Min = \mbox{\hyperlink{namespace_void_architect_1_1_resources_a5d5e1abd2d3371f98679e35af136125ba32a843da6ea40ab3b17a3421ccdf671b}{Texture\+Filter\+Mode\+::\+Linear}}\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_a12b79f811324365f2aafee7272744b3e}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_Handle@{m\_Handle}}
+\index{m\_Handle@{m\_Handle}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_Handle}{m\_Handle}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_a12b79f811324365f2aafee7272744b3e} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Handle\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_a447d4006402390485b06148b2f297332}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_HasTransparency@{m\_HasTransparency}}
+\index{m\_HasTransparency@{m\_HasTransparency}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_HasTransparency}{m\_HasTransparency}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_a447d4006402390485b06148b2f297332} 
+bool Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Has\+Transparency\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_abc72aa65d211c82081f1ef377be544f0}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_Height@{m\_Height}}
+\index{m\_Height@{m\_Height}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_Height}{m\_Height}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_abc72aa65d211c82081f1ef377be544f0} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Height\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_a8435b2e0f81bd371f71fc647b334b4a0}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_IsWritable@{m\_IsWritable}}
+\index{m\_IsWritable@{m\_IsWritable}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_IsWritable}{m\_IsWritable}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_a8435b2e0f81bd371f71fc647b334b4a0} 
+bool Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Is\+Writable = false\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_a1738407c9d869e83c1bfac7841aa8203}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_Name@{m\_Name}}
+\index{m\_Name@{m\_Name}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_Name}{m\_Name}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_a1738407c9d869e83c1bfac7841aa8203} 
+std\+::string Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Name\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_aaee2e7dac5ff3d8f2ea045994350584c}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_RepeatModeU@{m\_RepeatModeU}}
+\index{m\_RepeatModeU@{m\_RepeatModeU}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_RepeatModeU}{m\_RepeatModeU}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_aaee2e7dac5ff3d8f2ea045994350584c} 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfaf}{Texture\+Repeat\+Mode}} Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Repeat\+ModeU = \mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfafa7020426cfb0a204051be4b3053d2acc8}{Texture\+Repeat\+Mode\+::\+Repeat}}\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_ad4cd6d42c029027434838eb42602252f}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_RepeatModeV@{m\_RepeatModeV}}
+\index{m\_RepeatModeV@{m\_RepeatModeV}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_RepeatModeV}{m\_RepeatModeV}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_ad4cd6d42c029027434838eb42602252f} 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfaf}{Texture\+Repeat\+Mode}} Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Repeat\+ModeV = \mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfafa7020426cfb0a204051be4b3053d2acc8}{Texture\+Repeat\+Mode\+::\+Repeat}}\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_a360ca49269e8fe8c254f911378c49d6d}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_RepeatModeW@{m\_RepeatModeW}}
+\index{m\_RepeatModeW@{m\_RepeatModeW}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_RepeatModeW}{m\_RepeatModeW}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_a360ca49269e8fe8c254f911378c49d6d} 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfaf}{Texture\+Repeat\+Mode}} Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Repeat\+ModeW = \mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfafa7020426cfb0a204051be4b3053d2acc8}{Texture\+Repeat\+Mode\+::\+Repeat}}\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_a0e410195f10ca71e2072fb75a3144725}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_Use@{m\_Use}}
+\index{m\_Use@{m\_Use}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_Use}{m\_Use}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_a0e410195f10ca71e2072fb75a3144725} 
+\mbox{\hyperlink{namespace_void_architect_1_1_resources_a0263236753eb0716db01d7a5a0f9ae98}{Texture\+Use}} Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Use = \mbox{\hyperlink{namespace_void_architect_1_1_resources_a0263236753eb0716db01d7a5a0f9ae98a6adf97f83acf6453d4a6a4b1070f3754}{Texture\+Use\+::\+None}}\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_acdab0d2d28f491ed7b0939695d3abea9}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_UUID@{m\_UUID}}
+\index{m\_UUID@{m\_UUID}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_UUID}{m\_UUID}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_acdab0d2d28f491ed7b0939695d3abea9} 
+\mbox{\hyperlink{class_void_architect_1_1_u_u_i_d}{UUID}} Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+UUID\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_void_architect_1_1_resources_1_1_i_texture_ab49779cb44b5c68b118f4f7c11655bf1}\index{VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}!m\_Width@{m\_Width}}
+\index{m\_Width@{m\_Width}!VoidArchitect::Resources::ITexture@{VoidArchitect::Resources::ITexture}}
+\doxysubsubsection{\texorpdfstring{m\_Width}{m\_Width}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_resources_1_1_i_texture_ab49779cb44b5c68b118f4f7c11655bf1} 
+uint32\+\_\+t Void\+Architect\+::\+Resources\+::\+ITexture\+::m\+\_\+\+Width\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Resources/\mbox{\hyperlink{_texture_8hpp}{Texture.\+hpp}}\item 
+engine/src/\+Resources/\mbox{\hyperlink{_texture_8cpp}{Texture.\+cpp}}\end{DoxyCompactItemize}

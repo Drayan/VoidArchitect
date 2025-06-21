@@ -1,0 +1,21 @@
+digraph "VoidArchitect::Transform::GetLocalTransform"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="RL";
+  Node1 [id="Node000001",label="VoidArchitect::Transform\l::GetLocalTransform",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [id="edge8_Node000001_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node2 [id="Node000002",label="VoidArchitect::Transform\l::GetWorldTransform",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_void_architect_1_1_transform.html#a967af987f30032785bd78e30f0f71305",tooltip=" "];
+  Node2 -> Node3 [id="edge9_Node000002_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node3 [id="Node000003",label="VoidArchitect::Transform\l::GetWorldPosition",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_void_architect_1_1_transform.html#add4ef336d69451034dcb55055c6ef7e5",tooltip=" "];
+  Node3 -> Node4 [id="edge10_Node000003_Node000004",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node4 [id="Node000004",label="VoidArchitect::Transform\l::SetParentKeepWorldTransform",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_void_architect_1_1_transform.html#a73e25e7df28250a6be4a51b78a3d08a8",tooltip=" "];
+  Node2 -> Node5 [id="edge11_Node000002_Node000005",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node5 [id="Node000005",label="VoidArchitect::Transform\l::GetWorldRotation",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_void_architect_1_1_transform.html#a5d02889f0a3bc43ea10e80a3f0968bcb",tooltip=" "];
+  Node5 -> Node4 [id="edge12_Node000005_Node000004",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node2 -> Node6 [id="edge13_Node000002_Node000006",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node6 [id="Node000006",label="VoidArchitect::Transform\l::GetWorldScale",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$class_void_architect_1_1_transform.html#a49c7affef3b21fbb5a95a42d7b78f1d1",tooltip=" "];
+  Node6 -> Node4 [id="edge14_Node000006_Node000004",dir="back",color="steelblue1",style="solid",tooltip=" "];
+}

@@ -1,0 +1,278 @@
+\doxysection{Void\+Architect\+::Jobs\+::Job\+Result Struct Reference}
+\hypertarget{struct_void_architect_1_1_jobs_1_1_job_result}{}\label{struct_void_architect_1_1_jobs_1_1_job_result}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+
+
+Result structure returned by job execution.  
+
+
+
+
+{\ttfamily \#include $<$Job\+Types.\+hpp$>$}
+
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c}{Status}} \+: uint8\+\_\+t \{ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563ca505a83f220c02df2f85c3810cd9ceb38}{Success}} = 0
+, \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563cad7c8c85bf79bbe1b7188497c32c3b0ca}{Failed}}
+, \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563caa149e85a44aeec9140e92733d9ed694e}{Cancelled}}
+ \}
+\begin{DoxyCompactList}\small\item\em Possible job execution states. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_abe2ac9fbb5eec964167eabc618ae8bb0}{Job\+Result}} ()
+\begin{DoxyCompactList}\small\item\em Default constructor creates successful result. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_ab7ececde814a3092f8482887b60d471c}{Job\+Result}} (const \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c}{Status}} s, const char \texorpdfstring{$\ast$}{*}msg="{}"{})
+\begin{DoxyCompactList}\small\item\em Construct result with specific status and message. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a32e94a3eb6028099a86b47df79f037fc}{Is\+Success}} () const
+\begin{DoxyCompactList}\small\item\em Check if a job completed successfully. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_ac7ba949bf32377d702faaf4d502dd148}{Is\+Failed}} () const
+\begin{DoxyCompactList}\small\item\em Check if a job failed. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_aba87d18653ba743628dfc2996c7c8787}{Is\+Cancelled}} () const
+\begin{DoxyCompactList}\small\item\em Check if a job was cancelled. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a4b5194a5776b63a16a66890827abee4d}{Get\+Status\+String}} () const
+\begin{DoxyCompactList}\small\item\em Get a human-\/readable status string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result}} \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_ad24a0ccd3b2b067666f00f8f81c3af54}{Success}} ()
+\begin{DoxyCompactList}\small\item\em Create a successful job result. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result}} \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a4dc1e84b3b86be405d032b2301d91f25}{Failed}} (const char \texorpdfstring{$\ast$}{*}message)
+\begin{DoxyCompactList}\small\item\em Create a failed job result with an error message. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result}} \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_ad5035943ee339b35edfc4303cb513b98}{Cancelled}} (const char \texorpdfstring{$\ast$}{*}message="{}Job was cancelled"{})
+\begin{DoxyCompactList}\small\item\em Create a cancelled job result with reason. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c}{Status}} \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a3fe6fabc4fd69a12379677452dbb7265}{status}}
+\begin{DoxyCompactList}\small\item\em Current status of the job. \end{DoxyCompactList}\item 
+const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_aeab23ae67827b8c1a706f237a15ed149}{error\+Message}} \{"{}"{}\}
+\begin{DoxyCompactList}\small\item\em Optional error message for failed/cancelled jobs. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Result structure returned by job execution. 
+
+\doxylink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result} provides a standardized way to report job completion status and error information. This enables robust error handling and debugging throughout the job system.
+
+Usage examples\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ Successful\ job}}
+\DoxyCodeLine{\textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_ad24a0ccd3b2b067666f00f8f81c3af54}{JobResult::Success}}();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Failed\ job\ with\ error\ message}}
+\DoxyCodeLine{\textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563cad7c8c85bf79bbe1b7188497c32c3b0ca}{JobResult::Failed}}(\textcolor{stringliteral}{"{}File\ not\ found:\ config.json"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Cancelled\ job}}
+\DoxyCodeLine{\textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563caa149e85a44aeec9140e92733d9ed694e}{JobResult::Cancelled}}(\textcolor{stringliteral}{"{}User\ requested\ shutdown"{}});}
+
+\end{DoxyCode}
+ 
+
+\label{doc-enum-members}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_doc-enum-members}
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!Status@{Status}}
+\index{Status@{Status}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+\doxysubsubsection{\texorpdfstring{Status}{Status}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c} 
+enum class \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c}{Void\+Architect\+::\+Jobs\+::\+Job\+Result\+::\+Status}} \+: uint8\+\_\+t\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Possible job execution states. 
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Success@{Success}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!Success@{Success}}}\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563ca505a83f220c02df2f85c3810cd9ceb38}\label{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563ca505a83f220c02df2f85c3810cd9ceb38} 
+Success&\doxylink{struct_void_architect_1_1_jobs_1_1_job}{Job} completed successfully. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Failed@{Failed}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!Failed@{Failed}}}\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563cad7c8c85bf79bbe1b7188497c32c3b0ca}\label{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563cad7c8c85bf79bbe1b7188497c32c3b0ca} 
+Failed&\doxylink{struct_void_architect_1_1_jobs_1_1_job}{Job} failed with error. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Cancelled@{Cancelled}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!Cancelled@{Cancelled}}}\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563caa149e85a44aeec9140e92733d9ed694e}\label{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563caa149e85a44aeec9140e92733d9ed694e} 
+Cancelled&\doxylink{struct_void_architect_1_1_jobs_1_1_job}{Job} was cancelled before completion. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\label{doc-constructors}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_abe2ac9fbb5eec964167eabc618ae8bb0}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!JobResult@{JobResult}}
+\index{JobResult@{JobResult}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+\doxysubsubsection{\texorpdfstring{JobResult()}{JobResult()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_job_result_abe2ac9fbb5eec964167eabc618ae8bb0} 
+Void\+Architect\+::\+Jobs\+::\+Job\+Result\+::\+Job\+Result (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Default constructor creates successful result. 
+
+Here is the call graph for this function\+:
+% FIG 0
+Here is the caller graph for this function\+:
+% FIG 1
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_ab7ececde814a3092f8482887b60d471c}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!JobResult@{JobResult}}
+\index{JobResult@{JobResult}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+\doxysubsubsection{\texorpdfstring{JobResult()}{JobResult()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_job_result_ab7ececde814a3092f8482887b60d471c} 
+Void\+Architect\+::\+Jobs\+::\+Job\+Result\+::\+Job\+Result (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c}{Status}}}]{s}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{msg}{ = {\ttfamily "{}"{}}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Construct result with specific status and message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & \doxylink{struct_void_architect_1_1_jobs_1_1_job}{Job} status \\
+\hline
+{\em msg} & Error message (optional) \\
+\hline
+\end{DoxyParams}
+
+
+\label{doc-func-members}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_ad5035943ee339b35edfc4303cb513b98}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!Cancelled@{Cancelled}}
+\index{Cancelled@{Cancelled}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+\doxysubsubsection{\texorpdfstring{Cancelled()}{Cancelled()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_job_result_ad5035943ee339b35edfc4303cb513b98} 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result}} Void\+Architect\+::\+Jobs\+::\+Job\+Result\+::\+Cancelled (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{message}{ = {\ttfamily "{}Job~was~cancelled"{}}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Create a cancelled job result with reason. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & Description of why the job was cancelled \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result} indicating cancellation 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+% FIG 2
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_a4dc1e84b3b86be405d032b2301d91f25}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!Failed@{Failed}}
+\index{Failed@{Failed}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+\doxysubsubsection{\texorpdfstring{Failed()}{Failed()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_job_result_a4dc1e84b3b86be405d032b2301d91f25} 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result}} Void\+Architect\+::\+Jobs\+::\+Job\+Result\+::\+Failed (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{message}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Create a failed job result with an error message. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em message} & Description of the failure \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result} indicating failure 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+% FIG 3
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_a4b5194a5776b63a16a66890827abee4d}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!GetStatusString@{GetStatusString}}
+\index{GetStatusString@{GetStatusString}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+\doxysubsubsection{\texorpdfstring{GetStatusString()}{GetStatusString()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_job_result_a4b5194a5776b63a16a66890827abee4d} 
+std\+::string Void\+Architect\+::\+Jobs\+::\+Job\+Result\+::\+Get\+Status\+String (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get a human-\/readable status string. 
+
+\begin{DoxyReturn}{Returns}
+String representation of the current status 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_aba87d18653ba743628dfc2996c7c8787}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!IsCancelled@{IsCancelled}}
+\index{IsCancelled@{IsCancelled}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+\doxysubsubsection{\texorpdfstring{IsCancelled()}{IsCancelled()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_job_result_aba87d18653ba743628dfc2996c7c8787} 
+bool Void\+Architect\+::\+Jobs\+::\+Job\+Result\+::\+Is\+Cancelled (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check if a job was cancelled. 
+
+\begin{DoxyReturn}{Returns}
+true if status is Cancelled 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_ac7ba949bf32377d702faaf4d502dd148}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!IsFailed@{IsFailed}}
+\index{IsFailed@{IsFailed}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+\doxysubsubsection{\texorpdfstring{IsFailed()}{IsFailed()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_job_result_ac7ba949bf32377d702faaf4d502dd148} 
+bool Void\+Architect\+::\+Jobs\+::\+Job\+Result\+::\+Is\+Failed (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check if a job failed. 
+
+\begin{DoxyReturn}{Returns}
+true if status is Failed 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_a32e94a3eb6028099a86b47df79f037fc}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!IsSuccess@{IsSuccess}}
+\index{IsSuccess@{IsSuccess}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+\doxysubsubsection{\texorpdfstring{IsSuccess()}{IsSuccess()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_job_result_a32e94a3eb6028099a86b47df79f037fc} 
+bool Void\+Architect\+::\+Jobs\+::\+Job\+Result\+::\+Is\+Success (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check if a job completed successfully. 
+
+\begin{DoxyReturn}{Returns}
+true if status is Success 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_ad24a0ccd3b2b067666f00f8f81c3af54}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!Success@{Success}}
+\index{Success@{Success}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+\doxysubsubsection{\texorpdfstring{Success()}{Success()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_job_result_ad24a0ccd3b2b067666f00f8f81c3af54} 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result}} Void\+Architect\+::\+Jobs\+::\+Job\+Result\+::\+Success (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Create a successful job result. 
+
+\begin{DoxyReturn}{Returns}
+\doxylink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result} indicating success 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+% FIG 4
+Here is the caller graph for this function\+:
+% FIG 5
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_aeab23ae67827b8c1a706f237a15ed149}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!errorMessage@{errorMessage}}
+\index{errorMessage@{errorMessage}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+\doxysubsubsection{\texorpdfstring{errorMessage}{errorMessage}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_job_result_aeab23ae67827b8c1a706f237a15ed149} 
+const char\texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Jobs\+::\+Job\+Result\+::error\+Message \{"{}"{}\}}
+
+
+
+Optional error message for failed/cancelled jobs. 
+
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_job_result_a3fe6fabc4fd69a12379677452dbb7265}\index{VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}!status@{status}}
+\index{status@{status}!VoidArchitect::Jobs::JobResult@{VoidArchitect::Jobs::JobResult}}
+\doxysubsubsection{\texorpdfstring{status}{status}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_job_result_a3fe6fabc4fd69a12379677452dbb7265} 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c}{Status}} Void\+Architect\+::\+Jobs\+::\+Job\+Result\+::status}
+
+
+
+Current status of the job. 
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Systems/\+Jobs/\mbox{\hyperlink{_job_types_8hpp}{Job\+Types.\+hpp}}\end{DoxyCompactItemize}

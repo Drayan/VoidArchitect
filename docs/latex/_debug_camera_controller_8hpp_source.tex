@@ -1,0 +1,62 @@
+\doxysection{Debug\+Camera\+Controller.\+hpp}
+\hypertarget{_debug_camera_controller_8hpp_source}{}\label{_debug_camera_controller_8hpp_source}\index{engine/src/Systems/Renderer/DebugCameraController.hpp@{engine/src/Systems/Renderer/DebugCameraController.hpp}}
+\mbox{\hyperlink{_debug_camera_controller_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 21/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_event_8hpp}{Core/Events/Event.hpp}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_key_event_8hpp}{Core/Events/KeyEvent.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_mouse_event_8hpp}{Core/Events/MouseEvent.hpp}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_quat_8hpp}{Core/Math/Quat.hpp}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vec3_8hpp}{Core/Math/Vec3.hpp}}"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}\ ::\mbox{\hyperlink{namespace_void_architect_01_1_1_renderer}{Renderer}}}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{class\ }Camera;}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_01_1_1_renderer_1_1_debug_camera_controller_aa875477cb9410788a1567445749a2e55}{DebugCameraController}}}
+\DoxyCodeLine{00016\ \ \ \ \ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_01_1_1_renderer_1_1_debug_camera_controller_aa875477cb9410788a1567445749a2e55}{DebugCameraController}}(Camera\&\ camera);}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_01_1_1_renderer_1_1_debug_camera_controller_acc83f7153ca6923a5c7e53e59fae3402}{OnFixedUpdate}}(\textcolor{keywordtype}{float}\ fixedTimestep);}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_01_1_1_renderer_1_1_debug_camera_controller_add6da9b909539dcf6145e0c8d0231e95}{OnEvent}}(Event\&\ e);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_01_1_1_renderer_1_1_debug_camera_controller_a0146c80adb2e983efb07c413a49cd9af}{OnKeyPressed}}(KeyPressedEvent\&\ e);}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_01_1_1_renderer_1_1_debug_camera_controller_ad7948a408a33bad9bf3c42174c9a4b7a}{OnKeyReleased}}(KeyReleasedEvent\&\ e);}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_01_1_1_renderer_1_1_debug_camera_controller_a0e4be2e07002d69527b4a270d585dc79}{OnMouseMoved}}(MouseMovedEvent\&\ e);}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_01_1_1_renderer_1_1_debug_camera_controller_ad26d8a554d4509936a5b3b7f057881ba}{OnMouseButtonPressed}}(MouseButtonPressedEvent\&\ e);}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_01_1_1_renderer_1_1_debug_camera_controller_a33868f84d32b2234a17ab38accfa7b3c}{OnMouseButtonReleased}}(MouseButtonReleasedEvent\&\ e);}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ UpdateCameraVectors();}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ Camera\&\ m\_Camera;}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ Math::Vec3\ m\_CameraPosition;}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ Math::Quat\ m\_CameraOrientation;}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ Math::Vec3\ m\_Forward;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ Math::Vec3\ m\_Right;}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ Math::Vec3\ m\_Up;}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_Pitch\ =\ 0.0f;}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_Yaw\ =\ 0.0f;}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_MovementSpeed\ =\ 5.f;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_RotationSpeed\ =\ .005f;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_MoveForward\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_MoveBackward\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_MoveLeft\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_MoveRight\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_MoveUp\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_MoveDown\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_MouseDrag\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00055\ \ \ \ \ \};}
+\DoxyCodeLine{00056\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect::Renderer}}
+
+\end{DoxyCode}

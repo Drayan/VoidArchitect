@@ -1,0 +1,41 @@
+\doxysection{Sub\+Mesh.\+hpp}
+\hypertarget{_sub_mesh_8hpp_source}{}\label{_sub_mesh_8hpp_source}\index{engine/src/Resources/SubMesh.hpp@{engine/src/Resources/SubMesh.hpp}}
+\mbox{\hyperlink{_sub_mesh_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 14/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_material_8hpp}{Material.hpp}}"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_resources}{VoidArchitect::Resources}}}
+\DoxyCodeLine{00008\ \{}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_mesh_data}{MeshData}};}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_a9cc011bb246ddf4c954bdebf8d7dd283}{SubMeshDescriptor}}}
+\DoxyCodeLine{00012\ \ \ \ \ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_acf49941a01742994279243d348967481}{name}};}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_ac9746089dc6bc65cc247f1ba5f98bbc1}{MaterialHandle}}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_aa934231347878e6379b53eda70a01ca0}{material}};}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_ae3b806bd96fbac06a281f391a7e16c2a}{indexOffset}};}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_a97beacdbc80c1a8e34203656ddbdaf29}{indexCount}};}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_a842e48bc7b6dfa389e2432a6ba11f0d9}{vertexOffset}};}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_aff6b7a4cdeb09bddf6fe56afbe25f2e6}{vertexCount}};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_a9cc011bb246ddf4c954bdebf8d7dd283}{SubMeshDescriptor}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_a9cc011bb246ddf4c954bdebf8d7dd283}{SubMeshDescriptor}}(}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ meshName,}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_resources_ac9746089dc6bc65cc247f1ba5f98bbc1}{MaterialHandle}}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_aa934231347878e6379b53eda70a01ca0}{material}},}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_ae3b806bd96fbac06a281f391a7e16c2a}{indexOffset}},}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_a97beacdbc80c1a8e34203656ddbdaf29}{indexCount}},}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_a842e48bc7b6dfa389e2432a6ba11f0d9}{vertexOffset}},}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_aff6b7a4cdeb09bddf6fe56afbe25f2e6}{vertexCount}});}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_ac9086aadf2d7cac9b7d6ad537fef5bd5}{IsValid}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_mesh_data}{MeshData}}\&\ data)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_a847b760ba60592e92d23cf7de2ff40fb}{IsEmpty}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_a97beacdbc80c1a8e34203656ddbdaf29}{indexCount}}\ ==\ 0\ ||\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_aff6b7a4cdeb09bddf6fe56afbe25f2e6}{vertexCount}}\ ==\ 0;\ \}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ [[nodiscard]]\ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_ac0575b96fc7d7400b1917df3f054e598}{GetIndexEnd}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_ae3b806bd96fbac06a281f391a7e16c2a}{indexOffset}}\ +\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_a97beacdbc80c1a8e34203656ddbdaf29}{indexCount}};\ \}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ [[nodiscard]]\ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_a3f3c57e159afd8821f5d2344cb795ca4}{GetVertexEnd}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_a842e48bc7b6dfa389e2432a6ba11f0d9}{vertexOffset}}\ +\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor_aff6b7a4cdeb09bddf6fe56afbe25f2e6}{vertexCount}};\ \}}
+\DoxyCodeLine{00034\ \ \ \ \ \};}
+\DoxyCodeLine{00035\ \}}
+
+\end{DoxyCode}

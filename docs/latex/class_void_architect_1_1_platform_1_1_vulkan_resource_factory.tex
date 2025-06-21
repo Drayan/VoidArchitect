@@ -1,0 +1,109 @@
+\doxysection{Void\+Architect\+::Platform\+::Vulkan\+Resource\+Factory Class Reference}
+\hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory}{}\label{class_void_architect_1_1_platform_1_1_vulkan_resource_factory}\index{VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}}
+
+
+{\ttfamily \#include $<$Vulkan\+Resource\+Factory.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_adef937f2ffb61da3204b8ced9c9486cc}{Vulkan\+Resource\+Factory}} (const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&device, Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}allocator)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a765cbd3adf549063e57a99501e0015f5}{\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Resource\+Factory}} ()=default
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_texture2_d}{Resources\+::\+Texture2D}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a42c50a33ec312d693feb580adc9a83c4}{Create\+Texture2D}} (const std\+::string \&name, uint32\+\_\+t width, uint32\+\_\+t height, uint8\+\_\+t channels, bool has\+Transparency, const VAArray$<$ uint8\+\_\+t $>$ \&data) const
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state}{Resources\+::\+IRender\+State}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a53fcaad2a002b241d7f1a73180a8b8aa}{Create\+Render\+State}} (const \mbox{\hyperlink{struct_void_architect_1_1_render_state_config}{Render\+State\+Config}} \&config, \mbox{\hyperlink{namespace_void_architect_a0a7e2042bd7abc0b743137291d70bd4e}{Render\+Pass\+Handle}} pass\+Handle) const
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material}{Resources\+::\+IMaterial}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_adc53da4e9a466c5625d61576bfdb4475}{Create\+Material}} (const std\+::string \&name, const \mbox{\hyperlink{struct_void_architect_1_1_material_template}{Material\+Template}} \&templ) const
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_shader}{Resources\+::\+IShader}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a78fd4ebc6d29278587684ad3d4e83a8e}{Create\+Shader}} (const std\+::string \&name, const \mbox{\hyperlink{struct_void_architect_1_1_shader_config}{Shader\+Config}} \&config, const VAArray$<$ uint8\+\_\+t $>$ \&data) const
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh}{Resources\+::\+IMesh}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a29cb38acd742e741b8d24bc7fc22c1b3}{Create\+Mesh}} (const std\+::string \&name, const std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_mesh_data}{Resources\+::\+Mesh\+Data}} $>$ \&data, const VAArray$<$ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor}{Resources\+::\+Sub\+Mesh\+Descriptor}} $>$ \&submeshes) const
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target}{Resources\+::\+IRender\+Target}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_abfdad8a62cef8761d5374f7b9a3c8aa7}{Create\+Render\+Target}} (const \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_target_config}{Renderer\+::\+Render\+Target\+Config}} \&config) const
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target}{Resources\+::\+IRender\+Target}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a8a935099e836cb66d11a9e767d6b0d2c}{Create\+Render\+Target}} (const std\+::string \&name, Vk\+Image native\+Image, Vk\+Format format) const
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_pass}{Resources\+::\+IRender\+Pass}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a0d6e60ae1d9501ed6e36217849f95da9}{Create\+Render\+Pass}} (const \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_pass_config}{Renderer\+::\+Render\+Pass\+Config}} \&config, \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5f}{Renderer\+::\+Pass\+Position}} pass\+Position, Vk\+Format swapchain\+Format, Vk\+Format depth\+Format) const
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_adef937f2ffb61da3204b8ced9c9486cc}\index{VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}!VulkanResourceFactory@{VulkanResourceFactory}}
+\index{VulkanResourceFactory@{VulkanResourceFactory}!VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}}
+\doxysubsubsection{\texorpdfstring{VulkanResourceFactory()}{VulkanResourceFactory()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_adef937f2ffb61da3204b8ced9c9486cc} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Resource\+Factory\+::\+Vulkan\+Resource\+Factory (\begin{DoxyParamCaption}\item[{const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&}]{device}{, }\item[{Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}}]{allocator}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a765cbd3adf549063e57a99501e0015f5}\index{VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}!````~VulkanResourceFactory@{\texorpdfstring{$\sim$}{\string~}VulkanResourceFactory}}
+\index{````~VulkanResourceFactory@{\texorpdfstring{$\sim$}{\string~}VulkanResourceFactory}!VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}VulkanResourceFactory()}{\string~VulkanResourceFactory()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a765cbd3adf549063e57a99501e0015f5} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Resource\+Factory\+::\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Resource\+Factory (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_adc53da4e9a466c5625d61576bfdb4475}\index{VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}!CreateMaterial@{CreateMaterial}}
+\index{CreateMaterial@{CreateMaterial}!VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}}
+\doxysubsubsection{\texorpdfstring{CreateMaterial()}{CreateMaterial()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_adc53da4e9a466c5625d61576bfdb4475} 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_material}{Resources\+::\+IMaterial}} \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Platform\+::\+Vulkan\+Resource\+Factory\+::\+Create\+Material (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{, }\item[{const \mbox{\hyperlink{struct_void_architect_1_1_material_template}{Material\+Template}} \&}]{templ}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a29cb38acd742e741b8d24bc7fc22c1b3}\index{VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}!CreateMesh@{CreateMesh}}
+\index{CreateMesh@{CreateMesh}!VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}}
+\doxysubsubsection{\texorpdfstring{CreateMesh()}{CreateMesh()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a29cb38acd742e741b8d24bc7fc22c1b3} 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_mesh}{Resources\+::\+IMesh}} \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Platform\+::\+Vulkan\+Resource\+Factory\+::\+Create\+Mesh (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{, }\item[{const std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_mesh_data}{Resources\+::\+Mesh\+Data}} $>$ \&}]{data}{, }\item[{const VAArray$<$ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_sub_mesh_descriptor}{Resources\+::\+Sub\+Mesh\+Descriptor}} $>$ \&}]{submeshes}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a0d6e60ae1d9501ed6e36217849f95da9}\index{VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}!CreateRenderPass@{CreateRenderPass}}
+\index{CreateRenderPass@{CreateRenderPass}!VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}}
+\doxysubsubsection{\texorpdfstring{CreateRenderPass()}{CreateRenderPass()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a0d6e60ae1d9501ed6e36217849f95da9} 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_pass}{Resources\+::\+IRender\+Pass}} \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Platform\+::\+Vulkan\+Resource\+Factory\+::\+Create\+Render\+Pass (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_pass_config}{Renderer\+::\+Render\+Pass\+Config}} \&}]{config}{, }\item[{\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab641f279a75bfba8e3fd3c4e642a5e5f}{Renderer\+::\+Pass\+Position}}}]{pass\+Position}{, }\item[{Vk\+Format}]{swapchain\+Format}{, }\item[{Vk\+Format}]{depth\+Format}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a53fcaad2a002b241d7f1a73180a8b8aa}\index{VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}!CreateRenderState@{CreateRenderState}}
+\index{CreateRenderState@{CreateRenderState}!VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}}
+\doxysubsubsection{\texorpdfstring{CreateRenderState()}{CreateRenderState()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a53fcaad2a002b241d7f1a73180a8b8aa} 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_state}{Resources\+::\+IRender\+State}} \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Platform\+::\+Vulkan\+Resource\+Factory\+::\+Create\+Render\+State (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_render_state_config}{Render\+State\+Config}} \&}]{config}{, }\item[{\mbox{\hyperlink{namespace_void_architect_a0a7e2042bd7abc0b743137291d70bd4e}{Render\+Pass\+Handle}}}]{pass\+Handle}{}\end{DoxyParamCaption}) const}
+
+Here is the call graph for this function\+:
+% FIG 0
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_abfdad8a62cef8761d5374f7b9a3c8aa7}\index{VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}!CreateRenderTarget@{CreateRenderTarget}}
+\index{CreateRenderTarget@{CreateRenderTarget}!VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}}
+\doxysubsubsection{\texorpdfstring{CreateRenderTarget()}{CreateRenderTarget()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_abfdad8a62cef8761d5374f7b9a3c8aa7} 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target}{Resources\+::\+IRender\+Target}} \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Platform\+::\+Vulkan\+Resource\+Factory\+::\+Create\+Render\+Target (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_renderer_1_1_render_target_config}{Renderer\+::\+Render\+Target\+Config}} \&}]{config}{}\end{DoxyParamCaption}) const}
+
+Here is the call graph for this function\+:
+% FIG 1
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a8a935099e836cb66d11a9e767d6b0d2c}\index{VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}!CreateRenderTarget@{CreateRenderTarget}}
+\index{CreateRenderTarget@{CreateRenderTarget}!VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}}
+\doxysubsubsection{\texorpdfstring{CreateRenderTarget()}{CreateRenderTarget()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a8a935099e836cb66d11a9e767d6b0d2c} 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_render_target}{Resources\+::\+IRender\+Target}} \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Platform\+::\+Vulkan\+Resource\+Factory\+::\+Create\+Render\+Target (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{, }\item[{Vk\+Image}]{native\+Image}{, }\item[{Vk\+Format}]{format}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a78fd4ebc6d29278587684ad3d4e83a8e}\index{VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}!CreateShader@{CreateShader}}
+\index{CreateShader@{CreateShader}!VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}}
+\doxysubsubsection{\texorpdfstring{CreateShader()}{CreateShader()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a78fd4ebc6d29278587684ad3d4e83a8e} 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_i_shader}{Resources\+::\+IShader}} \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Platform\+::\+Vulkan\+Resource\+Factory\+::\+Create\+Shader (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{, }\item[{const \mbox{\hyperlink{struct_void_architect_1_1_shader_config}{Shader\+Config}} \&}]{config}{, }\item[{const VAArray$<$ uint8\+\_\+t $>$ \&}]{data}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a42c50a33ec312d693feb580adc9a83c4}\index{VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}!CreateTexture2D@{CreateTexture2D}}
+\index{CreateTexture2D@{CreateTexture2D}!VoidArchitect::Platform::VulkanResourceFactory@{VoidArchitect::Platform::VulkanResourceFactory}}
+\doxysubsubsection{\texorpdfstring{CreateTexture2D()}{CreateTexture2D()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_resource_factory_a42c50a33ec312d693feb580adc9a83c4} 
+\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_texture2_d}{Resources\+::\+Texture2D}} \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Platform\+::\+Vulkan\+Resource\+Factory\+::\+Create\+Texture2D (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{, }\item[{uint32\+\_\+t}]{width}{, }\item[{uint32\+\_\+t}]{height}{, }\item[{uint8\+\_\+t}]{channels}{, }\item[{bool}]{has\+Transparency}{, }\item[{const VAArray$<$ uint8\+\_\+t $>$ \&}]{data}{}\end{DoxyParamCaption}) const}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_resource_factory_8hpp}{Vulkan\+Resource\+Factory.\+hpp}}\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_resource_factory_8cpp}{Vulkan\+Resource\+Factory.\+cpp}}\end{DoxyCompactItemize}

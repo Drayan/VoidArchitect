@@ -1,0 +1,105 @@
+\doxysection{Void\+Architect\+::Platform\+::Vulkan\+Binding\+Group\+Manager Class Reference}
+\hypertarget{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager}{}\label{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager}\index{VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}}
+
+
+{\ttfamily \#include $<$Vulkan\+Binding\+Group\+Manager.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a8ad538ee06a8d788bccdca2bd62d47dd}{Vulkan\+Binding\+Group\+Manager}} (std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&device, Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}allocator)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a368c9af4ca114380a0e7ae4f2a0c895c}{\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Binding\+Group\+Manager}} ()
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a5aa0354b2946cc5f0cb5e2f41248491d}{Vulkan\+Binding\+Group\+Manager}} (const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager}{Vulkan\+Binding\+Group\+Manager}} \&)=delete
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager}{Vulkan\+Binding\+Group\+Manager}} \& \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a965d66e5cecf5fa2b71a35a5eba42bee}{operator=}} (const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager}{Vulkan\+Binding\+Group\+Manager}} \&)=delete
+\item 
+Vk\+Descriptor\+Set\+Layout \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a7e6f411c0e34775834ddcf7c79ae3f8e}{Get\+Layout\+For}} (const \mbox{\hyperlink{struct_void_architect_1_1_render_state_config}{Render\+State\+Config}} \&state\+Config)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_af719a8f8eff09cc375e69703cf36a874}{Bind\+Material\+Group}} (Vk\+Command\+Buffer cmds\+Buf, \mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{Material\+Handle}} material\+Handle, \mbox{\hyperlink{namespace_void_architect_a10b206cefcde9a579f6f29ed09cbd690}{Render\+State\+Handle}} state\+Handle)
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a1158bab8de1e2649aebb3f58cb5e6e04}{Update\+Material\+UBO}} (\mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{Material\+Handle}} material\+Handle, const \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_material_uniform_object}{Resources\+::\+Material\+Uniform\+Object}} \&ubo)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr uint32\+\_\+t \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_abda738d5a556074250e2f734c6dcd9a1}{MAX\+\_\+\+MATERIALS}} = 1024
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a8ad538ee06a8d788bccdca2bd62d47dd}\index{VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}!VulkanBindingGroupManager@{VulkanBindingGroupManager}}
+\index{VulkanBindingGroupManager@{VulkanBindingGroupManager}!VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}}
+\doxysubsubsection{\texorpdfstring{VulkanBindingGroupManager()}{VulkanBindingGroupManager()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a8ad538ee06a8d788bccdca2bd62d47dd} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Binding\+Group\+Manager\+::\+Vulkan\+Binding\+Group\+Manager (\begin{DoxyParamCaption}\item[{std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&}]{device}{, }\item[{Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}}]{allocator}{}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 0
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a368c9af4ca114380a0e7ae4f2a0c895c}\index{VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}!````~VulkanBindingGroupManager@{\texorpdfstring{$\sim$}{\string~}VulkanBindingGroupManager}}
+\index{````~VulkanBindingGroupManager@{\texorpdfstring{$\sim$}{\string~}VulkanBindingGroupManager}!VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}VulkanBindingGroupManager()}{\string~VulkanBindingGroupManager()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a368c9af4ca114380a0e7ae4f2a0c895c} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Binding\+Group\+Manager\+::\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Binding\+Group\+Manager (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a5aa0354b2946cc5f0cb5e2f41248491d}\index{VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}!VulkanBindingGroupManager@{VulkanBindingGroupManager}}
+\index{VulkanBindingGroupManager@{VulkanBindingGroupManager}!VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}}
+\doxysubsubsection{\texorpdfstring{VulkanBindingGroupManager()}{VulkanBindingGroupManager()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a5aa0354b2946cc5f0cb5e2f41248491d} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Binding\+Group\+Manager\+::\+Vulkan\+Binding\+Group\+Manager (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager}{Vulkan\+Binding\+Group\+Manager}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 1
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_af719a8f8eff09cc375e69703cf36a874}\index{VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}!BindMaterialGroup@{BindMaterialGroup}}
+\index{BindMaterialGroup@{BindMaterialGroup}!VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}}
+\doxysubsubsection{\texorpdfstring{BindMaterialGroup()}{BindMaterialGroup()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_af719a8f8eff09cc375e69703cf36a874} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Binding\+Group\+Manager\+::\+Bind\+Material\+Group (\begin{DoxyParamCaption}\item[{Vk\+Command\+Buffer}]{cmds\+Buf}{, }\item[{\mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{Material\+Handle}}}]{material\+Handle}{, }\item[{\mbox{\hyperlink{namespace_void_architect_a10b206cefcde9a579f6f29ed09cbd690}{Render\+State\+Handle}}}]{state\+Handle}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a7e6f411c0e34775834ddcf7c79ae3f8e}\index{VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}!GetLayoutFor@{GetLayoutFor}}
+\index{GetLayoutFor@{GetLayoutFor}!VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}}
+\doxysubsubsection{\texorpdfstring{GetLayoutFor()}{GetLayoutFor()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a7e6f411c0e34775834ddcf7c79ae3f8e} 
+Vk\+Descriptor\+Set\+Layout Void\+Architect\+::\+Platform\+::\+Vulkan\+Binding\+Group\+Manager\+::\+Get\+Layout\+For (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_render_state_config}{Render\+State\+Config}} \&}]{state\+Config}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 2
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a965d66e5cecf5fa2b71a35a5eba42bee}\index{VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a965d66e5cecf5fa2b71a35a5eba42bee} 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager}{Vulkan\+Binding\+Group\+Manager}} \& Void\+Architect\+::\+Platform\+::\+Vulkan\+Binding\+Group\+Manager\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager}{Vulkan\+Binding\+Group\+Manager}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 3
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a1158bab8de1e2649aebb3f58cb5e6e04}\index{VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}!UpdateMaterialUBO@{UpdateMaterialUBO}}
+\index{UpdateMaterialUBO@{UpdateMaterialUBO}!VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}}
+\doxysubsubsection{\texorpdfstring{UpdateMaterialUBO()}{UpdateMaterialUBO()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_a1158bab8de1e2649aebb3f58cb5e6e04} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Binding\+Group\+Manager\+::\+Update\+Material\+UBO (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_void_architect_ad0a851890901f21105f24139d04b7d35}{Material\+Handle}}}]{material\+Handle}{, }\item[{const \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_material_uniform_object}{Resources\+::\+Material\+Uniform\+Object}} \&}]{ubo}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_abda738d5a556074250e2f734c6dcd9a1}\index{VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}!MAX\_MATERIALS@{MAX\_MATERIALS}}
+\index{MAX\_MATERIALS@{MAX\_MATERIALS}!VoidArchitect::Platform::VulkanBindingGroupManager@{VoidArchitect::Platform::VulkanBindingGroupManager}}
+\doxysubsubsection{\texorpdfstring{MAX\_MATERIALS}{MAX\_MATERIALS}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_binding_group_manager_abda738d5a556074250e2f734c6dcd9a1} 
+uint32\+\_\+t Void\+Architect\+::\+Platform\+::\+Vulkan\+Binding\+Group\+Manager\+::\+MAX\+\_\+\+MATERIALS = 1024\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_binding_group_manager_8hpp}{Vulkan\+Binding\+Group\+Manager.\+hpp}}\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_binding_group_manager_8cpp}{Vulkan\+Binding\+Group\+Manager.\+cpp}}\end{DoxyCompactItemize}

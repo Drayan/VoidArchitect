@@ -1,0 +1,180 @@
+\doxysection{Job\+Scheduler.\+hpp}
+\hypertarget{_job_scheduler_8hpp_source}{}\label{_job_scheduler_8hpp_source}\index{engine/src/Systems/Jobs/JobScheduler.hpp@{engine/src/Systems/Jobs/JobScheduler.hpp}}
+\mbox{\hyperlink{_job_scheduler_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 20/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_job_types_8hpp}{JobTypes.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_sync_point_8hpp}{SyncPoint.hpp}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_fixed_storage_8hpp}{Core/Collections/FixedStorage.hpp}}"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacemoodycamel}{moodycamel}}}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classmoodycamel_1_1_concurrent_queue}{ConcurrentQueue}};}
+\DoxyCodeLine{00014\ \}}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_jobs}{VoidArchitect::Jobs}}}
+\DoxyCodeLine{00017\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{comment}{//\ ===\ Forward\ Declaration\ ===}}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_jobs_1_1_job_system}{JobSystem}};}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{comment}{//\ ===\ Job\ System\ Statistics\ ===}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keyword}{struct\ }JobSystemStats}
+\DoxyCodeLine{00028\ \ \ \ \ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ std::atomic<uint64\_t>\ jobsSubmitted\{0\};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ std::atomic<uint64\_t>\ jobsCompleted\{0\};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ std::atomic<uint64\_t>\ jobsFailed\{0\};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ std::atomic<uint64\_t>\ jobsCancelled\{0\};}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ std::atomic<uint64\_t>\ syncPointsCreated\{0\};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ std::atomic<uint64\_t>\ syncPointsSignaled\{0\};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ std::atomic<uint64\_t>\ jobsInQueue\{0\};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ std::atomic<uint64\_t>\ jobsExecuting\{0\};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ std::atomic<uint32\_t>\ activeWorkers\{0\};}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ GetJobsPerSecond(\textcolor{keywordtype}{float}\ deltaTimeSeconds)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ GetUtilizationPercentage()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00064\ \ \ \ \ \};}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{//\ ===\ Submission\ Result\ ===}}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{enum\ class}\ SubmissionResult\ :\ uint8\_t}
+\DoxyCodeLine{00073\ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ Success\ =\ 0,\ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ StorageFull\_Retry,\ }
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ StorageFull\_Critical\ }
+\DoxyCodeLine{00077\ \ \ \ \ \};}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{comment}{//\ ===\ JobScheduler\ Core\ Class\ ===}}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00137\ \ \ \ \ \textcolor{keyword}{class\ }JobScheduler}
+\DoxyCodeLine{00138\ \ \ \ \ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Lifecycle\ Management\ ===}}
+\DoxyCodeLine{00141\ }
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ JobScheduler(uint32\_t\ workerCount\ =\ 0);}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \string~JobScheduler();}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Non-\/copyable\ and\ non-\/movable}}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ JobScheduler(\textcolor{keyword}{const}\ JobScheduler\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ JobScheduler\&\ operator=(\textcolor{keyword}{const}\ JobScheduler\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ JobScheduler(JobScheduler\&\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ JobScheduler\&\ operator=(JobScheduler\&\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ IsRunning()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00164\ \textcolor{keyword}{\ \ \ \ \ \ \ \ }\{}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ !m\_Shutdown.load(std::memory\_order\_acquire);}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00167\ }
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ SyncPoint\ Management\ ===}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_aefce444dfbbc6313f911cbbf2ce08d4c}{SyncPointHandle}}\ CreateSyncPoint(uint32\_t\ initialCount,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name);}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Signal(SyncPointHandle\ sp,\ JobResult\ result);}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ Cancel(SyncPointHandle\ sp,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ reason);}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ IsSignaled(SyncPointHandle\ sp)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00202\ }
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ JobResult::Status\ GetSyncPointStatus(SyncPointHandle\ sp)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Job\ Submission\ (Backend\ API)\ ===}}
+\DoxyCodeLine{00209\ }
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{JobHandle}}\ Submit(}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ JobFunction\ job,}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ SyncPointHandle\ signalSP,}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ JobPriority\ priority,}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name);}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{JobHandle}}\ SubmitAfter(}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ SyncPointHandle\ dependency,}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ JobFunction\ job,}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ SyncPointHandle\ signalSP,}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ JobPriority\ priority,}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name);}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Synchronization\ (Main\ Thread\ Only\ ===}}
+\DoxyCodeLine{00245\ }
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ WaitFor(SyncPointHandle\ sp);}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ WaitForMultiple(std::span<SyncPointHandle>\ syncPoints,\ \textcolor{keywordtype}{bool}\ waitForAll\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Statistics\ and\ Monitoring\ ===}}
+\DoxyCodeLine{00263\ }
+\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ JobSystemStats\&\ GetStats()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Stats;\ \}}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ GetBackpressureLevel()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00277\ }
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ std::array<size\_t,\ 4>\ GetQueueLengths()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00281\ }
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ class\ ::VoidArchitect::Jobs::JobSystem;}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Storage\ and\ Memory\ Management\ ===}}
+\DoxyCodeLine{00286\ }
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ FixedStorage<Job,\ MAX\_JOBS>\ m\_JobStorage;}
+\DoxyCodeLine{00289\ }
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ FixedStorage<SyncPoint,\ MAX\_SYNCPOINTS>\ m\_SyncPointStorage;}
+\DoxyCodeLine{00292\ }
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Worker\ Thread\ Management\ ===}}
+\DoxyCodeLine{00294\ }
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ VAArray<std::unique\_ptr<Platform::IThread>>\ m\_Workers;}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ std::atomic<bool>\ m\_Shutdown\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ std::atomic<uint32\_t>\ m\_ActiveWorkers\{0\};}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Priority\ Queue\ System\ ===}}
+\DoxyCodeLine{00305\ }
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ std::array<std::unique\_ptr<moodycamel::ConcurrentQueue<JobHandle>>,\ 4>\ m\_PriorityQueues;}
+\DoxyCodeLine{00308\ }
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }PullWeights}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint8\_t\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_adb7e4d8af5862b62a479c742a238f9b2a278d01e5af56273bae1bb99a98b370cd}{Critical}}\ =\ 8;}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint8\_t\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_adb7e4d8af5862b62a479c742a238f9b2a655d20c1ca69519ca647684edbb2db35}{High}}\ =\ 4;}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint8\_t\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_adb7e4d8af5862b62a479c742a238f9b2a960b44c579bc2f6818d2daaf9e4c16f0}{Normal}}\ =\ 2;}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint8\_t\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_adb7e4d8af5862b62a479c742a238f9b2a28d0edd045e05cf5af64e35ae0c4c6ef}{Low}}\ =\ 1;}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint8\_t\ Total\ =\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_adb7e4d8af5862b62a479c742a238f9b2a278d01e5af56273bae1bb99a98b370cd}{Critical}}\ +\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_adb7e4d8af5862b62a479c742a238f9b2a655d20c1ca69519ca647684edbb2db35}{High}}\ +\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_adb7e4d8af5862b62a479c742a238f9b2a960b44c579bc2f6818d2daaf9e4c16f0}{Normal}}\ +\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_adb7e4d8af5862b62a479c742a238f9b2a28d0edd045e05cf5af64e35ae0c4c6ef}{Low}};}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00318\ }
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Statistics\ ===}}
+\DoxyCodeLine{00320\ }
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \textcolor{keyword}{mutable}\ JobSystemStats\ m\_Stats;}
+\DoxyCodeLine{00323\ }
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ Private\ Implementation\ Methods\ ===}}
+\DoxyCodeLine{00325\ }
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ WorkerThreadMain(uint32\_t\ workerIndex);}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{JobHandle}}\ PullJobFromQueues(uint32\_t\ workerIndex);}
+\DoxyCodeLine{00343\ }
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ ExecuteJob(JobHandle\ jobHandle,\ uint32\_t\ workerIndex);}
+\DoxyCodeLine{00351\ }
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ ProcessSyncPointCompletion(SyncPoint*\ sp);}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ EnqueueJob(JobHandle\ jobHandle,\ JobPriority\ priority);}
+\DoxyCodeLine{00367\ }
+\DoxyCodeLine{00373\ \ \ \ \ \ \ \ \ SubmissionResult\ CheckBackpressure()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ InitializePriorityQueues();}
+\DoxyCodeLine{00378\ }
+\DoxyCodeLine{00382\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ InitializeWorkers(uint32\_t\ workerCount);}
+\DoxyCodeLine{00383\ }
+\DoxyCodeLine{00385\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ CleanupResources();}
+\DoxyCodeLine{00386\ \ \ \ \ \};}
+\DoxyCodeLine{00387\ \}}
+
+\end{DoxyCode}

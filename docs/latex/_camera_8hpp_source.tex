@@ -1,0 +1,67 @@
+\doxysection{Camera.\+hpp}
+\hypertarget{_camera_8hpp_source}{}\label{_camera_8hpp_source}\index{engine/src/Systems/Renderer/Camera.hpp@{engine/src/Systems/Renderer/Camera.hpp}}
+\mbox{\hyperlink{_camera_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 20/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_mat4_8hpp}{Core/Math/Mat4.hpp}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_quat_8hpp}{Core/Math/Quat.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vec3_8hpp}{Core/Math/Vec3.hpp}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_renderer}{VoidArchitect::Renderer}}}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96}{CameraType}}}
+\DoxyCodeLine{00012\ \ \ \ \ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96aa80420eef88d11f77532f1b9cb467fa3}{Perspective}},}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96a03424250432f2aa71de95579d2c0eaeb}{Orthographic}},}
+\DoxyCodeLine{00015\ \ \ \ \ \};}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera_a4cef1ce64a3bfd1e73b352540dc53563}{Camera}}}
+\DoxyCodeLine{00018\ \ \ \ \ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera_a4cef1ce64a3bfd1e73b352540dc53563}{Camera}}(\textcolor{keywordtype}{float}\ fov,\ \textcolor{keywordtype}{float}\ aspect,\ \textcolor{keywordtype}{float}\ near,\ \textcolor{keywordtype}{float}\ far);}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera_a4cef1ce64a3bfd1e73b352540dc53563}{Camera}}(\textcolor{keywordtype}{float}\ top,\ \textcolor{keywordtype}{float}\ bottom,\ \textcolor{keywordtype}{float}\ left,\ \textcolor{keywordtype}{float}\ right,\ \textcolor{keywordtype}{float}\ near,\ \textcolor{keywordtype}{float}\ far);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera_af41837ac7bb449527198e34f13ff6df4}{RecalculateView}}();}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math::Mat4}}\&\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera_a690c580ccfdeed748928b7cc0a25c9a6}{GetProjection}}()\ \{\ \textcolor{keywordflow}{return}\ m\_Projection;\ \}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math::Mat4}}\&\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera_a690a7527b5adcb3345b5079ad477f834}{GetView}}()\ \{\ \textcolor{keywordflow}{return}\ m\_View;\ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera_a02c5cfeccb39dc81f7220b673e4f15d8}{GetPosition}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Position;\ \}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera_a14269f5b82d3a1a6cdbc9fb828937990}{SetAspectRatio}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ aspectRatio)\ \{\ m\_AspectRatio\ =\ aspectRatio;\ \}}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera_a889fd7aa09f13d4289e637bfda0be861}{SetPosition}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\&\ position)\ \{\ m\_Position\ =\ position;\ \}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera_af73ca9ab71db5c71a38ebeb111407938}{SetPosition}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ x,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ y,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ z)}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ m\_Position\ =\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}(x,\ y,\ z);}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera_afadfb42afe38fd1ac13a4c2a1d960ff6}{SetRotation}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math::Quat}}\&\ quat)\ \{\ m\_Rotation\ =\ quat;\ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math::Quat}}\ \mbox{\hyperlink{class_void_architect_1_1_renderer_1_1_camera_a9f14e3cfa7b1f7a7132793df7820ac34}{GetRotation}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Rotation;\ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_aff116bcfa4daf99b974bc821c5925d96}{CameraType}}\ m\_Type;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_Fov;}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_AspectRatio;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_Top;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_Bottom;}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_Left;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_Right;}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_Near;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ m\_Far;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math::Mat4}}\ m\_View;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math::Mat4}}\ m\_Projection;}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\ m\_Position;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math::Quat}}\ m\_Rotation;}
+\DoxyCodeLine{00060\ \ \ \ \ \};}
+\DoxyCodeLine{00061\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect::Renderer}}
+
+\end{DoxyCode}

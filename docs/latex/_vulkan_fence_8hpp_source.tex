@@ -1,0 +1,39 @@
+\doxysection{Vulkan\+Fence.\+hpp}
+\hypertarget{_vulkan_fence_8hpp_source}{}\label{_vulkan_fence_8hpp_source}\index{engine/src/Platform/RHI/Vulkan/VulkanFence.hpp@{engine/src/Platform/RHI/Vulkan/VulkanFence.hpp}}
+\mbox{\hyperlink{_vulkan_fence_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 19/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <vulkan/vulkan.h>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00008\ \{}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{VulkanDevice}};}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_aca5b662da1d4e0c742c79789b879e07b}{VulkanFence}}}
+\DoxyCodeLine{00012\ \ \ \ \ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_aca5b662da1d4e0c742c79789b879e07b}{VulkanFence}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_aca5b662da1d4e0c742c79789b879e07b}{VulkanFence}}(}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::unique\_ptr<VulkanDevice>\&\ device,}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ VkAllocationCallbacks*\ allocator,}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ createSignaled\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_aca5b662da1d4e0c742c79789b879e07b}{VulkanFence}}(VkDevice\ device,\ VkAllocationCallbacks*\ allocator,\ \textcolor{keywordtype}{bool}\ createSignaled\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_a783c255c2551d8217d0d2385548bef8c}{\string~VulkanFence}}();}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_ab5c08fa79b62f8fdd2798f3141e6bfa1}{Wait}}(uint64\_t\ timeout\ =\ std::numeric\_limits<uint64\_t>::max());}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_ab546fec5c88ebdb615fdc2c962df57cc}{Reset}}();}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ VkFence\ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_ae172c1fe6a398d0f44be9437f52a98ec}{GetHandle}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Fence;\ \};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ VkDevice\ m\_Device;}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ VkAllocationCallbacks*\ m\_Allocator;}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_Signaled\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ VkFence\ m\_Fence;}
+\DoxyCodeLine{00032\ \ \ \ \ \};}
+\DoxyCodeLine{00033\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect::Platform}}
+
+\end{DoxyCode}

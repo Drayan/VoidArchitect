@@ -1,0 +1,73 @@
+\doxysection{Vulkan\+Utils.\+hpp}
+\hypertarget{_vulkan_utils_8hpp_source}{}\label{_vulkan_utils_8hpp_source}\index{engine/src/Platform/RHI/Vulkan/VulkanUtils.hpp@{engine/src/Platform/RHI/Vulkan/VulkanUtils.hpp}}
+\mbox{\hyperlink{_vulkan_utils_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 19/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <vulkan/vulkan\_core.h>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_logger_8hpp}{Core/Logger.hpp}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_renderer_types_8hpp}{Systems/Renderer/RendererTypes.hpp}}"{}}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00011\ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_resources}{Resources}}}
+\DoxyCodeLine{00013\ \ \ \ \ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespace_void_architect_1_1_resources_ab2eac8b50f5500ec0b2cf9beef1f215b}{ShaderStage}};}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespace_void_architect_1_1_resources_a5d5e1abd2d3371f98679e35af136125b}{TextureFilterMode}};}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfaf}{TextureRepeatMode}};}
+\DoxyCodeLine{00017\ \ \ \ \ \}}
+\DoxyCodeLine{00018\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_platform}{VoidArchitect::Platform}}}
+\DoxyCodeLine{00021\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{comment}{//\ ===\ Engine\ -\/>\ Vulkan\ translation\ functions\ ===}}
+\DoxyCodeLine{00023\ \ \ \ \ VkDescriptorType\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a0bf5e5ee1a29124fda8571efbfabf897}{TranslateEngineResourceTypeToVulkan}}(\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94d}{Renderer::ResourceBindingType}}\ type);}
+\DoxyCodeLine{00024\ \ \ \ \ VkShaderStageFlagBits\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aa2f71b78cd84660d6a865557a86d99f0}{TranslateEngineShaderStageToVulkan}}(\mbox{\hyperlink{namespace_void_architect_1_1_resources_ab2eac8b50f5500ec0b2cf9beef1f215b}{Resources::ShaderStage}}\ stage);}
+\DoxyCodeLine{00025\ \ \ \ \ VkFormat\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aa6b11265965265e2c86f5b0e62c3f5a6}{TranslateEngineTextureFormatToVulkan}}(\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Renderer::TextureFormat}}\ format);}
+\DoxyCodeLine{00026\ \ \ \ \ VkAttachmentLoadOp\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a73f5a7cc63f505bf5b68fba14a6527f6}{TranslateEngineLoadOpToVulkan}}(\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587f}{Renderer::LoadOp}}\ op);}
+\DoxyCodeLine{00027\ \ \ \ \ VkAttachmentStoreOp\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a4c089a6511bd41f200a89c7341239c0d}{TranslateEngineStoreOpToVulkan}}(\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717da}{Renderer::StoreOp}}\ op);}
+\DoxyCodeLine{00028\ \ \ \ \ VkFilter\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_ab8e8d69d9acdc36f36e01846bf6fdff0}{TranslateEngineTextureFilterToVulkan}}(\mbox{\hyperlink{namespace_void_architect_1_1_resources_a5d5e1abd2d3371f98679e35af136125b}{Resources::TextureFilterMode}}\ mode);}
+\DoxyCodeLine{00029\ \ \ \ \ VkSamplerAddressMode\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a8f66cd2b80f9112375361225006f859c}{TranslateEngineTextureRepeatToVulkan}}(\mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfaf}{Resources::TextureRepeatMode}}\ mode);}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{//\ ===\ Vulkan\ -\/>\ Engine\ translation\ functions\ ===}}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Renderer::TextureFormat}}\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a4d5339b70d2374894a5291987c9fc99c}{TranslateVulkanTextureFormatToEngine}}(VkFormat\ format);}
+\DoxyCodeLine{00033\ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587f}{Renderer::LoadOp}}\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_abb85d5be5dc690fa12c7fd342878dfaa}{TranslateVulkanLoadOpToEngine}}(VkAttachmentLoadOp\ op);}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717da}{Renderer::StoreOp}}\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a97efa4e8f7f68a47f8a54257c8d06b8b}{TranslateVulkanStoreOpToEngine}}(VkAttachmentStoreOp\ op);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a47a51b66c3494e89f005e12b3a7437da}{AlignUp}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ value,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ alignment)}
+\DoxyCodeLine{00037\ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (value\ +\ alignment\ -\/\ 1)\ \&\ \string~(alignment\ -\/\ 1);}
+\DoxyCodeLine{00039\ \ \ \ \ \}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ std::string\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_aadc301862807fcef7ebfeb69cc0fafc5}{VulkanGetResultString}}(VkResult\ result,\ \textcolor{keywordtype}{bool}\ extended\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{namespace_void_architect_1_1_platform_a0284f1241a77dd7635da56ae7ecb68c2}{VulkanCheckResult}}(VkResult\ result);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{preprocessor}{\#define\ VA\_VULKAN\_CHECK\_RESULT\_CRITICAL(x)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ auto\ result\ =\ x;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ if\ (!VulkanCheckResult(result))\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ auto\ errorString\ =\ VulkanGetResultString(result);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ VA\_ENGINE\_CRITICAL("{}Vulkan\ error:\ \{\}"{},\ errorString);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ throw\ std::runtime\_error(errorString);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00053\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\ \ \ \ \}}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{preprocessor}{\#define\ VA\_VULKAN\_CHECK\_RESULT\_WARN(x)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00057\ \textcolor{preprocessor}{\ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00058\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ auto\ result\ =\ x;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00059\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ if\ (!VulkanCheckResult(result))\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00061\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ auto\ errorString\ =\ VulkanGetResultString(result);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00062\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ VA\_ENGINE\_WARN("{}Vulkan\ error:\ \{\}"{},\ errorString);\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00063\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \(\backslash\)}}
+\DoxyCodeLine{00064\ \textcolor{preprocessor}{\ \ \ \ \}}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \textcolor{preprocessor}{\#define\ VA\_VULKAN\_CHECK\_RESULT(x)\ !VulkanCheckResult(x)}}
+\DoxyCodeLine{00067\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect::Platform}}
+
+\end{DoxyCode}

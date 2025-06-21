@@ -1,0 +1,431 @@
+\doxysection{Void\+Architect\+::Jobs\+::Sync\+Point Struct Reference}
+\hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point}{}\label{struct_void_architect_1_1_jobs_1_1_sync_point}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+
+
+Thread-\/safe synchronization point for job dependency management.  
+
+
+
+
+{\ttfamily \#include $<$Sync\+Point.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a7ec5d8f6ffed09e8688b96fb2d8f4a5a}{Sync\+Point}} ()=default
+\begin{DoxyCompactList}\small\item\em Default constructor creates invalid sync point. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a10bfeec925042ef364cf598db4271124}{Sync\+Point}} (uint32\+\_\+t initial\+Count, const char \texorpdfstring{$\ast$}{*}name)
+\begin{DoxyCompactList}\small\item\em Construct a \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} with initial dependency count. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_aa83212429d6fa0e7397fc53a35e04016}{\texorpdfstring{$\sim$}{\string~}\+Sync\+Point}} ()
+\begin{DoxyCompactList}\small\item\em Destructor cleans up overflow storage if allocated. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_aacde2ca3100ab8e65e9f430da30ccaaf}{Sync\+Point}} (const \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}} \& \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_ae1e0200c9f88a880a96a378e228d0f5a}{operator=}} (const \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}} \&)=delete
+\item 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a220b220abd48fdf9c2851e6ada7cc7ea}{Sync\+Point}} (\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}} \&\&)=delete
+\item 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}} \& \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a1173b57f0383b9596f363438b89672cf}{operator=}} (\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}} \&\&)=delete
+\item 
+bool \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a1d4cccc10ad67ca9ecd7856d1346505a}{Decrement\+And\+Check}} (const \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result}} \&result)
+\begin{DoxyCompactList}\small\item\em Atomically decrement counter and check if sync point is signaled. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_aeeb648d851a4b36e965177fbe0dae810}{Is\+Signaled}} () const
+\begin{DoxyCompactList}\small\item\em Check if \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} is currently signaled. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a875a3ba515dfdb8c67a254d6f4cb3081}{Get\+Pending\+Count}} () const
+\begin{DoxyCompactList}\small\item\em Get current dependency count. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c}{Job\+Result\+::\+Status}} \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_af38941ed4ccfd628eedcb3c78c366cac}{Get\+Status}} () const
+\begin{DoxyCompactList}\small\item\em Get current status of the \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_ad3718aa23182d93c540ee28b28575652}{Add\+Continuation}} (\mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{Job\+Handle}} handle)
+\begin{DoxyCompactList}\small\item\em Add a job continuation to this \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}. \end{DoxyCompactList}\item 
+VAArray$<$ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{Job\+Handle}} $>$ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_ac34daddd861e10c0e41a7a06438be41a}{Get\+Continuations}} ()
+\begin{DoxyCompactList}\small\item\em Get all continuation handles for processing. \end{DoxyCompactList}\item 
+const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_aca8f66420847392d80ac6608bc118735}{Get\+Status\+String}} () const
+\begin{DoxyCompactList}\small\item\em Get a human-\/readable status string. \end{DoxyCompactList}\item 
+std\+::chrono\+::nanoseconds \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a5043d11aa13e7ccae3e437ab2db2cb90}{Get\+Elapsed\+Time}} () const
+\begin{DoxyCompactList}\small\item\em Get time elapsed since \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} creation. \end{DoxyCompactList}\item 
+const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a31e9ec7f2a478604e9bc5a1d961a4d31}{Get\+Debug\+Name}} () const
+\begin{DoxyCompactList}\small\item\em Get debug name for logging and profiling. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::atomic$<$ uint32\+\_\+t $>$ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a19da0944e153737e7d7909777c8d0e60}{counter}}
+\begin{DoxyCompactList}\small\item\em Number of dependencies remaining before sync point is signaled. \end{DoxyCompactList}\item 
+std\+::atomic$<$ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c}{Job\+Result\+::\+Status}} $>$ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_ae04a56c683dda3f719dc5c1b786e1383}{status}}
+\begin{DoxyCompactList}\small\item\em Aggregated status of all dependencies (can only degrade) \end{DoxyCompactList}\item 
+std\+::array$<$ std\+::atomic$<$ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{Job\+Handle}} $>$, \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a76f110192596e8dc7c086e231eec4ef3}{INLINE\+\_\+\+CONTINUATIONS}} $>$ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_adb3be18de1adeacd0148478403d028e6}{inline\+Continuations}}
+\begin{DoxyCompactList}\small\item\em Inline continuation storage for fast access (covers \texorpdfstring{$\sim$}{\string~}95\% of use cases) \end{DoxyCompactList}\item 
+std\+::atomic$<$ uint8\+\_\+t $>$ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a649a1d4b32e6ecaf32edcd107dfe1d68}{inline\+Count}} \{0\}
+\begin{DoxyCompactList}\small\item\em Number of continuations stored inline (0-\/6) \end{DoxyCompactList}\item 
+std\+::atomic$<$ VAArray$<$ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{Job\+Handle}} $>$ \texorpdfstring{$\ast$}{*} $>$ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_aad4c58b0094f6fbed04f1e7a4723265b}{overflow\+Continuations}} \{nullptr\}
+\begin{DoxyCompactList}\small\item\em Overflow storage for rare cases with \texorpdfstring{$>$}{>}6 continuations. \end{DoxyCompactList}\item 
+std\+::atomic$<$ bool $>$ \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_aba7522e460211cfb838d2eda7a8d386f}{overflow\+Lock}} \{false\}
+\begin{DoxyCompactList}\small\item\em Simple spinlock for overflow vector operations (rare case) \end{DoxyCompactList}\item 
+const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_ace943cecd77d506149a1f174552ce556}{debug\+Name}}
+\begin{DoxyCompactList}\small\item\em Debug name for profiling and logging (should be static string) \end{DoxyCompactList}\item 
+std\+::chrono\+::high\+\_\+resolution\+\_\+clock\+::time\+\_\+point \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a0e1979f0f75047c0f5d7887d810702cd}{creation\+Time}}
+\begin{DoxyCompactList}\small\item\em Timestamp when sync point was created. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr size\+\_\+t \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a76f110192596e8dc7c086e231eec4ef3}{INLINE\+\_\+\+CONTINUATIONS}} = 6
+\begin{DoxyCompactList}\small\item\em Number of inline continuation slots (optimized for common case) \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Thread-\/safe synchronization point for job dependency management. 
+
+\doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} provides a robust mechanism for coordinating job execution dependencies in a lock-\/free manner. It supports atomic counter-\/based synchronization with status propagation and continuation management.\hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_autotoc_md0}{}\doxysubsection{\texorpdfstring{Key features\+:}{Key features\+:}}\label{struct_void_architect_1_1_jobs_1_1_sync_point_autotoc_md0}
+
+\begin{DoxyItemize}
+\item Atomic dependency counting with status aggregation
+\item Lock-\/free hot path for counter operations
+\item Hybrid continuation storage (inline + overflow)
+\item Automatic failure/cancellation cascade propagation
+\item Debug-\/friendly naming and timing information
+\end{DoxyItemize}\hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_autotoc_md1}{}\doxysubsection{\texorpdfstring{Architecture\+:}{Architecture\+:}}\label{struct_void_architect_1_1_jobs_1_1_sync_point_autotoc_md1}
+
+\begin{DoxyItemize}
+\item Hot data (counter, status) uses atomic operations for lock-\/free access
+\item Continuations use hybrid storage \+: 6 inline slots + overflow vector
+\item Status can only degrade (Success -\/\texorpdfstring{$>$}{>} Failed/\+Cancelled) for safety
+\item Thread-\/safe continuation management with minimal locking
+\end{DoxyItemize}\hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_autotoc_md2}{}\doxysubsection{\texorpdfstring{Usage example\+:}{Usage example\+:}}\label{struct_void_architect_1_1_jobs_1_1_sync_point_autotoc_md2}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ sync\ point\ for\ fan-\/in\ dependency\ (wait\ for\ 3\ jobs)}}
+\DoxyCodeLine{\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a7ec5d8f6ffed09e8688b96fb2d8f4a5a}{SyncPoint}}\ syncPoint(3,\ \textcolor{stringliteral}{"{}ChunkGenerationComplete"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Add\ continuation\ jobs}}
+\DoxyCodeLine{syncPoint.AddContinuation(renderJobHandle);}
+\DoxyCodeLine{syncPoint.AddContinuation(collisionJobHandle);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Jobs\ signal\ completion\ (automatically\ decrements\ counter)}}
+\DoxyCodeLine{syncPoint.DecrementAndCheck(\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_ad24a0ccd3b2b067666f00f8f81c3af54}{JobResult::Success}}());\ \textcolor{comment}{//\ count:\ 3\ -\/>\ 2}}
+\DoxyCodeLine{syncPoint.DecrementAndCheck(\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_ad24a0ccd3b2b067666f00f8f81c3af54}{JobResult::Success}}());\ \textcolor{comment}{//\ count:\ 2\ -\/>\ 1}}
+\DoxyCodeLine{syncPoint.DecrementAndCheck(\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563cad7c8c85bf79bbe1b7188497c32c3b0ca}{JobResult::Failed}}(\textcolor{stringliteral}{"{}Error"{}}));\ \textcolor{comment}{//\ count:\ 1\ -\/>\ 0,\ status\ degraded}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ When\ counter\ reaches\ 0,\ continuations\ are\ activated\ or\ cancelled\ base\ on\ final\ status}}
+
+\end{DoxyCode}
+ 
+
+\label{doc-constructors}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_a7ec5d8f6ffed09e8688b96fb2d8f4a5a}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!SyncPoint@{SyncPoint}}
+\index{SyncPoint@{SyncPoint}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{SyncPoint()}{SyncPoint()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_a7ec5d8f6ffed09e8688b96fb2d8f4a5a} 
+Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Sync\+Point (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+Default constructor creates invalid sync point. 
+
+Here is the caller graph for this function\+:
+% FIG 0
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_a10bfeec925042ef364cf598db4271124}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!SyncPoint@{SyncPoint}}
+\index{SyncPoint@{SyncPoint}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{SyncPoint()}{SyncPoint()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_a10bfeec925042ef364cf598db4271124} 
+Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Sync\+Point (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{initial\+Count}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{name}{}\end{DoxyParamCaption})}
+
+
+
+Construct a \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} with initial dependency count. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em initial\+Count} & Number of dependencies that must complete before signaling \\
+\hline
+{\em name} & Debug name for the sync point (should be static string) \\
+\hline
+\end{DoxyParams}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_aa83212429d6fa0e7397fc53a35e04016}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!````~SyncPoint@{\texorpdfstring{$\sim$}{\string~}SyncPoint}}
+\index{````~SyncPoint@{\texorpdfstring{$\sim$}{\string~}SyncPoint}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}SyncPoint()}{\string~SyncPoint()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_aa83212429d6fa0e7397fc53a35e04016} 
+Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\texorpdfstring{$\sim$}{\string~}\+Sync\+Point (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Destructor cleans up overflow storage if allocated. 
+
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_aacde2ca3100ab8e65e9f430da30ccaaf}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!SyncPoint@{SyncPoint}}
+\index{SyncPoint@{SyncPoint}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{SyncPoint()}{SyncPoint()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_aacde2ca3100ab8e65e9f430da30ccaaf} 
+Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Sync\+Point (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 1
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_a220b220abd48fdf9c2851e6ada7cc7ea}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!SyncPoint@{SyncPoint}}
+\index{SyncPoint@{SyncPoint}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{SyncPoint()}{SyncPoint()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_a220b220abd48fdf9c2851e6ada7cc7ea} 
+Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Sync\+Point (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}} \&\&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 2
+
+
+\label{doc-func-members}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_ad3718aa23182d93c540ee28b28575652}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!AddContinuation@{AddContinuation}}
+\index{AddContinuation@{AddContinuation}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{AddContinuation()}{AddContinuation()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_ad3718aa23182d93c540ee28b28575652} 
+bool Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Add\+Continuation (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{Job\+Handle}}}]{handle}{}\end{DoxyParamCaption})}
+
+
+
+Add a job continuation to this \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em handle} & \doxylink{struct_void_architect_1_1_handle}{Handle} to job that should be activated when sync point signals \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if continuation was added successfully
+\end{DoxyReturn}
+Continuations are jobs that depend on this \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}. When the \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} signals, all continuations are either activated (is status is Success) or cancelled (if status is Failed/\+Cancelled).
+
+Implementation uses hybrid storage\+:
+\begin{DoxyItemize}
+\item First 6 continuations stored inline (lock-\/free)
+\item Additional continuations stored in overflow vector (minimal locking) 
+\end{DoxyItemize}\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_a1d4cccc10ad67ca9ecd7856d1346505a}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!DecrementAndCheck@{DecrementAndCheck}}
+\index{DecrementAndCheck@{DecrementAndCheck}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{DecrementAndCheck()}{DecrementAndCheck()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_a1d4cccc10ad67ca9ecd7856d1346505a} 
+bool Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Decrement\+And\+Check (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result}{Job\+Result}} \&}]{result}{}\end{DoxyParamCaption})}
+
+
+
+Atomically decrement counter and check if sync point is signaled. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em result} & Result to propagate (affects status if not Success) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if counter reached zero and sync point is now signaled
+\end{DoxyReturn}
+This is the core synchronization primitive used by completing jobs. It atomically decrements the dependency counter and propagates status. When the counter reaches zero, the \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} is considered signaled.
+
+Status propagation rules\+:
+\begin{DoxyItemize}
+\item Success\+: No status change
+\item Failed/\+Cancelled\+: Status degrades atomically (first failure wins) 
+\end{DoxyItemize}\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_ac34daddd861e10c0e41a7a06438be41a}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!GetContinuations@{GetContinuations}}
+\index{GetContinuations@{GetContinuations}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{GetContinuations()}{GetContinuations()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_ac34daddd861e10c0e41a7a06438be41a} 
+VAArray$<$ \mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{Job\+Handle}} $>$ Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Get\+Continuations (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Get all continuation handles for processing. 
+
+\begin{DoxyReturn}{Returns}
+Vector containing all continuation handles
+\end{DoxyReturn}
+This method is used by the job scheduler to retrieve all continuations when the \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} signals. If safely combines inline and overflow storage. Here is the call graph for this function\+:
+% FIG 3
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_a31e9ec7f2a478604e9bc5a1d961a4d31}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!GetDebugName@{GetDebugName}}
+\index{GetDebugName@{GetDebugName}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{GetDebugName()}{GetDebugName()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_a31e9ec7f2a478604e9bc5a1d961a4d31} 
+const char \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Get\+Debug\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get debug name for logging and profiling. 
+
+\begin{DoxyReturn}{Returns}
+Debug name string 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_a5043d11aa13e7ccae3e437ab2db2cb90}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!GetElapsedTime@{GetElapsedTime}}
+\index{GetElapsedTime@{GetElapsedTime}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{GetElapsedTime()}{GetElapsedTime()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_a5043d11aa13e7ccae3e437ab2db2cb90} 
+std\+::chrono\+::nanoseconds Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Get\+Elapsed\+Time (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get time elapsed since \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} creation. 
+
+\begin{DoxyReturn}{Returns}
+Duration since creation in nanoseconds 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_a875a3ba515dfdb8c67a254d6f4cb3081}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!GetPendingCount@{GetPendingCount}}
+\index{GetPendingCount@{GetPendingCount}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{GetPendingCount()}{GetPendingCount()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_a875a3ba515dfdb8c67a254d6f4cb3081} 
+uint32\+\_\+t Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Get\+Pending\+Count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get current dependency count. 
+
+\begin{DoxyReturn}{Returns}
+Number of dependencies still pending 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_af38941ed4ccfd628eedcb3c78c366cac}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!GetStatus@{GetStatus}}
+\index{GetStatus@{GetStatus}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{GetStatus()}{GetStatus()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_af38941ed4ccfd628eedcb3c78c366cac} 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c}{Job\+Result\+::\+Status}} Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Get\+Status (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get current status of the \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}. 
+
+\begin{DoxyReturn}{Returns}
+Current status (Success, Failed, or Cancelled) 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_aca8f66420847392d80ac6608bc118735}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!GetStatusString@{GetStatusString}}
+\index{GetStatusString@{GetStatusString}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{GetStatusString()}{GetStatusString()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_aca8f66420847392d80ac6608bc118735} 
+const char \texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Get\+Status\+String (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get a human-\/readable status string. 
+
+\begin{DoxyReturn}{Returns}
+String representation of current status 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_aeeb648d851a4b36e965177fbe0dae810}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!IsSignaled@{IsSignaled}}
+\index{IsSignaled@{IsSignaled}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{IsSignaled()}{IsSignaled()}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_aeeb648d851a4b36e965177fbe0dae810} 
+bool Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+Is\+Signaled (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Check if \doxylink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point} is currently signaled. 
+
+\begin{DoxyReturn}{Returns}
+true if counter has reached zero 
+\end{DoxyReturn}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_ae1e0200c9f88a880a96a378e228d0f5a}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_ae1e0200c9f88a880a96a378e228d0f5a} 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}} \& Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}} \&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 4
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_a1173b57f0383b9596f363438b89672cf}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!operator=@{operator=}}
+\index{operator=@{operator=}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_a1173b57f0383b9596f363438b89672cf} 
+\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}} \& Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point}{Sync\+Point}} \&\&}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+Here is the call graph for this function\+:
+% FIG 5
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_a19da0944e153737e7d7909777c8d0e60}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!counter@{counter}}
+\index{counter@{counter}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{counter}{counter}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_a19da0944e153737e7d7909777c8d0e60} 
+std\+::atomic$<$uint32\+\_\+t$>$ Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::counter}
+
+
+
+Number of dependencies remaining before sync point is signaled. 
+
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_a0e1979f0f75047c0f5d7887d810702cd}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!creationTime@{creationTime}}
+\index{creationTime@{creationTime}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{creationTime}{creationTime}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_a0e1979f0f75047c0f5d7887d810702cd} 
+std\+::chrono\+::high\+\_\+resolution\+\_\+clock\+::time\+\_\+point Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::creation\+Time}
+
+
+
+Timestamp when sync point was created. 
+
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_ace943cecd77d506149a1f174552ce556}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!debugName@{debugName}}
+\index{debugName@{debugName}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{debugName}{debugName}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_ace943cecd77d506149a1f174552ce556} 
+const char\texorpdfstring{$\ast$}{*} Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::debug\+Name}
+
+
+
+Debug name for profiling and logging (should be static string) 
+
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_a76f110192596e8dc7c086e231eec4ef3}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!INLINE\_CONTINUATIONS@{INLINE\_CONTINUATIONS}}
+\index{INLINE\_CONTINUATIONS@{INLINE\_CONTINUATIONS}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{INLINE\_CONTINUATIONS}{INLINE\_CONTINUATIONS}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_a76f110192596e8dc7c086e231eec4ef3} 
+size\+\_\+t Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::\+INLINE\+\_\+\+CONTINUATIONS = 6\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+
+
+Number of inline continuation slots (optimized for common case) 
+
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_adb3be18de1adeacd0148478403d028e6}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!inlineContinuations@{inlineContinuations}}
+\index{inlineContinuations@{inlineContinuations}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{inlineContinuations}{inlineContinuations}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_adb3be18de1adeacd0148478403d028e6} 
+std\+::array$<$std\+::atomic$<$\mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{Job\+Handle}}$>$, \mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_sync_point_a76f110192596e8dc7c086e231eec4ef3}{INLINE\+\_\+\+CONTINUATIONS}}$>$ Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::inline\+Continuations}
+
+
+
+Inline continuation storage for fast access (covers \texorpdfstring{$\sim$}{\string~}95\% of use cases) 
+
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_a649a1d4b32e6ecaf32edcd107dfe1d68}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!inlineCount@{inlineCount}}
+\index{inlineCount@{inlineCount}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{inlineCount}{inlineCount}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_a649a1d4b32e6ecaf32edcd107dfe1d68} 
+std\+::atomic$<$uint8\+\_\+t$>$ Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::inline\+Count \{0\}}
+
+
+
+Number of continuations stored inline (0-\/6) 
+
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_aad4c58b0094f6fbed04f1e7a4723265b}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!overflowContinuations@{overflowContinuations}}
+\index{overflowContinuations@{overflowContinuations}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{overflowContinuations}{overflowContinuations}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_aad4c58b0094f6fbed04f1e7a4723265b} 
+std\+::atomic$<$VAArray$<$\mbox{\hyperlink{namespace_void_architect_1_1_jobs_af593f8164f5ce6fc7c221fc7ac9613e7}{Job\+Handle}}$>$\texorpdfstring{$\ast$}{*}$>$ Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::overflow\+Continuations \{nullptr\}}
+
+
+
+Overflow storage for rare cases with \texorpdfstring{$>$}{>}6 continuations. 
+
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_aba7522e460211cfb838d2eda7a8d386f}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!overflowLock@{overflowLock}}
+\index{overflowLock@{overflowLock}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{overflowLock}{overflowLock}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_aba7522e460211cfb838d2eda7a8d386f} 
+std\+::atomic$<$bool$>$ Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::overflow\+Lock \{false\}}
+
+
+
+Simple spinlock for overflow vector operations (rare case) 
+
+\Hypertarget{struct_void_architect_1_1_jobs_1_1_sync_point_ae04a56c683dda3f719dc5c1b786e1383}\index{VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}!status@{status}}
+\index{status@{status}!VoidArchitect::Jobs::SyncPoint@{VoidArchitect::Jobs::SyncPoint}}
+\doxysubsubsection{\texorpdfstring{status}{status}}
+{\footnotesize\ttfamily \label{struct_void_architect_1_1_jobs_1_1_sync_point_ae04a56c683dda3f719dc5c1b786e1383} 
+std\+::atomic$<$\mbox{\hyperlink{struct_void_architect_1_1_jobs_1_1_job_result_a44981551b9c18ba6fe56bf3938ab563c}{Job\+Result\+::\+Status}}$>$ Void\+Architect\+::\+Jobs\+::\+Sync\+Point\+::status}
+
+
+
+Aggregated status of all dependencies (can only degrade) 
+
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Systems/\+Jobs/\mbox{\hyperlink{_sync_point_8hpp}{Sync\+Point.\+hpp}}\item 
+engine/src/\+Systems/\+Jobs/\mbox{\hyperlink{_sync_point_8cpp}{Sync\+Point.\+cpp}}\end{DoxyCompactItemize}

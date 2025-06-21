@@ -1,0 +1,42 @@
+\doxysection{engine/src/\+Platform/\+RHI/\+Vulkan/\+Vulkan\+Utils.cpp File Reference}
+\hypertarget{_vulkan_utils_8cpp}{}\label{_vulkan_utils_8cpp}\index{engine/src/Platform/RHI/Vulkan/VulkanUtils.cpp@{engine/src/Platform/RHI/Vulkan/VulkanUtils.cpp}}
+{\ttfamily \#include "{}Vulkan\+Utils.\+hpp"{}}\newline
+{\ttfamily \#include "{}Resources/\+Shader.\+hpp"{}}\newline
+{\ttfamily \#include "{}Resources/\+Texture.\+hpp"{}}\newline
+{\ttfamily \#include "{}Systems/\+Renderer/\+Renderer\+Types.\+hpp"{}}\newline
+Include dependency graph for Vulkan\+Utils.\+cpp\+:
+% FIG 0
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespace_void_architect}{Void\+Architect}}
+\item 
+namespace \mbox{\hyperlink{namespace_void_architect_1_1_platform}{Void\+Architect\+::\+Platform}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+Vk\+Descriptor\+Type \mbox{\hyperlink{namespace_void_architect_1_1_platform_a0bf5e5ee1a29124fda8571efbfabf897}{Void\+Architect\+::\+Platform\+::\+Translate\+Engine\+Resource\+Type\+To\+Vulkan}} (const \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a75da01cbb8baa9c065061d1ad6a2c94d}{Renderer\+::\+Resource\+Binding\+Type}} type)
+\item 
+Vk\+Shader\+Stage\+Flag\+Bits \mbox{\hyperlink{namespace_void_architect_1_1_platform_aa2f71b78cd84660d6a865557a86d99f0}{Void\+Architect\+::\+Platform\+::\+Translate\+Engine\+Shader\+Stage\+To\+Vulkan}} (const \mbox{\hyperlink{namespace_void_architect_1_1_resources_ab2eac8b50f5500ec0b2cf9beef1f215b}{Resources\+::\+Shader\+Stage}} stage)
+\item 
+Vk\+Format \mbox{\hyperlink{namespace_void_architect_1_1_platform_aa6b11265965265e2c86f5b0e62c3f5a6}{Void\+Architect\+::\+Platform\+::\+Translate\+Engine\+Texture\+Format\+To\+Vulkan}} (const \mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Renderer\+::\+Texture\+Format}} format)
+\item 
+Vk\+Attachment\+Load\+Op \mbox{\hyperlink{namespace_void_architect_1_1_platform_a73f5a7cc63f505bf5b68fba14a6527f6}{Void\+Architect\+::\+Platform\+::\+Translate\+Engine\+Load\+Op\+To\+Vulkan}} (const \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587f}{Renderer\+::\+Load\+Op}} op)
+\item 
+Vk\+Attachment\+Store\+Op \mbox{\hyperlink{namespace_void_architect_1_1_platform_a4c089a6511bd41f200a89c7341239c0d}{Void\+Architect\+::\+Platform\+::\+Translate\+Engine\+Store\+Op\+To\+Vulkan}} (const \mbox{\hyperlink{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717da}{Renderer\+::\+Store\+Op}} op)
+\item 
+Vk\+Filter \mbox{\hyperlink{namespace_void_architect_1_1_platform_ab8e8d69d9acdc36f36e01846bf6fdff0}{Void\+Architect\+::\+Platform\+::\+Translate\+Engine\+Texture\+Filter\+To\+Vulkan}} (const \mbox{\hyperlink{namespace_void_architect_1_1_resources_a5d5e1abd2d3371f98679e35af136125b}{Resources\+::\+Texture\+Filter\+Mode}} mode)
+\item 
+Vk\+Sampler\+Address\+Mode \mbox{\hyperlink{namespace_void_architect_1_1_platform_a8f66cd2b80f9112375361225006f859c}{Void\+Architect\+::\+Platform\+::\+Translate\+Engine\+Texture\+Repeat\+To\+Vulkan}} (const \mbox{\hyperlink{namespace_void_architect_1_1_resources_afee67498097a26d4197e8e54a388cfaf}{Resources\+::\+Texture\+Repeat\+Mode}} mode)
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_ab99910ded669105283667f09615bd6b5}{Renderer\+::\+Texture\+Format}} \mbox{\hyperlink{namespace_void_architect_1_1_platform_a4d5339b70d2374894a5291987c9fc99c}{Void\+Architect\+::\+Platform\+::\+Translate\+Vulkan\+Texture\+Format\+To\+Engine}} (const Vk\+Format format)
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a7267de05ce7ae4d4f1eef533bcb8587f}{Renderer\+::\+Load\+Op}} \mbox{\hyperlink{namespace_void_architect_1_1_platform_abb85d5be5dc690fa12c7fd342878dfaa}{Void\+Architect\+::\+Platform\+::\+Translate\+Vulkan\+Load\+Op\+To\+Engine}} (const Vk\+Attachment\+Load\+Op op)
+\item 
+\mbox{\hyperlink{namespace_void_architect_1_1_renderer_a08f4846169af3f88ef4ccc19d1c717da}{Renderer\+::\+Store\+Op}} \mbox{\hyperlink{namespace_void_architect_1_1_platform_a97efa4e8f7f68a47f8a54257c8d06b8b}{Void\+Architect\+::\+Platform\+::\+Translate\+Vulkan\+Store\+Op\+To\+Engine}} (const Vk\+Attachment\+Store\+Op op)
+\item 
+std\+::string \mbox{\hyperlink{namespace_void_architect_1_1_platform_aadc301862807fcef7ebfeb69cc0fafc5}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Get\+Result\+String}} (const Vk\+Result result, const bool extended)
+\item 
+bool \mbox{\hyperlink{namespace_void_architect_1_1_platform_a0284f1241a77dd7635da56ae7ecb68c2}{Void\+Architect\+::\+Platform\+::\+Vulkan\+Check\+Result}} (const Vk\+Result result)
+\end{DoxyCompactItemize}

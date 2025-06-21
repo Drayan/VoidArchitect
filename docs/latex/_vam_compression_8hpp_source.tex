@@ -1,0 +1,103 @@
+\doxysection{Vam\+Compression.\+hpp}
+\hypertarget{_vam_compression_8hpp_source}{}\label{_vam_compression_8hpp_source}\index{engine/src/Resources/Loaders/VamCompression.hpp@{engine/src/Resources/Loaders/VamCompression.hpp}}
+\mbox{\hyperlink{_vam_compression_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 15/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00007\ \{}
+\DoxyCodeLine{00008\ \ \ \ \ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_resources}{Resources}}}
+\DoxyCodeLine{00009\ \ \ \ \ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \ \ \ \ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_resources_1_1_loaders}{Loaders}}}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression}{VAMCompression}}}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Compression\ result\ structure}}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_1_1_compression_result_a3e85e66078fd40728972516b14d47366}{CompressionResult}}}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ VAArray<uint8\_t>\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_1_1_compression_result_abe707dfdef9e611494bd754c4dd494d2}{compressedData}};}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_1_1_compression_result_a0e40dc292cfc44f0854acedbec5b22cb}{originalSize}};}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_1_1_compression_result_a5ed2af8335751b77927926c645bd92ef}{compressedSize}};}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_1_1_compression_result_a51cf83542cb0a067c7fd9c6ea21dd5e7}{success}};}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_1_1_compression_result_a3e85e66078fd40728972516b14d47366}{CompressionResult}}()}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_1_1_compression_result_a0e40dc292cfc44f0854acedbec5b22cb}{originalSize}}(0),}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_1_1_compression_result_a5ed2af8335751b77927926c645bd92ef}{compressedSize}}(0),}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_1_1_compression_result_a51cf83542cb0a067c7fd9c6ea21dd5e7}{success}}(false)}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Compress\ data\ using\ LZ4}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ CompressionResult\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_ab6ada3ac6f2dbb27be1eb2f63ef15693}{Compress}}(\textcolor{keyword}{const}\ uint8\_t*\ data,\ uint32\_t\ size);}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ CompressionResult\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_ab6ada3ac6f2dbb27be1eb2f63ef15693}{Compress}}(\textcolor{keyword}{const}\ VAArray<uint8\_t>\&\ data);}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Decompress\ data\ using\ LZ4}}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ VAArray<uint8\_t>\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_ab71b3b1b833176b823d06741a0290c23}{Decompress}}(}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t*\ compressedData,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ compressedSize,}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ originalSize);}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ VAArray<uint8\_t>\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_ab71b3b1b833176b823d06741a0290c23}{Decompress}}(}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VAArray<uint8\_t>\&\ compressedData,}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ originalSize);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ compression\ savings}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_a4498d26b0bec928562acd01053ebecfc}{GetCompressionRatio}}(uint32\_t\ originalSize,\ uint32\_t\ compressedSize);}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ uint32\_t\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_aed482febeffa9a4c12c451444f8557f5}{GetCompressionSavings}}(}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ originalSize,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ compressedSize);}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ if\ LZ4\ is\ available\ (compile-\/time\ feature\ check)}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_a0f5c5e545d66cbe1242e4359fc0c9a8d}{IsLZ4Available}}();}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Internal\ LZ4\ integration\ -\/\ will\ use\ external\ LZ4\ library\ when\ availabe}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ InitializeLZ4();}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ ShutdownLZ4();}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ s\_LZ4Initialized;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings}{VAMCompressionSettings}}}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings_a14601b67efeb2efe650ca563e91796d6}{enableCompression}}\ =\ \textcolor{keyword}{true};\ \textcolor{comment}{//\ Enable/disable\ compression}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings_a003f456fc63857e311433e2987630e98}{minCompressionRatio}}\ =\ 0.1f;\ \textcolor{comment}{//\ Only\ compress\ if\ we\ save\ at\ least\ 10\%}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings_abb6a740dbe00f4274ac5041b7ed2d813}{minSizeThreshold}}\ =\ 1024;\ \textcolor{comment}{//\ Only\ compress\ file\ larger\ than\ 1KiB}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ LZ4\ specific\ settings\ (for\ futur\ expansion)}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings_a13f1b01855bf240a2b5e82c1a3a3b769}{compressionLevel}}\ =\ 1;\ \textcolor{comment}{//\ LZ4\ compression\ level\ (0-\/9)}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ default\ settings}}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings}{VAMCompressionSettings}}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings_a9bd6f7601bb458bf8820178c27439e1d}{Default}}()}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings}{VAMCompressionSettings}}\{\};}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ settings\ optimized\ for\ speed}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings}{VAMCompressionSettings}}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings_a6f5962c0b19e4062e0216124f96b60a7}{Fast}}()}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings}{VAMCompressionSettings}}\ settings\{\};}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ settings.\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings_a13f1b01855bf240a2b5e82c1a3a3b769}{compressionLevel}}\ =\ 1;}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ settings.\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings_a003f456fc63857e311433e2987630e98}{minCompressionRatio}}\ =\ 0.05f;}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ settings;}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ settings\ optimized\ for\ size}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings}{VAMCompressionSettings}}\ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings_ad37fb46b9c85da544ae21669b2b1b8ca}{Small}}()}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings}{VAMCompressionSettings}}\ settings\{\};}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ settings.\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings_a13f1b01855bf240a2b5e82c1a3a3b769}{compressionLevel}}\ =\ 9;}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ settings.\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings_a003f456fc63857e311433e2987630e98}{minCompressionRatio}}\ =\ 0.02f;}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ settings.\mbox{\hyperlink{struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression_settings_abb6a740dbe00f4274ac5041b7ed2d813}{minSizeThreshold}}\ =\ 256;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ settings;}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \}\ \textcolor{comment}{//\ Loaders}}
+\DoxyCodeLine{00096\ \ \ \ \ \}\ \textcolor{comment}{//\ Resources}}
+\DoxyCodeLine{00097\ \}\ \textcolor{comment}{//\ VoidArchitect}}
+
+\end{DoxyCode}

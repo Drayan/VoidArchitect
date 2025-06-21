@@ -1,0 +1,83 @@
+\doxysection{Void\+Architect\+::Platform\+::Vulkan\+Fence Class Reference}
+\hypertarget{class_void_architect_1_1_platform_1_1_vulkan_fence}{}\label{class_void_architect_1_1_platform_1_1_vulkan_fence}\index{VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}}
+
+
+{\ttfamily \#include $<$Vulkan\+Fence.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_aca5b662da1d4e0c742c79789b879e07b}{Vulkan\+Fence}} ()=default
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_a6e6ddcd28ee98c0b104436ab1346f980}{Vulkan\+Fence}} (const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&device, Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}allocator, bool create\+Signaled=false)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_af1a9174f36a462a6ed73f01bcb08b6b3}{Vulkan\+Fence}} (Vk\+Device device, Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}allocator, bool create\+Signaled=false)
+\item 
+\mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_a783c255c2551d8217d0d2385548bef8c}{\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Fence}} ()
+\item 
+bool \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_ab5c08fa79b62f8fdd2798f3141e6bfa1}{Wait}} (uint64\+\_\+t timeout=std\+::numeric\+\_\+limits$<$ uint64\+\_\+t $>$\+::max())
+\item 
+void \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_ab546fec5c88ebdb615fdc2c962df57cc}{Reset}} ()
+\item 
+Vk\+Fence \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_fence_ae172c1fe6a398d0f44be9437f52a98ec}{Get\+Handle}} () const
+\end{DoxyCompactItemize}
+
+
+\label{doc-constructors}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_fence_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_fence_aca5b662da1d4e0c742c79789b879e07b}\index{VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}!VulkanFence@{VulkanFence}}
+\index{VulkanFence@{VulkanFence}!VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}}
+\doxysubsubsection{\texorpdfstring{VulkanFence()}{VulkanFence()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_fence_aca5b662da1d4e0c742c79789b879e07b} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Fence\+::\+Vulkan\+Fence (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_fence_a6e6ddcd28ee98c0b104436ab1346f980}\index{VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}!VulkanFence@{VulkanFence}}
+\index{VulkanFence@{VulkanFence}!VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}}
+\doxysubsubsection{\texorpdfstring{VulkanFence()}{VulkanFence()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_fence_a6e6ddcd28ee98c0b104436ab1346f980} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Fence\+::\+Vulkan\+Fence (\begin{DoxyParamCaption}\item[{const std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_void_architect_1_1_platform_1_1_vulkan_device}{Vulkan\+Device}} $>$ \&}]{device}{, }\item[{Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}}]{allocator}{, }\item[{bool}]{create\+Signaled}{ = {\ttfamily false}}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_fence_af1a9174f36a462a6ed73f01bcb08b6b3}\index{VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}!VulkanFence@{VulkanFence}}
+\index{VulkanFence@{VulkanFence}!VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}}
+\doxysubsubsection{\texorpdfstring{VulkanFence()}{VulkanFence()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_fence_af1a9174f36a462a6ed73f01bcb08b6b3} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Fence\+::\+Vulkan\+Fence (\begin{DoxyParamCaption}\item[{Vk\+Device}]{device}{, }\item[{Vk\+Allocation\+Callbacks \texorpdfstring{$\ast$}{*}}]{allocator}{, }\item[{bool}]{create\+Signaled}{ = {\ttfamily false}}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_fence_a783c255c2551d8217d0d2385548bef8c}\index{VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}!````~VulkanFence@{\texorpdfstring{$\sim$}{\string~}VulkanFence}}
+\index{````~VulkanFence@{\texorpdfstring{$\sim$}{\string~}VulkanFence}!VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}VulkanFence()}{\string~VulkanFence()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_fence_a783c255c2551d8217d0d2385548bef8c} 
+Void\+Architect\+::\+Platform\+::\+Vulkan\+Fence\+::\texorpdfstring{$\sim$}{\string~}\+Vulkan\+Fence (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_fence_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_fence_ae172c1fe6a398d0f44be9437f52a98ec}\index{VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}!GetHandle@{GetHandle}}
+\index{GetHandle@{GetHandle}!VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}}
+\doxysubsubsection{\texorpdfstring{GetHandle()}{GetHandle()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_fence_ae172c1fe6a398d0f44be9437f52a98ec} 
+Vk\+Fence Void\+Architect\+::\+Platform\+::\+Vulkan\+Fence\+::\+Get\+Handle (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_fence_ab546fec5c88ebdb615fdc2c962df57cc}\index{VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}!Reset@{Reset}}
+\index{Reset@{Reset}!VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}}
+\doxysubsubsection{\texorpdfstring{Reset()}{Reset()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_fence_ab546fec5c88ebdb615fdc2c962df57cc} 
+void Void\+Architect\+::\+Platform\+::\+Vulkan\+Fence\+::\+Reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_void_architect_1_1_platform_1_1_vulkan_fence_ab5c08fa79b62f8fdd2798f3141e6bfa1}\index{VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}!Wait@{Wait}}
+\index{Wait@{Wait}!VoidArchitect::Platform::VulkanFence@{VoidArchitect::Platform::VulkanFence}}
+\doxysubsubsection{\texorpdfstring{Wait()}{Wait()}}
+{\footnotesize\ttfamily \label{class_void_architect_1_1_platform_1_1_vulkan_fence_ab5c08fa79b62f8fdd2798f3141e6bfa1} 
+bool Void\+Architect\+::\+Platform\+::\+Vulkan\+Fence\+::\+Wait (\begin{DoxyParamCaption}\item[{uint64\+\_\+t}]{timeout}{ = {\ttfamily std\+:\+:numeric\+\_\+limits$<$uint64\+\_\+t$>$\+:\+:max()}}\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 0
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_fence_8hpp}{Vulkan\+Fence.\+hpp}}\item 
+engine/src/\+Platform/\+RHI/\+Vulkan/\mbox{\hyperlink{_vulkan_fence_8cpp}{Vulkan\+Fence.\+cpp}}\end{DoxyCompactItemize}

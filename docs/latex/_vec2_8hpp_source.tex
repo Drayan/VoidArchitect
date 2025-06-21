@@ -1,0 +1,55 @@
+\doxysection{Vec2.\+hpp}
+\hypertarget{_vec2_8hpp_source}{}\label{_vec2_8hpp_source}\index{engine/src/Core/Math/Vec2.hpp@{engine/src/Core/Math/Vec2.hpp}}
+\mbox{\hyperlink{_vec2_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 31/05/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00007\ \{}
+\DoxyCodeLine{00008\ \ \ \ \ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_math}{Math}}}
+\DoxyCodeLine{00009\ \ \ \ \ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \ \ \ \ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect_1_1_math_1_1impl}{impl}}}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <glm/glm.hpp>}}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a0f7bc5c843b196beb76d91f65ac1f220}{Zero}}();}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a1e9cc9334e11bcee5ce4461112c7de1d}{One}}();}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_ad6ff878297e4d382daa8d372df95cbe1}{Left}}();}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a3e8e086e949e5b9312c90956aa8b9b0d}{Right}}();}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_aed1770e321cc005647975da38dfefb4f}{Up}}();}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a8d4c8249c1628f2ef711c8b4651c2c5f}{Down}}();}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}();}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}(\textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y);}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a8423d89e4d914093dd5ad419c3266998}{operator+}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\&\ other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a31ccc017eb8f03c80dec996552268b97}{operator-\/}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\&\ other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a0306743f7f3da06409968fb108f289b7}{operator*}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\&\ other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_aa44a5356e1df42ed8468388a8f8d1f54}{operator/}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\&\ other)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a0306743f7f3da06409968fb108f289b7}{operator*}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ scalar)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_aa44a5356e1df42ed8468388a8f8d1f54}{operator/}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ scalar)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\&\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a82b39cd0d88e9ad337f7d051d4acc9e2}{operator+=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\&\ other);}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\&\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a51932c400eeaf7cf5d07deb1c781947d}{operator-\/=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}\&\ other);}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a6edfc1c514866dd8b22fbd8a86947333}{X}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ x)\ \{\ m\_Vector.x\ =\ x;\ \}}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_aba57f96b7c6cc06c220eeba2335d1266}{Y}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ y)\ \{\ m\_Vector.y\ =\ y;\ \}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a2001bc20880ebebd991ec865c984cf5b}{X}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Vector.x;\ \}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a8cec9261d2e499fc4449c5856ed75946}{Y}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Vector.y;\ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec2_a56cfe34b498cb6206bfe3d59b0453fad}{Vec2}}(\textcolor{keyword}{const}\ impl::glm::vec2\&\ vector);}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ impl::glm::vec2\ m\_Vector;}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00048\ \ \ \ \ \}\ \textcolor{comment}{//\ namespace\ Math}}
+\DoxyCodeLine{00049\ \}\ \textcolor{comment}{//\ namespace\ VoidArchitect}}
+
+\end{DoxyCode}

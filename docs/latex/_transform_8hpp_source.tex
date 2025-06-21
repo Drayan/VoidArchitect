@@ -1,0 +1,56 @@
+\doxysection{Transform.\+hpp}
+\hypertarget{_transform_8hpp_source}{}\label{_transform_8hpp_source}\index{engine/src/Core/Transform.hpp@{engine/src/Core/Transform.hpp}}
+\mbox{\hyperlink{_transform_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ Michael\ Desmedt\ on\ 13/06/2025.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_mat4_8hpp}{Math/Mat4.hpp}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_quat_8hpp}{Math/Quat.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_vec3_8hpp}{Math/Vec3.hpp}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespace_void_architect}{VoidArchitect}}}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}}}
+\DoxyCodeLine{00012\ \ \ \ \ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_transform_a83ceef0154fa51df4fd81bb7bf66fac2}{SetLocalPosition}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\&\ position);}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_transform_a83ceef0154fa51df4fd81bb7bf66fac2}{SetLocalPosition}}(\textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y,\ \textcolor{keywordtype}{float}\ z);}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_transform_af510cbfb83acc6527ed09b7cd48d12e0}{SetLocalRotation}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math::Quat}}\&\ rotation);}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_transform_af510cbfb83acc6527ed09b7cd48d12e0}{SetLocalRotation}}(\textcolor{keywordtype}{float}\ pitch,\ \textcolor{keywordtype}{float}\ yaw,\ \textcolor{keywordtype}{float}\ roll);}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_transform_ad6aef25b8b4ca4ae8601c259b23a77d2}{SetLocalScale}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\&\ scale);}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_transform_ad6aef25b8b4ca4ae8601c259b23a77d2}{SetLocalScale}}(\textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y,\ \textcolor{keywordtype}{float}\ z);}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_transform_a53591b6f3141da038fd462fbff590c48}{SetParent}}(\mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}}*\ parent);}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_void_architect_1_1_transform_a73e25e7df28250a6be4a51b78a3d08a8}{SetParentKeepWorldTransform}}(\mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}}*\ parent);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}}*\ \mbox{\hyperlink{class_void_architect_1_1_transform_adfef3adf546d7585cf042a21509a9c62}{GetParent}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Parent;\ \}}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ VAArray<Transform*>\&\ \mbox{\hyperlink{class_void_architect_1_1_transform_ac2d244d1c5c02ddf0650815028f55da3}{GetChildren}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_Children;\ \}}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\&\ \mbox{\hyperlink{class_void_architect_1_1_transform_a3d9eb06e224e8c77b95df63315777e96}{GetLocalPosition}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_LocalPosition;\ \}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math::Quat}}\&\ \mbox{\hyperlink{class_void_architect_1_1_transform_a1bc4d55ec793878b59d5dc87b28e46e6}{GetLocalRotation}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_LocalRotation;\ \}}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\&\ \mbox{\hyperlink{class_void_architect_1_1_transform_ad11463a361a0550da94a0ce7f5ee81c0}{GetLocalScale}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_LocalScale;\ \}}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math::Mat4}}\&\ \mbox{\hyperlink{class_void_architect_1_1_transform_ab6d64dabde4123f779b660d1c638736b}{GetLocalTransform}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\ \mbox{\hyperlink{class_void_architect_1_1_transform_add4ef336d69451034dcb55055c6ef7e5}{GetWorldPosition}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math::Quat}}\ \mbox{\hyperlink{class_void_architect_1_1_transform_a5d02889f0a3bc43ea10e80a3f0968bcb}{GetWorldRotation}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\ \mbox{\hyperlink{class_void_architect_1_1_transform_a49c7affef3b21fbb5a95a42d7b78f1d1}{GetWorldScale}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math::Mat4}}\&\ \mbox{\hyperlink{class_void_architect_1_1_transform_a967af987f30032785bd78e30f0f71305}{GetWorldTransform}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ MarkDirty()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ MarkWorldDirtyRecursive()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\ m\_LocalPosition\ =\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3_acb0f6c01053c491d9eee8cbd6c5cbf23}{Math::Vec3::Zero}}();}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat}{Math::Quat}}\ m\_LocalRotation\ =\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_quat_a485cf11356a0e4ca1e9ee12a7ade3725}{Math::Quat::Identity}}();}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3}{Math::Vec3}}\ m\_LocalScale\ =\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_vec3_a53917d49b4a874a01c9a7c516b09ec2e}{Math::Vec3::One}}();}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_void_architect_1_1_transform}{Transform}}*\ m\_Parent\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ VAArray<Transform*>\ m\_Children;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keyword}{mutable}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math::Mat4}}\ m\_LocalTransform;}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keyword}{mutable}\ \mbox{\hyperlink{class_void_architect_1_1_math_1_1_mat4}{Math::Mat4}}\ m\_WorldTransform;}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keyword}{mutable}\ \textcolor{keywordtype}{bool}\ m\_LocalDirty\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keyword}{mutable}\ \textcolor{keywordtype}{bool}\ m\_WorldDirty\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00049\ \ \ \ \ \};}
+\DoxyCodeLine{00050\ \}}
+
+\end{DoxyCode}
