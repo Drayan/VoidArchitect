@@ -7,6 +7,7 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <span>
 #include <utility>
 
 #include <fstream>

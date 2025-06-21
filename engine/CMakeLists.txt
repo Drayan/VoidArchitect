@@ -24,6 +24,10 @@ if (NOT TARGET assimp)
     find_package(assimp CONFIG REQUIRED)
 endif ()
 
+if (NOT TARGET unofficial-concurrentqueue)
+    find_package(unofficial-concurrentqueue CONFIG REQUIRED)
+endif ()
+
 if (NOT TARGET yaml-cpp)
     FetchContent_Declare(
             yaml-cpp
@@ -53,7 +57,7 @@ add_library(VoidArchitect_Engine
         ${ENGINE_SOURCES}
         ${ENGINE_HEADERS}
 )
-target_link_libraries(VoidArchitect_Engine PUBLIC spdlog::spdlog SDL3::SDL3 stb_image assimp::assimp lz4::lz4 yaml-cpp::yaml-cpp Vulkan::Vulkan Vulkan::MoltenVK glm::glm)
+target_link_libraries(VoidArchitect_Engine PUBLIC spdlog::spdlog SDL3::SDL3 stb_image assimp::assimp lz4::lz4 yaml-cpp::yaml-cpp Vulkan::Vulkan Vulkan::MoltenVK glm::glm unofficial::concurrentqueue::concurrentqueue)
 
 # If the compiler support PCH, use it.
 target_precompile_headers(VoidArchitect_Engine PRIVATE "src/va.pch.hpp")

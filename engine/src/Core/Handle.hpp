@@ -79,21 +79,21 @@ namespace VoidArchitect
 
         /// @brief Check if the handle is valid
         /// @return true if the handle has a valid index, false otherwise
-        constexpr bool IsValid() const noexcept
+        [[nodiscard]] constexpr bool IsValid() const noexcept
         {
             return index != INVALID_INDEX;
         }
 
         /// @brief Get the handle index value
         /// @return Index portion of the handle
-        constexpr uint32_t GetIndex() const noexcept
+        [[nodiscard]] constexpr uint32_t GetIndex() const noexcept
         {
             return index;
         }
 
         /// @brief Get the handle generation value
         /// @return Generation portion of the handle
-        constexpr uint32_t GetGeneration() const noexcept
+        [[nodiscard]] constexpr uint32_t GetGeneration() const noexcept
         {
             return generation;
         }
@@ -152,7 +152,7 @@ namespace VoidArchitect
 
         /// @brief Get hash value for use in hash tables
         /// @return Combined hash of index and generation
-        constexpr uint32_t GetHash() const noexcept
+        [[nodiscard]] constexpr uint32_t GetHash() const noexcept
         {
             return (static_cast<uint32_t>(index) << GenerationBits) | generation;
         }
@@ -163,7 +163,7 @@ namespace VoidArchitect
         /// @return Handle data packed into 32-bit integer
         ///
         /// @note Useful for debugging and serialization
-        constexpr uint32_t GetPacked() const noexcept
+        [[nodiscard]] constexpr uint32_t GetPacked() const noexcept
         {
             return GetHash();
         }
