@@ -1,7 +1,11 @@
-# Roadmap
+# Roadmap
+
 ## Engine
+
 ### Client
+
 #### General
+
 - Multiplaform for Windows/Linux/Mac
     - Currently not tested on Windows and Linux
 - Mobile runtime support iOS / Android ?
@@ -38,11 +42,11 @@
     - Auto initialize ordering and shutdown ordering
     - Thread-safe access ?
 - Math
-    - Add more type as needed    
+    - Add more type as needed
     - Random generator
     - Various noises
 - Multithreading
-    - Jobs/Tasks system with scheduler 
+    - Jobs/Tasks system with scheduler
 - Resource system
     - Loaders : Image, Material, Shaders
         - TODO: Fonts, Models, Scene
@@ -90,6 +94,7 @@
 - Tests
 
 #### Renderer
+
 - RenderGraph with auto calculation of resources lifetime, ordering of RenderPass, culling, ...
 - RenderPass
     - Forward
@@ -118,7 +123,8 @@
 - Multithreading rendering (Vulkan/DX12/Metal)
 - Batch rendering
 
-#### UI
+#### UI
+
 - UI system
 - Layers
 - UI file format / load / save

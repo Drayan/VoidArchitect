@@ -91,26 +91,42 @@ namespace VoidArchitect::Jobs
         /// @param signalSP SyncPoint to signal when job completes
         /// @param priority Job execution priority
         /// @param name Debug name for the job (should be static string)
+        /// @param workerAffinity Worker thread affinity (ANY_WORKER, MAIN_THREAD_ONLY, or specific worker ID)
         /// @return Handle to the submitted job, or invalid handle if submission failed
+        ///
+        /// Worker affinity controls where the job can execute:
+        /// - ANY_WORKER: Default behavior, job can run on any available worker
+        /// - MAIN_THREAD_ONLY: Job MUST execute on main thread (for GPU operations, UI, etc.)
+        /// - Specific worker ID: Job must execute on a particular worker thread
+        ///
+        /// @note MAIN_THREAD_ONLY jobs are executed during WaitFor() calls and BeginFrame()
         JobHandle Submit(
             JobFunction job,
             SyncPointHandle signalSP,
             JobPriority priority,
-            const char* name) const;
+            const char* name,
+            uint32_t workerAffinity = ANY_WORKER) const;
 
         /// @brief Submit a job that executes after another job completes
         /// @param dependency Job that must complete first
         /// @param job Function to execute
         /// @param signalSP Sync point to signal when a job completes
-        /// @param name Debug name for the job
         /// @param priority Job execution priority
+        /// @param name Debug name for the job
+        /// @param workerAffinity Worker thread affinity (ANY_WORKER, MAIN_THREAD_ONLY, or specific worker ID)
         /// @return Handle to the submitted job, or invalid handle if submission failed
+        ///
+        /// This overload combines dependency scheduling with worker affinity control.
+        /// Useful for creating job chains where certain steps must execute on specific threads.
+        ///
+        /// @note If dependency fails or is cancelled, this job will automatically be cancelled
         JobHandle SubmitAfter(
             SyncPointHandle dependency,
             JobFunction job,
             SyncPointHandle signalSP,
             JobPriority priority,
-            const char* name) const;
+            const char* name,
+            uint32_t workerAffinity = ANY_WORKER) const;
 
         /// @brief Manually signal a SyncPoint
         /// @param sp Handle to SyncPoint to signal
@@ -177,23 +193,40 @@ namespace VoidArchitect::Jobs
         /// @param job Function to execute
         /// @param name Debug name for the job
         /// @param priority Job execution priority
+        /// @param workerAffinity Worker thread affinity (ANY_WORKER, MAIN_THREAD_ONLY, or specific worker ID)
         /// @return Handle to submitted job, or invalid handle if submission failed
+        ///
+        /// This is a convenience overload of the Frontend API that adds worker affinity control.
+        /// This job will be automatically managed with internal SyncPoints for simplified usage.
+        ///
+        /// Worker affinity examples:
+        /// - ANY_WORKER: General computation, file I/O, data processing
+        /// - MAIN_THREAD_ONLY: GPY uplaods, UI operations, platform-specific calls
+        /// - Specific worker ID: Thread-local data processing, worker-specific resources
         JobHandle SubmitJob(
             JobFunction job,
             const char* name,
-            JobPriority priority = JobPriority::Normal) const;
+            JobPriority priority = JobPriority::Normal,
+            uint32_t workerAffinity = ANY_WORKER) const;
 
         /// @brief Submit a job that executes after another job completes
         /// @param dependency Job that must complete first
         /// @param job Function to execute
         /// @param name Debug name for the job
         /// @param priority Job execution priority
+        /// @param workerAffinity Worker thread affinity (ANY_WORKER, MAIN_THREAD_ONLY, or specific worker ID)
         /// @return Handle to submitted job, or invalid handle if submission failed
+        ///
+        /// Frontend API convenience method for job chains with worker affinity control.
+        /// Automatically manages SyncPoints while providing dependency and affinity control.
+        ///
+        /// Perfect for simple workflows like: LoadData (anyworker) -> UploadToGPU (main thread)
         JobHandle SubmitJobAfter(
             JobHandle dependency,
             JobFunction job,
             const char* name,
-            JobPriority priority = JobPriority::Normal);
+            JobPriority priority = JobPriority::Normal,
+            uint32_t workerAffinity = ANY_WORKER) const;
 
         /// @brief Wait for a job to complete (blocking)
         /// @param handle Handle to job to wait for

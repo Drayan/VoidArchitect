@@ -68,9 +68,10 @@ namespace VoidArchitect::Jobs
 
     JobHandle JobSystem::Submit(
         JobFunction job,
-        const SyncPointHandle signalSP,
-        const JobPriority priority,
-        const char* name) const
+        SyncPointHandle signalSP,
+        JobPriority priority,
+        const char* name,
+        uint32_t workerAffinity) const
     {
         if (!m_Scheduler)
         {
@@ -78,15 +79,16 @@ namespace VoidArchitect::Jobs
             return InvalidJobHandle;
         }
 
-        return m_Scheduler->Submit(std::move(job), signalSP, priority, name);
+        return m_Scheduler->Submit(std::move(job), signalSP, priority, name, workerAffinity);
     }
 
     JobHandle JobSystem::SubmitAfter(
-        const SyncPointHandle dependency,
+        SyncPointHandle dependency,
         JobFunction job,
-        const SyncPointHandle signalSP,
-        const JobPriority priority,
-        const char* name) const
+        SyncPointHandle signalSP,
+        JobPriority priority,
+        const char* name,
+        uint32_t workerAffinity) const
     {
         if (!m_Scheduler)
         {
@@ -94,7 +96,13 @@ namespace VoidArchitect::Jobs
             return InvalidJobHandle;
         }
 
-        return m_Scheduler->SubmitAfter(dependency, std::move(job), signalSP, priority, name);
+        return m_Scheduler->SubmitAfter(
+            dependency,
+            std::move(job),
+            signalSP,
+            priority,
+            name,
+            workerAffinity);
     }
 
     void JobSystem::Signal(const SyncPointHandle sp, const JobResult result) const
@@ -170,7 +178,8 @@ namespace VoidArchitect::Jobs
     JobHandle JobSystem::SubmitJob(
         JobFunction job,
         const char* name,
-        const JobPriority priority) const
+        const JobPriority priority,
+        const uint32_t workerAffinity) const
     {
         if (!m_Scheduler)
         {
@@ -187,14 +196,15 @@ namespace VoidArchitect::Jobs
         }
 
         // Submit the job
-        return Submit(std::move(job), syncPoint, priority, name);
+        return Submit(std::move(job), syncPoint, priority, name, workerAffinity);
     }
 
     JobHandle JobSystem::SubmitJobAfter(
-        JobHandle dependency,
+        const JobHandle dependency,
         JobFunction job,
         const char* name,
-        const JobPriority priority)
+        const JobPriority priority,
+        const uint32_t workerAffinity) const
     {
         if (!m_Scheduler)
         {
@@ -225,7 +235,13 @@ namespace VoidArchitect::Jobs
         }
 
         // Submit after dependency's SyncPoint
-        return SubmitAfter(depJob->signalOnCompletion, std::move(job), syncPoint, priority, name);
+        return SubmitAfter(
+            depJob->signalOnCompletion,
+            std::move(job),
+            syncPoint,
+            priority,
+            name,
+            workerAffinity);
     }
 
     void JobSystem::WaitForJob(JobHandle handle)

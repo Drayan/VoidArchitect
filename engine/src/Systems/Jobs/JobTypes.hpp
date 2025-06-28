@@ -27,6 +27,30 @@ namespace VoidArchitect::Jobs
     /// @brief Maximum number of SyncPoint that can exist simultaneously in the system
     constexpr size_t MAX_SYNCPOINTS = 4096;
 
+    // === Worker Affinity Constants ===
+
+    /// @brief Worker affinity constants for job scheduling control
+    ///
+    /// These constants control which workers can execute specific jobs:
+    /// - ANY_WORKER: Job can run on any available worker thread (default behavior)
+    /// - MAIN_THREAD_ONLY: Job MUST be executed only on the main thread
+    ///
+    /// Main thread execution is useful for operations that require specific context:
+    /// - GPU resource creation/deletion (RHI binding)
+    /// - Platform-specific operations (window management, file dialogs)
+    /// - Thread-unsafe calls
+    ///
+    /// Usage example:
+    /// @code
+    /// // Regular job - can run anywhere
+    /// g_JobSystem->Submit(ProcessDataJob, sp, JobPriority::Normal, "ProcessData");
+    ///
+    /// // GPU upload job - must run on main thread
+    /// g_JobSystem->Submit(UploadToGPUJob, sp, JobPriority::High, "UploadGPU", MAIN_THREAD_ONLY);
+    /// @endcode
+    constexpr uint32_t ANY_WORKER = UINT32_MAX; ///< Job can execute on any worker thread
+    constexpr uint32_t MAIN_THREAD_ONLY = UINT32_MAX - 1; ///< Job must execute on main thread
+
     // === Handle Types ===
 
     /// @brief Handle for referencing jobs with generation-based validation

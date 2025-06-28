@@ -212,7 +212,8 @@ namespace VoidArchitect::Jobs
         JobFunction job,
         SyncPointHandle signalSP,
         JobPriority priority,
-        const char* name)
+        const char* name,
+        uint32_t workerAffinity)
     {
         // Check backpressure
         auto backpressure = CheckBackpressure();
@@ -225,7 +226,7 @@ namespace VoidArchitect::Jobs
             return InvalidJobHandle;
         }
 
-        Job jobObject(std::move(job), signalSP, name, priority);
+        Job jobObject(std::move(job), signalSP, name, priority, workerAffinity);
 
         // Allocate job slot
         auto handle = AllocateJobSlot(std::move(jobObject));
@@ -240,11 +241,18 @@ namespace VoidArchitect::Jobs
 
         m_Stats.jobsSubmitted.fetch_add(1, std::memory_order_relaxed);
 
+        const char* affinityStr = (workerAffinity == ANY_WORKER)
+            ? "any"
+            : (workerAffinity == MAIN_THREAD_ONLY)
+            ? "main"
+            : std::to_string(workerAffinity).c_str();
+
         VA_ENGINE_TRACE(
-            "[JobScheduler] Submitted job '{}' (handle: {}) with priority {}.",
+            "[JobScheduler] Submitted job '{}' (handle: {}) with priority {} (thread: {}).",
             name,
             handle.GetPacked(),
-            GetPriorityString(priority));
+            GetPriorityString(priority),
+            affinityStr);
 
         return handle;
     }
@@ -254,7 +262,8 @@ namespace VoidArchitect::Jobs
         JobFunction job,
         SyncPointHandle signalSP,
         JobPriority priority,
-        const char* name)
+        const char* name,
+        uint32_t workerAffinity)
     {
         // Check if the dependency is already signalled
         if (IsSignaled(dependency))
@@ -263,7 +272,7 @@ namespace VoidArchitect::Jobs
             if (depStatus == JobResult::Status::Success)
             {
                 // Job is already complete, submit job immediately
-                return Submit(std::move(job), signalSP, priority, name);
+                return Submit(std::move(job), signalSP, priority, name, workerAffinity);
             }
             else
             {
@@ -276,7 +285,7 @@ namespace VoidArchitect::Jobs
             }
         }
 
-        Job jobObject(std::move(job), signalSP, name, priority);
+        Job jobObject(std::move(job), signalSP, name, priority, workerAffinity);
 
         // Allocate job slot but don't queue it yet
         auto handle = AllocateJobSlot(std::move(jobObject));
@@ -304,12 +313,19 @@ namespace VoidArchitect::Jobs
 
         m_Stats.jobsSubmitted.fetch_add(1, std::memory_order_relaxed);
 
+        const char* affinityStr = (workerAffinity == ANY_WORKER)
+            ? "any"
+            : (workerAffinity == MAIN_THREAD_ONLY)
+            ? "main"
+            : std::to_string(workerAffinity).c_str();
+
         VA_ENGINE_TRACE(
-            "[JobScheduler] Submitted dependent job '{}' (handle: {}), waiting on sync point {}, with priority {}.",
+            "[JobScheduler] Submitted dependent job '{}' (handle: {}), waiting on sync point {}, with priority {} (thread: {}).",
             name,
             handle.GetPacked(),
             spname,
-            GetPriorityString(priority));
+            GetPriorityString(priority),
+            affinityStr);
 
         return handle;
     }

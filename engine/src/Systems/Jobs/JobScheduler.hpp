@@ -236,16 +236,28 @@ namespace VoidArchitect::Jobs
         /// @param signalSP SyncPoint to signal when job completes
         /// @param priority Job execution priority
         /// @param name Debug name for the job (should be static string)
+        /// @param workerAffinity Worker thread affinity (ANY_WORKER, MAIN_THREAD_ONLY, or specific worker ID)
         /// @return Handle to a submitted job, or invalid handle if submission failed
         ///
         /// This is the code job submission method. The job will be queued based on
         /// priority and executed when a worker becomes available. Upon completion,
         /// the specified SyncPoint will be signalled with the job's result.
+        ///
+        /// This method allow precise control over which worker can execute the job:
+        /// - ANY_WORKER: Default behavior, any available worker can execute
+        /// - MAIN_THREAD_ONLY: Job will only execute on main thread (during WaitFor calls)
+        /// - Specific worker ID: Job will only execute on that particular worker thread
+        ///
+        /// Main thread execution is essential for operations requiring specific context:
+        /// - GPU resource creation
+        /// - Platform-specific operations
+        /// - Thread-unsafe library calls
         JobHandle Submit(
             JobFunction job,
             SyncPointHandle signalSP,
             JobPriority priority,
-            const char* name);
+            const char* name,
+            uint32_t workerAffinity = ANY_WORKER);
 
         /// @brief Submit a job to execute after a dependency is satisfied
         /// @param dependency SyncPoint that must be signalled before execution
@@ -253,6 +265,7 @@ namespace VoidArchitect::Jobs
         /// @param signalSP SyncPoint to signal when job completes
         /// @param priority Job execution priority
         /// @param name Debug name for the job
+        /// @param workerAffinity Worker thread affinity (ANY_WORKER, MAIN_THREAD_ONLY, or specific worker ID)
         /// @return Handle to a submitted job, or invalid handle if submission failed
         ///
         /// The job will be held in a pending state until the dependency SyncPoint
@@ -263,7 +276,8 @@ namespace VoidArchitect::Jobs
             JobFunction job,
             SyncPointHandle signalSP,
             JobPriority priority,
-            const char* name);
+            const char* name,
+            uint32_t workerAffinity = ANY_WORKER);
 
         // === Synchronization (Main Thread Only ===
 
