@@ -1,0 +1,7 @@
+<map id="engine/src/Systems/Jobs/JobSystem.hpp" name="engine/src/Systems/Jobs/JobSystem.hpp">
+<area shape="rect" id="Node000001" title="JobSystem class following VoidArchitect engine patterns." alt="" coords="134,5,283,46"/>
+<area shape="rect" id="Node000002" href="$_application_8cpp.html" title=" " alt="" coords="5,102,212,127"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="176,58,124,103,120,99,173,54"/>
+<area shape="rect" id="Node000003" href="$_job_system_8cpp.html" title=" " alt="" coords="236,94,384,135"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="245,54,289,92,285,96,241,58"/>
+</map>

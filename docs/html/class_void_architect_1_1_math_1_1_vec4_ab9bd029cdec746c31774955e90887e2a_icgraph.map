@@ -1,0 +1,7 @@
+<map id="VoidArchitect::Math::Vec4::Zero" name="VoidArchitect::Math::Vec4::Zero">
+<area shape="rect" id="Node000001" title=" " alt="" coords="257,39,393,79"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_resources_1_1_mesh_data.html#a8ae55dcc2167f883c853cc72f8df33c1" title=" " alt="" coords="5,5,209,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="241,49,209,44,209,39,241,44"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_renderer_1_1_render_system.html#a268b747346b888c6092e8c0b11fe0d78" title=" " alt="" coords="5,71,209,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="241,74,209,79,209,73,241,69"/>
+</map>

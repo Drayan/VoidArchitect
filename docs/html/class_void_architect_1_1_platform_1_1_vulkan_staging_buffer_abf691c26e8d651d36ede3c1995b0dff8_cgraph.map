@@ -1,0 +1,11 @@
+<map id="VoidArchitect::Platform::VulkanStagingBuffer::VulkanStagingBuffer" name="VoidArchitect::Platform::VulkanStagingBuffer::VulkanStagingBuffer">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,63,162,119"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_platform_1_1_vulkan_buffer.html#ab596fbfa57a92baf2a7b17f07ed5f0b6" title=" " alt="" coords="216,5,404,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="161,66,222,48,223,53,163,71"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_platform_1_1_vulkan_buffer.html#ac39697a82f456157d97195356c53054e" title=" " alt="" coords="210,71,410,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="162,88,194,88,194,94,162,94"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_platform_1_1_vulkan_buffer.html#a66a0362b9ac36f01ab3217f02ebad9f6" title=" " alt="" coords="216,136,404,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="163,111,223,129,222,134,161,116"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_platform_1_1_vulkan_buffer.html#a845c3d723bba81d61430ad536b866791" title=" " alt="" coords="458,136,643,177"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="404,154,443,154,443,159,404,159"/>
+</map>

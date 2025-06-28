@@ -1,0 +1,13 @@
+<map id="VoidArchitect::Resources::Loaders::VAMLoader::LoadMeshFromVAM" name="VoidArchitect::Resources::Loaders::VAMLoader::LoadMeshFromVAM">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,143,223,198"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression.html#ab71b3b1b833176b823d06741a0290c23" title=" " alt="" coords="322,5,509,61"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="152,140,206,104,270,71,306,57,308,62,272,76,209,109,155,145"/>
+<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header.html#ad42e27b4347363115096bf35e58d68e7" title=" " alt="" coords="271,85,560,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="223,144,303,127,304,132,224,150"/>
+<area shape="rect" id="Node000004" href="$struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header.html#ab2c5f36660f71c66da563530766cc69b" title=" " alt="" coords="293,150,538,191"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="223,168,277,168,277,173,223,173"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression.html#a0f5c5e545d66cbe1242e4359fc0c9a8d" title=" " alt="" coords="322,215,509,270"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="224,194,307,214,306,219,223,199"/>
+<area shape="rect" id="Node000006" href="$struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header.html#ad11789bc91ea6c40162909b57ea287ce" title=" " alt="" coords="316,294,515,335"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="148,197,203,240,237,262,272,280,301,291,300,296,270,285,234,266,200,244,145,201"/>
+</map>

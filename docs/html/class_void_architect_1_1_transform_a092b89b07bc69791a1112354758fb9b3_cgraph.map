@@ -1,0 +1,7 @@
+<map id="VoidArchitect::Transform::SetLocalRotation" name="VoidArchitect::Transform::SetLocalRotation">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,172,46"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_math_1_1_quat.html#a27bfb6b79f033e5b66c21257ced1b266" title=" " alt="" coords="220,5,356,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="172,23,204,23,204,28,172,28"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_math_1_1_quat.html#a1c73bacedbc2543152b295ad7fa820a0" title=" " alt="" coords="404,5,540,46"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="356,23,388,23,388,28,356,28"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="VoidArchitect::Renderer::UIPassRenderer::Setup" name="VoidArchitect::Renderer::UIPassRenderer::Setup">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,104,174,144"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_renderer_1_1_render_graph_builder.html#a36d0fb4e8501778ef73e0633ef288e8e" title=" " alt="" coords="222,56,382,112"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,105,206,99,207,104,175,111"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_renderer_1_1_render_graph_builder.html#a7aba84ccb2a526765b4539e4b4e90d19" title=" " alt="" coords="222,136,382,192"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="175,137,207,143,206,148,174,142"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_renderer_1_1_render_graph_builder.html#a47e76d9e38755bb0f4a96910294b5c2f" title=" " alt="" coords="430,5,590,61"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="381,62,414,54,415,59,383,67"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_renderer_1_1_render_graph_builder.html#a40af6ac6f24899bca6d38fff2a0809d5" title=" " alt="" coords="638,96,799,152"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="383,89,623,112,622,117,382,94"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="577,59,640,87,637,92,575,64"/>
+<area shape="poly" id="edge6_Node000005_Node000004" title=" " alt="" coords="382,154,622,130,623,136,383,159"/>
+<area shape="rect" id="Node000006" href="$class_void_architect_1_1_renderer_1_1_render_graph_builder.html#a9a2d7216299d95e55d28fd5ad6612d43" title=" " alt="" coords="430,187,590,242"/>
+<area shape="poly" id="edge7_Node000005_Node000006" title=" " alt="" coords="383,181,415,189,414,194,381,186"/>
+<area shape="poly" id="edge8_Node000006_Node000004" title=" " alt="" coords="575,184,637,156,640,161,577,189"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="VoidArchitect::Platform::VulkanImage::TransitionLayout" name="VoidArchitect::Platform::VulkanImage::TransitionLayout">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,13,215,54"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_platform_1_1_vulkan_command_buffer.html#a4a832c47d322fdbbf388a1e1031d8e72" title=" " alt="" coords="263,5,427,61"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,30,247,30,247,36,215,36"/>
+</map>

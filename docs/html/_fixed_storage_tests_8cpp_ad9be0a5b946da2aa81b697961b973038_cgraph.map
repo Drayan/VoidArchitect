@@ -1,0 +1,17 @@
+<map id="VA_REGISTER_TEST" name="VA_REGISTER_TEST">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,144,160,169"/>
+<area shape="rect" id="Node000002" href="$_fixed_storage_tests_8cpp.html#a925360b2e40a579b247d321db7d07941" title="Test handle generation and ABA prevention." alt="" coords="208,144,401,169"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,154,192,154,192,159,160,159"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_collections_1_1_fixed_storage.html#a9f4828c0199ff0cd6a2f08f7622e3e78" title="Allocate a new slot and construct object in&#45;place." alt="" coords="449,37,621,78"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="333,140,448,89,464,82,466,87,450,93,335,145"/>
+<area shape="rect" id="Node000006" href="$class_void_architect_1_1_collections_1_1_fixed_storage.html#a721d4fae44f875c5946058de2effd441" title="Get mutable object by handle." alt="" coords="449,103,621,143"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="397,140,433,135,434,140,398,146"/>
+<area shape="rect" id="Node000007" href="$class_void_architect_1_1_collections_1_1_fixed_storage.html#ad0eee9c51c6341c404d860cc841ec73b" title="Check if handle references a valid object." alt="" coords="449,168,621,209"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="401,167,434,172,433,177,401,172"/>
+<area shape="rect" id="Node000008" href="$class_void_architect_1_1_collections_1_1_fixed_storage.html#a135e8dbe28a28e611e9c292ca82be518" title="Release a slot and destruct the object." alt="" coords="449,233,621,274"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="336,167,450,218,467,225,464,230,448,223,334,172"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_collections_1_1_fixed_storage.html#a005394a788ffe413201e38331689de39" title="Get the number of currently allocated slots." alt="" coords="669,5,866,46"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="621,43,654,39,654,44,622,48"/>
+<area shape="rect" id="Node000005" href="$struct_void_architect_1_1_handle.html#a791780bb18d11208b419903a9086b937" title="Create an explicitly invalid handle." alt="" coords="693,71,842,111"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="622,67,679,76,678,81,621,73"/>
+</map>

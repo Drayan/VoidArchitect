@@ -53,6 +53,15 @@ namespace VoidArchitect::Jobs
         /// @brief Number of active worker threads
         std::atomic<uint32_t> activeWorkers{0};
 
+        /// @brief Number of CompletedN2 jobs evicted during allocation
+        std::atomic<uint64_t> jobsEvictedN2{0};
+
+        /// @brief Number of CompletedN1 jobs evicted during allocation
+        std::atomic<uint64_t> jobsEvictedN1{0};
+
+        /// @brief Number of fresh Completed jobs evicted during allocation
+        std::atomic<uint64_t> jobsEvictedCompleted{0};
+
         /// @brief Get jobs per second throughput
         /// @param deltaTimeSeconds Time delta for calculation
         /// @return Estimated jobs per second
@@ -61,6 +70,21 @@ namespace VoidArchitect::Jobs
         /// @brief Get current job system utilization percentage
         /// @return Utilization as percentage (0.0 to 100.0)
         float GetUtilizationPercentage() const;
+
+        /// @brief Get total number of job evicted (all categories)
+        /// @return Sum of all eviction counters
+        uint64_t GetTotalJobsEvicted() const
+        {
+            return jobsEvictedN2.load(std::memory_order::relaxed) + jobsEvictedN1.load(
+                std::memory_order::relaxed) + jobsEvictedCompleted.load(std::memory_order::relaxed);
+        }
+
+        /// @brief Get eviction rate as percentage of total jobs submitted
+        /// @return Eviction rate as percentage (0.0 to 100.0)
+        ///
+        /// Low percentages (< 1%) indicate healthy operation, while high
+        /// percentages suggest system overload or inadequate storage capacity.
+        float GetEvictionRate() const;
     };
 
     // === Submission Result ===
@@ -321,6 +345,30 @@ namespace VoidArchitect::Jobs
         /// @brief Performance and usage statistics
         mutable JobSystemStats m_Stats;
 
+        // === High-Performance State Tracking ===
+
+        /// @brief Atomic counters for ultra-fast backpressure calculation
+        ///
+        /// These counters are updated atomically during state transitions,
+        /// eliminating the need for expensive storage scans during job submission.
+        struct JobStateCounts
+        {
+            /// @brief Count of truly active jobs (Pending, Ready, Executing, Cancelled)
+            std::atomic<size_t> activeJobs{0};
+
+            /// @brief Count of fresh completed jobs (just finished this frame)
+            std::atomic<size_t> completedJobs{0};
+
+            /// @brief Count of 1-frame old completed jobs
+            std::atomic<size_t> completedN1Jobs{0};
+
+            /// @brief Count of 2+ frame old completed jobs (immediately evictable)
+            std::atomic<size_t> completedN2Jobs{0};
+        };
+
+        /// @brief State counters for O(1) backpressure calculation
+        JobStateCounts m_JobStateCounts;
+
         // === Private Implementation Methods ===
 
         /// @brief Worker thread main loop
@@ -383,5 +431,74 @@ namespace VoidArchitect::Jobs
 
         /// @brief Clean up all resources during shutdown
         void CleanupResources();
+
+        /// @brief Update state counters during job transitions (thread-safe)
+        /// @param oldState Previous job state (use JobState(-1) for new jobs)
+        /// @param newState New job state (use JobState(-1) for job release)
+        ///
+        /// This method must be called every time a job changes state to keep
+        /// the counters accurate. Uses atomic operations for thread safety.
+        void UpdateJobStateCounts(JobState oldState, JobState newState);
+
+        /// @brief Convert JobState to counter category for efficient counting
+        /// @param state Job state to categorize
+        /// @return Counter category (0=active, 1=completed, 2=N1, 3=N2, -1=invalid)
+        static int GetStateCounterCategory(JobState state);
+
+        /// @brief Promote completed jobs through aging states
+        ///
+        /// Called one per frame from the main thread to advance job completion
+        /// states through the aging pipeline:
+        /// - Completed -> CompletedN1
+        /// - CompletedN1 -> CompletedN2
+        ///
+        /// CompletedN2 job remains until eviction during allocation
+        ///
+        /// This method ensures that job results remain accessible for at least
+        /// 3 frames (current + 2 aging states) before becoming eligible for eviction.
+        /// (In a normal scenario, in a pressure scenario the system is designed to reclaim
+        /// sooner)
+        ///
+        /// @note This method is NOT thread-safe and MUST be called from the main thread
+        /// @note Jobs in Completed, CompletedN1 and CompletedN2 state may be evicted during allocation under backpressure
+        void PromoteCompletedJobs();
+
+        /// @brief Allocate a job slot with intelligent eviction fallback
+        /// @param job Constructed job object to allocate
+        /// @return Valid JobHandle on success, invalid handle if allocation impossible
+        ///
+        /// This method implements the core allocation strategy for job storage:
+        /// 1. Attempts normal allocation from free slots first
+        /// 2. If no free slots, attempts intelligent eviction:
+        ///     a. CompletedN2 jobs (oldest, most eligible for eviction)
+        ///     b. CompletedN1 jobs (second priority)
+        ///     c. Completed jobs (last resort)
+        /// 3. Retries allocation after successful eviction
+        ///
+        /// Eviction priority ensures that:
+        /// - Active jobs (Pending/Ready/Executing) are never evicted
+        /// - Fresher completed jobs are preserved as long as possible
+        /// - System degrades gracefully under extreme memory pressure
+        ///
+        /// @note This method is thread-safe and can be called fron any thread
+        /// @note Statistics are updated to track eviction events for monitoring
+        JobHandle AllocateJobSlot(Job&& job);
+
+        /// @brief Attempt to evict a single job in the specified state
+        /// @param targetState Job state to search for and evict
+        /// @return true if a job was successfully evicted, false otherwise
+        ///
+        /// This method searches through the job storage for jobs in the target
+        /// completion state and evicts the first one found. The search is linear.
+        ///
+        /// Eviction process:
+        /// 1. Linear sarch through storage slots for target state
+        /// 2. Validate handle is still valid (race condition protection)
+        /// 3. Update eviction statistics for monitoring
+        /// 4. Release the job slot using proper handle generation
+        ///
+        /// @note This method is thread-safe but MAY compete with other operations
+        /// @note Only jobs in completed states should be evicted
+        bool TryEvictJobByState(JobState targetState);
     };
 }

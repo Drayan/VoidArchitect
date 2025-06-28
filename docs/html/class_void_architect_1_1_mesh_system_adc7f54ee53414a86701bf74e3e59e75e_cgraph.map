@@ -1,0 +1,5 @@
+<map id="VoidArchitect::MeshSystem::GenerateTangents" name="VoidArchitect::MeshSystem::GenerateTangents">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,190,46"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_math_1_1_vec3.html#a2bad1562192b626cadb6de205175b239" title=" " alt="" coords="238,5,374,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,23,222,23,222,28,190,28"/>
+</map>

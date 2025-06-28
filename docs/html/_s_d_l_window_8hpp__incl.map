@@ -1,0 +1,9 @@
+<map id="engine/src/Platform/SDLWindow.hpp" name="engine/src/Platform/SDLWindow.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="66,5,201,46"/>
+<area shape="rect" id="Node000002" href="$_window_8hpp.html" title=" " alt="" coords="5,94,129,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,48,89,83,85,80,115,45"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="153,94,248,120"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="152,45,182,80,178,83,148,48"/>
+<area shape="rect" id="Node000003" href="$_core_8hpp.html" title=" " alt="" coords="14,168,120,193"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="70,120,70,152,64,152,64,120"/>
+</map>

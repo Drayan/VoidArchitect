@@ -1,0 +1,8 @@
+<map id="VoidArchitect::Jobs::JobResult::Cancelled" name="VoidArchitect::Jobs::JobResult::Cancelled">
+<area shape="rect" id="Node000001" title="Create a cancelled job result with reason." alt="" coords="5,5,160,46"/>
+<area shape="rect" id="Node000002" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#abe2ac9fbb5eec964167eabc618ae8bb0" title="Default constructor creates successful result." alt="" coords="208,5,363,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,23,192,23,192,28,160,28"/>
+<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#ad24a0ccd3b2b067666f00f8f81c3af54" title="Create a successful job result." alt="" coords="411,5,558,46"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="363,32,395,32,395,37,363,37"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="410,20,378,19,378,14,411,14"/>
+</map>

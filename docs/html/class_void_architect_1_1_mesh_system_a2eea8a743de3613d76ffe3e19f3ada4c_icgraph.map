@@ -1,0 +1,15 @@
+<map id="VoidArchitect::MeshSystem::GetHandleFor" name="VoidArchitect::MeshSystem::GetHandleFor">
+<area shape="rect" id="Node000001" title=" " alt="" coords="238,169,422,210"/>
+<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="368,156,354,150,330,148,308,150,294,155,289,161,291,168,286,169,284,159,291,150,307,145,330,143,355,145,370,151"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_mesh_system.html#a789e0f9048d2845ae718bfe425778656" title=" " alt="" coords="5,5,190,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="299,159,250,109,220,84,188,61,164,49,167,44,191,57,224,80,254,106,303,156"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_mesh_system.html#a8710b6c5d7faf59b4a07865c431b76c6" title=" " alt="" coords="5,71,190,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="272,164,189,127,157,114,159,109,191,122,274,160"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_mesh_system.html#a01bb82af5fab7209d792d0ca7ee987b4" title=" " alt="" coords="5,136,190,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="222,177,190,172,191,167,223,172"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_mesh_system.html#a442b1697b6f0440b74584ddc1be39a90" title=" " alt="" coords="5,201,190,242"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="223,207,191,212,190,206,222,202"/>
+<area shape="rect" id="Node000006" href="$class_void_architect_1_1_mesh_system.html#a1e5a0bb40509c11653ee08605aeced99" title=" " alt="" coords="5,267,190,307"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="292,221,191,268,190,269,188,264,189,263,290,216"/>
+<area shape="poly" id="edge7_Node000006_Node000001" title=" " alt="" coords="142,258,189,239,260,208,262,213,191,244,144,263"/>
+</map>

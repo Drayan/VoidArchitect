@@ -1,0 +1,9 @@
+<map id="engine/src/Platform/RHI/Vulkan/VulkanSwapchain.hpp" name="engine/src/Platform/RHI/Vulkan/VulkanSwapchain.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="228,5,455,46"/>
+<area shape="rect" id="Node000002" href="$_vulkan_execution_context_8cpp.html" title=" " alt="" coords="5,94,201,150"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="279,55,173,96,171,91,277,50"/>
+<area shape="rect" id="Node000003" href="$_vulkan_render_pass_8cpp.html" title=" " alt="" coords="224,102,459,142"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="344,62,344,101,339,101,339,62"/>
+<area shape="rect" id="Node000004" href="$_vulkan_swapchain_8cpp.html" title=" " alt="" coords="483,102,710,142"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="410,49,544,98,542,103,408,54"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="VoidArchitect::Jobs::JobResult::Failed" name="VoidArchitect::Jobs::JobResult::Failed">
+<area shape="rect" id="Node000001" title="Create a failed job result with an error message." alt="" coords="5,5,141,46"/>
+<area shape="rect" id="Node000002" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#abe2ac9fbb5eec964167eabc618ae8bb0" title="Default constructor creates successful result." alt="" coords="189,5,344,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="141,23,173,23,173,28,141,28"/>
+<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#ad24a0ccd3b2b067666f00f8f81c3af54" title="Create a successful job result." alt="" coords="392,5,539,46"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="344,32,376,32,376,37,344,37"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="391,20,359,19,359,14,392,14"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="VoidArchitect::Resources::MeshData::GenerateNormals" name="VoidArchitect::Resources::MeshData::GenerateNormals">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,39,205,79"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_math_1_1_vec3.html#ac6003464f75d8794be4e973f17ffc480" title=" " alt="" coords="253,5,389,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="204,41,237,36,238,41,205,46"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_math_1_1_vec3.html#acb0f6c01053c491d9eee8cbd6c5cbf23" title=" " alt="" coords="253,71,389,111"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="205,71,238,76,237,81,204,76"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_math_1_1_vec3.html#aca594eef688919467165eb6595839832" title=" " alt="" coords="437,39,573,79"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="390,35,422,41,421,46,389,41"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="389,77,421,71,422,76,390,82"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="VoidArchitect::Resources::Loaders::ImportAssimpMaterialTemplate" name="VoidArchitect::Resources::Loaders::ImportAssimpMaterialTemplate">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,63,216,119"/>
+<area shape="rect" id="Node000002" href="$namespace_void_architect_1_1_resources_1_1_loaders.html#a14ce1b8764255cf9e62c8e8c5403f0ea" title=" " alt="" coords="274,5,477,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="216,62,275,48,276,53,217,68"/>
+<area shape="rect" id="Node000003" href="$namespace_void_architect_1_1_resources_1_1_loaders.html#ae7b8b3797accb2aab408a314dc8ceaee" title=" " alt="" coords="264,71,487,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="216,88,248,88,248,94,216,94"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_math_1_1_vec4.html#ab4d0f561521eb905d16805f3992d4aee" title=" " alt="" coords="307,136,444,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="217,114,293,133,291,138,216,120"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_math_1_1_vec4.html#a92e94b22510b1f0194a9f29e73673979" title=" " alt="" coords="535,136,671,177"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="444,154,519,154,519,159,444,159"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="VoidArchitect::Jobs::JobSystem::CreateSyncPoint" name="VoidArchitect::Jobs::JobSystem::CreateSyncPoint">
+<area shape="rect" id="Node000001" title="Create a new SyncPoint for dependency coordination." alt="" coords="247,39,449,79"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_jobs_1_1_job_system.html#a479b1fdc5fb1c35b6c24c0aea156c204" title="Submit a simple job (automatically creates SyncPoint)" alt="" coords="19,5,185,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="231,46,185,40,186,34,232,41"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_jobs_1_1_job_system.html#a5e889f9ede4fecb230367279bf704a53" title="Submit a job that executes after another job completes." alt="" coords="5,71,199,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="231,77,199,81,199,76,231,72"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="VoidArchitect::Jobs::Job" name="VoidArchitect::Jobs::Job">
+<area shape="rect" id="Node000001" title="Core job structure containing execution data and metadata." alt="" coords="327,78,491,104"/>
+<area shape="rect" id="Node000002" href="$struct_void_architect_1_1_handle.html" title=" " alt="" coords="5,5,154,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,36,303,60,361,75,360,80,302,66,168,41"/>
+<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_jobs_1_1_job_result.html" title="Result structure returned by job execution." alt="" coords="12,71,147,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="163,88,326,88,326,94,163,94"/>
+<area shape="rect" id="Node000004" href="$struct_void_architect_1_1_handle.html" title=" " alt="" coords="5,136,154,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="168,141,302,117,361,102,362,107,303,122,169,146"/>
+</map>

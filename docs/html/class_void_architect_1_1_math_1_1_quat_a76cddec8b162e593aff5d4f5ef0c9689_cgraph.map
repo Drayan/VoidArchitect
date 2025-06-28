@@ -1,0 +1,8 @@
+<map id="VoidArchitect::Math::Quat::ToMat4" name="VoidArchitect::Math::Quat::ToMat4">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,142,70"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_math_1_1_quat.html#ab22666e92ed99d4c504e684d717e98f1" title=" " alt="" coords="190,29,326,70"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="142,47,174,47,174,52,142,52"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="223,29,221,19,227,10,239,5,258,3,278,5,290,11,288,16,276,10,258,8,240,10,230,14,226,20,228,28"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_math_1_1_quat.html#a1c73bacedbc2543152b295ad7fa820a0" title=" " alt="" coords="374,29,510,70"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="326,47,358,47,358,52,326,52"/>
+</map>

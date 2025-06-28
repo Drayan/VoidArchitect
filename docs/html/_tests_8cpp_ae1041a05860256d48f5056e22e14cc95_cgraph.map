@@ -1,0 +1,14 @@
+<map id="TestThreadSafety" name="TestThreadSafety">
+<area shape="rect" id="Node000001" title="Test thread safety with concurrent allocations." alt="" coords="5,104,130,129"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_collections_1_1_fixed_storage.html#a9f4828c0199ff0cd6a2f08f7622e3e78" title="Allocate a new slot and construct object in&#45;place." alt="" coords="178,63,350,103"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,103,162,98,163,103,131,108"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_collections_1_1_fixed_storage.html#a005394a788ffe413201e38331689de39" title="Get the number of currently allocated slots." alt="" coords="398,5,594,46"/>
+<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="84,101,124,73,177,48,228,35,281,27,382,20,382,25,282,32,229,40,179,54,127,78,87,105"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_collections_1_1_fixed_storage.html#a721d4fae44f875c5946058de2effd441" title="Get mutable object by handle." alt="" coords="178,128,350,169"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="131,124,163,129,162,134,130,129"/>
+<area shape="rect" id="Node000006" href="$class_void_architect_1_1_collections_1_1_fixed_storage.html#ad0eee9c51c6341c404d860cc841ec73b" title="Check if handle references a valid object." alt="" coords="178,193,350,234"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="90,127,179,178,193,185,191,189,176,183,88,132"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="348,60,396,48,397,53,349,65"/>
+<area shape="rect" id="Node000004" href="$struct_void_architect_1_1_handle.html#a791780bb18d11208b419903a9086b937" title="Create an explicitly invalid handle." alt="" coords="422,71,570,111"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="350,83,406,85,406,91,350,89"/>
+</map>

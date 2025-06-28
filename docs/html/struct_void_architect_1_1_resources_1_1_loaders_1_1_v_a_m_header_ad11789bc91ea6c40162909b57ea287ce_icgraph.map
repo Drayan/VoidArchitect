@@ -1,0 +1,10 @@
+<map id="VoidArchitect::Resources::Loaders::VAMHeader::IsValid" name="VoidArchitect::Resources::Loaders::VAMHeader::IsValid">
+<area shape="rect" id="Node000001" title=" " alt="" coords="510,41,709,82"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_loader.html#ad0c918b8b651fc371bb7112421407ed7" title=" " alt="" coords="239,5,462,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="494,48,462,44,463,39,495,43"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_loader.html#a37035a258a8ac80cdf50ae65c1abeb13" title=" " alt="" coords="242,70,459,126"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="495,80,460,85,459,80,494,75"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_loader.html#a62f418e75bb0bf1f7f0979130de4a7ce" title=" " alt="" coords="5,41,191,82"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="223,46,192,51,191,46,223,41"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="226,83,191,78,191,72,227,77"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="VoidArchitect::Platform::VulkanCommandBuffer::SingleUseEnd" name="VoidArchitect::Platform::VulkanCommandBuffer::SingleUseEnd">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,70,170,126"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_platform_1_1_vulkan_command_buffer.html#a93366f3656a93de8872b5a921f18afe7" title=" " alt="" coords="218,5,413,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,69,233,49,235,54,171,74"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_platform_1_1_vulkan_command_buffer.html#a4a832c47d322fdbbf388a1e1031d8e72" title=" " alt="" coords="233,70,398,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="170,95,218,95,218,100,170,100"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_platform_1_1_vulkan_command_buffer.html#a0d0e53849c85e1ef6b871efd42dc3695" title=" " alt="" coords="233,174,398,230"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="151,124,240,165,238,169,149,129"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="271,173,271,163,279,155,294,149,315,147,339,150,354,157,352,161,338,155,315,152,295,154,282,159,276,165,276,174"/>
+</map>

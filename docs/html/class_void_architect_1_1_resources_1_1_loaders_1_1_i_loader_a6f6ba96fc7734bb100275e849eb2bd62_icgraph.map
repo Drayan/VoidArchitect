@@ -1,0 +1,15 @@
+<map id="VoidArchitect::Resources::Loaders::ILoader::ILoader" name="VoidArchitect::Resources::Loaders::ILoader::ILoader">
+<area shape="rect" id="Node000001" title=" " alt="" coords="277,197,454,238"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_image_loader.html#a82d3629fd669a3db65ae21a1ab035e06" title=" " alt="" coords="32,5,202,61"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="339,186,291,130,260,101,227,75,201,61,204,56,230,71,264,97,295,126,343,183"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_material_loader.html#a2066594312213d2b63706eefc70299d1" title=" " alt="" coords="32,109,202,165"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="285,194,202,167,204,162,287,189"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_raw_mesh_loader.html#aefd70b45cfa94d933a36cbcc946d4d33" title=" " alt="" coords="26,189,208,245"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="261,220,208,220,208,214,261,214"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_shader_loader.html#a051ac86cfc919832c5c116fc537c3fd6" title=" " alt="" coords="32,293,202,349"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="302,246,187,295,184,290,300,241"/>
+<area shape="rect" id="Node000006" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_loader.html#a3de162c3dae05b7085a955a58e6e1b8c" title=" " alt="" coords="5,373,229,414"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="343,252,295,309,264,338,230,363,208,375,205,370,227,359,261,334,292,305,339,249"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="157,97,142,90,117,88,95,90,81,95,74,101,74,109,69,109,69,99,78,90,94,85,117,83,143,85,159,92"/>
+<area shape="poly" id="edge6_Node000005_Node000005" title=" " alt="" coords="157,281,142,274,117,272,95,274,81,279,74,285,74,293,69,293,69,283,78,274,94,269,117,267,143,269,159,276"/>
+</map>

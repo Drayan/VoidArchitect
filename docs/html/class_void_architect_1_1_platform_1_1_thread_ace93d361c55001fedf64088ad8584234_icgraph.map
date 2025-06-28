@@ -1,0 +1,12 @@
+<map id="VoidArchitect::Platform::Thread::Sleep" name="VoidArchitect::Platform::Thread::Sleep">
+<area shape="rect" id="Node000001" title=" " alt="" coords="504,47,660,88"/>
+<area shape="rect" id="Node000002" href="$namespace_void_architect.html#a2fec0f9cd1b76ac8bdf6e1aef9ddf53f" title=" " alt="" coords="225,5,456,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="488,51,406,34,407,29,489,46"/>
+<area shape="rect" id="Node000004" href="$namespace_void_architect.html#a4370b9073e5736c909c2156a65ed9f1e" title=" " alt="" coords="227,55,454,80"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="489,70,454,70,454,65,489,65"/>
+<area shape="rect" id="Node000005" href="$namespace_void_architect.html#a1bfcd9a9c4cb34ac70b78908e6332483" title=" " alt="" coords="240,104,440,130"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="489,89,407,106,406,101,488,84"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_application.html#a6ea044a7ddd8c1f0fe14abe8619e4564" title=" " alt="" coords="5,47,177,88"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="257,37,178,53,177,48,256,32"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="256,103,177,87,178,82,257,98"/>
+</map>

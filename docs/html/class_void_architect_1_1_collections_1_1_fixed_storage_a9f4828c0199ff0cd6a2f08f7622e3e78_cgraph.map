@@ -1,0 +1,7 @@
+<map id="VoidArchitect::Collections::FixedStorage::Allocate" name="VoidArchitect::Collections::FixedStorage::Allocate">
+<area shape="rect" id="Node000001" title="Allocate a new slot and construct object in&#45;place." alt="" coords="5,39,178,79"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_collections_1_1_fixed_storage.html#a005394a788ffe413201e38331689de39" title="Get the number of currently allocated slots." alt="" coords="226,5,422,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="177,44,210,39,211,45,178,49"/>
+<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_handle.html#a791780bb18d11208b419903a9086b937" title="Create an explicitly invalid handle." alt="" coords="250,71,398,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="178,68,235,76,234,81,177,73"/>
+</map>

@@ -1,0 +1,12 @@
+<map id="VoidArchitect::Jobs::JobSystem::GetJobResult" name="VoidArchitect::Jobs::JobSystem::GetJobResult">
+<area shape="rect" id="Node000001" title="Get result of a completed job." alt="" coords="5,71,189,111"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_jobs_1_1_job_system.html#a5997837a9594314e46e30ad4971c3af9" title="Check if SyncPoint is signaled." alt="" coords="237,5,401,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="168,68,232,48,233,54,169,73"/>
+<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_handle.html#a49c43ae80dcdba365c441051b2c9e6eb" title="Check if the handle is valid." alt="" coords="245,71,393,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="189,88,229,88,229,94,189,94"/>
+<area shape="rect" id="Node000004" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#ad24a0ccd3b2b067666f00f8f81c3af54" title="Create a successful job result." alt="" coords="245,136,392,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="169,109,233,128,232,134,168,114"/>
+<area shape="rect" id="Node000005" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#abe2ac9fbb5eec964167eabc618ae8bb0" title="Default constructor creates successful result." alt="" coords="449,136,604,177"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="393,162,433,163,433,168,393,168"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="448,150,408,150,408,145,449,145"/>
+</map>

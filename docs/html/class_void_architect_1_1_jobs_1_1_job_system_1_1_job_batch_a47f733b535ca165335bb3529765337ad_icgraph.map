@@ -1,0 +1,11 @@
+<map id="VoidArchitect::Jobs::JobSystem::JobBatch::JobBatch" name="VoidArchitect::Jobs::JobSystem::JobBatch::JobBatch">
+<area shape="rect" id="Node000001" title="Constructor creates empty job batch." alt="" coords="212,125,370,181"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch.html#abd9176f1eb9cfecdfccc6d6d1ab388bc" title=" " alt="" coords="5,5,164,61"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="233,119,162,75,141,64,144,59,165,71,236,114"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch.html#a9cc8b7d1ed109fef5091e96ab032d7f7" title=" " alt="" coords="5,85,164,141"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="196,137,164,131,165,126,197,132"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch.html#a341151fd442c12e8d9997c4b728ace62" title=" " alt="" coords="5,165,164,221"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="197,174,165,180,164,175,196,169"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_jobs_1_1_job_system_1_1_job_batch.html#ae3cf2abc9fe5beafa0d97b3cc0407dc8" title=" " alt="" coords="5,245,164,301"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="236,192,165,235,144,247,141,242,162,231,233,187"/>
+</map>

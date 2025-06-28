@@ -1,0 +1,7 @@
+<map id="VoidArchitect::Resources::IMesh::GetMeshData" name="VoidArchitect::Resources::IMesh::GetMeshData">
+<area shape="rect" id="Node000001" title=" " alt="" coords="238,39,408,79"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_mesh_system.html#a09c84c8e9e79a910e61697bea5b90a8f" title=" " alt="" coords="5,5,190,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="222,47,190,42,191,37,223,42"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_mesh_system.html#abea7c90e154de834e7a19fca58607966" title=" " alt="" coords="5,71,190,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="223,76,191,81,190,75,222,71"/>
+</map>

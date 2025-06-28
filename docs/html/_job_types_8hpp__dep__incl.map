@@ -1,0 +1,19 @@
+<map id="engine/src/Systems/Jobs/JobTypes.hpp" name="engine/src/Systems/Jobs/JobTypes.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="194,5,332,46"/>
+<area shape="rect" id="Node000002" href="$_job_scheduler_8hpp.html" title=" " alt="" coords="95,183,255,223"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="216,57,197,75,183,95,175,117,172,140,174,182,169,182,167,140,170,116,178,93,193,71,212,53"/>
+<area shape="rect" id="Node000007" href="$_sync_point_8cpp.html" title=" " alt="" coords="289,183,431,223"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="312,53,332,71,348,93,357,115,362,140,364,182,359,182,357,140,352,117,343,95,328,75,308,57"/>
+<area shape="rect" id="Node000008" href="$_sync_point_8hpp.html" title=" " alt="" coords="192,94,334,135"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="266,62,266,94,260,94,260,62"/>
+<area shape="rect" id="Node000003" href="$_job_scheduler_8cpp.html" title=" " alt="" coords="5,271,166,312"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="145,236,108,273,104,269,142,232"/>
+<area shape="rect" id="Node000004" href="$_job_system_8hpp.html" title="JobSystem class following VoidArchitect engine patterns." alt="" coords="190,271,338,312"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="208,232,246,269,242,273,204,236"/>
+<area shape="rect" id="Node000005" href="$_application_8cpp.html" title=" " alt="" coords="60,368,266,393"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="232,324,178,369,175,365,228,320"/>
+<area shape="rect" id="Node000006" href="$_job_system_8cpp.html" title=" " alt="" coords="290,360,438,401"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="300,320,343,358,340,362,297,324"/>
+<area shape="poly" id="edge8_Node000008_Node000002" title=" " alt="" coords="234,148,197,184,193,180,230,144"/>
+<area shape="poly" id="edge9_Node000008_Node000007" title=" " alt="" coords="298,143,340,180,336,184,294,147"/>
+</map>

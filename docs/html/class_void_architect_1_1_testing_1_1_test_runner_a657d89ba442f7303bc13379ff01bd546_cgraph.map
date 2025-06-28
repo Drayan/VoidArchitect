@@ -1,0 +1,5 @@
+<map id="VoidArchitect::Testing::TestRunner::RunTestsMatching" name="VoidArchitect::Testing::TestRunner::RunTestsMatching">
+<area shape="rect" id="Node000001" title="Execute tests matching a pattern." alt="" coords="5,5,219,46"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_testing_1_1_test_runner.html#aa4d02c5ec6ab47e1fa52db69732b19c2" title="Execute tests and return detailed summary." alt="" coords="267,5,451,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="219,23,251,23,251,28,219,28"/>
+</map>

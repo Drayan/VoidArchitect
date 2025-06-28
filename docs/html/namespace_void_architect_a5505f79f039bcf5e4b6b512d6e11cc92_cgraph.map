@@ -1,0 +1,8 @@
+<map id="VoidArchitect::ExamplePerformanceMonitoring" name="VoidArchitect::ExamplePerformanceMonitoring">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,238,46"/>
+<area shape="rect" id="Node000002" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#ad24a0ccd3b2b067666f00f8f81c3af54" title="Create a successful job result." alt="" coords="286,5,433,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="238,23,270,23,270,28,238,28"/>
+<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#abe2ac9fbb5eec964167eabc618ae8bb0" title="Default constructor creates successful result." alt="" coords="481,5,636,46"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="433,32,465,32,465,37,433,37"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="480,20,449,19,449,14,480,14"/>
+</map>

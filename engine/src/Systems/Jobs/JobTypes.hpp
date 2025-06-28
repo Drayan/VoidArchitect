@@ -16,7 +16,7 @@ namespace VoidArchitect::Jobs
     // === Configuration Constants ===
 
     /// @brief Maximum number of jobs that can exist simultaneously in the system
-    constexpr size_t MAX_JOBS = 8192;
+    constexpr size_t MAX_JOBS = 16384;
 
     /// @brief Maximum number of worker threads supported by the job system
     constexpr size_t MAX_WORKERS = 32;
@@ -205,6 +205,8 @@ namespace VoidArchitect::Jobs
         Ready, ///< Job dependencies satisfied, ready for execution
         Executing, ///< Job is currently being executed by a worker
         Completed, ///< Job execution finished (check result for success/failure)
+        CompletedN1, ///< Job completed at least 1 frame ago
+        CompletedN2, ///< Job completed at least 2 frames ago, result available but can be reclaimed
         Cancelled, ///< Job was cancelled before execution
     };
 
@@ -223,6 +225,10 @@ namespace VoidArchitect::Jobs
                 return "Executing";
             case JobState::Completed:
                 return "Completed";
+            case JobState::CompletedN1:
+                return "CompletedN+1";
+            case JobState::CompletedN2:
+                return "CompletedN+2";
             case JobState::Cancelled:
                 return "Cancelled";
             default:
@@ -384,6 +390,24 @@ namespace VoidArchitect::Jobs
                 func();
                 return JobResult::Success();
             };
+        }
+
+        /// @brief Move constructor
+        Job(Job&& other) noexcept
+            : state(other.state.load()),
+              dependencyCount(other.dependencyCount.load()),
+              priority(other.priority),
+              workerAffinity(other.workerAffinity),
+              executeFunction(std::move(other.executeFunction)),
+              signalOnCompletion(other.signalOnCompletion),
+              result(other.result),
+              debugName(other.debugName),
+              parentJob(other.parentJob),
+              submitterThread(other.submitterThread),
+              submitTime(other.submitTime),
+              startTime(other.startTime),
+              endTime(other.endTime)
+        {
         }
 
         // --- State Management ---

@@ -1,0 +1,5 @@
+<map id="VoidArchitect::Resources::IMaterial" name="VoidArchitect::Resources::IMaterial">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,176,46"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_platform_1_1_vulkan_material.html" title=" " alt="" coords="12,94,169,135"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="93,62,93,94,88,94,88,62"/>
+</map>

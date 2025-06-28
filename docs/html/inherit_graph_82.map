@@ -1,0 +1,13 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader.html" title=" " alt="" coords="5,136,176,177"/>
+<area shape="rect" id="Node000001" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_image_loader.html" title=" " alt="" coords="229,5,400,46"/>
+<area shape="poly" id="edge35_Node000000_Node000001" title=" " alt="" coords="126,124,171,89,222,57,249,44,251,49,225,61,174,94,129,128"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_material_loader.html" title=" " alt="" coords="229,71,400,111"/>
+<area shape="poly" id="edge36_Node000000_Node000002" title=" " alt="" coords="176,129,241,109,243,115,178,134"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_raw_mesh_loader.html" title=" " alt="" coords="224,136,405,177"/>
+<area shape="poly" id="edge37_Node000000_Node000003" title=" " alt="" coords="191,154,223,154,223,159,191,159"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_shader_loader.html" title=" " alt="" coords="229,201,400,242"/>
+<area shape="poly" id="edge38_Node000000_Node000004" title=" " alt="" coords="178,179,243,198,241,203,176,184"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_loader.html" title=" " alt="" coords="229,267,400,307"/>
+<area shape="poly" id="edge39_Node000000_Node000005" title=" " alt="" coords="129,185,174,219,225,251,251,264,249,268,222,256,171,223,126,189"/>
+</map>

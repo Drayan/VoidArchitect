@@ -1,0 +1,11 @@
+<map id="VoidArchitect::Resources::Loaders::IResourceDefinition" name="VoidArchitect::Resources::Loaders::IResourceDefinition">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,104,204,145"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_image_data_definition.html" title=" " alt="" coords="257,5,459,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="161,95,251,57,286,44,288,49,253,61,164,100"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_material_data_definition.html" title=" " alt="" coords="252,71,464,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="219,107,251,102,252,108,220,112"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_mesh_data_definition.html" title=" " alt="" coords="259,136,457,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="220,136,258,141,258,146,219,141"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_shader_data_definition.html" title=" " alt="" coords="254,201,462,242"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="165,149,253,186,288,198,286,203,251,191,163,154"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="VoidArchitect::Handle::GetPacked" name="VoidArchitect::Handle::GetPacked">
+<area shape="rect" id="Node000001" title="Get packed representation as single uint32_t." alt="" coords="223,5,371,46"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_jobs_1_1_job_system.html#a9d8f4c5326f0f19d934f4ad126d7025d" title="Wait for a job to complete (blocking)" alt="" coords="5,5,175,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="207,28,175,28,175,23,207,23"/>
+</map>

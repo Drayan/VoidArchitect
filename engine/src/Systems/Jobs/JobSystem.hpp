@@ -143,6 +143,36 @@ namespace VoidArchitect::Jobs
 
         // === Frontend API ===
 
+        /// @brief Begin a new frame and perform maintenance operations
+        ///
+        /// This method should be called once per frame from the main thread before
+        /// submitting any frame-specific jobs. It performs essential maintenance:
+        /// - Promotes completed jobs through aging states (Completed -> N1 -> N2)
+        /// - Maintains result availability guarantees for deferred retrieval
+        /// - Prepares the job system for optimal performance during the frame
+        ///
+        /// @note This method is NOT thread-safe and MUST be called from the main thread
+        /// @note Calling thing method is essential for the job result persistence system
+        ///     to work correctly
+        ///
+        /// Usage example:
+        /// @code
+        /// void GameLoop::UpdateFrame()
+        /// {
+        ///     g_JobSystem->BeginFrame(); // Essential for job result persistence
+        ///
+        ///     // Submit frame jobs...
+        ///     auto job = g_JobSystem->SubmitJob(ProcessInput, "InputProcessing");
+        ///
+        ///     // Result from previous frames are still available during this call
+        ///     if(auto result = g_JobSystem->TryGetJobResult(previousFrameJob))
+        ///     {
+        ///         // Use result...
+        ///     }
+        /// }
+        /// @endcode
+        void BeginFrame() const;
+
         /// @brief Submit a simple job (automatically creates SyncPoint)
         /// @param job Function to execute
         /// @param name Debug name for the job
@@ -178,6 +208,45 @@ namespace VoidArchitect::Jobs
         /// @param handle Handle to job to query
         /// @return Job result, or Failed result if job hasn't completed
         JobResult GetJobResult(JobHandle handle) const;
+
+        /// @brief Attempt to retrieve the result of a completed job (recommended)
+        /// @param handle Handle to job to query
+        /// @return JobResult if available, nullopt if not found or not completed
+        ///
+        /// This method provides honest result retrieval with clear failure modes.
+        /// It supports the job result persistence system with aging states:
+        /// - Jobs in Completed/CompletedN1/CompletedN2 states return their results
+        /// - Jobs that have been evicted or are still executing return nullopt
+        /// - Invalid handles return nullopt
+        ///
+        /// Recommended usage pattern:
+        /// @code
+        /// auto loadJob = g_JobSystem->SubmitJob(LoadTesture, "LoadDiffuse");
+        ///
+        /// // Later (typically next frame)...
+        /// if(auto result = g_JobSystem->TryGetJobResult(loadJob))
+        /// {
+        ///     if(result->IsSuccess())
+        ///     {
+        ///         // Use the loaded texture date
+        ///         ProcessLoadedTexture();
+        ///     }
+        ///     else
+        ///     {
+        ///         // Handle loading failure
+        ///         VA_ENGINE_ERROR("Texture loading failed: {}", result->errorMessage);
+        ///     }
+        /// }
+        /// else
+        /// {
+        ///     // Job not completed yet, or result evicted due to backpressure
+        ///     // Implement fallback strategy (retry, default texture, etc.)
+        /// }
+        /// @endcode
+        ///
+        /// @note Under extreme backpressure, results may be evicted earlier than 3-frames
+        /// @note Prefer this method over GetJobResult() for robust error handling
+        [[nodiscard]] std::optional<JobResult> TryGetJobResult(JobHandle handle) const;
 
         // === Batch operations ===
 

@@ -1,0 +1,7 @@
+<map id="VoidArchitect::Renderer::RenderPassStep" name="VoidArchitect::Renderer::RenderPassStep">
+<area shape="rect" id="Node000001" title=" " alt="" coords="97,117,258,158"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_renderer_1_1_i_pass_renderer.html" title=" " alt="" coords="5,5,166,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="114,56,163,115,159,118,110,60"/>
+<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_renderer_1_1_render_pass_config.html" title=" " alt="" coords="189,5,350,46"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="257,61,236,95,209,119,206,115,231,91,253,59"/>
+</map>

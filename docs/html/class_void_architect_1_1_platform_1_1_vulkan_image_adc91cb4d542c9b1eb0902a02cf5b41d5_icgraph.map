@@ -1,0 +1,12 @@
+<map id="VoidArchitect::Platform::VulkanImage::VulkanImage" name="VoidArchitect::Platform::VulkanImage::VulkanImage">
+<area shape="rect" id="Node000001" title=" " alt="" coords="243,104,432,145"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="376,91,362,85,337,83,315,85,301,89,296,95,298,103,293,104,290,94,298,85,314,79,337,77,363,80,378,86"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_platform_1_1_vulkan_image.html#a55ee634127d093a2ad48b107973262c8" title=" " alt="" coords="16,5,184,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="279,99,194,61,161,49,163,44,196,57,281,95"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_platform_1_1_vulkan_image.html#a6e946b96564a6175855eb7268bf74f13" title=" " alt="" coords="16,71,184,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="227,112,184,105,185,100,228,106"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_platform_1_1_vulkan_image.html#ae1cc873cba7bb9756017a9f186b0db81" title=" " alt="" coords="5,136,195,177"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="228,142,196,146,195,141,227,137"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_platform_1_1_vulkan_image.html#a0388767bc0a0d2f51d97dad0aa35a5fe" title=" " alt="" coords="5,201,195,242"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="280,154,196,191,163,203,161,198,194,186,278,149"/>
+</map>

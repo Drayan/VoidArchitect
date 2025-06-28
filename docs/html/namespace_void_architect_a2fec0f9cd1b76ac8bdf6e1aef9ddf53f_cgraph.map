@@ -1,0 +1,10 @@
+<map id="VoidArchitect::ExampleBackendAPI" name="VoidArchitect::ExampleBackendAPI">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,46,237,72"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_platform_1_1_thread.html#ace93d361c55001fedf64088ad8584234" title=" " alt="" coords="285,5,441,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="219,43,269,36,270,41,219,48"/>
+<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#ad24a0ccd3b2b067666f00f8f81c3af54" title="Create a successful job result." alt="" coords="289,71,436,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="223,70,274,77,274,82,223,75"/>
+<area shape="rect" id="Node000004" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#abe2ac9fbb5eec964167eabc618ae8bb0" title="Default constructor creates successful result." alt="" coords="489,71,644,111"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="437,97,473,97,473,103,437,102"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="488,85,452,85,452,79,488,80"/>
+</map>

@@ -1,0 +1,33 @@
+<map id="engine/src/Systems/Jobs/JobSystem.hpp" name="engine/src/Systems/Jobs/JobSystem.hpp">
+<area shape="rect" id="Node000001" title="JobSystem class following VoidArchitect engine patterns." alt="" coords="239,5,387,46"/>
+<area shape="rect" id="Node000002" href="$_job_scheduler_8hpp.html" title=" " alt="" coords="251,94,375,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="316,46,316,78,310,78,310,46"/>
+<area shape="rect" id="Node000003" href="$_job_types_8hpp.html" title=" " alt="" coords="176,241,279,267"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="296,122,272,142,250,169,238,198,232,227,227,226,233,196,245,166,268,139,293,118"/>
+<area shape="rect" id="Node000010" href="$_sync_point_8hpp.html" title=" " alt="" coords="260,168,366,193"/>
+<area shape="poly" id="edge10_Node000002_Node000010" title=" " alt="" coords="316,120,316,152,310,152,310,120"/>
+<area shape="rect" id="Node000011" href="$_fixed_storage_8hpp.html" title=" " alt="" coords="390,168,614,193"/>
+<area shape="poly" id="edge13_Node000002_Node000011" title=" " alt="" coords="346,118,457,159,455,164,344,123"/>
+<area shape="rect" id="Node000004" href="$_handle_8hpp.html" title=" " alt="" coords="317,322,436,348"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="251,265,342,313,339,317,249,270"/>
+<area shape="rect" id="Node000005" href="$_thread_8hpp.html" title=" " alt="" coords="162,315,293,356"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="230,267,230,300,225,300,225,267"/>
+<area shape="rect" id="Node000009" href="$_thread_factory_8hpp.html" title=" " alt="" coords="5,315,138,356"/>
+<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="205,270,125,310,123,305,202,265"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="199,404,256,429"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="230,356,230,388,225,388,225,356"/>
+<area shape="rect" id="Node000007" href="$_i_thread_8hpp.html" title=" " alt="" coords="56,404,146,429"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="198,358,135,397,132,393,195,354"/>
+<area shape="rect" id="Node000008" href="$_thread_types_8hpp.html" title=" " alt="" coords="40,477,162,503"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="104,430,104,462,98,462,98,430"/>
+<area shape="poly" id="edge9_Node000009_Node000007" title=" " alt="" coords="81,355,93,388,88,390,76,357"/>
+<area shape="poly" id="edge11_Node000010_Node000003" title=" " alt="" coords="300,196,255,233,252,229,297,192"/>
+<area shape="poly" id="edge12_Node000010_Node000004" title=" " alt="" coords="320,193,368,307,364,309,315,195"/>
+<area shape="poly" id="edge14_Node000011_Node000004" title=" " alt="" coords="487,196,460,217,434,243,410,277,391,310,387,307,405,274,429,240,457,213,483,192"/>
+<area shape="rect" id="Node000012" href="$_logger_8hpp.html" title=" " alt="" coords="444,241,560,267"/>
+<area shape="poly" id="edge15_Node000011_Node000012" title=" " alt="" coords="505,194,505,226,500,226,500,194"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="562,322,674,348"/>
+<area shape="poly" id="edge16_Node000012_Node000013" title=" " alt="" coords="521,265,589,311,586,316,518,270"/>
+<area shape="rect" id="Node000014" href="$_core_8hpp.html" title=" " alt="" coords="464,322,538,348"/>
+<area shape="poly" id="edge17_Node000012_Node000014" title=" " alt="" coords="505,267,504,307,499,307,499,267"/>
+</map>

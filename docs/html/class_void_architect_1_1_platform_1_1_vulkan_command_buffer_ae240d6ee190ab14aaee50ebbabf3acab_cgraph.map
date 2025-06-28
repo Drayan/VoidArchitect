@@ -1,0 +1,8 @@
+<map id="VoidArchitect::Platform::VulkanCommandBuffer::SingleUseBegin" name="VoidArchitect::Platform::VulkanCommandBuffer::SingleUseBegin">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,57,170,113"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_platform_1_1_vulkan_command_buffer.html#af3ed85df6b2154e7e861d02139c9673b" title=" " alt="" coords="218,5,382,61"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,62,202,54,203,60,171,68"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_platform_1_1_vulkan_command_buffer.html#a0d0e53849c85e1ef6b871efd42dc3695" title=" " alt="" coords="218,109,382,165"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="171,103,203,111,202,116,169,108"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="258,109,259,99,266,90,280,85,300,83,322,85,336,92,334,97,321,90,300,88,281,90,269,95,263,101,263,109"/>
+</map>

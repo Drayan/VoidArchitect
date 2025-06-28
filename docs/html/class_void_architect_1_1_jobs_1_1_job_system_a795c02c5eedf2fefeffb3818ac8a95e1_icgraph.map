@@ -1,0 +1,11 @@
+<map id="VoidArchitect::Jobs::JobSystem::JobSystem" name="VoidArchitect::Jobs::JobSystem::JobSystem">
+<area shape="rect" id="Node000001" title="Constructor initializes the job system." alt="" coords="223,104,392,145"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_jobs_1_1_job_system.html#a4072096442656bb81f98005caef15a00" title=" " alt="" coords="5,5,175,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="252,99,174,61,144,49,146,44,176,57,254,94"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_jobs_1_1_job_system.html#a2056616e86a06ebd06489e999c7e5fd0" title=" " alt="" coords="5,71,175,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="207,112,175,107,175,101,208,106"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_jobs_1_1_job_system.html#af9d405770be28c8da63327a39dfb58b1" title=" " alt="" coords="11,136,169,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="208,142,170,147,169,142,207,136"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_jobs_1_1_job_system.html#ac42b15088476afbe5f4125299e422f9d" title=" " alt="" coords="11,201,169,242"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="253,154,176,191,146,203,144,198,174,186,251,149"/>
+</map>

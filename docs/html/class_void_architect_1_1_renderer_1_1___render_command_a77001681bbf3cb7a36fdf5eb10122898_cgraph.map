@@ -1,0 +1,9 @@
+<map id="VoidArchitect::Renderer::_RenderCommand::Initialize" name="VoidArchitect::Renderer::_RenderCommand::Initialize">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,49,200,90"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_renderer_1_1___render_command.html#afccaa483d73a088f4029a6d59192255c" title=" " alt="" coords="248,5,502,61"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="200,54,232,49,233,55,200,59"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_math_1_1_mat4.html#a1745ef0af887017b5222d3ee2ac54387" title=" " alt="" coords="305,85,445,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="200,79,289,91,289,97,200,85"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_math_1_1_mat4.html#a6b7a052d1b04aa2b5c902a58a0966669" title=" " alt="" coords="550,85,686,126"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="445,102,534,102,534,108,445,108"/>
+</map>

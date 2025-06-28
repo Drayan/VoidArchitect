@@ -1,0 +1,5 @@
+<map id="VoidArchitect::Collections::FixedStorage::IsEmpty" name="VoidArchitect::Collections::FixedStorage::IsEmpty">
+<area shape="rect" id="Node000001" title="Check if storage is empty." alt="" coords="5,5,178,46"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_collections_1_1_fixed_storage.html#a005394a788ffe413201e38331689de39" title="Get the number of currently allocated slots." alt="" coords="226,5,422,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="178,23,210,23,210,28,178,28"/>
+</map>

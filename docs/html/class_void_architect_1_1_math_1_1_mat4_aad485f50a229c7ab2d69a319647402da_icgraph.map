@@ -1,0 +1,21 @@
+<map id="VoidArchitect::Math::Mat4::GetScale" name="VoidArchitect::Math::Mat4::GetScale">
+<area shape="rect" id="Node000001" title=" " alt="" coords="1029,71,1165,111"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_math_1_1_mat4.html#a38efd4647b728f1ae4379048cc546908" title=" " alt="" coords="795,9,932,50"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1013,72,932,50,933,45,1014,67"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_transform.html#a49c7affef3b21fbb5a95a42d7b78f1d1" title=" " alt="" coords="530,71,696,111"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="1013,94,697,94,697,88,1013,88"/>
+<area shape="rect" id="Node000006" href="$namespace_void_architect_1_1_resources_1_1_loaders.html#ac5b50be5246f8dad58b2c3c01ff9a531" title=" " alt="" coords="746,132,981,173"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="1014,115,944,134,943,129,1013,110"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_transform.html#a5d02889f0a3bc43ea10e80a3f0968bcb" title=" " alt="" coords="530,5,696,46"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="780,31,697,30,697,24,780,26"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_transform.html#a73e25e7df28250a6be4a51b78a3d08a8" title=" " alt="" coords="271,27,480,67"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="515,37,481,40,480,35,514,32"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="514,75,480,69,481,64,515,70"/>
+<area shape="rect" id="Node000007" href="$namespace_void_architect_1_1_resources_1_1_loaders.html#a40f63f7e6ee85e1f3d2445f90f5fe744" title=" " alt="" coords="528,136,698,177"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="731,157,699,158,699,152,731,152"/>
+<area shape="rect" id="Node000008" href="$namespace_void_architect_1_1_resources_1_1_loaders.html#a48d53ec19569c0f54c9a689e70bb9ff4" title=" " alt="" coords="290,136,460,177"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="513,159,461,159,461,154,513,154"/>
+<area shape="poly" id="edge10_Node000008_Node000008" title=" " alt="" coords="414,123,400,117,375,115,353,117,339,121,334,127,336,135,331,136,328,126,336,117,351,111,375,109,401,112,416,118"/>
+<area shape="rect" id="Node000009" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_raw_mesh_loader.html#a463a8097a3727b52b9082cac194c2fbc" title=" " alt="" coords="5,136,223,177"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="274,159,223,159,223,154,274,154"/>
+</map>

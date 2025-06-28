@@ -1,0 +1,27 @@
+<map id="VoidArchitect::Jobs::JobResult::Success" name="VoidArchitect::Jobs::JobResult::Success">
+<area shape="rect" id="Node000001" title="Create a successful job result." alt="" coords="505,235,652,276"/>
+<area shape="rect" id="Node000002" href="$namespace_void_architect.html#a2fec0f9cd1b76ac8bdf6e1aef9ddf53f" title=" " alt="" coords="225,5,456,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="565,222,550,180,527,132,496,85,455,46,434,34,437,29,459,41,500,82,531,130,555,178,570,220"/>
+<area shape="rect" id="Node000004" href="$namespace_void_architect.html#a5505f79f039bcf5e4b6b512d6e11cc92" title=" " alt="" coords="225,55,457,96"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="556,224,515,165,487,135,456,110,435,99,438,94,458,105,491,131,519,161,561,220"/>
+<area shape="rect" id="Node000005" href="$namespace_void_architect.html#a4370b9073e5736c909c2156a65ed9f1e" title=" " alt="" coords="228,120,454,146"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="545,226,504,191,456,161,424,149,426,144,458,156,508,187,548,222"/>
+<area shape="rect" id="Node000006" href="$class_void_architect_1_1_jobs_1_1_job_system.html#a103705afbfdf73f8281c879ef319cdec" title="Get result of a completed job." alt="" coords="249,170,432,210"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="490,234,417,214,418,209,491,229"/>
+<area shape="rect" id="Node000007" href="$struct_void_architect_1_1_jobs_1_1_job.html#a49fa3cab58c1b6c4dd5796f7e8e12265" title="Construct job from void function (automatically wrapped)" alt="" coords="273,235,408,276"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="490,258,409,258,409,253,490,253"/>
+<area shape="rect" id="Node000008" href="$struct_void_architect_1_1_jobs_1_1_job.html#ad9e4b8628ac9e87965752b8c14e951f8" title="Construct a job from void function with sync point." alt="" coords="273,300,408,341"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="491,282,410,305,408,300,489,277"/>
+<area shape="rect" id="Node000009" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#abe2ac9fbb5eec964167eabc618ae8bb0" title="Default constructor creates successful result." alt="" coords="263,366,418,406"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="556,290,513,330,458,367,420,383,418,378,456,362,510,326,553,286"/>
+<area shape="rect" id="Node000012" href="$namespace_void_architect_1_1_jobs.html#aa96eb84f9c38319d0241728af2ebc6c3" title="Create a JobFunction from a void lambda for convenience." alt="" coords="273,431,408,472"/>
+<area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="563,291,521,357,492,391,459,420,435,433,410,443,408,438,433,429,455,416,489,387,517,354,558,289"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_application.html#a6ea044a7ddd8c1f0fe14abe8619e4564" title=" " alt="" coords="5,27,177,68"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="211,36,177,40,177,35,211,31"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="209,63,177,60,177,54,210,58"/>
+<area shape="poly" id="edge12_Node000009_Node000001" title=" " alt="" coords="405,358,456,338,504,307,545,274,548,278,507,311,458,343,407,363"/>
+<area shape="rect" id="Node000010" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#ad5035943ee339b35edfc4303cb513b98" title="Create a cancelled job result with reason." alt="" coords="14,334,168,374"/>
+<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="247,377,168,367,169,361,248,372"/>
+<area shape="rect" id="Node000011" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#a4dc1e84b3b86be405d032b2301d91f25" title="Create a failed job result with an error message." alt="" coords="23,399,159,440"/>
+<area shape="poly" id="edge11_Node000009_Node000011" title=" " alt="" coords="248,401,159,413,159,408,247,396"/>
+</map>

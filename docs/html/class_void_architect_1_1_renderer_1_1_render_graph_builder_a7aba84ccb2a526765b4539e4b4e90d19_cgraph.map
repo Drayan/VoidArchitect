@@ -1,0 +1,8 @@
+<map id="VoidArchitect::Renderer::RenderGraphBuilder::WritesToColorBuffer" name="VoidArchitect::Renderer::RenderGraphBuilder::WritesToColorBuffer">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,166,61"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_renderer_1_1_render_graph_builder.html#a40af6ac6f24899bca6d38fff2a0809d5" title=" " alt="" coords="422,5,582,61"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="166,25,214,23,374,23,406,24,406,29,374,28,214,28,166,30"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_renderer_1_1_render_graph_builder.html#a9a2d7216299d95e55d28fd5ad6612d43" title=" " alt="" coords="214,37,374,93"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="166,43,198,48,198,53,165,48"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="374,50,406,45,407,51,375,56"/>
+</map>

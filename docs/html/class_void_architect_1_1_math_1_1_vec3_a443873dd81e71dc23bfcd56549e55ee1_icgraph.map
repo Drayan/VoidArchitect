@@ -1,0 +1,14 @@
+<map id="VoidArchitect::Math::Vec3::Dot" name="VoidArchitect::Math::Vec3::Dot">
+<area shape="rect" id="Node000001" title=" " alt="" coords="959,39,1095,79"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_resources_1_1_mesh_data.html#a8ae55dcc2167f883c853cc72f8df33c1" title=" " alt="" coords="707,5,911,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="943,49,911,44,911,39,943,44"/>
+<area shape="rect" id="Node000003" href="$namespace_void_architect_1_1_resources_1_1_loaders.html#a55750dc74bd08ad2e711a3f948ed14ff" title=" " alt="" coords="724,71,894,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="943,74,895,81,894,76,943,69"/>
+<area shape="rect" id="Node000004" href="$namespace_void_architect_1_1_resources_1_1_loaders.html#a40f63f7e6ee85e1f3d2445f90f5fe744" title=" " alt="" coords="489,71,659,111"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="708,94,660,94,660,88,708,88"/>
+<area shape="rect" id="Node000005" href="$namespace_void_architect_1_1_resources_1_1_loaders.html#a48d53ec19569c0f54c9a689e70bb9ff4" title=" " alt="" coords="271,71,441,111"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="474,94,442,94,442,88,474,88"/>
+<area shape="poly" id="edge6_Node000005_Node000005" title=" " alt="" coords="391,57,378,52,356,49,335,51,322,56,318,62,320,69,315,71,313,61,319,52,334,46,356,44,379,46,394,53"/>
+<area shape="rect" id="Node000006" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_raw_mesh_loader.html#a463a8097a3727b52b9082cac194c2fbc" title=" " alt="" coords="5,71,223,111"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="255,94,223,94,223,88,255,88"/>
+</map>

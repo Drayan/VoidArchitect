@@ -153,6 +153,67 @@ namespace VoidArchitect::Collections
             return static_cast<float>(GetUsedSlots()) / static_cast<float>(CAPACITY);
         }
 
+        /// @brief Check if a specific slot is in use
+        /// @param index Slot index to check
+        /// @return true if the slot is used, false otherwise.
+        bool IsUsed(size_t index)
+        {
+            if (index >= CAPACITY) return false;
+            return m_Slots[index].inUse.load(std::memory_order_acquire);
+        }
+
+        /// @brief Array-like access to stored objects
+        /// @param index Slot index to access
+        /// @return Reference to object at the specified slot
+        ///
+        /// @warning Only call this on slots where IsUsed(index) returns true
+        T& operator[](size_t index)
+        {
+            return *m_Slots[index].GetObject();
+        }
+
+        /// @brief Array-life access to stored objects (const version)
+        /// @param index Slot index to access
+        /// @return Const reference to object at the specified slot
+        ///
+        /// @warning Only call this on slots where IsUsed(index) returns true
+        const T& operator[](size_t index) const
+        {
+            return *m_Slots[index].GetObject();
+        }
+
+        /// @brief Get a valid handle for a specific slot index
+        /// @param index Slot index to get handle for
+        /// @return Handle for this slot, or invalid handle if slot not in use
+        ///
+        /// This method allows advanced users to create handles for specific slots
+        /// during controlled iteration or eviction scenarios. The returned handle
+        /// is guaranteed to be valid for the current state of the slot.
+        ///
+        /// @note Returns invalid handle if slot is not in use
+        HandleType GetHandleForSlot(size_t index) const
+        {
+            if (index >= CAPACITY) return HandleType::Invalid();
+
+            const auto& slot = m_Slots[index];
+            if (!slot.inUse.load(std::memory_order_acquire)) return HandleType::Invalid();
+
+            auto generation = slot.generation.load(std::memory_order_relaxed);
+            return HandleType(static_cast<uint32_t>(index), generation);
+        }
+
+        /// @brief Get the generation of a specific slot
+        /// @param index Slot index to query
+        /// @return Current generation of this slot
+        ///
+        /// Useful for advanced handle management and debugging scenarios.
+        /// The generation counter is incremented each time a slot is allocated.
+        uint32_t GetSlotGeneration(size_t index) const
+        {
+            if (index >= CAPACITY) return 0;
+            return m_Slots[index].generation.load(std::memory_order_relaxed);
+        }
+
     private:
         /// @brief Internal slot structure for object storage
         ///

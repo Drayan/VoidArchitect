@@ -1,0 +1,7 @@
+<map id="VoidArchitect::MeshSystem::GenerateNormals" name="VoidArchitect::MeshSystem::GenerateNormals">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,190,46"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_math_1_1_vec3.html#ac6003464f75d8794be4e973f17ffc480" title=" " alt="" coords="238,5,374,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,23,222,23,222,28,190,28"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_math_1_1_vec3.html#aca594eef688919467165eb6595839832" title=" " alt="" coords="422,5,558,46"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="374,23,406,23,406,28,374,28"/>
+</map>

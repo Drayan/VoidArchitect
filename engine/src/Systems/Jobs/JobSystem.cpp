@@ -156,6 +156,17 @@ namespace VoidArchitect::Jobs
     // === Frontend API Implementation ===
     // ==============================================================
 
+    void JobSystem::BeginFrame() const
+    {
+        if (!m_Scheduler)
+        {
+            VA_ENGINE_ERROR("[JobSystem] BeginFrame called but scheduler not initialized.");
+            return;
+        }
+
+        m_Scheduler->PromoteCompletedJobs();
+    }
+
     JobHandle JobSystem::SubmitJob(
         JobFunction job,
         const char* name,
@@ -267,37 +278,69 @@ namespace VoidArchitect::Jobs
         return IsSignaled(job->signalOnCompletion);
     }
 
-    JobResult JobSystem::GetJobResult(JobHandle handle) const
+    JobResult JobSystem::GetJobResult(const JobHandle handle) const
+    {
+        // Delegate to TryGetJobResult and convert nullopt to a Failed result for compatibility
+        auto optionalResult = TryGetJobResult(handle);
+        if (optionalResult.has_value())
+        {
+            return optionalResult.value();
+        }
+
+        // Job not found, not completed, or result evicted
+        return JobResult::Failed(
+            "Job result not available (not completed, evicted, or invalid handle)");
+    }
+
+    std::optional<JobResult> JobSystem::TryGetJobResult(JobHandle handle) const
     {
         if (!m_Scheduler)
         {
-            VA_ENGINE_ERROR("[JobSystem] GetJobResult called but scheduler not initialized.");
-            return JobResult::Failed("Job system not initialized");
+            VA_ENGINE_ERROR("[JobSystem] TryGetJobResult called but scheduler not initialized.");
+            return std::nullopt;
         }
 
         if (!handle.IsValid())
         {
-            VA_ENGINE_ERROR("[JobSystem] GetJobResult called with invalid handle.");
-            return JobResult::Failed("Invalid job handle");
+            VA_ENGINE_ERROR("[JobSystem] TryGetJobResult called with invalid handle.");
+            return std::nullopt;
         }
 
+        // Attempt to retrieve the job from storage using the standard API
         auto job = m_Scheduler->m_JobStorage.Get(handle);
         if (!job)
         {
-            // Job isn't found - it may have completed and been released
-            // We can't know the result, so assume it was successful
-            return JobResult::Success();
+            return std::nullopt; // Job not found - probably completed and released
         }
 
-        // If job is still in storage but SyncPoint is signalled, return the stored result
-        if (IsSignaled(job->signalOnCompletion))
+        // Check job state to determine if a result is available
+        auto currentState = job->state.load(std::memory_order_acquire);
+        switch (currentState)
         {
-            return job->result;
-        }
-        else
-        {
-            // Job is still running, return the pending result
-            return JobResult::Failed("Job not yet completed");
+            case JobState::Completed:
+            case JobState::CompletedN1:
+            case JobState::CompletedN2:
+                return job->result;
+
+            case JobState::Pending:
+            case JobState::Ready:
+            case JobState::Executing:
+                // Job is still active - no result available yet
+                VA_ENGINE_TRACE(
+                    "[JobSystem] Job '{}' is still active - result not available yet.",
+                    job->debugName);
+                return std::nullopt;
+
+            case JobState::Cancelled:
+                return job->result;
+
+            default:
+                // Unknown state - should not happen
+                VA_ENGINE_ERROR(
+                    "[JobSystem] Unknown job state '{}' for job '{}'.",
+                    GetJobStateString(currentState),
+                    job->debugName);
+                return std::nullopt;
         }
     }
 

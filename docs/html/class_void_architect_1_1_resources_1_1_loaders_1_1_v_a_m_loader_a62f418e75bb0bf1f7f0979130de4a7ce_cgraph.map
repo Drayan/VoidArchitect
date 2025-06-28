@@ -1,0 +1,18 @@
+<map id="VoidArchitect::Resources::Loaders::VAMLoader::Load" name="VoidArchitect::Resources::Loaders::VAMLoader::Load">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,77,191,118"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_loader.html#ad0c918b8b651fc371bb7112421407ed7" title=" " alt="" coords="239,24,462,65"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="191,75,236,66,237,71,192,81"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_loader.html#a37035a258a8ac80cdf50ae65c1abeb13" title=" " alt="" coords="242,106,459,162"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="192,108,227,113,226,119,191,114"/>
+<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header.html#ad11789bc91ea6c40162909b57ea287ce" title=" " alt="" coords="555,5,754,46"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="462,35,539,30,540,35,462,40"/>
+<area shape="poly" id="edge8_Node000004_Node000003" title=" " alt="" coords="402,103,453,78,509,55,539,46,541,51,511,60,455,83,404,108"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression.html#ab71b3b1b833176b823d06741a0290c23" title=" " alt="" coords="561,70,748,126"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="459,118,545,108,546,113,460,123"/>
+<area shape="rect" id="Node000006" href="$struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header.html#ad42e27b4347363115096bf35e58d68e7" title=" " alt="" coords="510,149,799,190"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="460,144,495,148,494,153,459,149"/>
+<area shape="rect" id="Node000007" href="$struct_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_header.html#ab2c5f36660f71c66da563530766cc69b" title=" " alt="" coords="532,215,777,255"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="412,160,511,199,539,208,537,213,509,204,410,165"/>
+<area shape="rect" id="Node000008" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression.html#a0f5c5e545d66cbe1242e4359fc0c9a8d" title=" " alt="" coords="561,279,748,335"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="379,160,437,213,473,241,511,265,547,280,545,285,509,269,470,245,433,217,376,164"/>
+</map>

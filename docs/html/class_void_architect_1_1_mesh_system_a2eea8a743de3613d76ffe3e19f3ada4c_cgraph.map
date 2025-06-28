@@ -1,0 +1,7 @@
+<map id="VoidArchitect::MeshSystem::GetHandleFor" name="VoidArchitect::MeshSystem::GetHandleFor">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,190,70"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="54,29,52,19,59,10,74,5,98,3,123,5,137,11,135,16,121,10,97,8,75,10,62,15,57,21,59,28"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_mesh_system.html#a1e5a0bb40509c11653ee08605aeced99" title=" " alt="" coords="238,29,422,70"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="190,56,222,56,222,61,190,61"/>
+<area shape="poly" id="edge3_Node000002_Node000001" title=" " alt="" coords="237,44,206,43,206,38,237,38"/>
+</map>

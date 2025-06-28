@@ -1,0 +1,9 @@
+<map id="VoidArchitect::InvalidUUID" name="VoidArchitect::InvalidUUID">
+<area shape="rect" id="Node000001" title=" " alt="" coords="441,46,620,72"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_material_system.html#a7ba70dbc77d8a02b799a5344b448da85" title=" " alt="" coords="195,5,393,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="425,47,393,42,394,37,426,42"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_u_u_i_d.html#a90d9e9e60c05e30b82bc8158c3f5d87e" title=" " alt="" coords="223,71,364,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="426,76,365,84,365,79,425,71"/>
+<area shape="rect" id="Node000004" href="$class_void_architect_1_1_u_u_i_d.html#a1824ca23727d11476729158cc89cb66f" title=" " alt="" coords="5,71,147,111"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="208,94,147,94,147,88,208,88"/>
+</map>

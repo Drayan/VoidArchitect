@@ -1,0 +1,29 @@
+<map id="VoidArchitect::Application::Application" name="VoidArchitect::Application::Application">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,165,177,206"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_window.html#a9b5fc3a8ca4b9c6bc9ff1b5f2986c00f" title=" " alt="" coords="264,5,418,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="106,163,155,110,188,81,223,57,248,45,250,50,226,61,191,86,159,114,110,167"/>
+<area shape="rect" id="Node000003" href="$class_void_architect_1_1_platform_1_1_thread_factory.html#a644aa3ae815e968e69ad260b74c5546a" title=" " alt="" coords="241,71,441,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="132,162,224,122,247,114,249,119,226,127,134,167"/>
+<area shape="rect" id="Node000004" href="$namespace_void_architect.html#a2fec0f9cd1b76ac8bdf6e1aef9ddf53f" title=" " alt="" coords="225,201,456,226"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="177,193,210,196,209,202,177,198"/>
+<area shape="rect" id="Node000008" href="$namespace_void_architect.html#a5505f79f039bcf5e4b6b512d6e11cc92" title=" " alt="" coords="225,136,457,177"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="177,173,209,169,210,174,177,178"/>
+<area shape="rect" id="Node000009" href="$class_void_architect_1_1_application.html#a65347fa36063a0ff39a964ecf1257b05" title=" " alt="" coords="255,324,426,365"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="118,204,167,244,226,286,279,315,276,319,223,291,163,248,114,209"/>
+<area shape="rect" id="Node000011" href="$namespace_void_architect.html#a1bfcd9a9c4cb34ac70b78908e6332483" title=" " alt="" coords="241,250,441,276"/>
+<area shape="poly" id="edge13_Node000001_Node000011" title=" " alt="" coords="139,204,225,236,251,243,250,249,224,242,137,209"/>
+<area shape="rect" id="Node000005" href="$class_void_architect_1_1_platform_1_1_thread.html#ace93d361c55001fedf64088ad8584234" title=" " alt="" coords="540,197,697,238"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="457,213,525,214,525,219,457,218"/>
+<area shape="rect" id="Node000006" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#ad24a0ccd3b2b067666f00f8f81c3af54" title="Create a successful job result." alt="" coords="545,132,692,173"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="403,198,456,186,529,169,530,175,458,191,404,203"/>
+<area shape="rect" id="Node000007" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#abe2ac9fbb5eec964167eabc618ae8bb0" title="Default constructor creates successful result." alt="" coords="780,132,936,173"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="693,158,765,158,765,164,693,163"/>
+<area shape="poly" id="edge7_Node000007_Node000006" title=" " alt="" coords="780,147,708,146,708,141,780,141"/>
+<area shape="poly" id="edge9_Node000008_Node000006" title=" " alt="" coords="458,152,530,151,530,156,458,157"/>
+<area shape="poly" id="edge12_Node000009_Node000009" title=" " alt="" coords="294,324,292,314,299,305,316,299,341,297,368,300,384,306,382,311,367,305,341,303,317,305,302,309,297,315,299,323"/>
+<area shape="rect" id="Node000010" href="$class_void_architect_1_1_event_dispatcher.html#aab37d6cefc8a0d165687ea29935d60f5" title=" " alt="" coords="516,328,721,369"/>
+<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="427,343,501,344,501,349,427,348"/>
+<area shape="poly" id="edge15_Node000011_Node000005" title=" " alt="" coords="424,247,525,230,526,235,424,252"/>
+<area shape="rect" id="Node000012" href="$class_void_architect_1_1_platform_1_1_thread.html#ac7b01b02275a9f02b029bb9f5e8d3511" title=" " alt="" coords="505,263,732,303"/>
+<area shape="poly" id="edge14_Node000011_Node000012" title=" " alt="" coords="442,268,489,271,489,276,441,273"/>
+</map>

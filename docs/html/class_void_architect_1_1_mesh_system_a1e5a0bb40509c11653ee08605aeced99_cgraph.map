@@ -1,0 +1,7 @@
+<map id="VoidArchitect::MeshSystem::LoadMesh" name="VoidArchitect::MeshSystem::LoadMesh">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,29,190,70"/>
+<area shape="rect" id="Node000002" href="$class_void_architect_1_1_mesh_system.html#a2eea8a743de3613d76ffe3e19f3ada4c" title=" " alt="" coords="238,29,422,70"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,56,222,56,222,61,190,61"/>
+<area shape="poly" id="edge3_Node000002_Node000001" title=" " alt="" coords="237,44,206,43,206,38,237,38"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="286,29,284,19,291,10,307,5,330,3,355,5,370,11,368,16,354,10,330,8,308,10,294,15,289,21,291,28"/>
+</map>
