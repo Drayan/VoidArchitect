@@ -360,6 +360,73 @@ namespace VoidArchitect::Jobs
         }
     }
 
+    JobSystem::JobProcessingStats JobSystem::ProcessMainThreadJobs(float maxTimeMs) const
+    {
+        JobProcessingStats stats;
+
+        if (!m_Scheduler)
+        {
+            VA_ENGINE_WARN(
+                "[JobSystem] ProcessMainThreadJobs called but scheduler not initialized.");
+            return stats;
+        }
+
+        auto startTime = std::chrono::high_resolution_clock::now();
+
+        while (true)
+        {
+            // Check time budget first
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            auto elapsedMs = std::chrono::duration<float, std::milli>(currentTime - startTime).
+                count();
+            if (elapsedMs > maxTimeMs)
+            {
+                stats.budgetExceeded = (stats.jobsExecuted > 0); // Only flag if we had work
+                break;
+            }
+
+            // Try to pull a main thread job using weighted strategy
+            auto jobHandle = m_Scheduler->PullMainThreadJob();
+            if (!jobHandle.IsValid())
+            {
+                break; // No more jobs to process
+            }
+
+            // Get job priority for statistics before execution
+            auto* job = m_Scheduler->m_JobStorage.Get(jobHandle);
+            if (job)
+            {
+                auto priorityIndex = static_cast<uint32_t>(job->priority);
+                if (priorityIndex < 4)
+                {
+                    stats.jobsByPriority[priorityIndex]++;
+                }
+            }
+
+            // Execute the job
+            m_Scheduler->ExecuteJob(jobHandle, MAIN_THREAD_ONLY);
+            stats.jobsExecuted++;
+        }
+
+        // Update final time spent
+        auto endTime = std::chrono::high_resolution_clock::now();
+        stats.timeSpentMs = std::chrono::duration<float, std::milli>(endTime - startTime).count();
+
+        return stats;
+    }
+
+    bool JobSystem::HasPendingMainThreadJobs() const
+    {
+        if (!m_Scheduler)
+        {
+            VA_ENGINE_WARN(
+                "[JobSystem] HasPendingMainThreadJobs called but scheduler not initialized.");
+            return false;
+        }
+
+        return m_Scheduler->HasPendingMainThreadJobs();
+    }
+
     // ==============================================================
     // === Stats and Monitoring ===
     // ==============================================================

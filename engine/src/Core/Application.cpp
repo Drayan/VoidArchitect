@@ -198,7 +198,7 @@ namespace VoidArchitect
         }
 
         m_TestThread = Platform::ThreadFactory::CreateThread();
-        m_TestThread->Start(TestThreadMain, "TestThread");
+        //m_TestThread->Start(TestThreadMain, "TestThread");
 
         // ExampleSimpleJobs();
         ExamplePerformanceMonitoring();
@@ -220,15 +220,59 @@ namespace VoidArchitect
     void Application::Run()
     {
         constexpr double FIXED_STEP = 1.0 / 60.0;
+        constexpr float MAIN_THREAD_JOB_BUDGET_MS = 2.0f; // Time budget for main thread jobs
+
         double accumulator = 0.0;
         double currentTime = SDL_GetTicks() / 1000.f;
+
+        // Statistics for monitoring main thread job performance
+        uint32_t budgetExceededCount = 0;
+
         while (m_Running)
         {
             const double newTime = SDL_GetTicks() / 1000.f;
             const double frameTime = newTime - currentTime;
             currentTime = newTime;
 
+            // === Process Main Thread Jobs First ===
+            // This ensure main thread jobs (like GPU uploads) are processed consistently
+            // even if no WaitFor() calls are made during the frame
+            auto jobStats = Jobs::g_JobSystem->ProcessMainThreadJobs(MAIN_THREAD_JOB_BUDGET_MS);
+            if (jobStats.budgetExceeded && jobStats.jobsExecuted > 0)
+            {
+                budgetExceededCount++;
+
+                // Log warning every second (60 frames at 60 fps)
+                if (budgetExceededCount % 60 == 0)
+                {
+                    VA_ENGINE_WARN(
+                        "[Application] Main thread job budget exceeded {} times in the last second. "
+                        "Executed {} jobs in the last {:.2f} ms.",
+                        60,
+                        jobStats.jobsExecuted,
+                        jobStats.timeSpentMs);
+                }
+            }
+
+            // Trace detailed statistics every 300 frames (5 seconds at 60 fps)
+            static uint32_t frameCount = 0;
+            if (++frameCount % 300 == 0 && jobStats.jobsExecuted > 0)
+            {
+                VA_ENGINE_TRACE(
+                    "[Application] Main thread jobs: {} executed in {:.2f}ms "
+                    "[Critical: {}, High: {}, Normal: {}, Low: {}]",
+                    jobStats.jobsExecuted,
+                    jobStats.timeSpentMs,
+                    jobStats.jobsByPriority[0],
+                    jobStats.jobsByPriority[1],
+                    jobStats.jobsByPriority[2],
+                    jobStats.jobsByPriority[3]);
+            }
+
+            // === Frame Logic ===
             accumulator += frameTime;
+
+            Jobs::g_JobSystem->BeginFrame();
 
             while (accumulator >= FIXED_STEP)
             {
@@ -238,7 +282,6 @@ namespace VoidArchitect
             }
 
             Renderer::g_RenderSystem->RenderFrame(frameTime);
-
             m_MainWindow->OnUpdate();
         }
     }

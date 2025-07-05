@@ -420,6 +420,74 @@ namespace VoidArchitect::Jobs
         return SIZE_MAX;
     }
 
+    // === Main Thread Job Processing ===
+    JobHandle JobScheduler::PullMainThreadJob()
+    {
+        // Use thread-local random for randomized starting point
+        static thread_local std::random_device rd;
+        static thread_local std::mt19937 gen(rd());
+        static thread_local uint8_t pullOffset = gen() % PullWeights::Total;
+
+        // Weighted pull array: [Criticalx8, Highx4, Normalx2, Lowx1]
+        static constexpr std::array<JobPriority, PullWeights::Total> pullWeights = {
+            JobPriority::Critical,
+            JobPriority::Critical,
+            JobPriority::Critical,
+            JobPriority::Critical,
+            JobPriority::Critical,
+            JobPriority::Critical,
+            JobPriority::Critical,
+            JobPriority::Critical,
+            JobPriority::High,
+            JobPriority::High,
+            JobPriority::High,
+            JobPriority::High,
+            JobPriority::Normal,
+            JobPriority::Normal,
+            JobPriority::Low
+        };
+
+        // Try pulls based on weighted strategy
+        for (uint8_t attempt = 0; attempt < PullWeights::Total; ++attempt)
+        {
+            auto index = (pullOffset + attempt) % PullWeights::Total;
+            auto priority = pullWeights[index];
+            auto priorityIndex = static_cast<uint8_t>(priority);
+
+            JobHandle job;
+            if (m_MainThreadPriorityQueues[priorityIndex] && m_MainThreadPriorityQueues[
+                priorityIndex]->try_dequeue(job))
+            {
+                m_Stats.jobsInQueue.fetch_sub(1, std::memory_order_relaxed);
+                return job;
+            }
+        }
+
+        return InvalidJobHandle; // No jobs found
+    }
+
+    bool JobScheduler::HasPendingMainThreadJobs() const
+    {
+        // Quick check across all priority queues
+        for (uint8_t priorityIndex = 0; priorityIndex < 4; ++priorityIndex)
+        {
+            if (!m_MainThreadPriorityQueues[priorityIndex]) continue;
+
+            // Check if this queue has any jobs
+            if (m_MainThreadPriorityQueues[priorityIndex]->size_approx() > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool JobScheduler::IsMainThreadJob(const Job* job)
+    {
+        return job && job->workerAffinity == MAIN_THREAD_ONLY;
+    }
+
     // === Statistics and Monitoring ===
 
     float JobScheduler::GetBackpressureLevel() const
@@ -675,15 +743,23 @@ namespace VoidArchitect::Jobs
             return;
         }
 
-        if (m_PriorityQueues[priorityIndex] && m_PriorityQueues[priorityIndex]->try_enqueue(
-            jobHandle))
+        // Route job to appropriate queue based on affinity
+        auto* job = m_JobStorage.Get(jobHandle);
+        bool isMainThread = IsMainThreadJob(job);
+
+        auto& targetQueue = !isMainThread
+            ? m_PriorityQueues[priorityIndex]
+            : m_MainThreadPriorityQueues[priorityIndex];
+
+        if (targetQueue && targetQueue->try_enqueue(jobHandle))
         {
             m_Stats.jobsInQueue.fetch_add(1, std::memory_order_relaxed);
         }
         else
         {
             VA_ENGINE_ERROR(
-                "[JobScheduler] Failed to enqueue job to priority queue {}.",
+                "[JobScheduler] Failed to enqueue {} job to priority queue {}.",
+                isMainThread ? "main thread" : "worker thread",
                 GetPriorityString(priority));
         }
     }
@@ -716,6 +792,8 @@ namespace VoidArchitect::Jobs
             for (size_t i = 0; i < 4; ++i)
             {
                 m_PriorityQueues[i] = std::make_unique<moodycamel::ConcurrentQueue<JobHandle>>();
+                m_MainThreadPriorityQueues[i] = std::make_unique<moodycamel::ConcurrentQueue<
+                    JobHandle>>();
             }
 
             VA_ENGINE_DEBUG("[JobScheduler] Priority queues initialized successfully.");

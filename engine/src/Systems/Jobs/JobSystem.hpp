@@ -281,9 +281,60 @@ namespace VoidArchitect::Jobs
         /// @note Prefer this method over GetJobResult() for robust error handling
         [[nodiscard]] std::optional<JobResult> TryGetJobResult(JobHandle handle) const;
 
+        /// @brief Statistics for main thread job processing operations
+        ///
+        /// Provides detailed information about main thread jobs execution
+        /// for performance monitoring and optimization purposes.
+        struct JobProcessingStats
+        {
+            uint32_t jobsExecuted{0}; ///< Number of jobs successfully executed
+            float timeSpentMs{0.0f}; ///< Actual time spent processing jobs
+            bool budgetExceeded{false}; ///< Whether time budget was exceeded or not
+            std::array<uint32_t, 4> jobsByPriority = {0};
+            ///< Jobs executed by priority [Critical, High, Normal, Low]
+        };
+
+        /// @brief Process main thread jobs within a time budget
+        /// @param maxTimeMs Maximum time to spend processing jobs (default: 2ms)
+        /// @return Statistics about the processing operation
+        ///
+        /// This method processes MAIN_THREAD_ONLY jobs using the same weighted
+        /// priority strategy as worker threads. It provides a time-bounded guqrenteee
+        /// that main thread jobs will be executed regularly, independent of WaitFor() calls.
+        ///
+        /// The method is designed to be called from Application::Run() each frame
+        /// to ensure main thread jobs (like GPU upload) are processed consistently.
+        ///
+        /// Time budget considerations:
+        /// - 2ms on a 60fps target (16.67ms) = ~12% frame budget
+        /// - Method exits early if no main thread jobs are available
+        /// - Weighted priority ensures Critical jobs get preference
+        ///
+        /// Usage example:
+        /// @code
+        /// // In Application::Run()
+        /// auto stats = g_JobSystem->ProcessMainThreadJobs();
+        /// if(stats.budgetExceeded && stats.jobsExecuted > 0)
+        /// {
+        ///     VA_ENGINE_WARN("Main thread job budget exceeded, processed {} jobs", stats.jobsExecuted);
+        /// }
+        /// @endcode
+        JobProcessingStats ProcessMainThreadJobs(float maxTimeMs = 2.0f) const;
+
+        /// @brief Check if there are pending main thread jobs
+        /// @return true if main thread jobs are waiting in any priority queue
+        ///
+        /// This method provides a quick check for whether ProcessMainThreadJobs()
+        /// would have work to do. Useful for conditional processing or debugging.
+        ///
+        /// Note: This is a best-effort check - the state may change between
+        ///     this call and actually processing jobs due to concurrent modifications.
+        bool HasPendingMainThreadJobs() const;
+
         // === Batch operations ===
 
         /// @brief Utility class for managing batches of related jobs
+
         class JobBatch
         {
         public:

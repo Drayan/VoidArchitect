@@ -279,7 +279,7 @@ namespace VoidArchitect::Jobs
             const char* name,
             uint32_t workerAffinity = ANY_WORKER);
 
-        // === Synchronization (Main Thread Only ===
+        // === Synchronization (Main Thread Only) ===
 
         /// @brief Wait for a SyncPoint to be signalled (blocking)
         /// @param sp Handle to SyncPoint to wait for
@@ -296,6 +296,41 @@ namespace VoidArchitect::Jobs
         /// @param waitForAll If true, wait for all SyncPoints; if false, wait for anyone
         /// @return Index of first signalled SyncPoint (if waitForAll=false), or SIZE_MAX
         size_t WaitForMultiple(std::span<SyncPointHandle> syncPoints, bool waitForAll = true);
+
+        // === Main Thread Job Processing ===
+
+        /// @brief Pull a main thread job using weighted priority strategy
+        /// @return Job handle if found, invalid handle if no main thread jobs available
+        ///
+        /// This method implements the same weighted priority strategy as PullJobFromQueues()
+        /// but specifically filters for jobs with MAIN_THREAD_ONLY affinity. Uses the same
+        /// anti-starvation algorithm with randomized starting points.
+        ///
+        /// Weighted priority distribution:
+        /// - Critical: 8/15 pulls (53.3%)
+        /// - High: 4/15 pulls (26.7%)
+        /// - Normal: 2/15 pulls (13.3%)
+        /// - Low: 1/15 pulls (6.7%)
+        ///
+        /// This method is thread-safe and designed to be called from the main thread
+        /// during ProcessMainThreadJobs() operations.
+        JobHandle PullMainThreadJob();
+
+        /// @brief Check if there are pending main thread jobs in any priority queue
+        /// @return true if main thread jobs are waiting, false otherwise
+        ///
+        /// This method provides a quick check for main thread job availability without
+        /// modifying queue state. Used by JobSystem::HasPendingMainThreadJobs() and
+        /// for optimization in ProcessMainThreadJobs().
+        ///
+        /// Note : This is a best-effort check due to concurrent nature of the queues.
+        ///     The result may become outdated immediately after the call returns.
+        bool HasPendingMainThreadJobs() const;
+
+        /// @brief Check if a job requires main thread execution
+        /// @param job Pointer to job to check
+        /// @return true if job has MAIN_THREAD_ONLY affinity
+        static bool IsMainThreadJob(const Job* job);
 
         // === Statistics and Monitoring ===
 
@@ -316,6 +351,10 @@ namespace VoidArchitect::Jobs
         /// @brief Get the number of jobs in each priority queue
         /// @return Array of queue lengths [Critical, High, Normal, Low]
         std::array<size_t, 4> GetQueueLengths() const;
+
+        /// @brief Get the number of jobs in each priorty queue and are MAIN_THREAD_ONLY
+        /// @return Array of queue lengths [Critical, High, Normal, Low]
+        std::array<size_t, 4> GetMainThreadQueueLengths() const;
 
         friend class ::VoidArchitect::Jobs::JobSystem;
 
@@ -343,6 +382,10 @@ namespace VoidArchitect::Jobs
 
         /// @brief Priority-based job queues (lock-free)
         std::array<std::unique_ptr<moodycamel::ConcurrentQueue<JobHandle>>, 4> m_PriorityQueues;
+
+        /// @brief Priority-based job queues for Main Thread (lock-free)
+        std::array<std::unique_ptr<moodycamel::ConcurrentQueue<JobHandle>>, 4>
+        m_MainThreadPriorityQueues;
 
         /// @brief Pull weights for anti-starvation scheduling
         struct PullWeights
