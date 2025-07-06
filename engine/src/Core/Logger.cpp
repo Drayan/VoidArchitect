@@ -15,10 +15,15 @@ namespace VoidArchitect
     {
         auto consoleSink = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>();
         consoleSink->set_pattern("%^[%d-%m-%Y %H:%M:%S.%f --- %=8l --- %n]%$ %v");
+#ifdef DEBUG
         consoleSink->set_level(spdlog::level::trace);
+#else
+        consoleSink->set_level(spdlog::level::info);
+#endif
 
-        auto fileSink =
-            std::make_shared<spdlog::sinks::basic_file_sink_mt>("VoidArchitect.log", true);
+        auto fileSink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(
+            "VoidArchitect.log",
+            true);
         fileSink->set_pattern("%^[%d-%m-%Y %H:%M:%S.%f --- %=8l --- %n]%$ %v");
         fileSink->set_level(spdlog::level::trace);
 

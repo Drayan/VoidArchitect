@@ -3,9 +3,9 @@
 //
 #pragma once
 
+#include "Core/Collections/FixedStorage.hpp"
 #include "Jobs/SyncPoint.hpp"
 #include "Resources/Texture.hpp"
-#include "Core/Collections/FixedStorage.hpp"
 
 namespace VoidArchitect
 {
@@ -31,10 +31,10 @@ namespace VoidArchitect
     {
         std::string name; ///< Texture name/identifier
         std::unique_ptr<uint8_t[]> data; ///< Raw pixel data (owned)
-        uint32_t width; ///< Texture width in pixels
-        uint32_t height; ///< Texture height in pixels
-        uint8_t channels; ///< Number of channels per pixel (1-4)
-        bool hasTransparency; ///< Whether texture contains alpha channel data
+        uint32_t width = 0; ///< Texture width in pixels
+        uint32_t height = 0; ///< Texture height in pixels
+        uint8_t channels = 0; ///< Number of channels per pixel (1-4)
+        bool hasTransparency = false; ///< Whether texture contains alpha channel data
 
         /// @brief Default constructor creates empty loading data
         TextureLoadingData() = default;
@@ -49,13 +49,13 @@ namespace VoidArchitect
 
     /// @brief Thread-safe storage for completed texture data from a background job
     ///
-    /// Provides a communcation mechanism between background loading jobs
+    /// Provides a communication mechanism between background loading jobs
     /// and the main thread for completed texture data. Uses mutex protection
     /// for simplicity while maintaining good performance for typical usage patterns.
     class TextureLoadingStorage
     {
     public:
-        /// @brief Store completed texture data from background job
+        /// @brief Store completed texture data from a background job
         /// @param data Unique pointer to loaded texture data (ownership transferred)
         ///
         /// This method is called by background loading jobs when texture data
@@ -106,19 +106,19 @@ namespace VoidArchitect
         TextureSystem();
         ~TextureSystem();
 
-        /// @brief Get texture handle for a given name, loading async if needed
+        /// @brief Get a texture handle for a given name, loading async if needed
         /// @param name Texture name/identifier
-        /// @return Handle to texture resource (may be loading placeholder initially)
+        /// @return Handle to texture resource (maybe loading placeholder initially)
         ///
         /// This is the primary entry point for texture requests. If the texture
         /// is not loaded, it will be requested asynchronously and a handle returned
-        /// immediatly. The handle will initially point to a placeholder until
+        /// immediately. The handle will initially point to a placeholder until
         /// loading completes, at which point the generation will increment;
         Resources::TextureHandle GetHandleFor(const std::string& name);
 
-        /// @brief Get texture pointer from handle
+        /// @brief Get texture pointer from a handle
         /// @param handle Valid texture handle
-        /// @return Pointer to texture resource, or appropriate fallback texture
+        /// @return Pointer to texture resource, or the appropriate fallback texture
         ///
         /// Returns the actual texture if loaded, or default/error textures based
         /// on the current loading state. Never returns nullptr.
@@ -147,8 +147,8 @@ namespace VoidArchitect
         /// @param name Texture identifier
         /// @param width Texture width in pixels
         /// @param height Texture height in pixels
-        /// @param channels Number of color channels
-        /// @param hasTransparency Whether texture has alpha channel
+        /// @param channels Number of colour channels
+        /// @param hasTransparency Whether texture has an alpha channel
         /// @param data Raw pixel data
         /// @return Handle to created texture, or invalid handle on failure
         ///
@@ -167,7 +167,7 @@ namespace VoidArchitect
         void GenerateDefaultTextures();
 
         /// @brief Release a texture and make its handle available for reuse
-        /// @param texture Texture to release (currently unused))
+        /// @param texture Texture to release (currently unused)
         void ReleaseTexture(const Resources::ITexture* texture);
 
         /// @brief Start asynchronous loading for a texture
@@ -177,7 +177,7 @@ namespace VoidArchitect
         /// GPU upload jobs. Updates the texture node state to Loading.
         void StartAsyncTextureLoading(Resources::TextureHandle handle);
 
-        /// @brief Create a new texture node and allocate handle
+        /// @brief Create a new texture node and allocate a handle
         /// @param name Texture name/identifier
         /// @return Handle to the newly created texture node
         Resources::TextureHandle CreateTextureNode(const std::string& name);
@@ -203,11 +203,11 @@ namespace VoidArchitect
         /// @brief Main texture storage using handle-based system
         ///
         /// Uses FixedStorage for automatic generation management and ABA prevention.
-        /// Each TextureNode is accessed via its TextureHandle which contains both
+        /// Each TextureNode is accessed via its TextureHandle, which contains both
         /// the index and generation for safe access.
         FixedStorage<TextureNode, MAX_TEXTURES> m_TextureStorage;
 
-        /// @brief Shared storage for async loading communication between background jobs and main thread
+        /// @brief Shared storage for async loading communication between background jobs and the main thread
         TextureLoadingStorage m_LoadingStorage;
 
         /// @brief Cache mapping texture names to their handles for fast lookup
