@@ -5,6 +5,7 @@
 
 #include "Jobs/SyncPoint.hpp"
 #include "Resources/Texture.hpp"
+#include "Core/Collections/FixedStorage.hpp"
 
 namespace VoidArchitect
 {
@@ -105,8 +106,22 @@ namespace VoidArchitect
         TextureSystem();
         ~TextureSystem();
 
+        /// @brief Get texture handle for a given name, loading async if needed
+        /// @param name Texture name/identifier
+        /// @return Handle to texture resource (may be loading placeholder initially)
+        ///
+        /// This is the primary entry point for texture requests. If the texture
+        /// is not loaded, it will be requested asynchronously and a handle returned
+        /// immediatly. The handle will initially point to a placeholder until
+        /// loading completes, at which point the generation will increment;
         Resources::TextureHandle GetHandleFor(const std::string& name);
 
+        /// @brief Get texture pointer from handle
+        /// @param handle Valid texture handle
+        /// @return Pointer to texture resource, or appropriate fallback texture
+        ///
+        /// Returns the actual texture if loaded, or default/error textures based
+        /// on the current loading state. Never returns nullptr.
         Resources::ITexture* GetPointerFor(Resources::TextureHandle handle) const;
 
         Resources::TextureHandle GetDefaultDiffuseHandle() const { return m_DefaultDiffuseHandle; }
@@ -151,10 +166,6 @@ namespace VoidArchitect
         /// @brief Generate default textures (diffuse, normal, specular, error)
         void GenerateDefaultTextures();
 
-        /// @brief Get a free texture handle for new texture allocation
-        /// @return Available texture handle
-        uint32_t GetFreeTextureHandle();
-
         /// @brief Release a texture and make its handle available for reuse
         /// @param texture Texture to release (currently unused))
         void ReleaseTexture(const Resources::ITexture* texture);
@@ -186,11 +197,24 @@ namespace VoidArchitect
 
         // === Storage and State management ===
 
-        std::queue<uint32_t> m_FreeTextureHandles; ///< Pool of available texture handles
-        uint32_t m_NextTextureHandle = 0; ///< Next handle to allocate if pool empty
+        /// @brief Maximum number of textures that can be loaded simultaneously
+        static constexpr size_t MAX_TEXTURES = 1024;
 
-        VAArray<TextureNode> m_TextureNodes; ///< Node storage for texture state tracking
-        TextureLoadingStorage m_LoadingStorage; ///< Shared storage for async loading communication.
+        /// @brief Main texture storage using handle-based system
+        ///
+        /// Uses FixedStorage for automatic generation management and ABA prevention.
+        /// Each TextureNode is accessed via its TextureHandle which contains both
+        /// the index and generation for safe access.
+        FixedStorage<TextureNode, MAX_TEXTURES> m_TextureStorage;
+
+        /// @brief Shared storage for async loading communication between background jobs and main thread
+        TextureLoadingStorage m_LoadingStorage;
+
+        /// @brief Cache mapping texture names to their handles for fast lookup
+        ///
+        /// Avoids linear search when requesting the same texture multiple times.
+        /// Updated when new textures are allocated or when textures are freed.
+        VAHashMap<std::string, Resources::TextureHandle> m_NameToHandleMap;
 
         // === Default Texture Handles ===
 

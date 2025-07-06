@@ -3,8 +3,6 @@
 //
 #include "TextureSystem.hpp"
 
-#include <stb_image.h>
-
 #include "Core/Logger.hpp"
 #include "Platform/RHI/IRenderingHardware.hpp"
 #include "ResourceSystem.hpp"
@@ -17,38 +15,39 @@ namespace VoidArchitect
 {
     TextureSystem::TextureSystem()
     {
-        // Reserve space for 1024 textures to avoid frequent reallocations
-        m_TextureNodes.reserve(1024);
         GenerateDefaultTextures();
     }
 
     TextureSystem::~TextureSystem()
     {
-        m_TextureNodes.clear();
+        m_NameToHandleMap.clear();
     }
 
     Resources::TextureHandle TextureSystem::GetHandleFor(const std::string& name)
     {
-        // Check existing texture nodes
-        for (Resources::TextureHandle handle = 0; handle < m_TextureNodes.size(); ++handle)
+        // Check cache first for last lookup
+        if (const auto it = m_NameToHandleMap.find(name); it != m_NameToHandleMap.end())
         {
-            auto& node = m_TextureNodes[handle];
-            if (node.name == name)
+            const auto handle = it->second;
+
+            // Verify handle is still valid (could have been freed)
+            if (auto* node = m_TextureStorage.Get(handle))
             {
                 // If loading, check if async operation completed
-                if (node.state == TextureLoadState::Loading)
+                if (node->state == TextureLoadState::Loading)
                 {
-                    if (Jobs::g_JobSystem && Jobs::g_JobSystem->IsSignaled(node.loadingComplete))
+                    if (Jobs::g_JobSystem && Jobs::g_JobSystem->IsSignaled(node->loadingComplete))
                     {
-                        auto result = Jobs::g_JobSystem->GetSyncPointStatus(node.loadingComplete);
+                        auto result = Jobs::g_JobSystem->GetSyncPointStatus(node->loadingComplete);
                         if (result == Jobs::JobResult::Status::Success)
                         {
+                            // Loading completed successfully - texture should be uploaded
+                            // The generation increpent happens in CreateTextureUploadJob
                         }
                         else
                         {
                             // Async loading failed - mark as failed (GetPointerFro will handle fallback)
-                            node.state = TextureLoadState::Failed;
-
+                            node->state = TextureLoadState::Failed;
                             VA_ENGINE_ERROR("[TextureSystem] Failed to load texture '{}'.", name);
                         }
                     }
@@ -56,42 +55,66 @@ namespace VoidArchitect
 
                 return handle;
             }
+            else
+            {
+                // Handle is invalid - remove from cache
+                m_NameToHandleMap.erase(it);
+                VA_ENGINE_WARN("[TextureSystem] Texture handle for '{}' is invalid.", name);
+            }
         }
 
         // First time request - create new texture node and start async loading
         auto handle = CreateTextureNode(name);
-        StartAsyncTextureLoading(handle);
+        if (handle.IsValid())
+        {
+            m_NameToHandleMap[name] = handle;
+            StartAsyncTextureLoading(handle);
+        }
         return handle;
     }
 
     Resources::ITexture* TextureSystem::GetPointerFor(const Resources::TextureHandle handle) const
     {
-        if (handle >= m_TextureNodes.size())
+        const auto* node = m_TextureStorage.Get(handle);
+        if (!node)
         {
             VA_ENGINE_ERROR("[TextureSystem] Invalid texture handle.");
-            return m_TextureNodes[m_ErrorTextureHandle].texturePtr.get();
+            if (const auto* errorNode = m_TextureStorage.Get(m_ErrorTextureHandle))
+            {
+                return errorNode->texturePtr.get();
+            }
+
+            return nullptr;
         }
 
-        const auto& node = m_TextureNodes[handle];
-
         // Return actual texture if loaded
-        if (node.texturePtr)
+        if (node->texturePtr)
         {
-            return node.texturePtr.get();
+            return node->texturePtr.get();
         }
         else
         {
             // Handle different states appropriately
-            switch (node.state)
+            switch (node->state)
             {
                 case TextureLoadState::Failed:
-                    return m_TextureNodes[m_ErrorTextureHandle].texturePtr.get();
+                    if (const auto* errorNode = m_TextureStorage.Get(m_ErrorTextureHandle))
+                    {
+                        return errorNode->texturePtr.get();
+                    }
+                    break;
 
                 case TextureLoadState::Loading:
                 case TextureLoadState::Unloaded: default:
-                    return m_TextureNodes[m_DefaultDiffuseHandle].texturePtr.get();
+                    if (const auto* defaultNode = m_TextureStorage.Get(m_DefaultDiffuseHandle))
+                    {
+                        return defaultNode->texturePtr.get();
+                    }
+                    break;
             }
         }
+
+        return nullptr;
     }
 
     Resources::TextureHandle TextureSystem::CreateTexture2D(
@@ -111,29 +134,28 @@ namespace VoidArchitect
             data);
         if (texture)
         {
-            // Cache the texture
-            const auto handle = GetFreeTextureHandle();
-
-            // Ensure texture node array can accomodate the handle
-            if (handle >= m_TextureNodes.size())
+            const auto handle = m_TextureStorage.Allocate();
+            if (!handle.IsValid())
             {
-                m_TextureNodes.resize(handle + 1);
+                VA_ENGINE_ERROR("[TextureSystem] Failed to allocate texture slot for '{}'.", name);
+                delete texture;
+                return Resources::InvalidTextureHandle;
             }
 
-            // Initialize texture node with the created texture
-            auto& node = m_TextureNodes[handle];
-            node.name = name;
-            node.state = TextureLoadState::Loaded;
-            node.texturePtr.reset(texture);
-            node.loadingComplete = Jobs::InvalidSyncPointHandle;
+            auto* node = m_TextureStorage.Get(handle);
+            node->name = name;
+            node->state = TextureLoadState::Loaded;
+            node->texturePtr.reset(texture);
+            node->loadingComplete = Jobs::InvalidSyncPointHandle;
 
-            // Set handle in texture object
-            texture->m_Handle = handle;
+            m_NameToHandleMap[name] = handle;
 
             VA_ENGINE_TRACE(
-                "[TextureSystem] Created texture '{}' with handle {}.",
+                "[TextureSystem] Created texture '{}' with handle ({}, {}).",
                 texture->m_Name,
-                handle);
+                handle.GetIndex(),
+                handle.GetGeneration());
+
             return handle;
         }
 
@@ -267,25 +289,6 @@ namespace VoidArchitect
         }
     }
 
-    uint32_t TextureSystem::GetFreeTextureHandle()
-    {
-        // If there are free handles, return one
-        if (!m_FreeTextureHandles.empty())
-        {
-            const uint32_t handle = m_FreeTextureHandles.front();
-            m_FreeTextureHandles.pop();
-            return handle;
-        }
-
-        // Otherwise, return the next handle and increment it
-        if (m_NextTextureHandle >= m_TextureNodes.size())
-        {
-            m_TextureNodes.resize(m_NextTextureHandle + 1);
-            // Ensure the vector can hold the new handle
-        }
-        return m_NextTextureHandle++;
-    }
-
     void TextureSystem::ReleaseTexture(const Resources::ITexture* texture)
     {
     }
@@ -299,20 +302,26 @@ namespace VoidArchitect
             return;
         }
 
-        auto& node = m_TextureNodes[handle];
+        auto* node = m_TextureStorage.Get(handle);
+        if (!node)
+        {
+            VA_ENGINE_ERROR(
+                "[TextureSystem] Failed to start async texture loading - invalid handle.");
+            return;
+        }
 
         // Create SyncPoint for the complete loading pipeline
         auto completionSP = Jobs::g_JobSystem->CreateSyncPoint(1, "TextureLoaded");
-        node.loadingComplete = completionSP;
-        node.state = TextureLoadState::Loading;
+        node->loadingComplete = completionSP;
+        node->state = TextureLoadState::Loading;
 
         // Job 1: Load from disk (any worker thread)
         auto diskJobSP = Jobs::g_JobSystem->CreateSyncPoint(1, "TextureDiskLoad");
-        auto diskJob = CreateTextureLoadJob(node.name);
+        auto diskJob = CreateTextureLoadJob(node->name);
         Jobs::g_JobSystem->Submit(diskJob, diskJobSP, Jobs::JobPriority::Normal, "TextureDiskLoad");
 
         // Job 2: GPU upload (main thread)
-        auto gpuJob = CreateTextureUploadJob(node.name, handle);
+        auto gpuJob = CreateTextureUploadJob(node->name, handle);
         Jobs::g_JobSystem->SubmitAfter(
             diskJobSP,
             gpuJob,
@@ -321,25 +330,24 @@ namespace VoidArchitect
             "TextureGPUUpload",
             Jobs::MAIN_THREAD_ONLY);
 
-        VA_ENGINE_TRACE("[TextureSystem] Started async texture loading for '{}'.", node.name);
+        VA_ENGINE_TRACE("[TextureSystem] Started async texture loading for '{}'.", node->name);
     }
 
     Resources::TextureHandle TextureSystem::CreateTextureNode(const std::string& name)
     {
-        auto handle = GetFreeTextureHandle();
-
-        // Ensure texture nodes array can accomodate the new handle
-        if (handle >= m_TextureNodes.size())
+        const auto handle = m_TextureStorage.Allocate();
+        if (!handle.IsValid())
         {
-            m_TextureNodes.resize(handle + 1);
+            VA_ENGINE_ERROR("[TextureSystem] Failed to allocate texture slot for '{}'.", name);
+            return Resources::InvalidTextureHandle;
         }
 
         // Initialize the new texture node
-        auto& node = m_TextureNodes[handle];
-        node.name = name;
-        node.state = TextureLoadState::Unloaded;
-        node.texturePtr = nullptr;
-        node.loadingComplete = Jobs::InvalidSyncPointHandle;
+        auto* node = m_TextureStorage.Get(handle);
+        node->name = name;
+        node->state = TextureLoadState::Unloaded;
+        node->texturePtr = nullptr;
+        node->loadingComplete = Jobs::InvalidSyncPointHandle;
 
         return handle;
     }
@@ -402,75 +410,55 @@ namespace VoidArchitect
         const std::string& textureName,
         Resources::TextureHandle handle)
     {
-        return [textureName, handle, this]() -> Jobs::JobResult
+        return [this, textureName, handle]() -> Jobs::JobResult
         {
-            // This job runs on the main thread, so GPU operations are safe
-
-            // Extract loaded data from shared storage
-            auto loadedData = m_LoadingStorage.RetrieveCompletedLoad(textureName);
-            if (!loadedData)
+            // Get completed texture data from storage
+            auto textureData = m_LoadingStorage.RetrieveCompletedLoad(textureName);
+            if (!textureData)
             {
                 VA_ENGINE_ERROR(
                     "[TextureSystem] Failed to retrieve completed texture load for '{}'.",
                     textureName);
-
-                // Update texture node state
-                if (handle <= m_TextureNodes.size())
-                {
-                    m_TextureNodes[handle].state = TextureLoadState::Failed;
-                }
-
                 return Jobs::JobResult::Failed("Failed to retrieve completed texture load.");
             }
 
-            // Create the GPU texture using the loaded data
-            auto gpuTexture = Renderer::g_RenderSystem->GetRHI()->CreateTexture2D(
-                loadedData->name,
-                loadedData->width,
-                loadedData->height,
-                loadedData->channels,
-                loadedData->hasTransparency,
-                VAArray<uint8_t>(
-                    loadedData->data.get(),
-                    loadedData->data.get() + (loadedData->width * loadedData->height * loadedData->
-                        channels)));
-
-            // Update texture node state based on an upload result
-            if (handle < m_TextureNodes.size())
-            {
-                auto& node = m_TextureNodes[handle];
-                if (gpuTexture)
-                {
-                    // Success - store the texture and update state
-                    gpuTexture->m_Handle = handle;
-                    node.texturePtr.reset(gpuTexture);
-                    node.state = TextureLoadState::Loaded;
-
-                    VA_ENGINE_TRACE(
-                        "[TextureSystem] Completed texture GPU upload for '{}'.",
-                        textureName);
-                    return Jobs::JobResult::Success();
-                }
-                else
-                {
-                    // GPU upload failed - mark as failed (GetPointerFor will return error texture)
-                    node.state = TextureLoadState::Failed;
-
-                    VA_ENGINE_ERROR(
-                        "[TextureSystem] Failed to upload texture to GPU for '{}'.",
-                        textureName);
-                    return Jobs::JobResult::Failed("Failed to upload texture to GPU.");
-                }
-            }
-            else
+            // Get the texture node (validate handle is still valid)
+            auto* node = m_TextureStorage.Get(handle);
+            if (!node)
             {
                 VA_ENGINE_ERROR(
-                    "[TextureSystem] Invalid texture handle for texture '{}'.",
+                    "[TextureSystem] Texture node was freed during loading for '{}'.",
                     textureName);
-                return Jobs::JobResult::Failed("Invalid texture handle.");
+                return Jobs::JobResult::Failed("Texture node was freed during loading.");
             }
 
-            // loadedData destructor automatically frees pixel data
+            // Create the GPU texture
+            auto* texture = Renderer::g_RenderSystem->GetRHI()->CreateTexture2D(
+                textureData->name,
+                textureData->width,
+                textureData->height,
+                textureData->channels,
+                textureData->hasTransparency,
+                VAArray<uint8_t>(
+                    textureData->data.get(),
+                    textureData->data.get() + (textureData->width * textureData->height *
+                        textureData->channels)));
+
+            if (!texture)
+            {
+                VA_ENGINE_ERROR(
+                    "[TextureSystem] Failed to create GPU texture for '{}'.",
+                    textureName);
+                node->state = TextureLoadState::Failed;
+                return Jobs::JobResult::Failed("Failed to create GPU texture.");
+            }
+
+            // Update the node with loaded texture
+            node->texturePtr.reset(texture);
+            node->state = TextureLoadState::Loaded;
+
+            VA_ENGINE_TRACE("[TextureSystem] Completed texture GPU upload for '{}'.", textureName);
+            return Jobs::JobResult::Success();
         };
     }
 

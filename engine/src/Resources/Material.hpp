@@ -64,11 +64,34 @@ namespace VoidArchitect
 
             virtual ~IMaterial() = default;
 
+            /// @brief Check if textures have changed and require rebinding
+            /// @return true if texture resources have changed since last update
+            ///
+            /// This method is used by binding managers to determine if texture
+            /// bindings need to be updated. The base implementation returns true
+            /// (conservative approach) but derived class can optimize by tracking
+            /// actual changes.
+            virtual bool HasResourcesChanged() const { return true; }
+
+            /// @brief Mark current resource state as up-to-date
+            ///
+            /// Called by binding managers after updating bindings to reset
+            /// change detection. The base implementation is a no-op but derived
+            /// classes should update their change tracking state.
+            virtual void MarkResourcesUpdated()
+            {
+            }
+
             virtual void SetDiffuseColor(const Math::Vec4& color) = 0;
             virtual void SetTexture(
                 Resources::TextureUse use,
                 Resources::TextureHandle texture) = 0;
 
+            /// @brief Get material generation for property change detection
+            /// @return Current generation counter
+            ///
+            /// This tracks change to material properties (like diffuse color) but
+            /// not texture changes. Use HasResourcesChanged() for texture changes.
             [[nodiscard]] uint32_t GetGeneration() const { return m_Generation; }
 
         protected:

@@ -27,7 +27,7 @@ namespace VoidArchitect
             m_Width = window->GetWidth();
             m_Height = window->GetHeight();
 
-            m_MainCamera.SetPosition(Math::Vec3(0.f, 0.f, 3.f));
+            m_MainCamera.SetPosition(Math::Vec3(0.f, 0.f, 5.f));
             m_MainCamera.SetAspectRatio(static_cast<float>(m_Width) / static_cast<float>(m_Height));
 
             // Initialize the RHI

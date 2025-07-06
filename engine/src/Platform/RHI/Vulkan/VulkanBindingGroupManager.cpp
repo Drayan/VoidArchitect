@@ -263,7 +263,7 @@ namespace VoidArchitect::Platform
         MaterialHandle materialHandle)
     {
         const auto& materialConfig = g_MaterialSystem->GetTemplateFor(materialHandle);
-        const auto* vkMat = dynamic_cast<VulkanMaterial*>(g_MaterialSystem->GetPointerFor(
+        auto* vkMat = dynamic_cast<VulkanMaterial*>(g_MaterialSystem->GetPointerFor(
             materialHandle));
 
         if (!vkMat)
@@ -368,22 +368,30 @@ namespace VoidArchitect::Platform
             descriptorWrites.data(),
             0,
             nullptr);
+
+        vkMat->MarkResourcesUpdated();
     }
 
     bool VulkanBindingGroupManager::NeedsUpdate(const MaterialHandle materialHandle)
     {
-        auto& matTemplate = g_MaterialSystem->GetTemplateFor(materialHandle);
         const auto* mat = g_MaterialSystem->GetPointerFor(materialHandle);
-
         if (!mat) return false;
 
+        // Check if material generation changed (properties like diffuse color)
         const auto currentGen = mat->GetGeneration();
+        bool materialChanged = false;
         if (m_MaterialGenerations.contains(materialHandle))
         {
-            return currentGen != m_MaterialGenerations[materialHandle];
+            materialChanged = currentGen != m_MaterialGenerations[materialHandle];
+        }
+        else
+        {
+            materialChanged = true;
         }
 
-        return true;
+        bool resourcesChanged = mat->HasResourcesChanged();
+
+        return materialChanged || resourcesChanged;
     }
 
     void VulkanBindingGroupManager::UpdateData(MaterialHandle materialHandle)

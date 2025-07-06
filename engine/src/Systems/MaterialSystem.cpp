@@ -87,8 +87,8 @@ namespace VoidArchitect
     Renderer::MaterialClass MaterialSystem::GetClass(const MaterialHandle handle) const
     {
         const auto& node = m_Materials[handle];
-        if (node.config.renderStateClass.empty() || node.config.renderStateClass != "UI")
-            return Renderer::MaterialClass::Standard;
+        if (node.config.renderStateClass.empty() || node.config.renderStateClass != "UI") return
+            Renderer::MaterialClass::Standard;
         else return Renderer::MaterialClass::UI;
     }
 
@@ -215,7 +215,8 @@ namespace VoidArchitect
         //TODO: Same as the resourceBinding, we could do this a little bit more flexible
         if (!matTemplate.diffuseTexture.name.empty())
         {
-            if (const auto texture = g_TextureSystem->GetHandleFor(matTemplate.diffuseTexture.name))
+            if (const auto texture = g_TextureSystem->GetHandleFor(matTemplate.diffuseTexture.name);
+                texture.IsValid())
             {
                 material->SetTexture(matTemplate.diffuseTexture.use, texture);
             }
@@ -240,8 +241,8 @@ namespace VoidArchitect
 
         if (!matTemplate.specularTexture.name.empty())
         {
-            if (const auto texture = g_TextureSystem->GetHandleFor(
-                matTemplate.specularTexture.name))
+            if (const auto texture = g_TextureSystem->GetHandleFor(matTemplate.specularTexture.name)
+                ; texture.IsValid())
             {
                 material->SetTexture(matTemplate.specularTexture.use, texture);
             }
@@ -266,7 +267,8 @@ namespace VoidArchitect
 
         if (!matTemplate.normalTexture.name.empty())
         {
-            if (const auto texture = g_TextureSystem->GetHandleFor(matTemplate.normalTexture.name))
+            if (const auto texture = g_TextureSystem->GetHandleFor(matTemplate.normalTexture.name);
+                texture.IsValid())
             {
                 material->SetTexture(matTemplate.normalTexture.use, texture);
             }

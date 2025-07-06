@@ -20,7 +20,6 @@ namespace VoidArchitect::Resources
         const uint8_t channelCount,
         const bool hasTransparency)
         : m_Name(std::move(name)),
-          m_Handle{},
           m_Width(width),
           m_Height(height),
           m_ChannelCount(channelCount),

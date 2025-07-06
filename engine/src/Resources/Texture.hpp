@@ -2,11 +2,13 @@
 // Created by Michael Desmedt on 22/05/2025.
 //
 #pragma once
+#include "Core/Handle.hpp"
 #include "Core/Uuid.hpp"
 
 namespace VoidArchitect
 {
     class TextureSystem;
+    struct TextureNode;
 }
 
 namespace VoidArchitect::Platform
@@ -43,8 +45,8 @@ namespace VoidArchitect::Resources
         MirroredRepeat,
     };
 
-    using TextureHandle = uint32_t;
-    static constexpr TextureHandle InvalidTextureHandle = std::numeric_limits<TextureHandle>::max();
+    using TextureHandle = Handle<TextureNode>;
+    static constexpr TextureHandle InvalidTextureHandle = TextureHandle::Invalid();
 
     class ITexture
     {
@@ -65,7 +67,6 @@ namespace VoidArchitect::Resources
         virtual void Release() = 0;
 
         std::string m_Name;
-        uint32_t m_Handle;
         UUID m_UUID;
 
         uint32_t m_Width, m_Height;

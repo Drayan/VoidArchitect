@@ -20,7 +20,6 @@ namespace VoidArchitect::Platform
         const bool hasTransparency,
         const VAArray<uint8_t>& data)
         : Texture2D(name, width, height, channels, hasTransparency),
-          m_Generation(0),
           m_Image{},
           m_Sampler{},
           m_Device(device->GetLogicalDeviceHandle()),
