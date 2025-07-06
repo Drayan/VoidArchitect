@@ -42,7 +42,7 @@ namespace VoidArchitect::Platform
 
         void BindRenderState(RenderStateHandle stateHandle) override;
         void BindMaterial(MaterialHandle materialHandle, RenderStateHandle stateHandle) override;
-        void BindMesh(Resources::MeshHandle meshHandle) override;
+        bool BindMesh(Resources::MeshHandle meshHandle) override;
         void DrawIndexed(
             uint32_t indexCount,
             uint32_t indexOffset = 0,

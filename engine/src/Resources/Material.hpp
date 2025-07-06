@@ -18,9 +18,11 @@ namespace VoidArchitect
     using MaterialHandle = uint32_t;
     static constexpr MaterialHandle InvalidMaterialHandle = std::numeric_limits<uint32_t>::max();
 
+    struct MeshNode;
+
     namespace Resources
     {
-        using MeshHandle = uint32_t;
+        using MeshHandle = Handle<MeshNode>;
 
         class ITexture;
         class Texture2D;

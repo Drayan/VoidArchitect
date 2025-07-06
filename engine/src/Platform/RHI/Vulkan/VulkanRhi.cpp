@@ -135,9 +135,9 @@ namespace VoidArchitect::Platform
         g_VkExecutionContext->BindMaterialGroup(materialHandle, stateHandle);
     }
 
-    void VulkanRHI::BindMesh(Resources::MeshHandle meshHandle)
+    bool VulkanRHI::BindMesh(Resources::MeshHandle meshHandle)
     {
-        g_VkExecutionContext->BindMesh(meshHandle);
+        return g_VkExecutionContext->BindMesh(meshHandle);
     }
 
     auto VulkanRHI::DrawIndexed(

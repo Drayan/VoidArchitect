@@ -71,7 +71,7 @@ namespace VoidArchitect::Platform
 
         virtual void BindRenderState(RenderStateHandle stateHandle) = 0;
         virtual void BindMaterial(MaterialHandle materialHandle, RenderStateHandle stateHandle) = 0;
-        virtual void BindMesh(Resources::MeshHandle meshHandle) = 0;
+        virtual bool BindMesh(Resources::MeshHandle meshHandle) = 0;
         virtual void PushConstants(
             Resources::ShaderStage stage,
             uint32_t size,

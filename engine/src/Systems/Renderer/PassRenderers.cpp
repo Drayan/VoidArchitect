@@ -98,7 +98,12 @@ namespace VoidArchitect::Renderer
             const auto& mesh = meshes[j];
             const auto& transformMatrix = transforms[j];
 
-            context.rhi.BindMesh(mesh);
+            // Only proceed if mesh binding was successfull
+            if (!context.rhi.BindMesh(mesh))
+            {
+                // Mesh not ready
+                continue;
+            }
 
             //NOTE: We don't need to push constant everytime as only one transform exist currently
             //TODO: Implement Transform and get worldTransform from there = modelMatrix
@@ -177,7 +182,9 @@ namespace VoidArchitect::Renderer
             Resources::ShaderStage::Vertex,
             sizeof(Math::Mat4),
             &uiGeometry.Model);
-        context.rhi.BindMesh(uiGeometry.Mesh);
-        context.rhi.DrawIndexed(g_MeshSystem->GetIndexCountFor(uiGeometry.Mesh));
+        if (context.rhi.BindMesh(uiGeometry.Mesh))
+        {
+            context.rhi.DrawIndexed(g_MeshSystem->GetIndexCountFor(uiGeometry.Mesh));
+        }
     }
 } // namespace VoidArchitect::Renderer

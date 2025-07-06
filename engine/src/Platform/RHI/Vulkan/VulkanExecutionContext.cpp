@@ -199,8 +199,8 @@ namespace VoidArchitect::Platform
 
         cmdBuf.End();
 
-        if (m_ImagesInFlight[m_ImageIndex] != nullptr) m_ImagesInFlight[m_ImageIndex]->Wait(
-            std::numeric_limits<uint64_t>::max());
+        if (m_ImagesInFlight[m_ImageIndex] != nullptr)
+            m_ImagesInFlight[m_ImageIndex]->Wait(std::numeric_limits<uint64_t>::max());
 
         // Mark the image fence as in use by this frame.
         m_ImagesInFlight[m_ImageIndex] = &m_InFlightFences[m_CurrentIndex];
@@ -312,10 +312,17 @@ namespace VoidArchitect::Platform
         g_VkBindingGroupManager->BindMaterialGroup(cmdBuf.GetHandle(), materialHandle, stateHandle);
     }
 
-    void VulkanExecutionContext::BindMesh(const Resources::MeshHandle meshHandle)
+    bool VulkanExecutionContext::BindMesh(const Resources::MeshHandle meshHandle)
     {
         const auto& cmdBuf = GetCurrentCommandBuffer();
         auto* vkMesh = dynamic_cast<VulkanMesh*>(g_MeshSystem->GetPointerFor(meshHandle));
+
+        // Handle mesh isn't loaded yet or failed to load
+        if (!vkMesh)
+        {
+            // Mesh is still loading or failed to load - skip binding
+            return false;
+        }
         const auto* vkVertices = dynamic_cast<VulkanVertexBuffer*>(vkMesh->GetVertexBuffer());
         const auto* vkIndices = dynamic_cast<VulkanIndexBuffer*>(vkMesh->GetIndexBuffer());
 
@@ -323,6 +330,8 @@ namespace VoidArchitect::Platform
         const auto vertBuf = vkVertices->GetHandle();
         vkCmdBindVertexBuffers(cmdBuf.GetHandle(), 0, 1, &vertBuf, &offsets);
         vkCmdBindIndexBuffer(cmdBuf.GetHandle(), vkIndices->GetHandle(), 0, VK_INDEX_TYPE_UINT32);
+
+        return true;
     }
 
     void VulkanExecutionContext::PushConstants(

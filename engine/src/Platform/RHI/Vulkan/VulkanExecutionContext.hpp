@@ -56,7 +56,7 @@ namespace VoidArchitect::Platform
 
         void BindRenderState(RenderStateHandle stateHandle);
         void BindMaterialGroup(MaterialHandle materialHandle, RenderStateHandle stateHandle);
-        void BindMesh(Resources::MeshHandle meshHandle);
+        bool BindMesh(Resources::MeshHandle meshHandle);
         void PushConstants(Resources::ShaderStage stage, uint32_t size, const void* data);
         void DrawIndexed(
             uint32_t indexCount,
