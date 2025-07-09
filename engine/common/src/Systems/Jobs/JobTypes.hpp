@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "Core/Handle.hpp"
+#include "Handle.hpp"
 #include "Platform/Threading/Thread.hpp"
 #include "Platform/Threading/ThreadFactory.hpp"
 

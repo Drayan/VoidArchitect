@@ -2,8 +2,8 @@
 // Created by Michael Desmedt on 17/06/2025.
 //
 #pragma once
-#include "Core/Handle.hpp"
-#include "Core/Logger.hpp"
+#include "Handle.hpp"
+#include "Logger.hpp"
 
 namespace VoidArchitect::Collections
 {

@@ -2,7 +2,7 @@
 // Created by Michael Desmedt on 08/06/2025.
 //
 #pragma once
-#include "Core/Core.hpp"
+#include "../../../common/src/Core.hpp"
 #include "Core/Math/Vec4.hpp"
 #include "Resources/RenderTarget.hpp"
 

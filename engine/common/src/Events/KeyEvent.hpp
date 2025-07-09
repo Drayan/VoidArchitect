@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "Core/Core.hpp"
+#include "Core.hpp"
 #include "Event.hpp"
 
 namespace VoidArchitect
@@ -14,8 +14,12 @@ namespace VoidArchitect
         inline int GetKeyCode() const { return m_KeyCode; }
 
         EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
+
     protected:
-        KeyEvent(int keycode) : m_KeyCode(keycode) {}
+        KeyEvent(int keycode)
+            : m_KeyCode(keycode)
+        {
+        }
 
         int m_KeyCode;
     };
@@ -41,6 +45,7 @@ namespace VoidArchitect
         }
 
         EVENT_CLASS_TYPE(KeyPressed)
+
     private:
         int m_RepeatCount;
     };
@@ -48,7 +53,10 @@ namespace VoidArchitect
     class VA_API KeyReleasedEvent : public KeyEvent
     {
     public:
-        KeyReleasedEvent(int keycode) : KeyEvent(keycode) {}
+        KeyReleasedEvent(int keycode)
+            : KeyEvent(keycode)
+        {
+        }
 
         // NOTE This is purely for debugging purpose and thus performance isn't really critical
         // here.

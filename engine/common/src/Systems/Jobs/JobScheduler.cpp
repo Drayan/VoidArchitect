@@ -5,7 +5,7 @@
 
 #include <random>
 
-#include "Core/Logger.hpp"
+#include "Logger.hpp"
 
 // Conditional moodycamel inclusion with fallback
 #ifdef MOODYCAMEL_INCLUDE_DIR

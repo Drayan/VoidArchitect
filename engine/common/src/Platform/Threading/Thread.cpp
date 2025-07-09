@@ -3,7 +3,7 @@
 //
 #include "Thread.hpp"
 
-#include "Core/Logger.hpp"
+#include "Logger.hpp"
 
 #ifdef VOID_ARCH_PLATFORM_WINDOWS
 #include <Windows.h>
@@ -281,7 +281,8 @@ namespace VoidArchitect::Platform
         catch (const std::exception& e)
         {
             VA_ENGINE_ERROR("[Thread] Exception in thread '{}' : {}", m_Name, e.what());
-        } catch (...)
+        }
+        catch (...)
         {
             VA_ENGINE_ERROR("[Thread] Unknown exception in thread '{}'.", m_Name);
         }

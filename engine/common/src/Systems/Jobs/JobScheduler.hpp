@@ -5,7 +5,7 @@
 
 #include "JobTypes.hpp"
 #include "SyncPoint.hpp"
-#include "Core/Collections/FixedStorage.hpp"
+#include "Collections/FixedStorage.hpp"
 
 namespace moodycamel
 {

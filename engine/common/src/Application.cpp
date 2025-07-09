@@ -3,60 +3,54 @@
 //
 #include "Application.hpp"
 
-#include "Events/ApplicationEvent.hpp"
-#include "Events/KeyEvent.hpp"
 #include "Logger.hpp"
-#include "Platform/RHI/IRenderingHardware.hpp"
-#include "Window.hpp"
+#include "Events/ApplicationEvent.hpp"
 
-// TEMP Remove this include when we have proper keycode.
-#include <SDL3/SDL_keycode.h>
-#include <SDL3/SDL_timer.h>
-
-#include "Platform/Threading/Thread.hpp"
-#include "Systems/Renderer/RenderSystem.hpp"
-#include "Systems/ResourceSystem.hpp"
 #include "Systems/Jobs/JobSystem.hpp"
+
+#include <SDL3/SDL_timer.h>
 
 namespace VoidArchitect
 {
-#define BIND_EVENT_FN(x) [this](auto&& PH1) { return this->x(std::forward<decltype(PH1)>(PH1)); }
-
-    Application::Application()
+    void Application::Initialize()
     {
-        m_MainWindow = std::unique_ptr<Window>(Window::Create());
-        m_MainWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
+        VA_ENGINE_INFO("[Application] Initializing base application systems ...");
 
-        // Setting up Subsystems
         try
         {
+            // Initialize the job system
+            VA_ENGINE_TRACE("[Application] Initializing job system ...");
             Jobs::g_JobSystem = std::make_unique<Jobs::JobSystem>();
 
-            g_ResourceSystem = std::make_unique<ResourceSystem>();
-            Renderer::g_RenderSystem = std::make_unique<Renderer::RenderSystem>(
-                Platform::RHI_API_TYPE::Vulkan,
-                m_MainWindow);
-
-            Renderer::g_RenderSystem->InitializeSubsystems();
+            InitializeSubsystems();
         }
         catch (std::exception& e)
         {
-            VA_ENGINE_CRITICAL("[Application] Failed to initialize subsystem: {0}", e.what());
-            exit(-1);
+            VA_ENGINE_CRITICAL(
+                "[Application] Failed to initialize base application systems: {}",
+                e.what());
+            throw;
         }
     }
 
     Application::~Application()
     {
-        Renderer::g_RenderSystem = nullptr;
-        g_ResourceSystem = nullptr;
+        VA_ENGINE_INFO("[Application] Shutting down base application systems ...");
 
         Jobs::g_JobSystem = nullptr;
     }
 
     void Application::Run()
     {
+        VA_ENGINE_INFO("[Application] Starting main loop ...");
+
+        /// @brief Fixed timestep for consistent simulation (60 FPS)
         constexpr double FIXED_STEP = 1.0 / 60.0;
+
+        /// @brief Time budget for main thread job processing in milliseconds
+        ///
+        /// This budget prevents main thread jobs from consuming too much frame time.
+        /// At 60 FPS (16.67ms per frame), 2ms represents ~12% of the frame budget.
         constexpr float MAIN_THREAD_JOB_BUDGET_MS = 2.0f; // Time budget for main thread jobs
 
         double accumulator = 0.0;
@@ -118,20 +112,18 @@ namespace VoidArchitect
                 accumulator -= FIXED_STEP;
             }
 
-            Renderer::g_RenderSystem->RenderFrame(frameTime);
-            m_MainWindow->OnUpdate();
+            // Call derived class update hook with variable timestep
+            OnUpdate(static_cast<float>(frameTime));
+
+            // Call derived class application-specific update hook
+            OnApplicationUpdate(static_cast<float>(frameTime));
         }
+
+        VA_ENGINE_INFO("[Application] Main execution loop terminated.");
     }
 
     void Application::OnEvent(Event& e)
     {
-        EventDispatcher dispatcher(e);
-        dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-        dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(OnWindowResized));
-        // TEMP This should not stay here; it's just a convenience to hit ESC to quit the app for
-        //  now.
-        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyPressed));
-
         // Going through the layers backwards to propagate the event.
         for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
         {
@@ -150,44 +142,5 @@ namespace VoidArchitect
     {
         m_LayerStack.PushOverlay(layer);
         layer->OnAttach();
-    }
-
-    bool Application::OnWindowClose(WindowCloseEvent& e)
-    {
-        m_Running = false;
-        return true;
-    }
-
-    bool Application::OnWindowResized(WindowResizedEvent& e)
-    {
-        VA_ENGINE_TRACE("[Application] Window resized to {0}, {1}.", e.GetWidth(), e.GetHeight());
-        Renderer::g_RenderSystem->Resize(e.GetWidth(), e.GetHeight());
-        return true;
-    }
-
-    bool Application::OnKeyPressed(KeyPressedEvent& e)
-    {
-        switch (e.GetKeyCode())
-        {
-            case SDLK_ESCAPE:
-                m_Running = false;
-                return true;
-
-            // Debug rendering modes
-            case SDLK_0:
-                Renderer::g_RenderSystem->SetDebugMode(Renderer::RenderSystemDebugMode::None);
-                return true;
-            case SDLK_1:
-                Renderer::g_RenderSystem->SetDebugMode(Renderer::RenderSystemDebugMode::Lighting);
-                return true;
-            case SDLK_2:
-                Renderer::g_RenderSystem->SetDebugMode(Renderer::RenderSystemDebugMode::Normals);
-                return true;
-
-            default:
-                break;
-        }
-
-        return false;
     }
 } // namespace VoidArchitect
