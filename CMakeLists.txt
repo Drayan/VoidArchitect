@@ -49,13 +49,68 @@ endif ()
 
 # Release-specific settings
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DFORCE_VALIDATION")
+
+# === Build Configuration Options ===
+
+# Core build options
 option(BUILD_SHARED_LIBS "Build libraries as shared libraries" ON)
 option(VOID_ARCHITECT_BUILD_TESTS "Build test executables" OFF)
+
+# Engine modules build options
+option(VOID_ARCHITECT_BUILD_CLIENT "Build client engine module" ON)
+option(VOID_ARCHITECT_BUILD_SERVER "Build server engine module" OFF)
+option(VOID_ARCHITECT_BUILD_EDITOR "Build editor engine module" OFF)
+
+# Application build options
+option(VOID_ARCHITECT_BUILD_CLIENT_APP "Build client application" ON)
+option(VOID_ARCHITECT_BUILD_EDITOR_APP "Build editor application" OFF)
+
+# Server service build options
+option(VOID_ARCHITECT_BUILD_SERVER_FRONTEND "Build server frontend service" OFF)
+option(VOID_ARCHITECT_BUILD_SERVER_GAME "Build server game logic service" OFF)
+
+# Development and advanced options
+option(VOID_ARCHITECT_ENABLE_HOT_RELOAD "Enable hot-reload support" ON)
+option(VOID_ARCHITECT_ENABLE_PROFILING "Enable profiling support" OFF)
+option(VOID_ARCHITECT_ENABLE_GPU_DEBUG "Enable GPU debugging layers" OFF)
+
+# Set library type variable for engine modules
+if (BUILD_SHARED_LIBS)
+    set(VOID_ARCHITECT_LIB_TYPE SHARED)
+else ()
+    set(VOID_ARCHITECT_LIB_TYPE STATIC)
+endif ()
+
+# Validate configuration dependencies
+if (VOID_ARCHITECT_BUILD_CLIENT_APP AND NOT VOID_ARCHITECT_BUILD_CLIENT)
+    message(WARNING "Client application requires client engine module. Enabling VOID_ARCHITECT_BUILD_CLIENT.")
+    set(VOID_ARCHITECT_BUILD_CLIENT ON CACHE BOOL "Build client engine module" FORCE)
+endif ()
+
+if (VOID_ARCHITECT_BUILD_EDITOR_APP AND NOT VOID_ARCHITECT_BUILD_EDITOR)
+    message(WARNING "Editor application requires editor engine module. Enabling VOID_ARCHITECT_BUILD_EDITOR.")
+    set(VOID_ARCHITECT_BUILD_EDITOR ON CACHE BOOL "Build editor engine module" FORCE)
+endif ()
+
+# Check if any server service is enabled and ensure server module is built
+set(ANY_SERVER_SERVICE_ENABLED OFF)
+if (VOID_ARCHITECT_BUILD_SERVER_FRONTEND OR VOID_ARCHITECT_BUILD_SERVER_GAME)
+    set(ANY_SERVER_SERVICE_ENABLED ON)
+endif ()
+
+if (ANY_SERVER_SERVICE_ENABLED AND NOT VOID_ARCHITECT_BUILD_SERVER)
+    message(WARNING "Server services require server engine module. Enabling VOID_ARCHITECT_BUILD_SERVER.")
+    set(VOID_ARCHITECT_BUILD_SERVER ON CACHE BOOL "Build server engine module" FORCE)
+endif ()
+
+# === Output configuration ===
 
 set(OUTPUT_ROOT ${CMAKE_BINARY_DIR}/output)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_ROOT}/bin/${CMAKE_SYSTEM_NAME})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_ROOT}/lib/${CMAKE_SYSTEM_NAME})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_ROOT}/lib/${CMAKE_SYSTEM_NAME})
+
+# === Shader Compilation System ===
 
 # Assets configuration
 set(ASSETS_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")
@@ -155,71 +210,59 @@ function(compile_hlsl_shaders)
     endforeach ()
 endfunction()
 
-# Function to copy specified asset types
-function(copy_assets SOURCE_SUBDIR OUTPUT_SUBDIR FILE_PATTERN)
-    set(SOURCE_DIR "${ASSETS_SOURCE_DIR}/${SOURCE_SUBDIR}")
-    set(OUTPUT_DIR "${ASSETS_OUTPUT_DIR}/${OUTPUT_SUBDIR}")
-
-    file(GLOB_RECURSE ASSET_FILES "${SOURCE_DIR}/${FILE_PATTERN}")
-
-    if (ASSET_FILES)
-        # Create the output directory
-        file(MAKE_DIRECTORY ${OUTPUT_DIR})
-
-        # Create a custom target for copying these assets
-        add_custom_target(copy_${SOURCE_SUBDIR}_assets ALL)
-
-        foreach (ASSET_FILE ${ASSET_FILES})
-            get_filename_component(ASSET_NAME ${ASSET_FILE} NAME)
-            set(OUTPUT_FILE ${OUTPUT_DIR}/${ASSET_NAME})
-
-            add_custom_command(
-                    OUTPUT ${OUTPUT_FILE}
-                    COMMAND ${CMAKE_COMMAND} -E copy ${ASSET_FILE} "${OUTPUT_DIR}/${ASSET_NAME}"
-                    DEPENDS ${ASSET_FILE}
-                    COMMENT "Copying asset: ${ASSET_NAME}"
-            )
-
-            # Add this asset to the custom target dependencies
-            add_custom_target(
-                    copy_${SOURCE_SUBDIR}_${ASSET_NAME}
-                    DEPENDS ${OUTPUT_FILE}
-            )
-            add_dependencies(copy_${SOURCE_SUBDIR}_assets copy_${SOURCE_SUBDIR}_${ASSET_NAME})
-        endforeach ()
-    endif ()
-endfunction()
-
-function(symlink_assets SOURCE_SUBDIR OUTPUT_SUBDIR)
-    set(SOURCE_DIR "${ASSETS_SOURCE_DIR}/${SOURCE_SUBDIR}")
-    set(OUTPUT_DIR "${ASSETS_OUTPUT_DIR}/${OUTPUT_SUBDIR}")
-
-    file(MAKE_DIRECTORY ${OUTPUT_DIR})
-
-    add_custom_target(symlink_${SOURCE_SUBDIR}_assets ALL)
-
-    add_custom_command(
-            TARGET symlink_${SOURCE_SUBDIR}_assets
-            POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E create_symlink ${SOURCE_DIR} ${OUTPUT_DIR}
-            COMMENT "Creating symbolic link for ${SOURCE_SUBDIR} assets"
-    )
-endfunction()
-
 # Call the setup functions to prepare asset directories
 setup_asset_directories()
-
-# Compile shaders
 compile_hlsl_shaders()
 
-# Add subprojects
+# === Project Structure ===
+
+# Engine module (always built)
 add_subdirectory(engine)
-add_subdirectory(client)
 
-add_subdirectory(tests)
+# Applications
+if (VOID_ARCHITECT_BUILD_CLIENT_APP AND VOID_ARCHITECT_BUILD_CLIENT)
+    add_subdirectory(apps/client)
+    add_dependencies(VoidArchitect_Client compile_shaders)
+endif ()
+#
+#if (VOID_ARCHITECT_BUILD_EDITOR_APP AND VOID_ARCHITECT_BUILD_EDITOR)
+#    add_subdirectory(apps/editor)
+#    add_dependencies(VoidArchitect_EditorApp compile_shaders)
+#endif ()
+#
+#if (ANY_SERVER_SERVICE_ENABLED AND VOID_ARCHITECT_BUILD_SERVER)
+#    add_subdirectory(apps/server)
+#endif ()
+# Tests
+if (VOID_ARCHITECT_BUILD_TESTS)
+    add_subdirectory(tests)
+endif ()
 
-# Make the client depend on our asset compilation
-add_dependencies(VoidArchitect_Client compile_shaders)
+# === Configuration Summary ===
 
-# Uncomment and adapt these lines when you need to copy other asset types
-# copy_assets("textures" "textures" "*.png;*.jpg;*.jpeg")
+message(STATUS "")
+message(STATUS "=== VoidArchitect Build Configuration ===")
+message(STATUS "Version : ${PROJECT_VERSION}")
+message(STATUS "Build type : ${CMAKE_BUILD_TYPE}")
+message(STATUS "-----------------------------------------")
+message(STATUS "Libraries:")
+message(STATUS "  Shared Libraries: ${BUILD_SHARED_LIBS}")
+message(STATUS "  Hot reload : ${VOID_ARCHITECT_ENABLE_HOT_RELOAD}")
+message(STATUS "  Profiling : ${VOID_ARCHITECT_ENABLE_PROFILING}")
+message(STATUS "  GPU Debug : ${VOID_ARCHITECT_ENABLE_GPU_DEBUG}")
+message(STATUS "Engine Modules:")
+message(STATUS "  Common: ON (always built)")
+message(STATUS "  RHI: ON (always built)")
+message(STATUS "  Client: ${VOID_ARCHITECT_BUILD_CLIENT}")
+message(STATUS "  Server: ${VOID_ARCHITECT_BUILD_SERVER}")
+message(STATUS "  Editor: ${VOID_ARCHITECT_BUILD_EDITOR}")
+message(STATUS "Applications:")
+message(STATUS "  Client App: ${VOID_ARCHITECT_BUILD_CLIENT_APP}")
+message(STATUS "  Editor App: ${VOID_ARCHITECT_BUILD_EDITOR_APP}")
+message(STATUS "Server Services:")
+message(STATUS "  Frontend: ${VOID_ARCHITECT_BUILD_SERVER_FRONTEND}")
+message(STATUS "  Game: ${VOID_ARCHITECT_BUILD_SERVER_GAME}")
+message(STATUS "Development:")
+message(STATUS "  Tests: ${VOID_ARCHITECT_BUILD_TESTS}")
+message(STATUS "  DXC Compiler: ${DXC_EXECUTABLE}")
+message(STATUS "==========================================")
