@@ -6,17 +6,23 @@ if (NOT TARGET Vulkan)
 endif ()
 
 # === RHI Interface Library ===
-file(GLOB_RECURSE RHI_INTERFACE_SOURCES "src/interface/*.cpp")
-file(GLOB_RECURSE RHI_INTERFACE_HEADERS "src/interface/*.hpp")
+file(GLOB_RECURSE RHI_INTERFACE_SOURCES "src/Interface/*.cpp")
+file(GLOB_RECURSE RHI_INTERFACE_HEADERS "src/Interface/*.hpp")
 
-# Add loader sources for plugin management
-file(GLOB_RECURSE RHI_LOADER_SOURCES "src/loader/*.cpp")
-file(GLOB_RECURSE RHI_LOADER_HEADERS "src/loader/*.hpp")
+# Add Resources sources
+file(GLOB_RECURSE RHI_RESOURCES_SOURCES "src/Resources/*.cpp")
+file(GLOB_RECURSE RHI_RESOURCES_HEADERS "src/Resources/*.hpp")
+
+# Add Systems sources for plugin management
+file(GLOB_RECURSE RHI_LOADER_SOURCES "src/Systems/*.cpp")
+file(GLOB_RECURSE RHI_LOADER_HEADERS "src/Systems/*.hpp")
 
 # Create RHI Interface library
 add_library(VoidArchitectEngine_RHI_Interface ${VOID_ARCHITECT_LIB_TYPE}
         ${RHI_INTERFACE_SOURCES}
         ${RHI_INTERFACE_HEADERS}
+        ${RHI_RESOURCES_SOURCES}
+        ${RHI_RESOURCES_HEADERS}
         ${RHI_LOADER_SOURCES}
         ${RHI_LOADER_HEADERS}
 )
@@ -28,29 +34,60 @@ target_link_libraries(VoidArchitectEngine_RHI_Interface PUBLIC
 
 # Include directories for Interface
 target_include_directories(VoidArchitectEngine_RHI_Interface PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-        $<INSTALL_INTERFACE:include/VoidArchitectEngine_RHI>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
 )
 
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/VoidArchitect/Engine")
+
+execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+        "${CMAKE_CURRENT_BINARY_DIR}/include/VoidArchitect/Engine/RHI"
+)
+
+target_precompile_headers(VoidArchitectEngine_RHI_Interface PRIVATE "src/rhi_pch.hpp")
+
+# === Platform Detection and Backend Configuration ===
+
+# Detect Vulkan availability
+find_package(Vulkan QUIET)
+if (Vulkan_FOUND)
+    set(VOID_ARCH_RHI_VULKAN_AVAILABLE ON)
+    message(STATUS "Vulkan found: enabling Vulkan RHI backend.")
+else ()
+    set(VOID_ARCH_RHI_VULKAN_AVAILABLE OFF)
+    message(STATUS "Vulkan not found: disabling Vulkan RHI backend.")
+endif ()
+
+if (WIN32)
+    set(VOID_ARCH_RHI_DIRECTX12_AVAILABLE OFF)
+endif ()
+
+set(VOID_ARCH_RHI_OPENGL_AVAILABLE OFF)
+
+if (APPLE)
+    set(VOID_ARCH_RHI_METAL_AVAILABLE OFF)
+endif ()
+
 # === Vulkan RHI Plugin ===
-file(GLOB_RECURSE RHI_VULKAN_SOURCES "src/vulkan/*.cpp")
-file(GLOB_RECURSE RHI_VULKAN_HEADERS "src/vulkan/*.hpp")
+file(GLOB_RECURSE RHI_VULKAN_SOURCES "src/Vulkan/*.cpp")
+file(GLOB_RECURSE RHI_VULKAN_HEADERS "src/Vulkan/*.hpp")
 
 # Create Vulkan RHI plugin
-add_library(VoidArchitect_RHI_Vulkan SHARED
+add_library(VoidArchitectEngine_RHI_Vulkan STATIC
         ${RHI_VULKAN_SOURCES}
         ${RHI_VULKAN_HEADERS}
 )
 
 # Vulkan plugin dependencies
 target_link_libraries(VoidArchitectEngine_RHI_Vulkan PUBLIC
-        VoidArchitectEngine_RHI_Interface
+        VoidArchitectEngine_Client
         Vulkan::Vulkan
         Vulkan::MoltenVK
 )
 
 # Include directories for Vulkan plugin
-target_include_directories(VoidArchitect_RHI_Vulkan PRIVATE
+target_include_directories(VoidArchitectEngine_RHI_Vulkan PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
@@ -82,10 +119,16 @@ if (VOID_ARCHITECT_SHARED_LIBS)
     target_compile_definitions(VoidArchitectEngine_RHI_Interface INTERFACE VOID_ARCH_RHI_IMPORTS)
 endif ()
 
-target_compile_definitions(VoidArchitect_RHI_Vulkan PRIVATE VOID_ARCH_RHI_VULKAN_EXPORTS)
+target_compile_definitions(VoidArchitectEngine_RHI_Interface PUBLIC
+        VOID_ARCH_RHI_VULKAN_AVAILABLE
+)
+
+target_compile_definitions(VoidArchitectEngine_RHI_Vulkan PRIVATE VOID_ARCH_RHI_VULKAN_EXPORTS)
+
+target_precompile_headers(VoidArchitectEngine_RHI_Vulkan REUSE_FROM VoidArchitectEngine_RHI_Interface)
 
 # Installation
-install(TARGETS VoidArchitectEngine_RHI_Interface VoidArchitect_RHI_Vulkan
+install(TARGETS VoidArchitectEngine_RHI_Interface VoidArchitectEngine_RHI_Vulkan
         EXPORT VoidArchitectEngine_RHITargets
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
@@ -93,7 +136,7 @@ install(TARGETS VoidArchitectEngine_RHI_Interface VoidArchitect_RHI_Vulkan
 )
 
 # Install headers
-install(DIRECTORY src/interface/ src/loader/
-        DESTINATION include/VoidArchitectEngine_RHI
+install(DIRECTORY src/Interface/ src/Systems/ src/Resources src/Vulkan
+        DESTINATION include/VoidArchitect/Engine/RHI
         FILES_MATCHING PATTERN "*.hpp"
 )

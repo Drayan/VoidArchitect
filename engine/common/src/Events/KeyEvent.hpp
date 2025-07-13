@@ -3,7 +3,7 @@
 //
 #pragma once
 
-#include "Core.hpp"
+#include "VoidArchitect/Engine/Common/Core.hpp"
 #include "Event.hpp"
 
 namespace VoidArchitect

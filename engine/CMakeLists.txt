@@ -2,11 +2,11 @@ project(VoidArchitect_Engine VERSION 0.1.0 LANGUAGES CXX)
 
 # Engine modules
 add_subdirectory(common)
-#add_subdirectory(rhi)
+add_subdirectory(rhi)
 
 # Optional modules based on build configuration
 if (VOID_ARCHITECT_BUILD_CLIENT)
-    #add_subdirectory(client)
+    add_subdirectory(client)
 endif ()
 
 if (VOID_ARCHITECT_BUILD_SERVER)

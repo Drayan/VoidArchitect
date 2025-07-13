@@ -5,7 +5,7 @@
 
 #include <random>
 
-#include "Logger.hpp"
+#include "VoidArchitect/Engine/Common/Logger.hpp"
 
 // Conditional moodycamel inclusion with fallback
 #ifdef MOODYCAMEL_INCLUDE_DIR

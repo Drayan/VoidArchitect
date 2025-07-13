@@ -4,7 +4,7 @@
 #include "Vec4.hpp"
 #include "Vec3.hpp"
 
-#include "Logger.hpp"
+#include "VoidArchitect/Engine/Common/Logger.hpp"
 
 namespace VoidArchitect::Math
 {

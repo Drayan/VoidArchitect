@@ -57,12 +57,12 @@ option(BUILD_SHARED_LIBS "Build libraries as shared libraries" ON)
 option(VOID_ARCHITECT_BUILD_TESTS "Build test executables" OFF)
 
 # Engine modules build options
-option(VOID_ARCHITECT_BUILD_CLIENT "Build client engine module" OFF)
+option(VOID_ARCHITECT_BUILD_CLIENT "Build client engine module" ON)
 option(VOID_ARCHITECT_BUILD_SERVER "Build server engine module" OFF)
 option(VOID_ARCHITECT_BUILD_EDITOR "Build editor engine module" OFF)
 
 # Application build options
-option(VOID_ARCHITECT_BUILD_CLIENT_APP "Build client application" OFF)
+option(VOID_ARCHITECT_BUILD_CLIENT_APP "Build client application" ON)
 option(VOID_ARCHITECT_BUILD_EDITOR_APP "Build editor application" OFF)
 
 # Server service build options
@@ -220,10 +220,10 @@ compile_hlsl_shaders()
 add_subdirectory(engine)
 
 # Applications
-#if (VOID_ARCHITECT_BUILD_CLIENT_APP AND VOID_ARCHITECT_BUILD_CLIENT)
-#    add_subdirectory(apps/client)
-#    add_dependencies(VoidArchitect_ClientApp compile_shaders)
-#endif ()
+if (VOID_ARCHITECT_BUILD_CLIENT_APP AND VOID_ARCHITECT_BUILD_CLIENT)
+    add_subdirectory(apps/client)
+    add_dependencies(VoidArchitect_Client compile_shaders)
+endif ()
 #
 #if (VOID_ARCHITECT_BUILD_EDITOR_APP AND VOID_ARCHITECT_BUILD_EDITOR)
 #    add_subdirectory(apps/editor)

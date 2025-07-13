@@ -2,7 +2,7 @@
 // Created by Michael Desmedt on 20/06/2025.
 //
 #pragma once
-#include "Handle.hpp"
+#include "VoidArchitect/Engine/Common/Handle.hpp"
 #include "JobTypes.hpp"
 
 namespace VoidArchitect::Jobs

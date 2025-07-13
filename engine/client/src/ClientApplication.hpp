@@ -2,7 +2,10 @@
 // Created by Michael Desmedt on 09/07/2025.
 //
 #pragma once
-#include "../../common/src/Application.hpp"
+#include <VoidArchitect/Engine/Common/Application.hpp>
+#include <VoidArchitect/Engine/Common/Events/Event.hpp>
+#include <VoidArchitect/Engine/Common/Events/ApplicationEvent.hpp>
+#include <VoidArchitect/Engine/Common/Events/KeyEvent.hpp>
 
 namespace VoidArchitect
 {
@@ -42,6 +45,7 @@ namespace VoidArchitect
     /// @see `ServerApplication` for headless server implementations
     class ClientApplication : public Application
     {
+    public:
         /// @brief Constructs a client application with rendering capabilities
         ///
         /// Calls the base Application constructor which will trigger the
@@ -51,7 +55,7 @@ namespace VoidArchitect
         /// @throws std::runtime_error if window creation fails
         /// @throws std::runtime_error if rendering system initialization fails
         /// @throws std::exception if resource system initialization fails
-        ClientApplication() = default;
+        ClientApplication();
 
         /// @brief Virtual destructor ensuring proper clean-up
         ///

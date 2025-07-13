@@ -14,6 +14,7 @@ int main()
 
     VA_ENGINE_INFO("Starting application...");
     const auto app = VoidArchitect::CreateApplication();
+    app->Initialize();
     app->Run();
     VA_ENGINE_INFO("Application ended. Shutting down...");
     delete app;

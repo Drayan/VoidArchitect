@@ -6,11 +6,6 @@
 #include "Core.hpp"
 #include "LayerStack.hpp"
 
-// NOTE Currently the client application doesn't use PCH, therefore it need memory.
-#include "Events/KeyEvent.hpp"
-
-#include <memory>
-
 namespace VoidArchitect::Platform
 {
     class IThread;
@@ -19,9 +14,6 @@ namespace VoidArchitect::Platform
 namespace VoidArchitect
 {
     class Event;
-    class WindowCloseEvent;
-    class WindowResizedEvent;
-    class Window;
 
     /// @brief  Base application class for all VoidArchitect application types
     ///

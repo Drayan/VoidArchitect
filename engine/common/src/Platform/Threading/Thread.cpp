@@ -3,7 +3,7 @@
 //
 #include "Thread.hpp"
 
-#include "Logger.hpp"
+#include "VoidArchitect/Engine/Common/Logger.hpp"
 
 #ifdef VOID_ARCH_PLATFORM_WINDOWS
 #include <Windows.h>

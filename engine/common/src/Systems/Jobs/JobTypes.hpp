@@ -3,9 +3,9 @@
 //
 #pragma once
 
-#include "Handle.hpp"
-#include "Platform/Threading/Thread.hpp"
-#include "Platform/Threading/ThreadFactory.hpp"
+#include "VoidArchitect/Engine/Common/Handle.hpp"
+#include "VoidArchitect/Engine/Common/Platform/Threading/Thread.hpp"
+#include "VoidArchitect/Engine/Common/Platform/Threading/ThreadFactory.hpp"
 
 namespace VoidArchitect::Jobs
 {

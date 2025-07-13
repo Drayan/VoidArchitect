@@ -38,8 +38,16 @@ target_link_libraries(VoidArchitectEngine_Common PUBLIC
 
 # Include directories
 target_include_directories(VoidArchitectEngine_Common PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-        $<INSTALL_INTERFACE:include/VoidArchitectEngine_Common>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+)
+
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/VoidArchitect/Engine")
+
+execute_process(
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+        "${CMAKE_CURRENT_BINARY_DIR}/include/VoidArchitect/Engine/Common"
 )
 
 # Platform-specific configuration
@@ -78,6 +86,6 @@ install(TARGETS VoidArchitectEngine_Common
 
 # Install headers
 install(DIRECTORY src/
-        DESTINATION include/VoidArchitectEngine_Common
+        DESTINATION include/VoidArchitect/Engine/Common
         FILES_MATCHING PATTERN "*.hpp"
 )

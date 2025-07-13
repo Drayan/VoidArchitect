@@ -3,7 +3,9 @@
 //
 #pragma once
 
-#include "Core/Core.hpp"
+#include "Core.hpp"
+
+#include <VoidArchitect/Engine/RHI/Interface/ISurfaceFactory.hpp>
 
 namespace VoidArchitect
 {
@@ -33,6 +35,8 @@ namespace VoidArchitect
         using EventCallbackFn = std::function<void(Event&)>;
 
         virtual ~Window() = default;
+
+        virtual std::unique_ptr<RHI::ISurfaceFactory> CreateSurfaceFactory() = 0;
 
         virtual void OnUpdate() = 0;
 
