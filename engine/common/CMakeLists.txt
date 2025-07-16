@@ -18,6 +18,15 @@ if (NOT TARGET SDL3)
     find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 endif ()
 
+if (NOT TARGET yaml-cpp)
+    FetchContent_Declare(
+            yaml-cpp
+            GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+            GIT_TAG 0.8.0
+    )
+    FetchContent_MakeAvailable(yaml-cpp)
+endif ()
+
 # List source files
 file(GLOB_RECURSE COMMON_SOURCES "src/*.cpp")
 file(GLOB_RECURSE COMMON_HEADERS "src/*.hpp")
@@ -34,6 +43,7 @@ target_link_libraries(VoidArchitectEngine_Common PUBLIC
         glm::glm
         unofficial::concurrentqueue::concurrentqueue
         SDL3::SDL3
+        yaml-cpp::yaml-cpp
 )
 
 # Include directories

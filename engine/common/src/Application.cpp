@@ -5,8 +5,8 @@
 
 #include "Logger.hpp"
 #include "Events/ApplicationEvent.hpp"
-
 #include "Systems/Jobs/JobSystem.hpp"
+#include "Systems/ConfigSystem.hpp"
 
 #include <SDL3/SDL_timer.h>
 
@@ -21,6 +21,9 @@ namespace VoidArchitect
             // Initialize the job system
             VA_ENGINE_TRACE("[Application] Initializing job system ...");
             Jobs::g_JobSystem = std::make_unique<Jobs::JobSystem>();
+
+            VA_ENGINE_TRACE("[Application] Initializing config system ...");
+            g_ConfigSystem = std::make_unique<ConfigSystem>();
 
             InitializeSubsystems();
         }
@@ -37,6 +40,7 @@ namespace VoidArchitect
     {
         VA_ENGINE_INFO("[Application] Shutting down base application systems ...");
 
+        g_ConfigSystem = nullptr;
         Jobs::g_JobSystem = nullptr;
     }
 
