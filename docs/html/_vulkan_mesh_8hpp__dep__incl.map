@@ -1,9 +1,0 @@
-<map id="engine/src/Platform/RHI/Vulkan/VulkanMesh.hpp" name="engine/src/Platform/RHI/Vulkan/VulkanMesh.hpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="224,5,419,46"/>
-<area shape="rect" id="Node000002" href="$_vulkan_execution_context_8cpp.html" title=" " alt="" coords="5,94,201,150"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="263,55,167,96,165,91,261,50"/>
-<area shape="rect" id="Node000003" href="$_vulkan_mesh_8cpp.html" title=" " alt="" coords="224,102,419,142"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="324,62,324,101,319,101,319,62"/>
-<area shape="rect" id="Node000004" href="$_vulkan_resource_factory_8cpp.html" title=" " alt="" coords="442,94,636,150"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="382,50,477,91,475,96,380,55"/>
-</map>

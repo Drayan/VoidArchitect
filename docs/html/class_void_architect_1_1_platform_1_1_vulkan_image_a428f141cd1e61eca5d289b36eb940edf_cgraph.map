@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Platform::VulkanImage::CopyFromBuffer" name="VoidArchitect::Platform::VulkanImage::CopyFromBuffer">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,41,215,82"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_platform_1_1_vulkan_buffer.html#a067406c918ae9325c5777dd9f41ee5dc" title=" " alt="" coords="263,5,437,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,43,247,38,248,44,215,49"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_platform_1_1_vulkan_command_buffer.html#a4a832c47d322fdbbf388a1e1031d8e72" title=" " alt="" coords="268,70,432,126"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="215,75,253,80,252,86,215,80"/>
-</map>

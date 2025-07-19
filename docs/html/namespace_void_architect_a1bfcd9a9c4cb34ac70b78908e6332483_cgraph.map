@@ -1,7 +1,0 @@
-<map id="VoidArchitect::TestThreadMain" name="VoidArchitect::TestThreadMain">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,46,206,72"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_platform_1_1_thread.html#ac7b01b02275a9f02b029bb9f5e8d3511" title=" " alt="" coords="254,5,481,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="206,44,238,39,239,45,207,49"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_platform_1_1_thread.html#ace93d361c55001fedf64088ad8584234" title=" " alt="" coords="289,71,446,111"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="207,69,274,77,273,82,206,74"/>
-</map>

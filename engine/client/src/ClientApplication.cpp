@@ -6,9 +6,7 @@
 #include <SDL3/SDL_keycode.h>
 #include <VoidArchitect/Engine/Common/Logger.hpp>
 #include <VoidArchitect/Engine/Common/Window.hpp>
-#include <VoidArchitect/Engine/Common/Events/Event.hpp>
-#include <VoidArchitect/Engine/Common/Events/ApplicationEvent.hpp>
-#include <VoidArchitect/Engine/Common/Events/KeyEvent.hpp>
+#include <VoidArchitect/Engine/Common/Systems/Events/EventSystem.hpp>
 
 #include "Platform/SDLWindow.hpp"
 #include "Systems/ResourceSystem.hpp"
@@ -17,8 +15,6 @@
 
 namespace VoidArchitect
 {
-#define BIND_EVENT_FN(x) [this](auto&& PH1) { return this->x(std::forward<decltype(PH1)>(PH1)); }
-
     ClientApplication::ClientApplication()
         : Application(),
           m_MainWindow(nullptr)
@@ -31,10 +27,18 @@ namespace VoidArchitect
 
         try
         {
+            // Setup event subscriptions
+            m_WindowCloseSubscription = Events::g_EventSystem->Subscribe<Events::WindowCloseEvent>(
+                [this](const Events::WindowCloseEvent& e) { OnWindowClose(e); });
+            m_WindowResizeSubscription = Events::g_EventSystem->Subscribe<
+                Events::WindowResizedEvent>(
+                [this](const Events::WindowResizedEvent& e) { OnWindowResize(e); });
+            m_KeyPressedSubscription = Events::g_EventSystem->Subscribe<Events::KeyPressedEvent>(
+                [this](const Events::KeyPressedEvent& e) { OnKeyPressed(e); });
+
             // Window Creation
             m_MainWindow = std::unique_ptr<Window>(
                 Platform::SDLWindow::Create(WindowProps("VoidArchitect", 1280, 720)));
-            m_MainWindow->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
             // Resource Management System
             g_ResourceSystem = std::make_unique<ResourceSystem>();
@@ -73,54 +77,38 @@ namespace VoidArchitect
         Renderer::g_RenderSystem->RenderFrame(deltaTime);
     }
 
-    void ClientApplication::OnEvent(Event& e)
-    {
-        EventDispatcher dispatcher(e);
-
-        dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
-        dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FN(OnWindowResize));
-        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyPressed));
-
-        Application::OnEvent(e);
-    }
-
-    bool ClientApplication::OnWindowClose(WindowCloseEvent& e)
+    void ClientApplication::OnWindowClose(const Events::WindowCloseEvent& e)
     {
         m_Running = false;
-
-        return true;
     }
 
-    bool ClientApplication::OnWindowResize(WindowResizedEvent& e)
+    void ClientApplication::OnWindowResize(const Events::WindowResizedEvent& e)
     {
         VA_ENGINE_TRACE("[Application] Window resized to {0}, {1}.", e.GetWidth(), e.GetHeight());
         Renderer::g_RenderSystem->Resize(e.GetWidth(), e.GetHeight());
-        return true;
     }
 
-    bool ClientApplication::OnKeyPressed(KeyPressedEvent& e)
+    void ClientApplication::OnKeyPressed(const Events::KeyPressedEvent& e)
     {
         switch (e.GetKeyCode())
         {
             case SDLK_ESCAPE:
                 m_Running = false;
-                return true;
+                break;
 
             // Debug rendering modes
             case SDLK_0:
                 Renderer::g_RenderSystem->SetDebugMode(Renderer::RenderSystemDebugMode::None);
-                return true;
+                break;
             case SDLK_1:
                 Renderer::g_RenderSystem->SetDebugMode(Renderer::RenderSystemDebugMode::Lighting);
-                return true;
+                break;
             case SDLK_2:
                 Renderer::g_RenderSystem->SetDebugMode(Renderer::RenderSystemDebugMode::Normals);
-                return true;
+                break;
 
             default:
                 break;
         }
-
-        return false;
     }
 } // VoidArchitect

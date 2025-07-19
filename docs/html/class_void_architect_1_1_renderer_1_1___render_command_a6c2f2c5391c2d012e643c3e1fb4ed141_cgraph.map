@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Renderer::_RenderCommand::Resize" name="VoidArchitect::Renderer::_RenderCommand::Resize">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,193,46"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_math_1_1_mat4.html#a1745ef0af887017b5222d3ee2ac54387" title=" " alt="" coords="241,5,381,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="193,23,225,23,225,28,193,28"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_math_1_1_mat4.html#a6b7a052d1b04aa2b5c902a58a0966669" title=" " alt="" coords="429,5,565,46"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="382,23,414,23,414,28,382,28"/>
-</map>

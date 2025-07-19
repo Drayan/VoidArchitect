@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Platform::VulkanBuffer::GetHandle" name="VoidArchitect::Platform::VulkanBuffer::GetHandle">
-<area shape="rect" id="Node000001" title=" " alt="" coords="263,49,437,90"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_platform_1_1_vulkan_execution_context.html#a61c23a049ce4eda814e9d466dc01cbec" title=" " alt="" coords="23,5,197,61"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="247,56,197,49,198,44,247,51"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_platform_1_1_vulkan_image.html#a428f141cd1e61eca5d289b36eb940edf" title=" " alt="" coords="5,85,215,126"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="248,87,216,92,215,87,247,82"/>
-</map>

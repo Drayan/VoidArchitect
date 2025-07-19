@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Platform::VulkanMaterial" name="VoidArchitect::Platform::VulkanMaterial">
-<area shape="rect" id="Node000001" title=" " alt="" coords="12,207,169,248"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_resources_1_1_i_material.html" title=" " alt="" coords="5,117,176,158"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="93,173,93,207,88,207,88,173"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_math_1_1_vec4.html" title=" " alt="" coords="22,5,159,46"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="93,61,93,117,88,117,88,61"/>
-</map>

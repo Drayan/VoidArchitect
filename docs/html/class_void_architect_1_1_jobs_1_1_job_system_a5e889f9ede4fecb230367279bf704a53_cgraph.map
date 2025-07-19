@@ -1,9 +1,0 @@
-<map id="VoidArchitect::Jobs::JobSystem::SubmitJobAfter" name="VoidArchitect::Jobs::JobSystem::SubmitJobAfter">
-<area shape="rect" id="Node000001" title="Submit a job that executes after another job completes." alt="" coords="5,71,199,111"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_jobs_1_1_job_system.html#a8c595ad5a2b69f76955bf46364456f12" title="Create a new SyncPoint for dependency coordination." alt="" coords="247,5,449,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="181,67,253,48,255,53,182,73"/>
-<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_handle.html#a49c43ae80dcdba365c441051b2c9e6eb" title="Check if the handle is valid." alt="" coords="274,71,422,111"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="199,88,258,88,258,94,199,94"/>
-<area shape="rect" id="Node000004" href="$class_void_architect_1_1_jobs_1_1_job_system.html#a9a1b51cd3b86f41b098680afb3e7ba8a" title="Submit a job that executes after another job completes." alt="" coords="262,136,434,177"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="182,109,255,129,253,134,181,115"/>
-</map>

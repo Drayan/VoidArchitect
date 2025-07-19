@@ -4,7 +4,7 @@
 #pragma once
 
 #include "Core.hpp"
-#include "Events/Event.hpp"
+#include "Systems/Events/Event.hpp"
 
 namespace VoidArchitect
 {
@@ -30,7 +30,7 @@ namespace VoidArchitect
         {
         }
 
-        virtual void OnEvent(Event& e)
+        virtual void OnEvent(Events::Event& e)
         {
         }
 

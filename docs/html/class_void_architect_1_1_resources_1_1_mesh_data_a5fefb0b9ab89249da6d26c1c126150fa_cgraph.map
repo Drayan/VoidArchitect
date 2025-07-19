@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Resources::MeshData::GetTotalDataSize" name="VoidArchitect::Resources::MeshData::GetTotalDataSize">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,39,206,79"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_resources_1_1_mesh_data.html#adf552301c65fe84c761913d34a4c40d6" title=" " alt="" coords="257,5,461,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="206,43,241,39,241,44,207,48"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_resources_1_1_mesh_data.html#a3a6906de0fad09d1569dccf851242d42" title=" " alt="" coords="254,71,464,111"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="207,69,239,73,238,78,206,74"/>
-</map>

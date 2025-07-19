@@ -3,9 +3,8 @@
 //
 #pragma once
 #include <VoidArchitect/Engine/Common/Application.hpp>
-#include <VoidArchitect/Engine/Common/Events/Event.hpp>
-#include <VoidArchitect/Engine/Common/Events/ApplicationEvent.hpp>
-#include <VoidArchitect/Engine/Common/Events/KeyEvent.hpp>
+#include <VoidArchitect/Engine/Common/Systems/Events/InputEvents.hpp>
+#include <VoidArchitect/Engine/Common/Systems/Events/WindowEvents.hpp>
 
 namespace VoidArchitect
 {
@@ -118,44 +117,9 @@ namespace VoidArchitect
         /// @note Called once per frame after `OnUpdate()`
         void OnApplicationUpdate(float deltaTime) override;
 
-        /// @brief Processes client-specific events(window, input, rendering)
-        /// @param e Event to process
-        ///
-        /// Extends the base event processing to handle client-specific events
-        /// including window management, input processing, and rendering events.
-        void OnEvent(Event& e) override;
-
-        /// @brief Handles window close events with proper shutdown initiation
-        /// @param e Window close event data
-        /// @return true if the event was handled, false otherwise
-        ///
-        /// Processes window close requests from the user or system. Provides
-        /// an opportunity for graceful shutdown procedures, save dialogs,
-        /// or shutdown cancellation based on application state.
-        virtual bool OnWindowClose(WindowCloseEvent& e);
-
-        /// @brief Handles window resize events with rendering surface updates
-        /// @param e Window resize event containing new dimensions
-        /// @return true if the event was handled, false otherwise
-        ///
-        /// Manages rendering surface resize operations when the window size
-        /// changes. This includes updating render targets, swap chains, camera
-        /// aspect ratios, and UI layouts to match new window dimensions.
-        virtual bool OnWindowResize(WindowResizedEvent& e);
-
-        /// @brief Handles key press events
-        /// @param e Key press event containing key information
-        /// @return true if the event was handled, false otherwise
-        ///
-        /// Processes client-specific keyboard input. Including but not limited to
-        /// debug shortcuts, application controls, ...
-        ///
-        /// **Default key bindings:**
-        /// - ESC: Application termination
-        /// - 0: Normal rendering mode (full lighting and materials)
-        /// - 1: Lighting debug mode (visualizes lighting calculations)
-        /// - 2: Normals debug mode (virtualizes surface normals)
-        virtual bool OnKeyPressed(KeyPressedEvent& e);
+        void OnWindowClose(const Events::WindowCloseEvent& e);
+        void OnWindowResize(const Events::WindowResizedEvent& e);
+        void OnKeyPressed(const Events::KeyPressedEvent& e);
 
         /// @brief Main window instance managed by the client application
         ///
@@ -163,5 +127,9 @@ namespace VoidArchitect
         /// and the operating system's windowing system. It provides the rendering
         /// surface and generates input/window events for application processing.
         std::unique_ptr<Window> m_MainWindow;
+
+        Events::EventSubscription m_WindowCloseSubscription;
+        Events::EventSubscription m_WindowResizeSubscription;
+        Events::EventSubscription m_KeyPressedSubscription;
     };
 } // VoidArchitect

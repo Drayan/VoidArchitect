@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Platform::VulkanShader::VulkanShader" name="VoidArchitect::Platform::VulkanShader::VulkanShader">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,205,46"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_platform_1_1_vulkan_shader.html#ac34b4991980512f3edb929f96d74d1c5" title=" " alt="" coords="253,5,452,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="205,23,237,23,237,28,205,28"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_resources_1_1_i_shader.html#aefaea076c148d18fd525c82ebb0c25be" title=" " alt="" coords="500,5,670,46"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="453,23,484,23,484,28,453,28"/>
-</map>

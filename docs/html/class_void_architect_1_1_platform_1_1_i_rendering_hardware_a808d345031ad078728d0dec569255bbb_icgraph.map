@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Platform::IRenderingHardware::PushConstants" name="VoidArchitect::Platform::IRenderingHardware::PushConstants">
-<area shape="rect" id="Node000001" title=" " alt="" coords="258,41,414,97"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_renderer_1_1_forward_opaque_pass_renderer.html#ab5f5a984378a212bd99cf23fab29ee36" title=" " alt="" coords="5,5,210,61"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="242,57,210,52,211,47,243,52"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_renderer_1_1_u_i_pass_renderer.html#a46e2de39cc5f9f0f5c7b57ee2f79643f" title=" " alt="" coords="16,85,199,126"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="243,86,200,93,199,88,242,81"/>
-</map>

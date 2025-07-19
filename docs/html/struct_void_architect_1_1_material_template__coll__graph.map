@@ -1,7 +1,0 @@
-<map id="VoidArchitect::MaterialTemplate" name="VoidArchitect::MaterialTemplate">
-<area shape="rect" id="Node000001" title=" " alt="" coords="68,158,274,183"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_math_1_1_vec4.html" title=" " alt="" coords="5,5,142,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,57,165,156,161,159,93,60"/>
-<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_material_template_1_1_texture_config.html" title=" " alt="" coords="166,5,373,46"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="265,62,252,99,230,135,216,149,200,159,197,155,212,145,226,132,247,97,260,60"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Renderer::RenderPacket" name="VoidArchitect::Renderer::RenderPacket">
-<area shape="rect" id="Node000001" title=" " alt="" coords="10,229,171,269"/>
-<area shape="rect" id="Node000002" href="$struct_void_architect_1_1_resources_1_1_geometry_render_data.html" title=" " alt="" coords="5,117,176,158"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="93,173,93,228,88,228,88,173"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_math_1_1_mat4.html" title=" " alt="" coords="22,5,159,46"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="93,61,93,117,88,117,88,61"/>
-</map>

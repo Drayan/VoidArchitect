@@ -1,8 +1,0 @@
-<map id="VoidArchitect::Jobs::Job::Job" name="VoidArchitect::Jobs::Job::Job">
-<area shape="rect" id="Node000001" title="Construct a job from void function with sync point." alt="" coords="5,5,141,46"/>
-<area shape="rect" id="Node000002" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#ad24a0ccd3b2b067666f00f8f81c3af54" title="Create a successful job result." alt="" coords="189,5,336,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="141,23,173,23,173,28,141,28"/>
-<area shape="rect" id="Node000003" href="$struct_void_architect_1_1_jobs_1_1_job_result.html#abe2ac9fbb5eec964167eabc618ae8bb0" title="Default constructor creates successful result." alt="" coords="384,5,539,46"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="336,32,368,32,368,37,336,37"/>
-<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="383,20,352,19,352,14,383,14"/>
-</map>

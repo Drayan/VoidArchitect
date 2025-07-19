@@ -1,9 +1,0 @@
-<map id="engine/src/Platform/RHI/Vulkan/VulkanShader.hpp" name="engine/src/Platform/RHI/Vulkan/VulkanShader.hpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="60,5,262,46"/>
-<area shape="rect" id="Node000002" href="$_shader_8hpp.html" title=" " alt="" coords="5,94,159,120"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="143,48,107,85,103,81,139,45"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="183,94,296,120"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="182,45,219,81,215,85,178,48"/>
-<area shape="rect" id="Node000003" href="$_uuid_8hpp.html" title=" " alt="" coords="29,168,135,193"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="85,120,85,152,79,152,79,120"/>
-</map>

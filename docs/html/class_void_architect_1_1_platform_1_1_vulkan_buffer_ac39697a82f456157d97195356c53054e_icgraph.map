@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Platform::VulkanBuffer::UnlockMemory" name="VoidArchitect::Platform::VulkanBuffer::UnlockMemory">
-<area shape="rect" id="Node000001" title=" " alt="" coords="222,41,422,82"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_platform_1_1_vulkan_buffer.html#a6feee3cd93c6c7cbad6adb5d0afacc23" title=" " alt="" coords="5,5,174,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="206,46,174,41,175,36,206,41"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_platform_1_1_vulkan_staging_buffer.html#abf691c26e8d651d36ede3c1995b0dff8" title=" " alt="" coords="11,70,168,126"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="206,82,169,88,168,83,206,77"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="VoidArchitect::Resources::Loaders::VAMVertex" name="VoidArchitect::Resources::Loaders::VAMVertex">
-<area shape="rect" id="Node000001" title=" " alt="" coords="148,137,319,178"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_math_1_1_vec3.html" title=" " alt="" coords="5,5,142,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,55,177,111,208,135,205,139,174,115,105,59"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_math_1_1_vec2.html" title=" " alt="" coords="165,5,302,46"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="236,62,236,137,231,137,231,62"/>
-<area shape="rect" id="Node000004" href="$class_void_architect_1_1_math_1_1_vec4.html" title=" " alt="" coords="325,5,462,46"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="359,58,259,139,256,135,356,54"/>
-</map>

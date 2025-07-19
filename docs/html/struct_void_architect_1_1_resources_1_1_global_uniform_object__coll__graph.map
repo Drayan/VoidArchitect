@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Resources::GlobalUniformObject" name="VoidArchitect::Resources::GlobalUniformObject">
-<area shape="rect" id="Node000001" title=" " alt="" coords="68,158,239,198"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_math_1_1_mat4.html" title=" " alt="" coords="5,5,142,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="90,59,126,132,142,156,137,159,122,135,85,61"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_math_1_1_vec4.html" title=" " alt="" coords="165,5,302,46"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="232,62,223,98,206,135,184,159,180,156,202,132,218,97,227,61"/>
-</map>

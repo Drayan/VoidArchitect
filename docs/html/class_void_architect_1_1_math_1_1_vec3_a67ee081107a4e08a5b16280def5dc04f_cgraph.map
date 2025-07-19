@@ -1,8 +1,0 @@
-<map id="VoidArchitect::Math::Vec3::Normalized" name="VoidArchitect::Math::Vec3::Normalized">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,35,142,75"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_math_1_1_vec3.html#afd4c197a364d164e963a8a5c79004ba6" title=" " alt="" coords="190,5,326,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="142,42,174,36,174,42,142,47"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_math_1_1_vec3.html#aca594eef688919467165eb6595839832" title=" " alt="" coords="374,35,510,75"/>
-<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="142,54,190,55,326,55,358,54,358,60,326,60,190,60,142,59"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="327,34,359,39,358,44,326,39"/>
-</map>

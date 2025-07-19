@@ -4,9 +4,10 @@
 #include "Application.hpp"
 
 #include "Logger.hpp"
-#include "Events/ApplicationEvent.hpp"
 #include "Systems/Jobs/JobSystem.hpp"
 #include "Systems/ConfigSystem.hpp"
+#include "Systems/Events/Event.hpp"
+#include "Systems/Events/EventSystem.hpp"
 
 #include <SDL3/SDL_timer.h>
 
@@ -21,6 +22,8 @@ namespace VoidArchitect
             // Initialize the job system
             VA_ENGINE_TRACE("[Application] Initializing job system ...");
             Jobs::g_JobSystem = std::make_unique<Jobs::JobSystem>();
+
+            Events::g_EventSystem = std::make_unique<Events::EventSystem>();
 
             VA_ENGINE_TRACE("[Application] Initializing config system ...");
             g_ConfigSystem = std::make_unique<ConfigSystem>();
@@ -41,6 +44,7 @@ namespace VoidArchitect
         VA_ENGINE_INFO("[Application] Shutting down base application systems ...");
 
         g_ConfigSystem = nullptr;
+        Events::g_EventSystem = nullptr;
         Jobs::g_JobSystem = nullptr;
     }
 
@@ -56,6 +60,7 @@ namespace VoidArchitect
         /// This budget prevents main thread jobs from consuming too much frame time.
         /// At 60 FPS (16.67ms per frame), 2ms represents ~12% of the frame budget.
         constexpr float MAIN_THREAD_JOB_BUDGET_MS = 2.0f; // Time budget for main thread jobs
+        constexpr float MAIN_THREAD_EVENT_BUDGET_MS = 1.0f; // Time budget for deferred events
 
         double accumulator = 0.0;
         double currentTime = SDL_GetTicks() / 1000.f;
@@ -108,11 +113,12 @@ namespace VoidArchitect
             accumulator += frameTime;
 
             Jobs::g_JobSystem->BeginFrame();
+            Events::g_EventSystem->BeginFrame();
+            Events::g_EventSystem->ProcessDeferredEvents(MAIN_THREAD_EVENT_BUDGET_MS);
 
             while (accumulator >= FIXED_STEP)
             {
-                for (Layer* layer : m_LayerStack) layer->OnFixedUpdate(FIXED_STEP);
-
+                OnFixedUpdate(static_cast<float>(FIXED_STEP));
                 accumulator -= FIXED_STEP;
             }
 
@@ -124,27 +130,5 @@ namespace VoidArchitect
         }
 
         VA_ENGINE_INFO("[Application] Main execution loop terminated.");
-    }
-
-    void Application::OnEvent(Event& e)
-    {
-        // Going through the layers backwards to propagate the event.
-        for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
-        {
-            (*--it)->OnEvent(e);
-            if (e.Handled) break;
-        }
-    }
-
-    void Application::PushLayer(Layer* layer)
-    {
-        m_LayerStack.PushLayer(layer);
-        layer->OnAttach();
-    }
-
-    void Application::PushOverlay(Layer* layer)
-    {
-        m_LayerStack.PushOverlay(layer);
-        layer->OnAttach();
     }
 } // namespace VoidArchitect

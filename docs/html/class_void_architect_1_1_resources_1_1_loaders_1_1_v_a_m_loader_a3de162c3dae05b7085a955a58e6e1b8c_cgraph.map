@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Resources::Loaders::VAMLoader::VAMLoader" name="VoidArchitect::Resources::Loaders::VAMLoader::VAMLoader">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,41,229,82"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_i_loader.html#a6f6ba96fc7734bb100275e849eb2bd62" title=" " alt="" coords="282,5,459,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="229,43,266,38,267,43,229,48"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_v_a_m_compression.html#a0f5c5e545d66cbe1242e4359fc0c9a8d" title=" " alt="" coords="277,70,464,126"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="229,75,262,80,261,85,229,80"/>
-</map>

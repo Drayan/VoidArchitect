@@ -1,8 +1,0 @@
-<map id="VoidArchitect::Resources::Loaders::ConvertAssimpMatrix" name="VoidArchitect::Resources::Loaders::ConvertAssimpMatrix">
-<area shape="rect" id="Node000001" title=" " alt="" coords="489,29,698,70"/>
-<area shape="rect" id="Node000002" href="$namespace_void_architect_1_1_resources_1_1_loaders.html#a48d53ec19569c0f54c9a689e70bb9ff4" title=" " alt="" coords="271,29,441,70"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="473,52,441,52,441,47,473,47"/>
-<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="395,16,380,10,356,8,333,10,319,15,314,21,316,28,311,29,309,19,316,10,332,5,356,3,381,5,397,11"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_resources_1_1_loaders_1_1_raw_mesh_loader.html#a463a8097a3727b52b9082cac194c2fbc" title=" " alt="" coords="5,29,223,70"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="255,52,223,52,223,47,255,47"/>
-</map>

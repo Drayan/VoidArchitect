@@ -3,10 +3,10 @@
 //
 #include "SDLWindow.hpp"
 
-#include <VoidArchitect/Engine/Common/Events/ApplicationEvent.hpp>
-#include <VoidArchitect/Engine/Common/Events/KeyEvent.hpp>
-#include <VoidArchitect/Engine/Common/Events/MouseEvent.hpp>
 #include <VoidArchitect/Engine/Common/Logger.hpp>
+#include <VoidArchitect/Engine/Common/Systems/Events/EventSystem.hpp>
+#include <VoidArchitect/Engine/Common/Systems/Events/InputEvents.hpp>
+#include <VoidArchitect/Engine/Common/Systems/Events/WindowEvents.hpp>
 
 #include <SDL3/SDL_vulkan.h>
 
@@ -33,7 +33,7 @@ namespace VoidArchitect
                 s_IsSDLInitialized = true;
             }
 
-            // Create window with Vulkan support
+            // Create a window with Vulkan support
             m_Window = SDL_CreateWindow(
                 props.Title.c_str(),
                 props.Width,
@@ -72,16 +72,14 @@ namespace VoidArchitect
                 {
                     case SDL_EVENT_QUIT:
                     {
-                        auto closeEvent = WindowCloseEvent();
-                        m_EventCallback(closeEvent);
+                        EMIT_EVENT(Events::WindowCloseEvent);
                         break;
                     }
 
                     // --- Window events ---
                     case SDL_EVENT_WINDOW_RESIZED:
                     {
-                        auto resizeEvent = WindowResizedEvent(e.window.data1, e.window.data2);
-                        m_EventCallback(resizeEvent);
+                        EMIT_EVENT(Events::WindowResizedEvent, e.window.data1, e.window.data2);
                         break;
                     }
 
@@ -89,54 +87,51 @@ namespace VoidArchitect
                     // TODO Translate SDL_Keycode to Engine's keycode.
                     case SDL_EVENT_KEY_DOWN:
                     {
-                        auto keyEvent = KeyPressedEvent(e.key.key, e.key.repeat);
-                        m_EventCallback(keyEvent);
+                        EMIT_EVENT(Events::KeyPressedEvent, e.key.key, e.key.repeat);
                         break;
                     }
 
                     case SDL_EVENT_KEY_UP:
                     {
-                        auto keyEvent = KeyReleasedEvent(e.key.key);
-                        m_EventCallback(keyEvent);
+                        EMIT_EVENT(Events::KeyReleasedEvent, e.key.key);
                         break;
                     }
 
                     // --- Mouse events ---
                     case SDL_EVENT_MOUSE_MOTION:
                     {
-                        auto mouseEvent = MouseMovedEvent(e.motion.x, e.motion.y);
-                        m_EventCallback(mouseEvent);
+                        EMIT_EVENT(Events::MouseMovedEvent, e.motion.x, e.motion.y);
                         break;
                     }
 
                     case SDL_EVENT_MOUSE_BUTTON_DOWN:
                     {
-                        auto mouseEvent = MouseButtonPressedEvent(
+                        EMIT_EVENT(
+                            Events::MouseButtonPressedEvent,
                             e.button.x,
                             e.button.y,
                             e.button.button);
-                        m_EventCallback(mouseEvent);
                         break;
                     }
 
                     case SDL_EVENT_MOUSE_BUTTON_UP:
                     {
-                        auto mouseEvent = MouseButtonReleasedEvent(
+                        EMIT_EVENT(
+                            Events::MouseButtonReleasedEvent,
                             e.button.x,
                             e.button.y,
                             e.button.button);
-                        m_EventCallback(mouseEvent);
                         break;
                     }
 
                     case SDL_EVENT_MOUSE_WHEEL:
                     {
-                        auto mouseEvent = MouseScrolledEvent(
+                        EMIT_EVENT(
+                            Events::MouseScrolledEvent,
                             e.wheel.mouse_x,
                             e.wheel.mouse_y,
                             e.wheel.x,
                             e.wheel.y);
-                        m_EventCallback(mouseEvent);
                         break;
                     }
                     default:

@@ -4,7 +4,9 @@
 #include "DebugCameraController.hpp"
 
 #include <VoidArchitect/Engine/Common/Logger.hpp>
-#include <VoidArchitect/Engine/Common/Events/KeyEvent.hpp>
+#include <VoidArchitect/Engine/Common/Systems/Events/EventSystem.hpp>
+#include <VoidArchitect/Engine/Common/Systems/Events/InputEvents.hpp>
+
 #include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_mouse.h>
 
@@ -12,8 +14,6 @@
 
 namespace VoidArchitect::Renderer
 {
-#define BIND_EVENT_FN(x) [this](auto&& PH1) { return this->x(std::forward<decltype(PH1)>(PH1)); }
-
     DebugCameraController::DebugCameraController(Camera& camera)
         : m_Camera(camera),
           m_CameraPosition(camera.GetPosition()),
@@ -26,6 +26,19 @@ namespace VoidArchitect::Renderer
         const auto euler = m_CameraOrientation.ToEuler();
         m_Pitch = euler.X();
         m_Yaw = euler.Y();
+
+        // Setup event subscriptions
+        m_KeyPressedSub = Events::g_EventSystem->Subscribe<Events::KeyPressedEvent>(
+            [this](const Events::KeyPressedEvent& e) { OnKeyPressed(e); });
+        m_KeyReleasedSub = Events::g_EventSystem->Subscribe<Events::KeyReleasedEvent>(
+            [this](const Events::KeyReleasedEvent& e) { OnKeyReleased(e); });
+        m_MouseMovedSub = Events::g_EventSystem->Subscribe<Events::MouseMovedEvent>(
+            [this](const Events::MouseMovedEvent& e) { OnMouseMoved(e); });
+        m_MouseButtonPressedSub = Events::g_EventSystem->Subscribe<Events::MouseButtonPressedEvent>(
+            [this](const Events::MouseButtonPressedEvent& e) { OnMouseButtonPressed(e); });
+        m_MouseButtonReleasedSub = Events::g_EventSystem->Subscribe<
+            Events::MouseButtonReleasedEvent>(
+            [this](const Events::MouseButtonReleasedEvent& e) { OnMouseButtonReleased(e); });
     }
 
     void DebugCameraController::UpdateCameraVectors()
@@ -55,7 +68,7 @@ namespace VoidArchitect::Renderer
         m_Camera.SetRotation(m_CameraOrientation);
     }
 
-    bool DebugCameraController::OnMouseMoved(MouseMovedEvent& e)
+    bool DebugCameraController::OnMouseMoved(const Events::MouseMovedEvent& e)
     {
         static bool firstMouse = true;
         static float lastX;
@@ -94,7 +107,7 @@ namespace VoidArchitect::Renderer
         return false;
     }
 
-    bool DebugCameraController::OnKeyPressed(KeyPressedEvent& e)
+    bool DebugCameraController::OnKeyPressed(const Events::KeyPressedEvent& e)
     {
         switch (e.GetKeyCode())
         {
@@ -122,7 +135,7 @@ namespace VoidArchitect::Renderer
         return false;
     }
 
-    bool DebugCameraController::OnKeyReleased(KeyReleasedEvent& e)
+    bool DebugCameraController::OnKeyReleased(const Events::KeyReleasedEvent& e)
     {
         switch (e.GetKeyCode())
         {
@@ -150,9 +163,9 @@ namespace VoidArchitect::Renderer
         return false;
     }
 
-    bool DebugCameraController::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+    bool DebugCameraController::OnMouseButtonPressed(const Events::MouseButtonPressedEvent& e)
     {
-        switch (e.GetMouseButton())
+        switch (e.GetButton())
         {
             case SDL_BUTTON_RIGHT:
                 m_MouseDrag = true;
@@ -163,9 +176,9 @@ namespace VoidArchitect::Renderer
         return false;
     }
 
-    bool DebugCameraController::OnMouseButtonReleased(MouseButtonReleasedEvent& e)
+    bool DebugCameraController::OnMouseButtonReleased(const Events::MouseButtonReleasedEvent& e)
     {
-        switch (e.GetMouseButton())
+        switch (e.GetButton())
         {
             case SDL_BUTTON_RIGHT:
                 m_MouseDrag = false;
@@ -174,15 +187,5 @@ namespace VoidArchitect::Renderer
         }
 
         return false;
-    }
-
-    void DebugCameraController::OnEvent(Event& e)
-    {
-        EventDispatcher dispatcher(e);
-        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FN(OnKeyPressed));
-        dispatcher.Dispatch<KeyReleasedEvent>(BIND_EVENT_FN(OnKeyReleased));
-        dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(OnMouseMoved));
-        dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(OnMouseButtonPressed));
-        dispatcher.Dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FN(OnMouseButtonReleased));
     }
 } // namespace VoidArchitect::Renderer

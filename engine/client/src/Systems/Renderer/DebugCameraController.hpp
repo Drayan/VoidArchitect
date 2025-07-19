@@ -2,11 +2,9 @@
 // Created by Michael Desmedt on 21/05/2025.
 //
 #pragma once
-#include <VoidArchitect/Engine/Common/Events/Event.hpp>
-#include <VoidArchitect/Engine/Common/Events/KeyEvent.hpp>
-#include <VoidArchitect/Engine/Common/Events/MouseEvent.hpp>
 #include <VoidArchitect/Engine/Common/Math/Quat.hpp>
 #include <VoidArchitect/Engine/Common/Math/Vec3.hpp>
+#include <VoidArchitect/Engine/Common/Systems/Events/InputEvents.hpp>
 
 namespace VoidArchitect ::Renderer
 {
@@ -18,13 +16,12 @@ namespace VoidArchitect ::Renderer
         DebugCameraController(Camera& camera);
 
         void OnFixedUpdate(float fixedTimestep);
-        void OnEvent(Event& e);
 
-        bool OnKeyPressed(KeyPressedEvent& e);
-        bool OnKeyReleased(KeyReleasedEvent& e);
-        bool OnMouseMoved(MouseMovedEvent& e);
-        bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
-        bool OnMouseButtonReleased(MouseButtonReleasedEvent& e);
+        bool OnKeyPressed(const Events::KeyPressedEvent& e);
+        bool OnKeyReleased(const Events::KeyReleasedEvent& e);
+        bool OnMouseMoved(const Events::MouseMovedEvent& e);
+        bool OnMouseButtonPressed(const Events::MouseButtonPressedEvent& e);
+        bool OnMouseButtonReleased(const Events::MouseButtonReleasedEvent& e);
 
     private:
         void UpdateCameraVectors();
@@ -52,5 +49,12 @@ namespace VoidArchitect ::Renderer
         bool m_MoveDown = false;
 
         bool m_MouseDrag = false;
+
+        // Events subscriptions
+        Events::EventSubscription m_KeyPressedSub;
+        Events::EventSubscription m_KeyReleasedSub;
+        Events::EventSubscription m_MouseMovedSub;
+        Events::EventSubscription m_MouseButtonPressedSub;
+        Events::EventSubscription m_MouseButtonReleasedSub;
     };
 } // namespace VoidArchitect::Renderer

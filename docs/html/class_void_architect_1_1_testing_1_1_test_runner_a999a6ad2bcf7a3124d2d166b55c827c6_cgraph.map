@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Testing::TestRunner::RunSpecificTest" name="VoidArchitect::Testing::TestRunner::RunSpecificTest">
-<area shape="rect" id="Node000001" title="Execute a specific test by name." alt="" coords="5,39,206,79"/>
-<area shape="rect" id="Node000002" href="$struct_void_architect_1_1_testing_1_1_test_run_summary.html#aa81f70ddc931cd0fa59eef2778bcb6bd" title="Check if all tests passed." alt="" coords="254,5,487,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="206,44,238,40,239,45,207,49"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_testing_1_1_test_runner.html#aa4d02c5ec6ab47e1fa52db69732b19c2" title="Execute tests and return detailed summary." alt="" coords="278,71,462,111"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="207,68,263,75,263,81,206,74"/>
-</map>

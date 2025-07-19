@@ -1,7 +1,0 @@
-<map id="VoidArchitect::KeyEvent::KeyEvent" name="VoidArchitect::KeyEvent::KeyEvent">
-<area shape="rect" id="Node000001" title=" " alt="" coords="239,39,403,79"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_key_pressed_event.html#a9999ca72c5383c5983f25e08464606e8" title=" " alt="" coords="9,5,187,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="223,47,187,42,188,36,224,42"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_key_released_event.html#a96f7297ca6ae7488b6d056c62b75abdf" title=" " alt="" coords="5,71,191,111"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="224,76,192,80,191,75,223,70"/>
-</map>

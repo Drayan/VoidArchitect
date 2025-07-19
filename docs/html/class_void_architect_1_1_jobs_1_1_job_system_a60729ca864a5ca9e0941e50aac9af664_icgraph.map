@@ -1,5 +1,0 @@
-<map id="VoidArchitect::Jobs::JobSystem::Submit" name="VoidArchitect::Jobs::JobSystem::Submit">
-<area shape="rect" id="Node000001" title="Submit a job for execution with explicit SyncPoint." alt="" coords="219,5,363,46"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_jobs_1_1_job_system.html#a479b1fdc5fb1c35b6c24c0aea156c204" title="Submit a simple job (automatically creates SyncPoint)" alt="" coords="5,5,171,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="203,28,171,28,171,23,203,23"/>
-</map>

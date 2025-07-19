@@ -15,7 +15,10 @@ protected:
     void InitializeSubsystems() override
     {
         ClientApplication::InitializeSubsystems();
-        PushLayer(new TestLayer());
+    }
+
+    void OnFixedUpdate(float fixedDeltaTime) override
+    {
     }
 };
 

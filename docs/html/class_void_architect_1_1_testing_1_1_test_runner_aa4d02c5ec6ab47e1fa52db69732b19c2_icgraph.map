@@ -1,9 +1,0 @@
-<map id="VoidArchitect::Testing::TestRunner::ExecuteTests" name="VoidArchitect::Testing::TestRunner::ExecuteTests">
-<area shape="rect" id="Node000001" title="Execute tests and return detailed summary." alt="" coords="267,71,451,111"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_testing_1_1_test_runner.html#a9a6692cade07c4e2bace4cd351edec92" title="Execute all registered tests." alt="" coords="24,5,200,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="264,69,191,49,192,44,265,64"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_testing_1_1_test_runner.html#a999a6ad2bcf7a3124d2d166b55c827c6" title="Execute a specific test by name." alt="" coords="12,71,212,111"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="251,94,213,94,213,88,251,88"/>
-<area shape="rect" id="Node000004" href="$class_void_architect_1_1_testing_1_1_test_runner.html#a657d89ba442f7303bc13379ff01bd546" title="Execute tests matching a pattern." alt="" coords="5,136,219,177"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="265,118,192,138,191,133,264,113"/>
-</map>

@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Math::Mat4::GetRotation" name="VoidArchitect::Math::Mat4::GetRotation">
-<area shape="rect" id="Node000001" title=" " alt="" coords="477,5,613,46"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_transform.html#a5d02889f0a3bc43ea10e80a3f0968bcb" title=" " alt="" coords="263,5,429,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="462,28,430,28,430,23,462,23"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_transform.html#a73e25e7df28250a6be4a51b78a3d08a8" title=" " alt="" coords="5,5,215,46"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="247,28,215,28,215,23,247,23"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="VoidArchitect::Jobs::JobSystem::SubmitAfter" name="VoidArchitect::Jobs::JobSystem::SubmitAfter">
-<area shape="rect" id="Node000001" title="Submit a job that executes after another job completes." alt="" coords="247,5,419,46"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_jobs_1_1_job_system.html#a5e889f9ede4fecb230367279bf704a53" title="Submit a job that executes after another job completes." alt="" coords="5,5,199,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="231,28,199,28,199,23,231,23"/>
-</map>

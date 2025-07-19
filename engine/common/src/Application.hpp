@@ -4,7 +4,6 @@
 #pragma once
 
 #include "Core.hpp"
-#include "LayerStack.hpp"
 
 namespace VoidArchitect::Platform
 {
@@ -13,7 +12,10 @@ namespace VoidArchitect::Platform
 
 namespace VoidArchitect
 {
-    class Event;
+    namespace Events
+    {
+        class Event;
+    }
 
     /// @brief  Base application class for all VoidArchitect application types
     ///
@@ -28,12 +30,11 @@ namespace VoidArchitect
     /// **Core Responsabilities:**
     /// - Main loop execution and fixed timestep updates
     /// - Job system integration for parallel task execution
-    /// - Layer stack management for modular architecture
     /// - Event system for decoupled communication
     /// - Application lifecycle management
     ///
     /// **Application Hierarchy:**
-    /// - Application (base): Main loop, jobs, layers, events
+    /// - Application (base): Main loop, jobs, events
     /// - ClientApplication: + Window, rendering, input handling
     /// - ServerApplication: + Networking, game logic, database
     /// - EditorApplication: + Editor tools, asset management
@@ -95,60 +96,6 @@ namespace VoidArchitect
         /// @note This method blocks until the application is terminated
         void Run();
 
-        /// @brief Processes and dispatches events through the application and layer stack
-        /// @param e Event to process and dispatch
-        ///
-        /// Handles event dispatching using a consistent pattern suitable for all
-        /// application types. Events are first processed by application-level handlers,
-        /// then propagated through the layer stack for specialized handling.
-        ///
-        /// **Event flow:**
-        /// 1. Application-level event processing
-        /// 2. Layer stack propagation in reverse order (top-down)
-        /// 3. Stop propagation if any handler marks the event as handled
-        virtual void OnEvent(Event& e);
-
-        /// @brief Adds a regular layer to the layer stack
-        /// @param layer Pointer to layer to add (must not be nullptr)
-        ///
-        /// Regular layers form the core of the application's modular architecture.
-        /// Different application types use layers for different purposes:
-        /// - Client: Rendering layer, input layers, game logic layers
-        /// - Server: Network layer, game logic layers, database layers
-        /// - Editor: Tool layers, asset management layers, UI layers
-        ///
-        /// **Layer lifecycle:**
-        /// - `OnAttach()` called immediately after addition
-        /// - `OnFixedUpdate()` called during main loop fixed timestep updates
-        /// - `OnUpdate()` called during main loop variable timestep updates
-        /// - `OnEvent()` called for event processing
-        /// - `OnDetach()` called when layer is removed
-        ///
-        /// @warning The application takes ownership of the layer pointer
-        /// @warning Layer must remain valid until removed from the stack
-        /// @note Layers are processed in insertion order for updates
-        /// @note Layers are processed in reverse order for events
-        void PushLayer(Layer* layer);
-
-        /// @brief Adds an overlay layer to the layer stack
-        /// @param layer Pointer-to-overlay layer to add (must not be nullptr)
-        ///
-        /// Overlay layers are processed after regular layers and are ideal for
-        /// cross-cutting concerns that should operate above normal application logic:
-        /// - Client: UI overlays, debug displays, performance monitors
-        /// - Server: Administrative interfaces, monitoring dashboards
-        /// - Editor: Tool windows, property panels, debug visualizations
-        ///
-        /// **Overlay characteristics:**
-        /// - Always processed after regular layers
-        /// - Receive events before regular layers (top-down processing)
-        /// - Can block events from reaching lower layers
-        ///
-        /// @warning The application takes ownership of the layer pointer
-        /// @warning Layer must remain valid until removed from the stack
-        /// @note Overlays receive priority for event processing
-        void PushOverlay(Layer* layer);
-
     protected:
         /// @brief Virtual method for derived classes to initialize their subsystems
         ///
@@ -173,6 +120,13 @@ namespace VoidArchitect
         /// distinction between general updates and core application functionality.
         virtual void OnApplicationUpdate(float deltaTime) = 0;
 
+        /// @brief Virtual method for derived classes to handle fixed timestep updates
+        /// @param fixedDeltaTime Fixed timestep duration in seconds
+        ///
+        /// Called during fixed timestep simulation loop. Derived classes should
+        /// implement game logic, physics, and other systems requiring consistent timing.
+        virtual void OnFixedUpdate(float fixedDeltaTime) = 0;
+
         /// @brief Application running state flag
         ///
         /// Controls the main loop execution. When set to false, the `Run()` method
@@ -181,14 +135,6 @@ namespace VoidArchitect
         ///
         /// @note This should only be modified from the main-thread.
         bool m_Running = true;
-
-        /// @brief Layer management system for modular application architecture
-        ///
-        /// The layer stack provides a structued way to organize application
-        /// functionnality into discrete, manageable components. Different application
-        /// types use layers for different purposes while maintaining conssiten
-        /// processing patterns.
-        LayerStack m_LayerStack;
     };
 
     /// @brief Factory function for creating application instances

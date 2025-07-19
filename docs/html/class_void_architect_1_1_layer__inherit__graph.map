@@ -1,7 +1,0 @@
-<map id="VoidArchitect::Layer" name="VoidArchitect::Layer">
-<area shape="rect" id="Node000001" title=" " alt="" coords="43,5,182,31"/>
-<area shape="rect" id="Node000002" href="$class_test_layer.html" title=" " alt="" coords="5,86,84,112"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="94,45,57,88,53,84,90,41"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_testing_1_1_test_layer.html" title="Layer that executes the test suite." alt="" coords="107,79,256,120"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="135,41,167,77,163,80,131,44"/>
-</map>

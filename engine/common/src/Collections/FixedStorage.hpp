@@ -43,7 +43,7 @@ namespace VoidArchitect::Collections
     /// // Handle becomes invalid after release
     /// assert(!entityStorage.IsValid(handle));
     /// @endcode
-    template <typename T, size_t CAPACITY>
+    template <typename T, size_t CAPACITY, size_t MAX_SIZE = sizeof(T)>
     class FixedStorage
     {
     public:
@@ -52,6 +52,9 @@ namespace VoidArchitect::Collections
 
         /// @brief Maximum number of objects that can be stored
         static constexpr size_t MAX_OBJECTS = CAPACITY;
+
+        /// @brief Maximum size of stored objects
+        static constexpr size_t MAX_OBJECT_SIZE = MAX_SIZE;
 
         // === Constructors / Destructors ===
 
@@ -87,6 +90,9 @@ namespace VoidArchitect::Collections
         /// @note If allocation fails due to full storage, a warning is logged
         /// and an invalid handle is returned.
         template <typename... Args>
+        HandleType Allocate(Args&&... args);
+
+        template <typename DerivedT, typename... Args>
         HandleType Allocate(Args&&... args);
 
         /// @brief Release a slot and destruct the object
@@ -224,7 +230,7 @@ namespace VoidArchitect::Collections
         struct Slot
         {
             /// @brief Raw storage for an object (properly aligned)
-            alignas(T) std::byte storage[sizeof(T)];
+            alignas(T) std::byte storage[MAX_SIZE];
 
             /// @brief Atomic flag indicating if a slot contains a valid object
             std::atomic<bool> inUse{false};
@@ -278,11 +284,11 @@ namespace VoidArchitect::Collections
     // Template Implementation
     // ==============================================================
 
-    template <typename T, size_t CAPACITY>
-    FixedStorage<T, CAPACITY>::FixedStorage() = default;
+    template <typename T, size_t CAPACITY, size_t MAX_SIZE>
+    FixedStorage<T, CAPACITY, MAX_SIZE>::FixedStorage() = default;
 
-    template <typename T, size_t CAPACITY>
-    FixedStorage<T, CAPACITY>::~FixedStorage()
+    template <typename T, size_t CAPACITY, size_t MAX_SIZE>
+    FixedStorage<T, CAPACITY, MAX_SIZE>::~FixedStorage()
     {
         // Release all allocated objects to ensure proper destruction
         for (size_t i = 0; i < CAPACITY; ++i)
@@ -296,11 +302,14 @@ namespace VoidArchitect::Collections
         }
     }
 
-    template <typename T, size_t CAPACITY>
+    template <typename T, size_t CAPACITY, size_t MAX_SIZE>
     template <typename... Args>
-    typename FixedStorage<T, CAPACITY>::HandleType FixedStorage<T, CAPACITY>::Allocate(
-        Args&&... args)
+    typename FixedStorage<T, CAPACITY, MAX_SIZE>::HandleType FixedStorage<
+        T, CAPACITY, MAX_SIZE>::Allocate(Args&&... args)
     {
+        static_assert(sizeof(T) <= MAX_SIZE, "T is too large for storage");
+        static_assert(std::is_constructible_v<T, Args...>, "T is not constructible");
+
         // Find and claim a free slot
         size_t slotIndex = FindAndClaimFreeSlot();
         if (slotIndex >= CAPACITY)
@@ -348,8 +357,58 @@ namespace VoidArchitect::Collections
         }
     }
 
-    template <typename T, size_t CAPACITY>
-    bool FixedStorage<T, CAPACITY>::Release(HandleType handle)
+    template <typename T, size_t CAPACITY, size_t MAX_SIZE>
+    template <typename DerivedT, typename... Args>
+    typename FixedStorage<T, CAPACITY, MAX_SIZE>::HandleType FixedStorage<
+        T, CAPACITY, MAX_SIZE>::Allocate(Args&&... args)
+    {
+        static_assert(std::is_base_of_v<T, DerivedT>, "DerivedT must inherit from base type T");
+        static_assert(sizeof(DerivedT) <= MAX_SIZE, "DerivedT is too large for storage");
+        static_assert(std::is_constructible_v<DerivedT, Args...>, "DerivedT is not constructible");
+
+        auto slotIndex = FindAndClaimFreeSlot();
+        if (slotIndex >= CAPACITY)
+        {
+            VA_ENGINE_WARN(
+                "[FixedStorage<{}>] The storage is full ({}/{} slots used). Cannot allocate {}.",
+                typeid(T).name(),
+                GetUsedSlots(),
+                CAPACITY,
+                typeid(DerivedT).name());
+
+            return HandleType::Invalid();
+        }
+
+        auto& slot = m_Slots[slotIndex];
+        auto generation = slot.generation.fetch_add(1, std::memory_order_acq_rel) + 1;
+
+        try
+        {
+            auto* derivedObject = reinterpret_cast<DerivedT*>(slot.storage);
+            new(derivedObject) DerivedT(std::forward<Args>(args)...);
+
+            m_UsedCount.fetch_add(1, std::memory_order_relaxed);
+            m_NextSlot.store((slotIndex + 1) % CAPACITY, std::memory_order_relaxed);
+
+            return HandleType(static_cast<uint32_t>(slotIndex), generation);
+        }
+        catch (...)
+        {
+            slot.generation.fetch_sub(1, std::memory_order_acq_rel);
+            slot.inUse.store(false, std::memory_order_release);
+
+            VA_ENGINE_ERROR(
+                "[FixedStorage<{}>] Failed to construct object of type {} in slot {}.",
+                typeid(T).name(),
+                typeid(DerivedT).name(),
+                slotIndex);
+
+            return HandleType::Invalid();
+        }
+    }
+
+    template <typename T, size_t CAPACITY, size_t MAX_SIZE>
+    bool FixedStorage<T, CAPACITY, MAX_SIZE>::Release(HandleType handle)
     {
         size_t slotIndex;
         if (!ValidateHandle(handle, slotIndex))
@@ -371,8 +430,8 @@ namespace VoidArchitect::Collections
         return true;
     }
 
-    template <typename T, size_t CAPACITY>
-    T* FixedStorage<T, CAPACITY>::Get(HandleType handle)
+    template <typename T, size_t CAPACITY, size_t MAX_SIZE>
+    T* FixedStorage<T, CAPACITY, MAX_SIZE>::Get(HandleType handle)
     {
         size_t slotIndex;
         if (!ValidateHandle(handle, slotIndex))
@@ -383,8 +442,8 @@ namespace VoidArchitect::Collections
         return m_Slots[slotIndex].GetObject();
     }
 
-    template <typename T, size_t CAPACITY>
-    const T* FixedStorage<T, CAPACITY>::Get(HandleType handle) const
+    template <typename T, size_t CAPACITY, size_t MAX_SIZE>
+    const T* FixedStorage<T, CAPACITY, MAX_SIZE>::Get(HandleType handle) const
     {
         size_t slotIndex;
         if (!ValidateHandle(handle, slotIndex))
@@ -395,16 +454,16 @@ namespace VoidArchitect::Collections
         return m_Slots[slotIndex].GetObject();
     }
 
-    template <typename T, size_t CAPACITY>
-    bool FixedStorage<T, CAPACITY>::IsValid(HandleType handle) const
+    template <typename T, size_t CAPACITY, size_t MAX_SIZE>
+    bool FixedStorage<T, CAPACITY, MAX_SIZE>::IsValid(HandleType handle) const
     {
         size_t slotIndex;
 
         return ValidateHandle(handle, slotIndex);
     }
 
-    template <typename T, size_t CAPACITY>
-    size_t FixedStorage<T, CAPACITY>::FindAndClaimFreeSlot()
+    template <typename T, size_t CAPACITY, size_t MAX_SIZE>
+    size_t FixedStorage<T, CAPACITY, MAX_SIZE>::FindAndClaimFreeSlot()
     {
         const uint32_t startSlot = m_NextSlot.load(std::memory_order_relaxed);
 
@@ -428,8 +487,10 @@ namespace VoidArchitect::Collections
         return CAPACITY; // No free slots found - return an invalid handle
     }
 
-    template <typename T, size_t CAPACITY>
-    bool FixedStorage<T, CAPACITY>::ValidateHandle(HandleType handle, size_t& slotIndex) const
+    template <typename T, size_t CAPACITY, size_t MAX_SIZE>
+    bool FixedStorage<T, CAPACITY, MAX_SIZE>::ValidateHandle(
+        HandleType handle,
+        size_t& slotIndex) const
     {
         if (!handle.IsValid()) return false;
 

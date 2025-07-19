@@ -1,9 +1,0 @@
-<map id="VoidArchitect::Renderer::RenderPassTypeToString" name="VoidArchitect::Renderer::RenderPassTypeToString">
-<area shape="rect" id="Node000001" title=" " alt="" coords="247,71,424,111"/>
-<area shape="rect" id="Node000002" href="$class_void_architect_1_1_render_pass_system.html#ae8afb9ca85b95e279d8b069ef455791a" title=" " alt="" coords="12,5,192,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="245,69,177,49,178,44,247,63"/>
-<area shape="rect" id="Node000003" href="$class_void_architect_1_1_render_state_system.html#a49002ed4ba566fcd6c5685085ad819fc" title=" " alt="" coords="12,71,192,111"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="231,94,192,94,192,88,231,88"/>
-<area shape="rect" id="Node000004" href="$class_void_architect_1_1_render_state_system.html#a56e5d68ef03835a3b6e91610fcc02e3f" title=" " alt="" coords="5,136,199,177"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="247,119,178,138,177,133,245,113"/>
-</map>

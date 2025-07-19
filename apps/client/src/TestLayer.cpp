@@ -25,23 +25,3 @@ void TestLayer::OnFixedUpdate(const float fixedTimestep)
 {
     m_DebugCameraController->OnFixedUpdate(fixedTimestep);
 }
-
-void TestLayer::OnEvent(VoidArchitect::Event& e)
-{
-    m_DebugCameraController->OnEvent(e);
-
-    auto dispatcher = VoidArchitect::EventDispatcher(e);
-    dispatcher.Dispatch<VoidArchitect::KeyPressedEvent>(
-        [](VoidArchitect::KeyPressedEvent& e)
-        {
-            if (e.GetKeyCode() == SDLK_T)
-            {
-                // VoidArchitect::Renderer::RenderCommand::SwapTestTexture();
-            }
-            if (e.GetKeyCode() == SDLK_C)
-            {
-                // VoidArchitect::Renderer::RenderCommand::SwapColor();
-            }
-            return false;
-        });
-}
