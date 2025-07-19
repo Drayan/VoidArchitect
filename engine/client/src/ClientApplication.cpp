@@ -72,7 +72,7 @@ namespace VoidArchitect
         m_MainWindow->OnUpdate();
     }
 
-    void ClientApplication::OnApplicationUpdate(float deltaTime)
+    void ClientApplication::OnLogic(float deltaTime)
     {
         Renderer::g_RenderSystem->RenderFrame(deltaTime);
     }

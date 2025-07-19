@@ -115,7 +115,7 @@ namespace VoidArchitect
         /// from server applications.
         ///
         /// @note Called once per frame after `OnUpdate()`
-        void OnApplicationUpdate(float deltaTime) override;
+        void OnLogic(float deltaTime) override;
 
         void OnWindowClose(const Events::WindowCloseEvent& e);
         void OnWindowResize(const Events::WindowResizedEvent& e);

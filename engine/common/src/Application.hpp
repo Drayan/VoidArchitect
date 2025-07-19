@@ -104,13 +104,23 @@ namespace VoidArchitect
         /// maintaining proper dependency order.
         virtual void InitializeSubsystems() = 0;
 
+        virtual void OnInitialized()
+        {
+        };
+
+        virtual void OnShutdownRequested()
+        {
+        };
+
         /// @brief Virtual method for derived classes to perform per-frame updates
         /// @param deltaTime Time elapsed since the last frame in seconds.
         ///
         /// Called once per frame after fixed timestep updates have been processed.
         /// This is where derived classes should implement frame-specific logic
         /// that require variable timestep handling.
-        virtual void OnUpdate(float deltaTime) = 0;
+        virtual void OnUpdate(float deltaTime)
+        {
+        };
 
         /// @brief Virtual method for derived classes to perform application-specific updates
         /// @param deltaTime Time elapsed since the last frmae in seconds.
@@ -118,14 +128,16 @@ namespace VoidArchitect
         /// Called once per frame after `OnUpdate()` to allow derived classes to perform
         /// their primary application-specific work. This separation allows for clear
         /// distinction between general updates and core application functionality.
-        virtual void OnApplicationUpdate(float deltaTime) = 0;
+        virtual void OnLogic(float deltaTime) = 0;
 
         /// @brief Virtual method for derived classes to handle fixed timestep updates
         /// @param fixedDeltaTime Fixed timestep duration in seconds
         ///
         /// Called during fixed timestep simulation loop. Derived classes should
         /// implement game logic, physics, and other systems requiring consistent timing.
-        virtual void OnFixedUpdate(float fixedDeltaTime) = 0;
+        virtual void OnFixedUpdate(float fixedDeltaTime)
+        {
+        };
 
         /// @brief Application running state flag
         ///

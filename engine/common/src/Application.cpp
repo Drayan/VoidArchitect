@@ -29,6 +29,7 @@ namespace VoidArchitect
             g_ConfigSystem = std::make_unique<ConfigSystem>();
 
             InitializeSubsystems();
+            OnInitialized();
         }
         catch (std::exception& e)
         {
@@ -126,9 +127,10 @@ namespace VoidArchitect
             OnUpdate(static_cast<float>(frameTime));
 
             // Call derived class application-specific update hook
-            OnApplicationUpdate(static_cast<float>(frameTime));
+            OnLogic(static_cast<float>(frameTime));
         }
 
         VA_ENGINE_INFO("[Application] Main execution loop terminated.");
+        OnShutdownRequested();
     }
 } // namespace VoidArchitect
