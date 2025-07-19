@@ -25,4 +25,5 @@
   documentation).
 * Lorsqu'une méthode est utilisée dans plusieurs threads, ajoute un warning dans la documentation.
 * Evite les commentaires trop évidents dans la documentation ("Default constructor", ...). Rappel
-  toi, claire et concise !
+  toi, cla&ire et concise !
+* Toute la documentation et les commentaires doivent être en anglais britannique.

@@ -92,6 +92,46 @@ namespace VoidArchitect::Collections
         template <typename... Args>
         HandleType Allocate(Args&&... args);
 
+        /// @brief Allocate a new slot and construct a derived object in-place
+        /// @tparam DerivedT Derived type that inherits from base type T
+        /// @tparam Args Constructor argument types (deduced)
+        /// @param args Arguments to forward to DerivedT's constructor
+        /// @return Valid handle on success, invalid otherwise
+        ///
+        /// @warning Thread-safe - can be called from any thread concurrently
+        ///
+        /// Specialised allocation method for derived types that inherit from the base type T.
+        /// This enables polymorphic storage where different derived types can be stored
+        /// in the same container whilst maintaining type safety.
+        ///
+        /// **Type requirements:**
+        /// - DerivedT must inherit from base type T
+        /// - sizeof(DerivedT) must be <= MAX_SIZE
+        /// - DerivedT must be constructible with the provided arguments
+        ///
+        /// **Thread safety:**
+        /// Uses atomic operations for slot claiming and generation management.
+        /// Multiple threads can safely allocate derived objects concurrently.
+        ///
+        /// **Memory layout:**
+        /// The derived object is constructed directly in the slot's storage using
+        /// placement new, allowing proper virtual function table setup.
+        ///
+        /// **Usage example:**
+        /// @code
+        /// FixedStorage<Entity, 1000, 256> storage;
+        ///
+        /// // Allocate different derived types
+        /// auto playerHandle = storage.Allocate<Player>("John", 100);
+        /// auto npcHandle = storage.Allocate<NPC>("Vendor", ItemList{});
+        ///
+        /// // Access through base type interface
+        /// Entity* entity = storage.Get(playerHandle);
+        /// entity->Update(); // Calls derived implementation
+        /// @endcode
+        ///
+        /// @note If allocation fails due to full storage, a warning is logged
+        /// and an invalid handle is returned
         template <typename DerivedT, typename... Args>
         HandleType Allocate(Args&&... args);
 

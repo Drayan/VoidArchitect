@@ -6,8 +6,22 @@
 #include "Event.hpp"
 #include "EventTypes.hpp"
 
+/// @file WindowEvents.hpp
+/// @brief Window-related event classes for application lifecycle management
+///
+/// This file defines all window-related events in the VoidArchitect engine,
+/// including window close, resize, focus, and movement events. These events
+/// handle critical application lifecycle management and UI state synchronisation.
+///
+/// **Event processing modes:**
+/// - WindowCloseEvent: Immediate processing (critical for clean shutdown)
+/// - WindowResizedEvent: Immediate processing (critical for rendering surface updates)
+/// - WindowFocusEvent/WindowLostFocusEvent: Deferred processing (normal priority)
+/// - WindowMovedEvent: Deferred processing (low priority)
+
 namespace VoidArchitect::Events
 {
+    // Forward declarations
     class WindowCloseEvent;
     class WindowResizedEvent;
     class WindowFocusEvent;
@@ -15,50 +29,62 @@ namespace VoidArchitect::Events
     class WindowMovedEvent;
 
     // === Event Traits Specializations ===
+    
+    /// @brief Critical window events require immediate processing
+    ///
+    /// Window close and resize events are processed immediately to ensure
+    /// responsive application termination and rendering surface updates.
 
-    /// @brief WindowCloseEvent must be processed immediately with critical priority
+    /// @brief Event traits for WindowCloseEvent - immediate critical processing
     EVENT_TRAITS(
         WindowCloseEvent,
-        EventExecutionMode::Immediate,
-        Jobs::JobPriority::Critical,
-        true,
-        EventCategory::Application);
+        EventExecutionMode::Immediate,  ///< Immediate processing for responsive shutdown
+        Jobs::JobPriority::Critical,    ///< Critical priority for clean termination
+        true,                          ///< Pooled for performance
+        EventCategory::Application);   ///< Application category
 
-    /// @brief WindowResizedEvent requires main thread processing with high priority
+    /// @brief Event traits for WindowResizedEvent - immediate critical processing
     EVENT_TRAITS(
         WindowResizedEvent,
-        EventExecutionMode::Immediate,
-        EventPriority::Critical,
-        true,
-        EventCategory::Application);
+        EventExecutionMode::Immediate,  ///< Immediate processing for rendering updates
+        EventPriority::Critical,        ///< Critical priority for UI responsiveness
+        true,                          ///< Pooled for performance
+        EventCategory::Application);   ///< Application category
 
-    /// @brief WindowFocusEvent requires main thread processing with normal priority
+    /// @brief Standard window events use deferred processing
+    ///
+    /// Focus and movement events are processed on the main thread with
+    /// deferred execution as they are not time-critical.
+
+    /// @brief Event traits for WindowFocusEvent - deferred normal processing
     EVENT_TRAITS(
         WindowFocusEvent,
-        EventExecutionMode::Deferred,
-        EventPriority::Normal,
-        true,
-        EventCategory::Application)
+        EventExecutionMode::Deferred,   ///< Deferred main thread processing
+        EventPriority::Normal,          ///< Normal priority
+        true,                          ///< Pooled for performance
+        EventCategory::Application);   ///< Application category
 
-    /// @brief WindowLostFocusEvent requires main thread processing with normal priority
+    /// @brief Event traits for WindowLostFocusEvent - deferred normal processing
     EVENT_TRAITS(
         WindowLostFocusEvent,
-        EventExecutionMode::Deferred,
-        EventPriority::Normal,
-        true,
-        EventCategory::Application)
+        EventExecutionMode::Deferred,   ///< Deferred main thread processing
+        EventPriority::Normal,          ///< Normal priority
+        true,                          ///< Pooled for performance
+        EventCategory::Application);   ///< Application category
 
-    /// @brief WindowMovedEvent requires main thread processing with low priority
+    /// @brief Event traits for WindowMovedEvent - deferred low priority processing
     EVENT_TRAITS(
         WindowMovedEvent,
-        EventExecutionMode::Deferred,
-        EventPriority::Low,
-        true,
-        EventCategory::Application)
+        EventExecutionMode::Deferred,   ///< Deferred main thread processing
+        EventPriority::Low,             ///< Low priority (position changes not critical)
+        true,                          ///< Pooled for performance
+        EventCategory::Application);   ///< Application category
 
     // === Events Declarations ===
 
     /// @brief Event emitted when the main window is requested to close
+    ///
+    /// @warning Thread-safe emission - handlers executed immediately in emitting thread
     ///
     /// WindowCloseEvent is triggered when the user requests to close the application
     /// window through system means (clicking X, Alt+F4, etc.). This event requires
@@ -87,6 +113,7 @@ namespace VoidArchitect::Events
     class VA_API WindowCloseEvent final : public Event
     {
     public:
+        /// @brief Construct a window close event
         WindowCloseEvent()
             : Event(
                 EventTraits<WindowCloseEvent>::Priority,
@@ -106,13 +133,15 @@ namespace VoidArchitect::Events
 
     /// @brief Event emitted when the main window is resized
     ///
+    /// @warning Thread-safe emission - handlers executed immediately in emitting thread
+    ///
     /// WindowResizedEvent is triggered when the application window size changes
     /// due to user interaction, system events, or programmatic changes. This event
-    /// requires main thread processing for rendering surface updates.
+    /// requires immediate processing for rendering surface updates.
     ///
     /// **Processing characteristics:**
-    /// - Execution mode: Deferred (main thread required for rendering)
-    /// - Priority: High (responsive UI updates)
+    /// - Execution mode: Immediate (critical for rendering surface updates)
+    /// - Priority: Critical (responsive UI updates)
     /// - Main thread: Required (rendering surface management)
     /// - Typical handlers: Renderer updates, UI layout updates, camera aspect ratio
     ///
@@ -179,27 +208,32 @@ namespace VoidArchitect::Events
         EVENT_CLASS_TYPE(WindowResizedEvent, "WindowResize", EventCategory::Application);
 
     private:
-        /// @brief New window width in pixels
-        uint32_t m_Width;
-
-        /// @brief New window height in pixels
-        uint32_t m_Height;
+        uint32_t m_Width;  ///< New window width in pixels
+        uint32_t m_Height; ///< New window height in pixels
     };
 
     /// @brief Event emitted when the main window gains focus
+    ///
+    /// @warning Thread-safe emission - handlers executed on main thread via deferred processing
     ///
     /// WindowFocusEvent is triggered when the application window becomes the
     /// active/focused window in the operating system. This is useful for
     /// resuming game logic, audio, or other activities when the application
     /// becomes active again.
     ///
-    /// **Processing characteristics: **
-    /// - Execution mode: Deferred (the main thread for UI updates)
+    /// **Processing characteristics:**
+    /// - Execution mode: Deferred (main thread for UI updates)
     /// - Priority: Normal (not critical but timely)
     /// - Main thread: Required (UI state management)
     /// - Typical handlers: Resume game logic, enable audio, show cursor
     ///
-    /// **Usage example: **
+    /// **Handler responsibilities:**
+    /// - Resume paused game logic and timers
+    /// - Restore audio volume and effects
+    /// - Re-enable input processing
+    /// - Update UI to active state
+    ///
+    /// **Usage example:**
     /// @code
     /// auto subscription = g_EventSystem->Subscribe<WindowFocusEvent>(
     ///     [this](const WindowFocusEvent& e) {
@@ -210,7 +244,7 @@ namespace VoidArchitect::Events
     class VA_API WindowFocusEvent final : public Event
     {
     public:
-        /// @brief Construct window focus event
+        /// @brief Construct a window focus event
         WindowFocusEvent()
             : Event(
                 EventTraits<WindowFocusEvent>::Priority,
@@ -230,17 +264,25 @@ namespace VoidArchitect::Events
 
     /// @brief Event emitted when the main window loses focus
     ///
+    /// @warning Thread-safe emission - handlers executed on main thread via deferred processing
+    ///
     /// WindowLostFocusEvent is triggered when the application window is no longer
     /// the active/focused window. This is useful for pausing game logic, muting
     /// audio, or performing other "background mode" activities.
     ///
-    /// **Processing characteristics: **
+    /// **Processing characteristics:**
     /// - Execution mode: Deferred (main thread for UI updates)
     /// - Priority: Normal (not critical but timely)
     /// - Main thread: Required (UI state management)
     /// - Typical handlers: Pause game logic, mute audio, hide cursor
     ///
-    /// **Usage example: **
+    /// **Handler responsibilities:**
+    /// - Pause game logic and timers
+    /// - Reduce or mute audio volume
+    /// - Disable input processing
+    /// - Update UI to inactive state
+    ///
+    /// **Usage example:**
     /// @code
     /// auto subscription = g_EventSystem->Subscribe<WindowLostFocusEvent>(
     ///     [this](const WindowLostFocusEvent& e) {
@@ -251,7 +293,7 @@ namespace VoidArchitect::Events
     class VA_API WindowLostFocusEvent final : public Event
     {
     public:
-        /// @brief Construct window lost focus event
+        /// @brief Construct a window lost focus event
         WindowLostFocusEvent()
             : Event(
                 EventTraits<WindowLostFocusEvent>::Priority,
@@ -271,17 +313,25 @@ namespace VoidArchitect::Events
 
     /// @brief Event emitted when the main window is moved
     ///
+    /// @warning Thread-safe emission - handlers executed on main thread via deferred processing
+    ///
     /// WindowMovedEvent is triggered when the application window position changes
     /// on the desktop. This can be useful for saving window state, updating
     /// multi-monitor configurations, or adjusting rendering based on display.
     ///
-    /// **Processing characteristics: **
+    /// **Processing characteristics:**
     /// - Execution mode: Deferred (low-priority UI event)
     /// - Priority: Low (position changes are not critical)
     /// - Main thread: Required (UI state management)
     /// - Typical handlers: Save window state, update display configurations
     ///
-    /// **Usage example: **
+    /// **Handler responsibilities:**
+    /// - Save window position for restoration
+    /// - Update multi-monitor display configurations
+    /// - Adjust rendering for display-specific properties
+    /// - Update window management state
+    ///
+    /// **Usage example:**
     /// @code
     /// auto subscription = g_EventSystem->Subscribe<WindowMovedEvent>(
     ///     [this](const WindowMovedEvent& e) {
@@ -292,6 +342,9 @@ namespace VoidArchitect::Events
     class VA_API WindowMovedEvent final : public Event
     {
     public:
+        /// @brief Construct a window moved event
+        /// @param x New window X position in screen coordinates
+        /// @param y New window Y position in screen coordinates
         WindowMovedEvent(const int32_t x, const int32_t y)
             : Event(
                   EventTraits<WindowMovedEvent>::Priority,
@@ -301,11 +354,11 @@ namespace VoidArchitect::Events
         {
         }
 
-        /// @brief Get a new window X position
+        /// @brief Get the new window X position
         /// @return Window X position in screen coordinates
         int32_t GetX() const { return m_X; }
 
-        /// @brief Get a new window Y position
+        /// @brief Get the new window Y position
         /// @return Window Y position in screen coordinates
         int32_t GetY() const { return m_Y; }
 
@@ -319,10 +372,7 @@ namespace VoidArchitect::Events
         EVENT_CLASS_TYPE(WindowMovedEvent, "WindowMoved", EventCategory::Application);
 
     private:
-        /// @brief New window X position in screen coordinates
-        int32_t m_X;
-
-        /// @brief New window Y position in screen coordinates
-        int32_t m_Y;
+        int32_t m_X; ///< New window X position in screen coordinates
+        int32_t m_Y; ///< New window Y position in screen coordinates
     };
 }

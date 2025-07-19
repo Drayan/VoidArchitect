@@ -110,6 +110,8 @@ namespace VoidArchitect::Events
         /// @param args Arguments forwarded to event constructor
         /// @return Handle to the emitted event (maybe invalid if pooling fails)
         ///
+        /// @warning Thread-safe - can be called from any thread concurrently
+        ///
         /// Thread-safe event emission that automatically determines processing
         /// mode based on EventTraits<T> configuration. Events are either:
         /// - Processed immediately (Immediate mode)
@@ -145,6 +147,8 @@ namespace VoidArchitect::Events
         /// @param args Arguments forwarded to event constructor
         /// @return Handle to the emitted event
         ///
+        /// @warning Thread-safe - can be called from any thread concurrently
+        ///
         /// Extended emission function that captures source location information
         /// for enhanced debugging and profiling capabilities.
         template <typename T, typename... Args>
@@ -161,7 +165,7 @@ namespace VoidArchitect::Events
         /// returned EventSubscription object is destroyed. This prevents
         /// memory leaks and dangling function pointers.
         ///
-        /// **Thread safety: ** Main thread only (follows VoidArchitect patterns)
+        /// @warning Main thread only - subscription management is not thread-safe
         ///
         /// **Handler requirements: **
         /// - Must be copyable (stored internally)
@@ -186,6 +190,8 @@ namespace VoidArchitect::Events
         /// @param maxTimeMs Maximum time budget in milliseconds (0 = unlimited)
         /// @return Statistics about processed events
         ///
+        /// @warning Main thread only - must be called from the main thread
+        ///
         /// Processes deferred events that require main thread execution.
         /// Called by Application main loop to handle UI, rendering, and
         /// other main-thread-only operations.
@@ -208,15 +214,17 @@ namespace VoidArchitect::Events
         /// @endcode
         struct DeferredEventStats
         {
-            uint32_t eventsProcessed = 0;
-            float timeSpentMs = 0.0f;
-            bool budgetExceeded = false;
-            std::array<uint32_t, 4> eventsByPriority = {0};
+            uint32_t eventsProcessed = 0;    ///< Number of events processed this call
+            float timeSpentMs = 0.0f;        ///< Actual time spent processing events
+            bool budgetExceeded = false;     ///< Whether the time budget was exceeded
+            std::array<uint32_t, 4> eventsByPriority = {0}; ///< Events processed by priority [Critical, High, Normal, Low]
         };
 
         DeferredEventStats ProcessDeferredEvents(float maxTimeMs = 0.0f);
 
         /// @brief Begin frame processing with clean-up and statistics update
+        ///
+        /// @warning Main thread only - must be called from the main thread
         ///
         /// Called at the beginning of each frame to:
         /// - Clean up processed events and return them to pool
@@ -239,6 +247,8 @@ namespace VoidArchitect::Events
         /// @brief Get comprehensive event system statistics
         /// @return The current statistics structure with performance metrics
         ///
+        /// @warning Thread-safe - can be called from any thread
+        ///
         /// Provides detailed metrics for performance monitoring, debugging,
         /// and optimization. All statistics are thread-safe and updated
         /// in real-time during event processing.
@@ -256,29 +266,39 @@ namespace VoidArchitect::Events
         /// @brief Check if there are pending deferred events to process
         /// @return true if deferred events are waiting for main thread processing
         ///
+        /// @warning Thread-safe - can be called from any thread
+        ///
         /// Useful for Application main loop to determine if event processing
         /// is needed, allowing for more efficient frame timing.
         bool HasPendingDeferredEvents() const;
 
         /// @brief Get the current number of active subscriptions
         /// @return Total number of active subscriptions across all event types
+        ///
+        /// @warning Thread-safe - can be called from any thread
         uint32_t GetActiveSubscriptionCount() const;
 
     private:
         // === Internal Event Management ===
 
         /// @brief Internal structure for subscription storage
+        ///
+        /// Contains all necessary data for a single event subscription.
+        /// Used internally by the EventSystem to manage subscriptions.
         struct SubscriptionEntry
         {
-            std::function<void(const Event&)> handler; ///< Type-erased handler function
-            uint32_t subscriptionId; ///< Unique subscription identifier
-            bool active; ///< Whether subscription is active
+            std::function<void(const Event&)> handler; ///< Type-erased handler function that processes events
+            uint32_t subscriptionId;                   ///< Unique subscription identifier for removal
+            bool active;                               ///< Whether subscription is active and should process events
         };
 
         /// @brief Create and configure an event instance
         /// @tparam T Event type
         /// @param args Constructor arguments
         /// @return Handle to created event (maybe invalid if pool full)
+        ///
+        /// Allocates an event from the internal storage pool and constructs it
+        /// with the provided arguments. Returns invalid handle if pool is full.
         template <typename T, typename... Args>
         EventHandle CreateEvent(Args&&... args);
 
@@ -288,64 +308,142 @@ namespace VoidArchitect::Events
         /// @param sourceLine Source line where the event was emitted
         /// @param args Constructor arguments
         /// @return Handle to created event (maybe invalid if pool full)
+        ///
+        /// Extended creation function that captures source location information
+        /// for enhanced debugging and profiling capabilities. Sets source location
+        /// metadata on the created event.
         template <typename T, typename... Args>
         EventHandle CreateEventWithSource(const char* sourceFile, int sourceLine, Args&&... args);
 
         /// @brief Process a single event immediately
+        /// @tparam T Event type being processed
         /// @param eventHandle Handle to event to process
+        ///
+        /// Processes the event immediately in the calling thread by invoking
+        /// all registered handlers for the event type. Used for immediate
+        /// execution mode events.
         template <typename T>
         void ProcessEventImmediate(EventHandle eventHandle);
 
         /// @brief Queue event for deferred processing
         /// @param eventHandle Handle to event to queue
+        ///
+        /// @warning Thread-safe - can be called from any thread
+        ///
+        /// Adds the event to the deferred queue for main thread processing.
+        /// Events are processed later via ProcessDeferredEvents().
         void QueueEventDeferred(EventHandle eventHandle) const;
 
         /// @brief Queue event for async processing via JobSystem
         /// @param eventHandle Handle to event to queue
+        ///
+        /// @warning Thread-safe - can be called from any thread
+        ///
+        /// Submits the event to the JobSystem for processing on worker threads.
+        /// Event handlers must be thread-safe for async events.
         void QueueEventAsync(EventHandle eventHandle);
 
         /// @brief Process a single event with timing and statistics
         /// @param eventHandle Handle to event to process
+        ///
+        /// Core event processing function that handles timing measurement,
+        /// statistics updates, and invokes all registered handlers for the event.
+        /// Used internally by all processing modes.
         void ProcessSingleEvent(EventHandle eventHandle);
 
         /// @brief Get subscriptions for a specific event type
         /// @param typeId Event type identifier
         /// @return Vector of active subscriptions (thread-safe copy)
+        ///
+        /// @warning Thread-safe - can be called from any thread
+        ///
+        /// Returns a copy of all active subscriptions for the given event type.
+        /// Creates a snapshot under shared lock to ensure thread safety.
         VAArray<SubscriptionEntry> GetSubscriptionsForType(EventTypeID typeId) const;
 
         /// @brief Remove subscription by ID
         /// @param typeId Event type identifier
         /// @param subscriptionId Subscription identifier to remove
+        ///
+        /// @warning Thread-safe - can be called from any thread
+        ///
+        /// Removes the specified subscription from the subscription list.
+        /// Called automatically when EventSubscription RAII objects are destroyed.
+        /// Updates subscription statistics.
         void RemoveSubscription(EventTypeID typeId, uint32_t subscriptionId);
 
         /// @brief Generate unique subscription ID
         /// @return Unique identifier for new subscription
+        ///
+        /// @warning Thread-safe - uses atomic increment
+        ///
+        /// Generates a unique subscription ID using atomic increment.
+        /// IDs are never reused during the lifetime of the EventSystem.
         uint32_t GenerateSubscriptionId();
 
         // === Storage and Threading ===
 
         /// @brief Event object storage with pooling
+        ///
+        /// Fixed-size storage pool for Event objects. Provides zero-allocation
+        /// event creation during normal operation. Events are recycled when
+        /// processing completes.
         FixedStorage<Event, MAX_EVENTS, MAX_EVENT_SIZE> m_EventStorage;
 
         /// @brief Deferred event queue for main thread processing
+        ///
+        /// @warning Thread-safe - uses lock-free concurrent queue
+        ///
+        /// Lock-free queue for events that need main thread processing.
+        /// Producer threads can enqueue events, main thread dequeues and processes.
         std::unique_ptr<moodycamel::ConcurrentQueue<EventHandle>> m_DeferredQueue;
 
         /// @brief Subscription management with thread safety
+        ///
+        /// @warning Protected by shared_mutex - readers can access concurrently
+        ///
+        /// Reader-writer lock protecting subscription data structures.
+        /// Multiple threads can read subscriptions concurrently, but writes
+        /// (subscribe/unsubscribe) require exclusive access.
         mutable std::shared_mutex m_Mutex;
+
+        /// @brief Per-event-type subscription storage
+        ///
+        /// @warning Protected by m_Mutex - not directly thread-safe
+        ///
+        /// Maps event type IDs to arrays of subscription entries.
+        /// Each event type maintains its own subscription list.
         VAHashMap<EventTypeID, VAArray<SubscriptionEntry>> m_Subscriptions;
 
-        /// @brief Statistics and monitoring
+        /// @brief Statistics and monitoring data
+        ///
+        /// @warning Partially thread-safe - atomic counters safe, others require external sync
+        ///
+        /// Real-time performance metrics and debugging information.
+        /// Atomic counters are thread-safe, complex stats may require synchronization.
         mutable EventSystemStats m_Stats;
 
-        /// @brief Subscription ID generation
+        /// @brief Subscription ID generation counter
+        ///
+        /// @warning Thread-safe - atomic increment only
+        ///
+        /// Atomic counter for generating unique subscription IDs.
+        /// Incremented atomically to ensure uniqueness across threads.
         std::atomic<uint32_t> m_NextSubscriptionId = 0;
     };
 
     /// @brief Global event system instance
     ///
+    /// @warning Thread-safe for emission, main thread only for subscription
+    ///
     /// Initialized during application startup and available throughout
     /// the application lifetime for both client and server applications.
     /// Follows the same pattern as g_JobSystem and g_ConfigSystem.
+    ///
+    /// **Thread safety:**
+    /// - Event emission: Safe from any thread
+    /// - Event subscription: Main thread only
+    /// - Statistics access: Safe from any thread
     extern VA_API std::unique_ptr<EventSystem> g_EventSystem;
 
     // === Convenience Emission Macro ===
@@ -354,7 +452,16 @@ namespace VoidArchitect::Events
     /// @param EventType Event type to emit
     /// @param ... Arguments for event constructor
     ///
+    /// @warning Thread-safe - can be used from any thread
+    ///
     /// Automatically captures __FILE__ and __LINE__ for debugging.
+    /// Prefer this macro over direct EmitEvent() calls for better debugging.
+    ///
+    /// **Usage example:**
+    /// @code
+    /// EMIT_EVENT(KeyPressedEvent, 42, 0);  // keycode=42, repeat=0
+    /// EMIT_EVENT(WindowResizedEvent, 1920, 1080);
+    /// @endcode
 #define EMIT_EVENT(EventType, ...) \
     Events::g_EventSystem->EmitEventWithSource<EventType>(__FILE__, __LINE__, ##__VA_ARGS__)
 
